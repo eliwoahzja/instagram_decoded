@@ -1,0 +1,188 @@
+.class public final LX/QZR;
+.super LX/OXT;
+.source ""
+
+
+# static fields
+.field public static final __redex_internal_original_name:Ljava/lang/String; = "QuicksilverShareFragment"
+
+
+# instance fields
+.field public A00:Ljava/io/File;
+
+.field public A01:Ljava/lang/String;
+
+.field public A02:Z
+
+.field public final A03:LX/Pry;
+
+
+# direct methods
+.method public constructor <init>()V
+    .locals 2
+
+    invoke-direct {p0}, LX/OXT;-><init>()V
+
+    const/16 v1, 0x9
+
+    new-instance v0, LX/YfT;
+
+    invoke-direct {v0, p0, v1}, LX/YfT;-><init>(Ljava/lang/Object;I)V
+
+    iput-object v0, p0, LX/QZR;->A03:LX/Pry;
+
+    return-void
+.end method
+
+
+# virtual methods
+.method public final getModuleName()Ljava/lang/String;
+    .locals 1
+
+    const-string v0, "quicksilver_share_fragment"
+
+    return-object v0
+.end method
+
+.method public final onCreate(Landroid/os/Bundle;)V
+    .locals 4
+
+    const v0, 0x27432949
+
+    invoke-static {v0}, LX/3Et;->A02(I)I
+
+    move-result v3
+
+    invoke-super {p0, p1}, LX/4Ka;->onCreate(Landroid/os/Bundle;)V
+
+    invoke-virtual {p0}, Landroidx/fragment/app/Fragment;->requireArguments()Landroid/os/Bundle;
+
+    move-result-object v2
+
+    const/16 v0, 0x193
+
+    invoke-static {v0}, LX/C38;->A00(I)Ljava/lang/String;
+
+    move-result-object v0
+
+    invoke-static {v2, v0}, LX/D6m;->A01(Landroid/os/Bundle;Ljava/lang/String;)Ljava/lang/String;
+
+    move-result-object v1
+
+    const/16 v0, 0x1a3
+
+    invoke-static {v0}, LX/C38;->A00(I)Ljava/lang/String;
+
+    move-result-object v0
+
+    invoke-virtual {v2, v0}, Landroid/os/BaseBundle;->getString(Ljava/lang/String;)Ljava/lang/String;
+
+    move-result-object v0
+
+    iput-object v0, p0, LX/QZR;->A01:Ljava/lang/String;
+
+    invoke-static {v1}, LX/135;->A0j(Ljava/lang/String;)Ljava/io/File;
+
+    move-result-object v0
+
+    iput-object v0, p0, LX/QZR;->A00:Ljava/io/File;
+
+    const v0, 0x267fdf71
+
+    invoke-static {v0, v3}, LX/3Et;->A09(II)V
+
+    return-void
+.end method
+
+.method public final onDestroy()V
+    .locals 4
+
+    const v0, -0x66eff7fa
+
+    invoke-static {v0}, LX/3Et;->A02(I)I
+
+    move-result v3
+
+    invoke-super {p0}, LX/4Ka;->onDestroy()V
+
+    invoke-virtual {p0}, Landroidx/fragment/app/Fragment;->getActivity()Landroidx/fragment/app/FragmentActivity;
+
+    move-result-object v0
+
+    if-nez v0, :cond_0
+
+    const v0, 0xaabd35c
+
+    :goto_0
+    invoke-static {v0, v3}, LX/3Et;->A09(II)V
+
+    return-void
+
+    :cond_0
+    invoke-virtual {v0}, Landroid/app/Activity;->isFinishing()Z
+
+    move-result v0
+
+    if-eqz v0, :cond_1
+
+    iget-object v0, p0, LX/OXT;->A02:LX/Esp;
+
+    invoke-static {v0}, LX/16V;->A0j(LX/Esp;)Lcom/instagram/common/session/UserSession;
+
+    move-result-object v0
+
+    invoke-static {v0}, LX/3xx;->A00(LX/4Nb;)LX/3xx;
+
+    move-result-object v2
+
+    iget-boolean v0, p0, LX/QZR;->A02:Z
+
+    new-instance v1, LX/na2;
+
+    invoke-direct {v1}, Ljava/lang/Object;-><init>()V
+
+    iput-boolean v0, v1, LX/na2;->A00:Z
+
+    const/4 v0, 0x0
+
+    sput v0, Lredex/$StoreFenceHelper;->DUMMY_VOLATILE:I
+
+    invoke-virtual {v2, v1}, LX/3xx;->A01(LX/GRz;)V
+
+    :cond_1
+    const v0, 0x15152d07
+
+    goto :goto_0
+.end method
+
+.method public final onResume()V
+    .locals 2
+
+    const v0, -0x2d5248d
+
+    invoke-static {v0}, LX/3Et;->A02(I)I
+
+    move-result v1
+
+    invoke-super {p0}, LX/OXT;->onResume()V
+
+    iget-object v0, p0, LX/QZR;->A00:Ljava/io/File;
+
+    if-eqz v0, :cond_0
+
+    invoke-virtual {v0}, Ljava/io/File;->exists()Z
+
+    move-result v0
+
+    if-nez v0, :cond_1
+
+    :cond_0
+    invoke-static {p0}, LX/OUv;->A00(Landroidx/fragment/app/Fragment;)V
+
+    :cond_1
+    const v0, -0x32ca5e90
+
+    invoke-static {v0, v1}, LX/3Et;->A09(II)V
+
+    return-void
+.end method

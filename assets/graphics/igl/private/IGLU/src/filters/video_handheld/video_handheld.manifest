@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_handheld",
+  "displayName": "Handheld",
+  "description": "Video effects selection. Mimics the results of handheld camera.",
+  "iglu": {
+    "legacyId": 2004,
+    "customization": [
+      {
+        "name": "speed",
+        "default": 0.375,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Speed",
+        "displayNameDescription": "[IG Edits] Slider label controlling the playback or animation speed of a video effect (noun, not a verb); exact range varies per effect."
+      },
+      {
+        "name": "intensity",
+        "default": 0.4,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Intensity",
+        "displayNameDescription": "[IG Edits] Slider label controlling the strength of a video effect. Generic across many effects (glow, blur, color, distortion, etc.); exact range varies per effect."
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "a0983227",
+      "handle": "AQAHa589o5bY",
+      "md5": "a4198437830eadb4210abbf5f4bc689a"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAKo8rJwTLB"
+    }
+  }
+}

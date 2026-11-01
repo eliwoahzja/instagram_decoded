@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout android:layout_width="wrap_content" android:layout_height="wrap_content"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <com.instagram.honolulu.zoom.ZoomSelectorView android:id="@id/zoom_selector" android:layout_width="194.0dp" android:layout_height="194.0dp" app:pill_color="@android:color/white" app:pill_height="26.0dp" app:pill_text_color="@android:color/black" app:pill_text_size="14.0sp" app:track_background_color="@color/bds_black_60_transparent" app:track_height="32.0dp" app:track_outline_color="@color/white_25_transparent" app:track_outline_width="1.0dp" app:track_sweep_angle="130.0" app:track_text_color="@android:color/white" app:track_text_size="14.0sp" />
+    <com.instagram.honolulu.capture.ShutterButtonView android:layout_gravity="center" android:id="@id/shutter_button" android:layout_width="112.0dp" android:layout_height="112.0dp" app:button_color="@android:color/white" app:circle_spacing="2.0dp" app:inner_circle_shrink_scale_delta="0.25" app:outer_circle_grow_scale_delta="0.34" app:outer_circle_stroke_width="4.0dp" app:outer_ring_color="@android:color/white" app:recording_glyph_color="@color/bds_red_5" app:resting_scale="0.66" />
+</FrameLayout>

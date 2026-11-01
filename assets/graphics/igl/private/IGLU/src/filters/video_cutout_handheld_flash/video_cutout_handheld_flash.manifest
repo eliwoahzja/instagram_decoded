@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_cutout_handheld_flash",
+  "displayName": "Handheld flash",
+  "description": "[IG Edits] Video effect name shared across full-frame and subject-cutout surfaces. With \"Handheld flash\", the video simulates a handheld camera with intermittent flash bursts.",
+  "iglu": {
+    "subject": {
+      "enabled": true,
+      "fullFrameEnabled": false
+    }
+  },
+  "assets": [
+    {
+      "name": "perlin_noise.png",
+      "assetHash": "42393e620664a372495800bfcf40ca960aa0ab3e2ddfe42fbfe2b86098d33000",
+      "hubAssetId": "1259354255546062"
+    }
+  ]
+}

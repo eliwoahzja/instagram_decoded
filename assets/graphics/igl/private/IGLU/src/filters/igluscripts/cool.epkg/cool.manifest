@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "identifier": "84E3D37B-B578-4DE4-AEE6-31E1F6A0BEC7",
+  "displayName": "Cool",
+  "description": "[IG Edits] Color preset filter name. Applies a cool color grade with skin smoothing.",
+  "android": {
+    "previewAsset": {
+      "key": "a3ccfcc3",
+      "handle": "AQADv6i-P9Nd",
+      "md5": "43cd441b4638a569c7118e1b9af5aadf"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQBnRFOMlxS_"
+    }
+  },
+  "iglu": {
+    "legacyId": 3177
+  },
+  "assets": [
+    {
+      "name": "cool_lut.png",
+      "assetHash": "67ee2abf77ad6439be093f2954e9f66a194edad3b0709aadc1b331fa9e186acc",
+      "hubAssetId": "2058208924769208"
+    }
+  ]
+}

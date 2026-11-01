@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "cdf_builder",
+  "displayName": "CDF Builder",
+  "description": "[IG Edits] Utility filter name. With \"CDF Builder\", the creator can build a tiled CLAHE-style contrast-limited cumulative histogram of HSV brightness, used as input to other tone-mapping filters.",
+  "iglu": {}
+}

@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "identifier": "8C5ACB40-2A43-4461-A31E-EA01ED775D8B",
+  "displayName": "Old Film",
+  "description": "[IG Edits] Video effect name. With \"Old Film\", the creator gets a warm black-and-white color grade with camera shake and film scratch and dust overlays.",
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAD4qGgp54c"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "92985fde",
+      "handle": "AQADwQODNn5e",
+      "md5": "da2ad5eb8c022f6283c55ebcc8ebca2d"
+    }
+  },
+  "iglu": {
+    "legacyId": 3208
+  },
+  "assets": [
+    {
+      "name": "old_film_ii_lut.png",
+      "assetHash": "e2d7f2ba3663d3e457647e573eab9fb2674f7b6f5a5c00ef33ef906c915a12c5",
+      "hubAssetId": "1831750754859701"
+    }
+  ]
+}

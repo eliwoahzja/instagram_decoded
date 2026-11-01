@@ -1,0 +1,81 @@
+[Filter VideoMaskWipeHeart]
+[MaskBehavior alpha]
+
+[Init]
+fun init(Filter filter) {
+    filter.parameters = {
+        {amount = 0.1, min = 0.0, max = 0.2, description = "Edge smoothness"},
+        {outro = 0.0, min = 0.0, max = 1.0, description = "0 = In, 1 = Out"},
+    };
+
+    filter.passes = {
+        {
+            name = 'pass0,
+            inputs = {'default},
+            uniforms = {
+                progress = 0.0,
+                amount = 0.01,
+                outro = 0.0,
+            },
+            glslShader = glsl,
+        },
+    };
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+    f32 progress = getParameterFloat('progress);
+    f32 amount = getParameterFloat('amount);
+    f32 outro = getParameterFloat('outro);
+
+    # keep amount off 0 so the smoothstep edge doesn't collapse
+    amount = max(0.001, amount);
+
+    setShaderUniform('pass0, 'progress, progress);
+    setShaderUniform('pass0, 'amount, amount);
+    setShaderUniform('pass0, 'outro, outro);
+}
+
+string glsl = "
+    precision highp float;
+    varying vec2 sourceTextureCoordinate;
+    uniform vec2 inputSize;
+    uniform float progress;
+    uniform float amount;
+    uniform float outro;
+
+    float sdHeart(vec2 p) {
+        p.x = abs(p.x);
+        if (p.y + p.x > 1.0) {
+            return sqrt(dot(p - vec2(0.25, 0.75), p - vec2(0.25, 0.75))) - sqrt(2.0) / 4.0;
+        }
+        float a = p.x + p.y;
+        float b = max(a, 0.0) * 0.5;
+        vec2 q1 = p - vec2(0.0, 1.0);
+        vec2 q2 = p - vec2(b, b);
+        return sqrt(min(dot(q1, q1), dot(q2, q2))) * sign(p.x - p.y);
+    }
+
+    void main() {
+        vec2 uv = sourceTextureCoordinate;
+        vec4 color = sampleInput(uv);
+
+        float p = mix(progress, 1.0 - progress, outro);
+        float aspect = inputSize.x / inputSize.y;
+        // Heart geometry is authored bottom-origin; flip on top-origin
+        // backends (Metal/iOS) so the shape stays upright everywhere.
+        float my = uv.y;
+        if (UP < 0.0) { my = 1.0 - my; }
+        vec2 pt = vec2((uv.x - 0.5) * aspect, my - 0.5);
+        float maxR = max(aspect, 1.0) * 2.0;
+        float scale = max(mix(-amount, maxR + amount, p), 0.001);
+        vec2 heartUV = pt / scale;
+        heartUV.y += 0.55;
+        float dist = sdHeart(heartUV);
+        float mask = smoothstep(amount, -amount, dist);
+
+        color.a = color.a * mask;
+        color.rgb *= color.a;
+        gl_FragColor = toOutputFormat(color);
+    }
+";

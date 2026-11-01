@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_super_zoom",
+  "displayName": "Super Zoom",
+  "description": "Video effects selection. Video zooms in more.",
+  "iglu": {
+    "legacyId": 2011,
+    "behavior": {
+      "type": "fixedIntro",
+      "durationMs": 1500,
+      "curve": "linear"
+    },
+    "customization": [
+      {
+        "name": "zoom",
+        "default": 0.2857143,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Zoom",
+        "displayNameDescription": "[IG Edits] Slider label controlling the zoom factor (scale toward/away from the subject) of a video effect; exact range varies per effect."
+      },
+      {
+        "name": "duration",
+        "default": 1.5,
+        "min": 0.25,
+        "max": 3.0,
+        "displayName": "Duration",
+        "displayNameDescription": "[IG Edits] Slider label controlling how long a video effect's animation lasts; exact units and range vary per effect (seconds or normalized).",
+        "displayMethod": "time"
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "28d6f806",
+      "handle": "AQAEzuFOGZot",
+      "md5": "ea892e54a36d0d0b62546c9e235a0ed1"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAE5M00VfXl"
+    }
+  }
+}

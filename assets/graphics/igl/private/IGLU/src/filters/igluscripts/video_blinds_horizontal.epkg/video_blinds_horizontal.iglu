@@ -1,0 +1,62 @@
+[Filter VideoBlindsHorizontal]
+[MaskBehavior alpha]
+
+[Init]
+fun init(Filter filter) {
+    filter.parameters = {
+        {amount = 0.0, min = 0.0, max = 1.0, description = "Feather amount"},
+        {outro = 0.0, min = 0.0, max = 1.0, description = "0 = In, 1 = Out"},
+        {direction = 0.0, min = 0.0, max = 1.0, description = "Blinds direction"},
+    };
+
+    filter.passes = {
+        {
+            name = 'pass0,
+            inputs = {'default},
+            uniforms = {
+                progress = 0.0,
+                amount = 0.01,
+                outro = 0.0,
+                direction = 0.0,
+            },
+            glslShader = glsl,
+        },
+    };
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+    f32 progress = getParameterFloat('progress);
+    f32 amount = getParameterFloat('amount);
+    f32 outro = getParameterFloat('outro);
+    f32 direction = getParameterFloat('direction);
+
+    setShaderUniform('pass0, 'progress, progress);
+    setShaderUniform('pass0, 'amount, amount);
+    setShaderUniform('pass0, 'outro, outro);
+    setShaderUniform('pass0, 'direction, direction);
+}
+
+string glsl = "
+    precision highp float;
+    varying vec2 sourceTextureCoordinate;
+    uniform float progress;
+    uniform float amount;
+    uniform float outro;
+    uniform float direction;
+
+    void main() {
+        vec2 uv = sourceTextureCoordinate;
+        vec4 color = sampleInput(uv);
+
+        float amt = fract(uv.x * 6.0);
+        float band = mix(1.0-amt, amt, direction);
+        float maskIn = smoothstep(band, band+amount, progress * (1.0+amount));
+        float maskOut = smoothstep(band, band+amount, (1.0 - progress) * (1.0+amount));
+        float mask = mix(maskIn, maskOut, outro);
+
+        color.a = color.a * mask;
+        color.rgb *= color.a;
+        gl_FragColor = toOutputFormat(color);
+    }
+";

@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "identifier": "35629544-9481-43AE-82FB-07445D307842",
+  "displayName": "Vibrant",
+  "description": "[IG Edits] Color preset filter name. Applies a vibrant color grade with skin smoothing.",
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAFI2Zk8Yct"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "28f6b73f",
+      "handle": "AQAGO-PqZVUE",
+      "md5": "f14acd2c619acaf9c71eb480eeea5028"
+    }
+  },
+  "iglu": {
+    "legacyId": 3173
+  },
+  "assets": [
+    {
+      "name": "vibrant_lut.png",
+      "assetHash": "2b7eb5be43accf6906a9c867597e3dad62206ca6d598794241b284fc9b76b4c1",
+      "hubAssetId": "2073567356565965"
+    }
+  ]
+}

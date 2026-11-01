@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "identifier": "d1r3ct10n-t3st-0000-0000-000000000001",
+  "displayName": "Direction Test",
+  "description": "[IG Edits] Video effect name. With \"Direction Test\", the creator can render orientation reference markers along a chosen axis (vertical, horizontal, diagonal) for frame validation.",
+  "iglu": {
+    "legacyId": 10014,
+    "customization": [
+      {
+        "name": "direction",
+        "defaultSelection": "up",
+        "available": [
+          "diagonal-ascending",
+          "diagonal-descending",
+          "vertical",
+          "horizontal"
+        ],
+        "displayName": "Direction",
+        "displayNameDescription": "[IG Edits] Picker label for the orientation of a video effect, typically choosing between values like horizontal and vertical; available options vary per effect."
+      },
+      {
+        "name": "position",
+        "default": 0.0,
+        "min": -0.5,
+        "max": 0.5,
+        "displayName": "Position",
+        "displayNameDescription": "[IG Edits] Slider label controlling the location of a video effect along a single axis; exact units and range vary per effect (normalized or pixels).",
+        "displayMethod": "percent"
+      }
+    ]
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAHBXPiswCu"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "a6a95dc8",
+      "handle": "AQAF8HHST1MX",
+      "md5": "76e8f26c1b72c12c3500db1de7109ff5"
+    }
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "identifier": "3e728e1e-e009-4251-96e8-42ff54ebc7bc",
+  "displayName": "Mask Wipe Circle",
+  "description": "[IG Edits] Effect name shown in the video effects picker. This is the user-facing label for a video effect.",
+  "iglu": {
+    "legacyId": 3142,
+    "behavior": {
+      "type": "fixedIntro",
+      "durationMs": 1500,
+      "curve": "quadraticInOut"
+    },
+    "customization": [
+      {
+        "name": "duration",
+        "default": 1.5,
+        "min": 0.5,
+        "max": 5.0,
+        "displayName": "Duration",
+        "displayMethod": "time"
+      },
+      {
+        "name": "amount",
+        "displayName": "Amount",
+        "default": 0.04,
+        "min": 0.0,
+        "max": 0.2
+      }
+    ]
+  }
+}

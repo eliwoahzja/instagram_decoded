@@ -1,0 +1,235 @@
+[Filter IgluscriptVideoScrollInFilter]
+[MaskBehavior alpha]
+
+# AE source: POSITION_SCROLL_IN (scroll_up_finger) / POSITION_SCROLL_OUT (scroll_up_out_finger)
+# Position-only vertical scroll, no rotation
+
+fun mix(f32 a, f32 b, f32 t) f32 {
+  return a * (1.0 - t) + b * t;
+}
+
+fun cssBezier(f32 time, f32 x1, f32 y1, f32 x2, f32 y2) f32 {
+  f32 t = time;
+  f32 i = 0.0;
+  while (i < 8.0) {
+    f32 u = 1.0 - t;
+    f32 xt = 3.0 * u * u * t * x1 + 3.0 * u * t * t * x2 + t * t * t;
+    f32 dxdt = 3.0 * u * u * x1 + 6.0 * u * t * (x2 - x1) + 3.0 * t * t * (1.0 - x2);
+    t = t - (xt - time) / max(dxdt, 0.0001);
+    t = clamp(t, 0.0, 1.0);
+    i = i + 1.0;
+  }
+  f32 u = 1.0 - t;
+  return 3.0 * u * u * t * y1 + 3.0 * u * t * t * y2 + t * t * t;
+}
+
+# --- IN keyframes (scroll_up_finger, 1040ms) ---
+# Pixel offset magnitudes from center (AE Y delta, negated for GL via sign)
+f32 IPT0 = 0.0;
+f32 IPT1 = 0.2308;
+f32 IPT2 = 0.6538;
+f32 IPT3 = 1.0;
+
+f32 IPK0 = 778.09;
+f32 IPK1 = 261.49;
+f32 IPK2 = 125.62;
+f32 IPK3 = 0.0;
+
+# --- OUT keyframes (scroll_up_out_finger, 1040ms) ---
+f32 OPT0 = 0.0;
+f32 OPT1 = 0.3462;
+f32 OPT2 = 0.7692;
+f32 OPT3 = 1.0;
+
+f32 OPK0 = 0.0;
+f32 OPK1 = 181.0;
+f32 OPK2 = 326.5;
+f32 OPK3 = 1156.09;
+
+fun evalPosIn(f32 p) f32 {
+  f32 pos = IPK3;
+  f32 f = 0.0;
+  f32 t = 0.0;
+
+  if (p < IPT1) {
+    f = p / IPT1;
+    t = cssBezier(f, 0.6309, 0.2222, 0.6074, 0.7145);
+    pos = mix(IPK0, IPK1, t);
+  } else if (p < IPT2) {
+    f = (p - IPT1) / (IPT2 - IPT1);
+    t = cssBezier(f, 0.2291, 1.1612, 0.8136, 0.3643);
+    pos = mix(IPK1, IPK2, t);
+  } else if (p < IPT3) {
+    f = (p - IPT2) / (IPT3 - IPT2);
+    t = cssBezier(f, 0.3906, 1.1791, 0.5909, 1.1635);
+    pos = mix(IPK2, IPK3, t);
+  }
+
+  return pos;
+}
+
+fun evalPosOut(f32 p) f32 {
+  f32 pos = OPK3;
+  f32 f = 0.0;
+  f32 t = 0.0;
+
+  if (p < OPT1) {
+    f = p / OPT1;
+    t = cssBezier(f, 0.4091, -0.1135, 0.6094, 0.1817);
+    pos = mix(OPK0, OPK1, t);
+  } else if (p < OPT2) {
+    f = (p - OPT1) / (OPT2 - OPT1);
+    t = cssBezier(f, 0.1864, 0.5936, 0.7709, -0.0843);
+    pos = mix(OPK1, OPK2, t);
+  } else if (p < OPT3) {
+    f = (p - OPT2) / (OPT3 - OPT2);
+    t = cssBezier(f, 0.3926, 0.1778, 0.3691, 0.8616);
+    pos = mix(OPK2, OPK3, t);
+  }
+
+  return pos;
+}
+
+[Init]
+fun init(Filter filter) {
+  filter.parameters = {
+    {direction = 2.0, min = 2.0, max = 3.0, description = "Direction code: 2 = Scroll up, 3 = Scroll down"},
+    {outro = 0.0, min = 0.0, max = 1.0, description = "0 = In, 1 = Out"},
+  };
+
+  filter.passes = {
+    {
+      name = 'scrollFx,
+      inputs = {'default},
+      uniforms = {
+        position = {0.0, 0.0},
+        opacity = 1.0,
+      },
+      glslShader = glsl,
+    },
+    {
+      name = 'dirBlur,
+      inputs = {'scrollFx},
+      uniforms = {
+        ghostSpread = 0.0,
+        ghostDir = {0.0, 0.0},
+      },
+      glslShader = blurGlsl,
+    },
+  };
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  f32 p = getParameterFloat('progress);
+  f32 outro = getParameterFloat('outro);
+  f32 dir = getParameterFloat('direction);
+
+  # Direction code (Component.kt): up = 2, down = 3. A 0.5 threshold does not
+  # separate them.
+  f32 sign = 0.0 - 1.0;
+  if (dir > 2.5) { sign = 1.0; }
+
+  f32 posScale = 2.0;
+  f32 blurScale = 15.0;
+
+  vec2 size = getTextureSize('default);
+  f32 texH = size.y;
+
+  f32 posVal = 0.0;
+  f32 posValPrev = 0.0;
+  if (outro < 0.5) {
+    # IN entry is spatially opposite of OUT exit for the same sign; flip for IN only.
+    # IGLUScript has no compound assignment, so this cannot be written `sign *= -1.0`.
+    sign = 0.0 - sign;
+    posVal = evalPosIn(p);
+    posValPrev = evalPosIn(max(p - 0.008, 0.0));
+  } else {
+    posVal = evalPosOut(p);
+    posValPrev = evalPosOut(max(p - 0.008, 0.0));
+  }
+
+  f32 offsetUV = posVal * posScale / texH;
+  f32 offset = sign * offsetUV;
+
+  f32 velocity = abs(posVal - posValPrev) * posScale / texH;
+  f32 blurAmount = velocity * blurScale;
+
+  f32 texelSize = 1.0 / texH;
+  f32 ghostSpread = blurAmount * 10.0 * texelSize;
+  vec2 ghostDir = {0.0, sign};
+
+  f32 opacity = 1.0;
+  vec2 pos = {0.0, offset};
+  setShaderUniform('scrollFx, 'position, pos);
+  setShaderUniform('scrollFx, 'opacity, opacity);
+  setShaderUniform('dirBlur, 'ghostSpread, ghostSpread);
+  setShaderUniform('dirBlur, 'ghostDir, ghostDir);
+}
+
+string blurGlsl = "varying vec2 sourceTextureCoordinate;
+
+BaseUniformsOpenGL;
+
+uniform float ghostSpread;
+uniform vec2 ghostDir;
+
+float clipAlpha(vec2 uv) {
+  float e = 0.005;
+  return smoothstep(0.0, e, uv.x) * smoothstep(0.0, e, 1.0 - uv.x)
+       * smoothstep(0.0, e, uv.y) * smoothstep(0.0, e, 1.0 - uv.y);
+}
+
+void main() {
+  vec2 uv = sourceTextureCoordinate;
+  vec4 color = vec4(0.0);
+  float totalWeight = 0.0;
+
+  // Weighting each ghost by clipAlpha drops samples that land outside the frame
+  // instead of letting them wrap to the opposite edge, and renormalizing by
+  // totalWeight keeps the edge from darkening.
+  for (int i = -4; i <= 4; i++) {
+    float fi = float(i);
+    vec2 gUV = uv + ghostDir * ghostSpread * fi;
+    float k = 2.0;
+    float weight = (1.0 / (1.0 + k * abs(fi))) * clipAlpha(gUV);
+    color += sampleInput(gUV) * weight;
+    totalWeight += weight;
+  }
+
+  gl_FragColor = toOutputFormat(color / max(totalWeight, 0.001));
+}
+";
+
+string glsl = "varying vec2 sourceTextureCoordinate;
+
+BaseUniformsOpenGL;
+
+uniform vec2 position;
+uniform float opacity;
+uniform vec2 inputSize;
+
+// One-pixel antialiased frame edge. The +0.5 bias puts the ramp entirely outside the
+// first interior pixel, so an untransformed frame stays fully opaque. A fixed uv
+// epsilon instead fades a fraction of the frame regardless of resolution, which shows
+// up as a permanent margin once the animation settles.
+float clipAlpha(vec2 uv) {
+  vec2 texel = 1.0 / max(inputSize, vec2(1.0));
+  vec2 d = min(uv, 1.0 - uv);
+  vec2 a = clamp(d / texel + 0.5, 0.0, 1.0);
+  return a.x * a.y;
+}
+
+void main() {
+  vec2 uv = sourceTextureCoordinate;
+
+  // DOWN (-1.0 on OpenGL, +1.0 on Metal) flips position.y for OpenGL's
+  // bottom-left origin so the scroll direction matches the iOS/Metal path.
+  uv.x -= position.x;
+  uv.y -= DOWN * position.y;
+
+  float ca = clipAlpha(uv);
+  vec4 color = sampleInput(uv) * ca * opacity;
+  gl_FragColor = toOutputFormat(color);
+}
+";

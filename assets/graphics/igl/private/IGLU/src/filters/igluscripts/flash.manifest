@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "identifier": "A9ADEFF0-9BE3-4FE8-822D-E6378B263B47",
+  "displayName": "Flash",
+  "description": "[IG Edits] Color filter name. With \"Flash\", the creator can apply a disposable-camera flash look via S-curve contrast, 8x8 LUT grade, radial lift, amber bloom, and film grain.",
+  "iglu": {
+    "legacyId": 3086
+  },
+  "assets": [
+    {
+      "name": "flash_lut.png",
+      "assetHash": "1a6d101a6df191f6359b1a8dc704a3c0c2b528002a7252916921bc7aa8784137",
+      "hubAssetId": "2753740018315547"
+    }
+  ]
+}

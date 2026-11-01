@@ -1,0 +1,73 @@
+# IGLUSCRIPTCOLLISION_BYPASS: IGLUScript port of transition_ripple, QE-selectable for A/B vs TransitionRippleFilter.
+[Filter TransitionRipple]
+
+[Init]
+fun init(Filter filter) {
+  makeTexture('transition);
+  filter.passes = {{
+    name = 'ripple,
+    inputs = {'default, 'transition},
+    shaderInputNames = {'default, 's_texture1},
+    uniforms = {
+      outputSize = {1024.0, 1024.0},
+      progress = 0.0,
+      progressLinear = 0.0,
+      distortion = 0.4,
+      speed = 0.6,
+      frequency = 10.0,
+      duration = 0.5,
+    },
+    glslShader = glsl,
+  }};
+}
+
+fun easeOutCubic(f32 t) f32 {
+  f32 u = 1.0 - t;
+  return 1.0 - u * u * u;
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  f32 p = getParameterFloat('progress);
+  setShaderUniform('ripple, 'progress, easeOutCubic(p));
+  setShaderUniform('ripple, 'progressLinear, p);
+  setShaderUniform('ripple, 'outputSize, getTextureSize('default));
+}
+
+string glsl = "
+  varying vec2 sourceTextureCoordinate;
+  BaseUniformsOpenGL;
+  uniform sampler2D s_texture1;
+  uniform vec2 outputSize;
+  uniform float progress;
+  uniform float progressLinear;
+  uniform float distortion;
+  uniform float speed;
+  uniform float frequency;
+  uniform float duration;
+  float trianglePulse(float t) { return 1.0 - abs(t - 0.5) * 2.0; }
+  vec2 mirrorUV(vec2 uv) {
+    uv = fract(uv * 0.5) * 2.0;
+    return 1.0 - abs(1.0 - uv);
+  }
+  void main() {
+    vec2 uv = sourceTextureCoordinate;
+    vec2 rippleUV = uv;
+    rippleUV.x = rippleUV.x - 0.5;
+    rippleUV.x = rippleUV.x * (outputSize.x / outputSize.y);
+    rippleUV.x = rippleUV.x + 0.5;
+    vec2 dir = rippleUV - 0.5;
+    float len = length(dir);
+    float PI = 3.14159265358979;
+    float rippleDir = sin((len - progressLinear * speed * duration) * frequency * PI);
+    rippleDir = rippleDir * smoothstep(0.0, 0.1, len);
+    vec2 rippleOffset = normalize(dir + vec2(0.0001)) * rippleDir;
+    float midPoint = trianglePulse(progress);
+    vec2 distortionUV = mirrorUV(uv + rippleOffset * distortion * midPoint);
+    float transitionAlpha = smoothstep(0.333, 0.666, progress);
+    vec4 texA = sampleInput(distortionUV);
+    vec4 texB = texture2D(s_texture1, distortionUV);
+    vec4 color = mix(texA, texB, transitionAlpha);
+    gl_FragColor = toOutputFormat(color);
+  }
+";

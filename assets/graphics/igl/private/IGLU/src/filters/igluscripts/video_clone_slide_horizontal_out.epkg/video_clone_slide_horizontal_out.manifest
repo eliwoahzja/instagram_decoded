@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "identifier": "2dafe976-b794-4148-86f6-7fb0ea581c5d",
+  "displayName": "Clone Slide Horizontal Out",
+  "description": "[IG Edits] Transition name. \"Clone Slide Horizontal Out\" slides the segmented subject off to the side in repeating clone passes with motion-blur ghosting as a 1-second outro.",
+  "iglu": {
+    "legacyId": 3997,
+    "behavior": {
+      "type": "fixedOutro",
+      "durationMs": 1000,
+      "curve": "linear"
+    },
+    "customization": [
+      {
+        "name": "duration",
+        "default": 1.0,
+        "min": 0.1,
+        "max": 5.0,
+        "displayName": "Duration",
+        "displayMethod": "time"
+      }
+    ]
+  },
+  "dependencies": [
+    "video_clone_slide"
+  ],
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAFmEifqotG"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "52dbde94",
+      "handle": "AQAE4BirU54x",
+      "md5": "193f14ca9bf7772464e4f2301d9caff1"
+    }
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "text_gradient_bevel",
+  "displayName": "Gradient Bevel",
+  "description": "[IG Edits] Text effect name. With \"Gradient Bevel\", the creator can add a soft side-lit shine highlight to text by smoothstepping the alpha difference between two horizontally offset blur samples.",
+  "iglu": {}
+}

@@ -1,0 +1,511 @@
+[Filter ProductOutlineFinal]
+[MaskBehavior composite]
+
+[Init]
+fun init(Filter filter) {
+  # Declares the named mask input that the host binds to the object silhouette.
+  makeTexture('mask);
+
+  filter.parameters = {
+    {thickness = 5.0, min = 0.0, max = 25.0, description = "Outline Thickness"},
+    {softness = 0.15, min = 0.0, max = 1.0, description = "Outline Edge Softness"},
+    {blurRadius = 3.48, min = 0.0, max = 8.0, description = "Mask Blur Radius"},
+    {edgeWidth = 0.25, min = 0.01, max = 0.5, description = "Mask Edge Width"},
+    {edgeBlurOffset = 0.6, min = 0.0, max = 1.0, description = "Mask Edge Threshold"},
+    {falloffLead = 47.0, min = 0.0, max = 360.0, description = "Sweep Lead Falloff"},
+    {falloffTrail = 360.0, min = 0.0, max = 360.0, description = "Sweep Trail Falloff"},
+    {radialMod = 1.0, min = 1.0, max = 4.0, description = "Radial Mod (Sections)"},
+    {easeIn = 0.33695652173913043, min = 0.0, max = 1.0, description = "Ease In"},
+    {easeInPower = 3.7717391304347827, min = 1.0, max = 6.0, description = "Ease In Power"},
+    {easeOut = 0.4, min = 0.0, max = 1.0, description = "Ease Out"},
+    {easeOutPower = 4.1, min = 1.0, max = 6.0, description = "Ease Out Power"},
+    {edgeGain = 9.2, min = 0.0, max = 16.0, description = "Interior Edge Gain"},
+    {edgeBlur = 1.6, min = 0.0, max = 8.0, description = "Interior Edge Blur"},
+    {embossAmount = 0.6, min = 0.0, max = 1.0, description = "Emboss Amount"},
+    {embossSlope = 3.38, min = 0.25, max = 6.0, description = "Emboss Slope"},
+    {baseOpacity = 0.0, min = 0.0, max = 1.0, description = "Outline Base Opacity"},
+    {opacity = 0.9, min = 0.0, max = 1.0, description = "Outline Opacity"},
+    {highlightColor = {1.0, 1.0, 1.0, 1.0}, description = "Sweep Highlight Color"},
+    {baseColor = {0.0, 0.0, 0.0, 1.0}, description = "Sweep Base Color"},
+    {topColor = {0.9294117647058824, 0.9019607843137255, 0.792156862745098, 1.0}, description = "Vertical Gradient Top Color"},
+    {bottomColor = {0.9137254901960784, 0.8352941176470589, 0.7529411764705882, 1.0}, description = "Vertical Gradient Bottom Color"},
+  };
+
+  filter.passes = {
+    {
+      name = 'maskBlurH,
+      inputs = {'mask},
+      uniforms = {
+        outputSize = {1080.0, 1920.0},
+        blurStep = 2.0,
+        axis = {1.0, 0.0},
+      },
+      glslShader = maskBlurGlsl,
+    },
+    {
+      name = 'maskAA,
+      inputs = {'maskBlurH},
+      uniforms = {
+        outputSize = {1080.0, 1920.0},
+        blurStep = 2.0,
+        axis = {0.0, 1.0},
+        edgeWidth = 0.15,
+        edgeBlurOffset = 0.5,
+      },
+      glslShader = maskAAGlsl,
+    },
+    {
+      name = 'center,
+      inputs = {'maskAA},
+      scale = {0.01, 0.01},
+      uniforms = {
+        aspect = 0.5625,
+      },
+      glslShader = centerGlsl,
+    },
+    {
+      name = 'dilate,
+      inputs = {'maskAA},
+      uniforms = {
+        outputSize = {1080.0, 1920.0},
+        radius = 6.0,
+        edgeFade = 0.15,
+      },
+      glslShader = dilateGlsl,
+    },
+    {
+      name = 'bounds,
+      inputs = {'maskAA},
+      scale = {0.01, 0.01},
+      glslShader = boundsGlsl,
+    },
+    {
+      name = 'edges,
+      inputs = {'default},
+      scale = {0.5, 0.5},
+      uniforms = {
+        outputSize = {1080.0, 1920.0},
+        edgeGain = 4.0,
+      },
+      glslShader = edgesGlsl,
+    },
+    {
+      name = 'edgeBlurH,
+      inputs = {'edges},
+      scale = {0.5, 0.5},
+      uniforms = {
+        outputSize = {1080.0, 1920.0},
+        blurStep = 1.0,
+        axis = {1.0, 0.0},
+      },
+      glslShader = maskBlurGlsl,
+    },
+    {
+      name = 'edgeBlurV,
+      inputs = {'edgeBlurH},
+      scale = {0.5, 0.5},
+      uniforms = {
+        outputSize = {1080.0, 1920.0},
+        blurStep = 1.0,
+        axis = {0.0, 1.0},
+      },
+      glslShader = maskBlurGlsl,
+    },
+    {
+      name = 'compose,
+      inputs = {'default, 'dilate, 'maskAA, 'center, 'edgeBlurV, 'bounds},
+      uniforms = {
+        outputSize = {1080.0, 1920.0},
+        phase = 0.0,
+        falloffLead = 90.0,
+        falloffTrail = 90.0,
+        radialMod = 2.0,
+        embossAmount = 1.0,
+        embossSlope = 1.0,
+        baseOpacity = 0.25,
+        opacity = 1.0,
+        highlightColor = {1.0, 1.0, 1.0, 1.0},
+        baseColor = {1.0, 1.0, 1.0, 1.0},
+        topColor = {1.0, 1.0, 1.0, 1.0},
+        bottomColor = {1.0, 1.0, 1.0, 1.0},
+      },
+      glslShader = composeGlsl,
+    }
+  };
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  vec2 size = getTextureSize('default);
+  f32 sizeScale = min(size.x, size.y) / 1080.0;
+
+  f32 blurStep = getParameterFloat('blurRadius) * sizeScale;
+  setShaderUniform('maskBlurH, 'outputSize, size);
+  setShaderUniform('maskBlurH, 'blurStep, blurStep);
+  setShaderUniform('maskAA, 'outputSize, size);
+  setShaderUniform('maskAA, 'blurStep, blurStep);
+  setShaderUniform('maskAA, 'edgeWidth, max(getParameterFloat('edgeWidth), 0.001));
+  setShaderUniform('maskAA, 'edgeBlurOffset, getParameterFloat('edgeBlurOffset));
+
+  setShaderUniform('dilate, 'outputSize, size);
+  setShaderUniform('dilate, 'radius, getParameterFloat('thickness) * sizeScale);
+  setShaderUniform('dilate, 'edgeFade, getParameterFloat('softness));
+
+  setShaderUniform('center, 'aspect, size.x / size.y);
+
+  setShaderUniform('edges, 'outputSize, size);
+  setShaderUniform('edges, 'edgeGain, getParameterFloat('edgeGain));
+
+  f32 edgeBlurStep = getParameterFloat('edgeBlur) * sizeScale;
+  setShaderUniform('edgeBlurH, 'outputSize, size);
+  setShaderUniform('edgeBlurH, 'blurStep, edgeBlurStep);
+  setShaderUniform('edgeBlurV, 'outputSize, size);
+  setShaderUniform('edgeBlurV, 'blurStep, edgeBlurStep);
+
+  f32 p = clamp(getParameterFloat('progress), 0.0, 1.0);
+  f32 halves = p * 2.0;
+  f32 halfIndex = floor(halves);
+  f32 halfFraction = halves - halfIndex;
+  f32 easeInAmount = clamp(getParameterFloat('easeIn), 0.0, 1.0);
+  f32 easeOutAmount = clamp(getParameterFloat('easeOut), 0.0, 1.0);
+  f32 easeInPower = max(getParameterFloat('easeInPower), 1.0);
+  f32 easeOutPower = max(getParameterFloat('easeOutPower), 1.0);
+
+  f32 eased = 0.0;
+  if (halfFraction < 0.5) {
+    f32 x = halfFraction * 2.0;
+    f32 curved = pow(x, easeInPower);
+    eased = 0.5 * (x + easeInAmount * (curved - x));
+  } else {
+    f32 x = (1.0 - halfFraction) * 2.0;
+    f32 curved = pow(x, easeOutPower);
+    eased = 1.0 - 0.5 * (x + easeOutAmount * (curved - x));
+  }
+
+  f32 phase = (halfIndex + eased) * 3.14159265;
+
+  setShaderUniform('compose, 'outputSize, size);
+  setShaderUniform('compose, 'phase, phase);
+  setShaderUniform('compose, 'falloffLead, getParameterFloat('falloffLead));
+  setShaderUniform('compose, 'falloffTrail, getParameterFloat('falloffTrail));
+  setShaderUniform('compose, 'radialMod, round(getParameterFloat('radialMod)));
+  setShaderUniform('compose, 'embossAmount, getParameterFloat('embossAmount));
+  setShaderUniform('compose, 'embossSlope, max(getParameterFloat('embossSlope), 0.05));
+  setShaderUniform('compose, 'baseOpacity, getParameterFloat('baseOpacity));
+  setShaderUniform('compose, 'opacity, getParameterFloat('opacity));
+  setShaderUniform('compose, 'highlightColor, getParameterVec4('highlightColor));
+  setShaderUniform('compose, 'baseColor, getParameterVec4('baseColor));
+  setShaderUniform('compose, 'topColor, getParameterVec4('topColor));
+  setShaderUniform('compose, 'bottomColor, getParameterVec4('bottomColor));
+}
+
+string maskBlurGlsl = "
+precision highp float;
+
+varying vec2 sourceTextureCoordinate;
+BaseUniformsOpenGL;
+
+uniform vec2 outputSize;
+uniform vec2 axis;
+uniform float blurStep;
+
+void main() {
+  vec2 uv = sourceTextureCoordinate;
+  vec2 offset = axis * blurStep / outputSize;
+
+  vec4 c = sampleInput(uv) * 0.2270270270;
+  c += (sampleInput(uv + offset) + sampleInput(uv - offset)) * 0.1945945946;
+  c += (sampleInput(uv + offset * 2.0) + sampleInput(uv - offset * 2.0)) * 0.1216216216;
+  c += (sampleInput(uv + offset * 3.0) + sampleInput(uv - offset * 3.0)) * 0.0540540541;
+  c += (sampleInput(uv + offset * 4.0) + sampleInput(uv - offset * 4.0)) * 0.0162162162;
+
+  gl_FragColor = toOutputFormat(c);
+}
+";
+
+string maskAAGlsl = "
+precision highp float;
+
+varying vec2 sourceTextureCoordinate;
+BaseUniformsOpenGL;
+
+uniform vec2 outputSize;
+uniform vec2 axis;
+uniform float blurStep;
+uniform float edgeWidth;
+uniform float edgeBlurOffset;
+
+float maskCoverage(vec4 c) {
+  return max(c.r, max(c.g, c.b));
+}
+
+void main() {
+  vec2 uv = sourceTextureCoordinate;
+  vec2 offset = axis * blurStep / outputSize;
+
+  vec4 c = sampleInput(uv) * 0.2270270270;
+  c += (sampleInput(uv + offset) + sampleInput(uv - offset)) * 0.1945945946;
+  c += (sampleInput(uv + offset * 2.0) + sampleInput(uv - offset * 2.0)) * 0.1216216216;
+  c += (sampleInput(uv + offset * 3.0) + sampleInput(uv - offset * 3.0)) * 0.0540540541;
+  c += (sampleInput(uv + offset * 4.0) + sampleInput(uv - offset * 4.0)) * 0.0162162162;
+
+  float coverage = maskCoverage(c);
+  float aa = smoothstep(edgeBlurOffset - edgeWidth, edgeBlurOffset + edgeWidth, coverage);
+
+  gl_FragColor = toOutputFormat(vec4(vec3(aa), aa));
+}
+";
+
+string centerGlsl = "
+precision highp float;
+
+varying vec2 sourceTextureCoordinate;
+BaseUniformsOpenGL;
+
+uniform float aspect;
+
+#define GRID_SIZE 32
+#define RADIUS_SCALE 4.0
+
+float maskCoverage(vec4 c) {
+  return max(c.r, max(c.g, c.b));
+}
+
+void main() {
+  float gridStep = 1.0 / float(GRID_SIZE);
+
+  vec2 weighted = vec2(0.0);
+  float total = 0.0;
+
+  for (int y = 0; y < GRID_SIZE; y++) {
+    for (int x = 0; x < GRID_SIZE; x++) {
+      vec2 sampleUV = (vec2(float(x), float(y)) + 0.5) * gridStep;
+      float coverage = maskCoverage(sampleInput(sampleUV));
+      weighted += sampleUV * coverage;
+      total += coverage;
+    }
+  }
+
+  vec2 maskCenter = total > 0.0001 ? weighted / total : vec2(0.5);
+
+  float extent = 0.0;
+  for (int y = 0; y < GRID_SIZE; y++) {
+    for (int x = 0; x < GRID_SIZE; x++) {
+      vec2 sampleUV = (vec2(float(x), float(y)) + 0.5) * gridStep;
+      if (maskCoverage(sampleInput(sampleUV)) > 0.5) {
+        vec2 delta = sampleUV - maskCenter;
+        delta.x *= aspect;
+        extent = max(extent, length(delta));
+      }
+    }
+  }
+  extent = max(extent, 0.05);
+
+  gl_FragColor = toOutputFormat(vec4(maskCenter, extent / RADIUS_SCALE, 1.0));
+}
+";
+
+string boundsGlsl = "
+precision highp float;
+
+varying vec2 sourceTextureCoordinate;
+BaseUniformsOpenGL;
+
+#define GRID_SIZE 32
+
+float maskCoverage(vec4 c) {
+  return max(c.r, max(c.g, c.b));
+}
+
+void main() {
+  float gridStep = 1.0 / float(GRID_SIZE);
+
+  float lowest = 1.0;
+  float highest = 0.0;
+
+  for (int y = 0; y < GRID_SIZE; y++) {
+    for (int x = 0; x < GRID_SIZE; x++) {
+      vec2 sampleUV = (vec2(float(x), float(y)) + 0.5) * gridStep;
+      if (maskCoverage(sampleInput(sampleUV)) > 0.5) {
+        lowest = min(lowest, sampleUV.y);
+        highest = max(highest, sampleUV.y);
+      }
+    }
+  }
+
+  if (highest <= lowest) {
+    lowest = 0.0;
+    highest = 1.0;
+  }
+
+  gl_FragColor = toOutputFormat(vec4(lowest, highest, 0.0, 1.0));
+}
+";
+
+string dilateGlsl = "
+precision highp float;
+
+varying vec2 sourceTextureCoordinate;
+BaseUniformsOpenGL;
+
+uniform vec2 outputSize;
+uniform float radius;
+uniform float edgeFade;
+
+#define MAX_RADIUS 25
+
+float maskCoverage(vec4 c) {
+  return max(c.r, max(c.g, c.b));
+}
+
+float ramp(float edge0, float edge1, float x) {
+  return clamp((x - edge0) / (edge1 - edge0), 0.0, 1.0);
+}
+
+void main() {
+  vec2 uv = sourceTextureCoordinate;
+  vec2 duv = 1.0 / outputSize;
+
+  int rad = int(radius);
+  float circleRadius = max(1.0, min(float(MAX_RADIUS), radius));
+  float fade = max(edgeFade, 0.001);
+
+  float coverage = 0.0;
+  for (int x = -MAX_RADIUS; x <= MAX_RADIUS; ++x) {
+    if (x < -rad || x > rad) continue;
+
+    for (int y = -MAX_RADIUS; y <= MAX_RADIUS; ++y) {
+      if (y < -rad || y > rad) continue;
+
+      vec2 offset = vec2(float(x), float(y));
+      float circle = ramp(1.0, 1.0 - fade, length(offset) / circleRadius);
+      coverage = max(coverage, maskCoverage(sampleInput(uv + duv * offset)) * circle);
+    }
+  }
+
+  gl_FragColor = toOutputFormat(vec4(vec3(coverage), coverage));
+}
+";
+
+string edgesGlsl = "
+precision highp float;
+
+varying vec2 sourceTextureCoordinate;
+BaseUniformsOpenGL;
+
+uniform vec2 outputSize;
+uniform float edgeGain;
+
+float luma(vec3 c) {
+  return dot(c, vec3(0.299, 0.587, 0.114));
+}
+
+void main() {
+  vec2 uv = sourceTextureCoordinate;
+  vec2 duv = 1.0 / outputSize;
+
+  float tl = luma(sampleInput(uv + duv * vec2(-1.0, 1.0)).rgb);
+  float tc = luma(sampleInput(uv + duv * vec2(0.0, 1.0)).rgb);
+  float tr = luma(sampleInput(uv + duv * vec2(1.0, 1.0)).rgb);
+  float ml = luma(sampleInput(uv + duv * vec2(-1.0, 0.0)).rgb);
+  float mr = luma(sampleInput(uv + duv * vec2(1.0, 0.0)).rgb);
+  float bl = luma(sampleInput(uv + duv * vec2(-1.0, -1.0)).rgb);
+  float bc = luma(sampleInput(uv + duv * vec2(0.0, -1.0)).rgb);
+  float br = luma(sampleInput(uv + duv * vec2(1.0, -1.0)).rgb);
+
+  float gx = tl + 2.0 * ml + bl - tr - 2.0 * mr - br;
+  float gy = tl + 2.0 * tc + tr - bl - 2.0 * bc - br;
+
+  float edge = clamp(sqrt(gx * gx + gy * gy) * edgeGain, 0.0, 1.0);
+
+  gl_FragColor = toOutputFormat(vec4(vec3(edge), 1.0));
+}
+";
+
+string composeGlsl = "
+precision highp float;
+
+varying vec2 sourceTextureCoordinate;
+BaseUniformsOpenGL;
+
+uniform sampler2D auxSampler1;
+uniform sampler2D auxSampler2;
+uniform sampler2D auxSampler3;
+uniform sampler2D auxSampler4;
+uniform sampler2D auxSampler5;
+
+uniform vec2 outputSize;
+uniform float phase;
+uniform float falloffLead;
+uniform float falloffTrail;
+uniform float radialMod;
+uniform float embossAmount;
+uniform float embossSlope;
+uniform float baseOpacity;
+uniform float opacity;
+uniform vec4 highlightColor;
+uniform vec4 baseColor;
+uniform vec4 topColor;
+uniform vec4 bottomColor;
+
+#define RADIUS_SCALE 4.0
+#define TWO_PI 6.2831853
+
+float maskCoverage(vec4 c) {
+  return max(c.r, max(c.g, c.b));
+}
+
+void main() {
+  vec2 uv = sourceTextureCoordinate;
+
+  vec4 base = sampleInput(uv);
+  float dilated = maskCoverage(texture2D(auxSampler1, uv));
+  float subject = maskCoverage(texture2D(auxSampler2, uv));
+
+  float outline = clamp(dilated - subject, 0.0, 1.0);
+
+  vec4 centerData = texture2D(auxSampler3, vec2(0.5));
+  vec2 center = centerData.xy;
+  float extent = max(centerData.z * RADIUS_SCALE, 0.001);
+
+  vec2 delta = uv - center;
+  delta.x *= outputSize.x / outputSize.y;
+
+  float dist = clamp(length(delta) / extent, 0.0, 1.0);
+  float radial = pow(dist, embossSlope);
+
+  float edge = texture2D(auxSampler4, uv).r;
+  float emboss = edge * subject * embossAmount * radial;
+  float edgeMask = clamp(outline + emboss, 0.0, 1.0);
+
+  float angle = atan(delta.y, delta.x);
+
+  float lobe = (angle - phase) * radialMod;
+  float cycles = lobe / TWO_PI;
+  float frac = cycles - floor(cycles);
+
+  float period = TWO_PI / radialMod;
+  float aheadOf = frac * period;
+  float behindOf = (1.0 - frac) * period;
+
+  float leadSpan = max(radians(falloffLead), 0.0001);
+  float trailSpan = max(radians(falloffTrail), 0.0001);
+
+  float leadFalloff = 1.0 - smoothstep(0.0, leadSpan, aheadOf);
+  float trailFalloff = 1.0 - smoothstep(0.0, trailSpan, behindOf);
+  float gradient = max(leadFalloff, trailFalloff);
+
+  vec4 gradientColor = mix(baseColor, highlightColor, gradient);
+
+  vec4 boundsData = texture2D(auxSampler5, vec2(0.5));
+  float maskBottom = boundsData.x;
+  float maskTop = boundsData.y;
+  float vertical = clamp((uv.y - maskBottom) / max(maskTop - maskBottom, 0.001), 0.0, 1.0);
+  vec4 verticalColor = mix(bottomColor, topColor, vertical);
+
+  float alpha = edgeMask * opacity * gradientColor.a * verticalColor.a * mix(baseOpacity, 1.0, gradient);
+
+  vec3 color = base.rgb + gradientColor.rgb * verticalColor.rgb * alpha;
+  gl_FragColor = toOutputFormat(vec4(color, base.a));
+}
+";

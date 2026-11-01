@@ -1,0 +1,5 @@
+{
+  "assets/heliumiabexp/libs.txt": "0fc5f29124bffffef9f1d7cbf7bd2e119abbb5928ebaacee58460f90f8d597bb",
+  "lib/arm64-v8a/d.libheliumexp.so": "348fe3f8d87a0dc9abf9a3240f6412e4ff59f43a124c9096234b1bb0d747480e",
+  "lib/arm64-v8a/libcrashpad_handler_trampolineexp.so": "7d4cc548755f42a3fa5ccad65e15bf783ec0d2b649de6bb0a10f07a0fcf8365d"
+}

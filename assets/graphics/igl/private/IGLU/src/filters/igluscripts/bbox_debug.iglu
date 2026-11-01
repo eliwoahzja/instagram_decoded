@@ -1,0 +1,342 @@
+[Filter BBoxDebug]
+# Bounding box debugger filter - visualizes bounding boxes from a mask.
+# Uses a two-pass approach:
+#   1. bbox_calc pass: Calculates bounding box from mask (same as BBoxProcessor)
+#   2. debug_draw pass: Draws bounding box borders on top of the original image
+# This demonstrates how to chain passes where the second pass uses the first as input.
+
+[Init]
+fun init(Filter filter)
+{
+    filter.parameters = {
+      {debugPassIndex = 0.0, min = 0.0, max = 2.0, description = "Debug pass: 0=final, 1=bbox_calc, 2=debug_draw"},
+      {threshold = 0.5, min = 0.0, max = 1.0, description = "Mask alpha threshold"},
+      {borderThickness = 3.0, min = 1.0, max = 20.0, description = "Border thickness in pixels"},
+      {numInstances = 5.0, min = 1.0, max = 5.0, description = "Number of mask instances to track"},
+      {numMaxInstances = 16.0, description = "Maximum instances (fixed at 16)"},
+      {showCenter = true, description = "Show center crosshair"},
+      {showDimensions = false, description = "Show dimensions label"},
+      {useInstanceColors = true, description = "Match specific mask colors instead of threshold"},
+      {instanceColor0 = {1.0, 0.0, 0.0, 1.0}},
+      {instanceColor1 = {0.0, 1.0, 0.0, 1.0}},
+      {instanceColor2 = {0.0, 0.0, 1.0, 1.0}},
+      {instanceColor3 = {1.0, 1.0, 0.0, 1.0}},
+      {instanceColor4 = {1.0, 0.0, 1.0, 1.0}},
+      {maskColor0 = {1.0, 1.0, 1.0, 1.0}},
+      {maskColor1 = {1.0, 0.0, 0.0, 1.0}},
+      {maskColor2 = {0.0, 1.0, 0.0, 1.0}},
+      {maskColor3 = {0.0, 0.0, 1.0, 1.0}},
+      {maskColor4 = {1.0, 0.0, 1.0, 1.0}}
+    };
+
+    # Load a default mask texture - can be overridden at runtime via setNamedInput("mask", ...)
+    loadTexture('mask, 'texture://SubjectEffectsAssets/white);
+
+    filter.passes = {
+      # Pass 1: Calculate bounding box from mask (render at 1x16 fixed size to match C++ BBoxFilter)
+      {
+        name = 'bbox_calc,
+        inputs = {'mask},
+        uniforms = {
+          threshold = 0.5,
+          numInstances = 5.0,
+          numMaxInstances = 16.0,
+          useInstanceColors = 0.0,
+          maskColor0 = {1.0, 1.0, 1.0, 1.0},
+          maskColor1 = {1.0, 0.0, 0.0, 1.0},
+          maskColor2 = {0.0, 1.0, 0.0, 1.0},
+          maskColor3 = {0.0, 0.0, 1.0, 1.0},
+          maskColor4 = {1.0, 0.0, 1.0, 1.0}
+        },
+        glslShader  = glslBBoxCalc,
+      },
+      # Pass 2: Draw bounding box on image - uses bbox_calc output as auxSampler1
+      {
+        name = 'debug_draw,
+        inputs = {'default, 'bbox_calc},
+        uniforms = {
+          borderThickness = 3.0,
+          numInstances = 5.0,
+          numMaxInstances = 16.0,
+          showCenter = 1.0,
+          instanceColor0 = {1.0, 0.0, 0.0, 1.0},
+          instanceColor1 = {0.0, 1.0, 0.0, 1.0},
+          instanceColor2 = {0.0, 0.0, 1.0, 1.0},
+          instanceColor3 = {1.0, 1.0, 0.0, 1.0},
+          instanceColor4 = {1.0, 0.0, 1.0, 1.0}
+        },
+        glslShader  = glslDebugDraw,
+      },
+      # Pass 3: Final debug output - selects which pass to display
+      {
+        name = 'final_debug,
+        inputs = {'default, 'bbox_calc, 'debug_draw},
+        uniforms = {
+          debugPassIndex = 0.0
+        },
+        glslShader  = glslFinalDebug,
+      }
+    };
+}
+
+[PreRender]
+fun preRender(Filter filter){
+  vec2 size = getTextureSize('default);
+
+  # Set bbox_calc output to fixed 1x16 size to match C++ BBoxFilter
+  vec2 bboxSize = {1.0, 16.0};
+  setTextureSize('bbox_calc, bboxSize);
+
+  # BBox calc parameters
+  f32 threshold = getParameterFloat('threshold);
+  f32 numInstances = getParameterFloat('numInstances);
+  f32 numMaxInstances = getParameterFloat('numMaxInstances);
+  boolean useInstanceColors = getParameterBoolean('useInstanceColors);
+  vec4 maskColor0 = getParameterVec4('maskColor0);
+  vec4 maskColor1 = getParameterVec4('maskColor1);
+  vec4 maskColor2 = getParameterVec4('maskColor2);
+  vec4 maskColor3 = getParameterVec4('maskColor3);
+  vec4 maskColor4 = getParameterVec4('maskColor4);
+
+  setShaderUniform('bbox_calc, 'threshold, threshold);
+  setShaderUniform('bbox_calc, 'numInstances, numInstances);
+  setShaderUniform('bbox_calc, 'numMaxInstances, numMaxInstances);
+  if (useInstanceColors) {
+    setShaderUniform('bbox_calc, 'useInstanceColors, 1.0);
+  } else {
+    setShaderUniform('bbox_calc, 'useInstanceColors, 0.0);
+  }
+  setShaderUniform('bbox_calc, 'maskColor0, maskColor0);
+  setShaderUniform('bbox_calc, 'maskColor1, maskColor1);
+  setShaderUniform('bbox_calc, 'maskColor2, maskColor2);
+  setShaderUniform('bbox_calc, 'maskColor3, maskColor3);
+  setShaderUniform('bbox_calc, 'maskColor4, maskColor4);
+
+  # Debug draw parameters
+  f32 borderThickness = getParameterFloat('borderThickness);
+  boolean showCenter = getParameterBoolean('showCenter);
+  vec4 instanceColor0 = getParameterVec4('instanceColor0);
+  vec4 instanceColor1 = getParameterVec4('instanceColor1);
+  vec4 instanceColor2 = getParameterVec4('instanceColor2);
+  vec4 instanceColor3 = getParameterVec4('instanceColor3);
+  vec4 instanceColor4 = getParameterVec4('instanceColor4);
+
+  setShaderUniform('debug_draw, 'borderThickness, borderThickness);
+  setShaderUniform('debug_draw, 'inputSize, size);
+  setShaderUniform('debug_draw, 'numInstances, numInstances);
+  setShaderUniform('debug_draw, 'numMaxInstances, numMaxInstances);
+  if (showCenter) {
+    setShaderUniform('debug_draw, 'showCenter, 1.0);
+  } else {
+    setShaderUniform('debug_draw, 'showCenter, 0.0);
+  }
+  setShaderUniform('debug_draw, 'instanceColor0, instanceColor0);
+  setShaderUniform('debug_draw, 'instanceColor1, instanceColor1);
+  setShaderUniform('debug_draw, 'instanceColor2, instanceColor2);
+  setShaderUniform('debug_draw, 'instanceColor3, instanceColor3);
+    setShaderUniform('debug_draw, 'instanceColor4, instanceColor4);
+
+    # Final debug pass parameters
+    f32 debugPassIndex = getParameterFloat('debugPassIndex);
+    setShaderUniform('final_debug, 'debugPassIndex, debugPassIndex);
+}
+
+
+#### GLSL shaders ####
+
+# BBox calculation shader (same as bbox_processor.iglu)
+string glslBBoxCalc = "
+  precision highp float;
+  varying vec2 sourceTextureCoordinate;
+  BaseUniformsOpenGL;
+
+  uniform float threshold;
+  uniform float numInstances;
+  uniform float numMaxInstances;
+  uniform float useInstanceColors;
+  uniform vec4 maskColor0;
+  uniform vec4 maskColor1;
+  uniform vec4 maskColor2;
+  uniform vec4 maskColor3;
+  uniform vec4 maskColor4;
+
+  float colorMatch(vec3 maskRgb, vec3 targetRgb) {
+    float diff = dot(abs(maskRgb - targetRgb), vec3(1.0));
+    return diff < 0.15 ? 1.0 : 0.0;
+  }
+
+  float getMaskValue(vec4 maskSample, int instanceIdx) {
+    if (useInstanceColors < 0.5) {
+      return maskSample.a > threshold ? 1.0 : 0.0;
+    }
+
+    if (instanceIdx == 0) return colorMatch(maskSample.rgb, maskColor0.rgb);
+    if (instanceIdx == 1) return colorMatch(maskSample.rgb, maskColor1.rgb);
+    if (instanceIdx == 2) return colorMatch(maskSample.rgb, maskColor2.rgb);
+    if (instanceIdx == 3) return colorMatch(maskSample.rgb, maskColor3.rgb);
+    if (instanceIdx == 4) return colorMatch(maskSample.rgb, maskColor4.rgb);
+    return 0.0;
+  }
+
+  void main() {
+    vec2 uv = sourceTextureCoordinate;
+    int numInst = int(numInstances);
+    int maxInst = int(numMaxInstances);
+
+    vec4 bboxes[5];
+    for (int i = 0; i < 5; i++) {
+      bboxes[i] = vec4(1.0, 1.0, 0.0, 0.0);
+    }
+
+    const int GRID_SIZE = 32;
+    float step = 1.0 / float(GRID_SIZE);
+
+    for (int y = 0; y < GRID_SIZE; y++) {
+      for (int x = 0; x < GRID_SIZE; x++) {
+        vec2 sampleUV = vec2(
+          (float(x) + 0.5) * step,
+          (float(y) + 0.5) * step
+        );
+        vec4 maskSample = sampleInput(sampleUV);
+
+        for (int inst = 0; inst < 5; inst++) {
+          if (inst >= numInst) break;
+          float maskVal = getMaskValue(maskSample, inst);
+          if (maskVal > 0.5) {
+            bboxes[inst].x = min(bboxes[inst].x, sampleUV.x);
+            bboxes[inst].y = min(bboxes[inst].y, sampleUV.y);
+            bboxes[inst].z = max(bboxes[inst].z, sampleUV.x);
+            bboxes[inst].w = max(bboxes[inst].w, sampleUV.y);
+          }
+        }
+      }
+    }
+
+    int rowIndex = int(uv.y * numMaxInstances);
+    if (rowIndex >= 0 && rowIndex < 5 && rowIndex < numInst) {
+      vec4 bbox = bboxes[rowIndex];
+      gl_FragColor = toOutputFormat(bbox);
+    } else {
+      gl_FragColor = toOutputFormat(vec4(1.0, 1.0, 0.0, 0.0));
+    }
+  }
+";
+
+# Debug draw shader - draws bbox borders on the image
+string glslDebugDraw = "
+  precision highp float;
+  varying vec2 sourceTextureCoordinate;
+  BaseUniformsOpenGL;
+
+  uniform sampler2D auxSampler1;
+
+  uniform float borderThickness;
+  uniform vec2 inputSize;
+  uniform float numInstances;
+  uniform float numMaxInstances;
+  uniform float showCenter;
+  uniform vec4 instanceColor0;
+  uniform vec4 instanceColor1;
+  uniform vec4 instanceColor2;
+  uniform vec4 instanceColor3;
+  uniform vec4 instanceColor4;
+
+  vec4 getInstanceColor(int idx) {
+    if (idx == 0) return instanceColor0;
+    if (idx == 1) return instanceColor1;
+    if (idx == 2) return instanceColor2;
+    if (idx == 3) return instanceColor3;
+    if (idx == 4) return instanceColor4;
+    return vec4(1.0);
+  }
+
+  bool isOnBBoxBorder(vec4 bbox, vec2 texCoord, vec2 thicknessTex) {
+    bool bboxValid = bbox.x < bbox.z && bbox.y < bbox.w;
+    if (!bboxValid) return false;
+
+    bool isOnX1 = abs(texCoord.x - bbox.x) < thicknessTex.x && texCoord.y > bbox.y && texCoord.y < bbox.w;
+    bool isOnX2 = abs(texCoord.x - bbox.z) < thicknessTex.x && texCoord.y > bbox.y && texCoord.y < bbox.w;
+    bool isOnY1 = abs(texCoord.y - bbox.y) < thicknessTex.y && texCoord.x > bbox.x && texCoord.x < bbox.z;
+    bool isOnY2 = abs(texCoord.y - bbox.w) < thicknessTex.y && texCoord.x > bbox.x && texCoord.x < bbox.z;
+
+    return isOnX1 || isOnX2 || isOnY1 || isOnY2;
+  }
+
+  bool isOnCenterCross(vec4 bbox, vec2 texCoord, vec2 thicknessTex) {
+    bool bboxValid = bbox.x < bbox.z && bbox.y < bbox.w;
+    if (!bboxValid) return false;
+
+    vec2 center = (bbox.xy + bbox.zw) * 0.5;
+    vec2 halfSize = (bbox.zw - bbox.xy) * 0.25;
+
+    bool isOnHorizontal = abs(texCoord.y - center.y) < thicknessTex.y * 0.5 &&
+                          abs(texCoord.x - center.x) < halfSize.x;
+    bool isOnVertical = abs(texCoord.x - center.x) < thicknessTex.x * 0.5 &&
+                        abs(texCoord.y - center.y) < halfSize.y;
+
+    return isOnHorizontal || isOnVertical;
+  }
+
+  void main() {
+    vec2 uv = sourceTextureCoordinate;
+    vec4 texel = sampleInput(uv);
+    vec2 thicknessTex = borderThickness / inputSize;
+
+    int numInst = int(numInstances);
+    int maxInst = int(numMaxInstances);
+
+    vec4 finalColor = texel;
+    bool drewAnything = false;
+
+    for (int i = 0; i < 5; i++) {
+      if (i >= numInst) break;
+
+      vec2 bboxUV = vec2(0.5, (float(i) + 0.5) / numMaxInstances);
+      vec4 bbox = texture2D(auxSampler1, bboxUV);
+
+      vec4 instColor = getInstanceColor(i);
+
+      if (isOnBBoxBorder(bbox, uv, thicknessTex)) {
+        finalColor = instColor;
+        drewAnything = true;
+      }
+
+      if (showCenter > 0.5 && isOnCenterCross(bbox, uv, thicknessTex)) {
+        finalColor = instColor;
+        drewAnything = true;
+      }
+    }
+
+    gl_FragColor = toOutputFormat(finalColor);
+  }
+";
+
+# Final debug shader - selects which pass output to display
+string glslFinalDebug = "
+  precision highp float;
+  varying vec2 sourceTextureCoordinate;
+  BaseUniformsOpenGL;
+
+  uniform sampler2D auxSampler1;
+  uniform sampler2D auxSampler2;
+  uniform float debugPassIndex;
+
+  void main() {
+    vec2 uv = sourceTextureCoordinate;
+    int passIdx = int(debugPassIndex + 0.5);
+
+    vec4 result;
+    if (passIdx == 1) {
+      // Show bbox_calc pass output (visualize the bbox data)
+      result = texture2D(auxSampler1, uv);
+    } else if (passIdx == 2) {
+      // Show debug_draw pass output
+      result = texture2D(auxSampler2, uv);
+    } else {
+      // Default (0): show final debug_draw result
+      result = texture2D(auxSampler2, uv);
+    }
+
+    gl_FragColor = toOutputFormat(result);
+  }
+";

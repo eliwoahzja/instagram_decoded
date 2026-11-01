@@ -1,0 +1,11 @@
+.class public final LX/5x6;
+.super Ljava/lang/Object;
+.source ""
+
+
+# instance fields
+.field public A00:I
+
+.field public A01:J
+
+.field public A02:[LX/5x5;

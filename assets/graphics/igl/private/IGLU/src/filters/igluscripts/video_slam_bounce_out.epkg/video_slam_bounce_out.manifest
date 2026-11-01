@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "identifier": "53f235e0-1c89-4f97-b240-9b50f3413b17",
+  "displayName": "Slam bump out",
+  "description": "[IG Edits] Effect name shown in the video effects picker. This is the user-facing label for a video effect.",
+  "iglu": {
+    "legacyId": 3152,
+    "behavior": {
+      "type": "fixedOutro",
+      "durationMs": 2100,
+      "curve": "linear"
+    },
+    "customization": [
+      {
+        "name": "duration",
+        "default": 2.1,
+        "min": 0.1,
+        "max": 5.0,
+        "displayName": "Duration",
+        "displayMethod": "time"
+      },
+      {
+        "name": "size",
+        "displayName": "Size",
+        "default": 0.3,
+        "min": 0.0,
+        "max": 1.0
+      }
+    ]
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQADnKEDzTTH"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "a441d682",
+      "handle": "AQAFXdMYfNNG",
+      "md5": "ec1aa21434daa7d5a4b75a553c0d0414"
+    }
+  },
+  "dependencies": [
+    "video_slam_bounce_in"
+  ]
+}

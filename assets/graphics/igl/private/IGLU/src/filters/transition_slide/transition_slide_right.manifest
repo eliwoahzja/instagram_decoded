@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "transition_slide_right",
+  "displayName": "Slide Right",
+  "description": "[IG Edits] Text animation name. A text animation can be applied to a text layer in a video to augment its intro or outro. With 'Slide Right', the words seem to glide in sequentially.",
+  "iglu": {}
+}

@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_cutout_float",
+  "displayName": "Float",
+  "description": "[Instagram Edits] Effect browser - Label for an effect that creates a gentle, floating motion in subjects within the video. Character count for labels is 14 characters max.",
+  "iglu": {
+    "legacyId": 5068,
+    "customization": [
+      {
+        "name": "amount",
+        "default": 0.33,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Amount",
+        "displayNameDescription": "[IG Edits] Slider label controlling the magnitude or quantity of a video effect. Generic across many effects; exact range varies per effect."
+      },
+      {
+        "name": "speed",
+        "default": 0.8,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Speed",
+        "displayNameDescription": "[IG Edits] Slider label controlling the playback or animation speed of a video effect (noun, not a verb); exact range varies per effect."
+      }
+    ],
+    "subject": {
+      "overlay": true
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "e432524e",
+      "handle": "AQAGdLOcm0k4",
+      "md5": "b1b159719176f66b2db69a2b0dc13e9a"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAEDS7oWwhp"
+    }
+  }
+}

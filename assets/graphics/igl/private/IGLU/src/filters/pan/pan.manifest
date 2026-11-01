@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "pan",
+  "displayName": "Pan",
+  "description": "[IG Edits] Transition name. With \"Pan\", the creator can pan or translate the source via `content_transform` while the sampler uses `MirrorRepeat` to mirror edges beyond the frame.",
+  "iglu": {}
+}

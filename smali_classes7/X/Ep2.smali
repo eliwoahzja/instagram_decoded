@@ -1,0 +1,60 @@
+.class public final LX/Ep2;
+.super Ljava/lang/Object;
+.source ""
+
+# interfaces
+.implements LX/PgA;
+
+
+# instance fields
+.field public final A00:LX/Btx;
+
+
+# direct methods
+.method public constructor <init>(LX/Psl;Lkotlin/jvm/functions/Function0;)V
+    .locals 7
+
+    invoke-direct {p0}, Ljava/lang/Object;-><init>()V
+
+    sget-object v2, LX/008;->A0M:Ljava/lang/Integer;
+
+    const/4 v0, 0x2
+
+    new-instance v4, LX/SRu;
+
+    invoke-direct {v4, p0, v0}, LX/SRu;-><init>(Ljava/lang/Object;I)V
+
+    const/4 v6, 0x1
+
+    new-instance v0, LX/Btx;
+
+    move-object v1, p1
+
+    move-object v3, p2
+
+    move-object v5, p2
+
+    invoke-direct/range {v0 .. v6}, LX/Btx;-><init>(LX/Psl;Ljava/lang/Integer;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Z)V
+
+    iput-object v0, p0, LX/Ep2;->A00:LX/Btx;
+
+    return-void
+.end method
+
+
+# virtual methods
+.method public final F0k(Z)V
+    .locals 1
+
+    iget-object v0, p0, LX/Ep2;->A00:LX/Btx;
+
+    invoke-virtual {v0}, LX/Btx;->A01()LX/Pkx;
+
+    move-result-object v0
+
+    check-cast v0, LX/PgA;
+
+    invoke-interface {v0, p1}, LX/PgA;->F0k(Z)V
+
+    return-void
+.end method

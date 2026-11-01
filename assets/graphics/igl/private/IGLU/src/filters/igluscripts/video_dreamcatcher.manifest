@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "identifier": "2f4a5279-9bc8-46ce-ae5d-b656bc8178e3",
+  "displayName": "Dreamcatcher",
+  "description": "[IG Edits] Video effect name. Color-graded look layered with film grain, dust, and animated dreamy light overlay.",
+  "iglu": {
+    "legacyId": 3118,
+    "customization": [
+      {
+        "name": "intensity",
+        "default": 0.7,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Intensity",
+        "displayNameDescription": "[IG Edits] Slider label controlling the strength of a video effect. Generic across many effects (glow, blur, color, distortion, etc.); exact range varies per effect."
+      }
+    ]
+  },
+  "assets": [
+    {
+      "name": "dreamcatcher.mp4",
+      "assetHash": "263954e73f15045729a1ef3cebdc4d23202f9aa71e38298dfb75090b4fcfd5a6",
+      "hubAssetId": "1497683625478158"
+    },
+    {
+      "name": "dreamcatcher_lights.png",
+      "assetHash": "bc558654c1220a9aeb0f17eb07b157f2c3d52a0eb06e4b70fb4e1f5c55f74ee3",
+      "hubAssetId": "983987650878580"
+    }
+  ],
+  "dependencies": [
+    "common_film_grain"
+  ],
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAHMbRRTaOS"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "fb01773c",
+      "handle": "AQAFd8OeRvms",
+      "md5": "bb07c9de0085e54060b9bdd0a0eea18f"
+    }
+  }
+}

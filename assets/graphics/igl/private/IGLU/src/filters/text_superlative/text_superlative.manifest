@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "text_superlative",
+  "displayName": "Superlative",
+  "description": "[IG Edits] Text effect name. With \"Superlative\", the creator can render arch-warped text with a dilated outline, drop shadow and a top-to-bottom HSL hue/luminance gradient.",
+  "iglu": {}
+}

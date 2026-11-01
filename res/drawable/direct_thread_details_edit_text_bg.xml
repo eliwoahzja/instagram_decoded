@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:left="@dimen/abc_floating_window_z" android:top="@dimen/abc_floating_window_z" android:right="@dimen/abc_floating_window_z" android:bottom="@dimen/abc_dialog_padding_material">
+        <shape android:shape="rectangle">
+            <solid android:color="?igds_color_elevated_highlight_background" />
+            <corners android:radius="@dimen/account_discovery_bottom_gap" />
+        </shape>
+    </item>
+</layer-list>

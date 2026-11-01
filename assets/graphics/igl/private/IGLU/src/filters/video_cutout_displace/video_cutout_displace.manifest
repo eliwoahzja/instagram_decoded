@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_cutout_displace",
+  "displayName": "Video Cutout Displace",
+  "description": "[IG Edits] Video effect name. With \"Video Cutout Displace\", the creator can warp the segmented subject using animated golden-ratio noise distortion driven by a baked animation texture as an intro.",
+  "iglu": {
+    "subject": {
+      "enabled": true,
+      "fullFrameEnabled": false
+    }
+  },
+  "assets": [
+    {
+      "name": "displace_in.png",
+      "assetHash": "b857707b9642cbf8c0a0a318af39116cff592a1e10c0d64c1a5946145501a2d5",
+      "hubAssetId": "1234560632154926"
+    }
+  ]
+}

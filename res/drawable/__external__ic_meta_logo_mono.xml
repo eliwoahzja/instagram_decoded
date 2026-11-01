@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.facebook.fbui.drawable.custom.AppThemedDrawable fbui:variant_dark="@drawable/__external__ic_meta_logo_mono__dark" fbui:variant_light="@drawable/__external__ic_meta_logo_mono__light"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:fbui="http://schemas.android.com/apk/res-auto" />

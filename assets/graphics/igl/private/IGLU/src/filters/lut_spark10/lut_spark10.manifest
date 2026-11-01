@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "identifier": "dusk",
+  "displayName": "Dusk",
+  "description": "[IG Edits] Color filter name. With \"Dusk\", the creator can apply a soft purple-pink dusk tone by remapping each pixel's RGB through a 3D color lookup table.",
+  "iglu": {
+    "legacyId": 827
+  },
+  "assets": [
+    {
+      "name": "dusk.png",
+      "assetHash": "3121662c1e4f06b9b6fe6ab5dfcb837df68cfe863172380071516c093bbdb3b3",
+      "hubAssetId": "829635926850620"
+    },
+    {
+      "name": "dusk_compressed.png",
+      "assetHash": "ae3f6008b20f059c64eb88bfc94ea1e8783cf7150e4341c25b89f01a564a9f18",
+      "hubAssetId": "955563573757334"
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "identifier": "01AA0191-EC51-4165-970D-471A6EBE9CA1",
+  "displayName": "BW Grain",
+  "description": "[IG Edits] Video effect name. A high-contrast black & white film look — a B&W LUT color grade, a warm light-leak overlay, and animated film grain.",
+  "android": {
+    "previewAsset": {
+      "key": "15f65996",
+      "handle": "AQBjLYROxA-0",
+      "md5": "dc1e46bd8173f9ee73ff4050f44966fd"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAHZ-wq4PKb"
+    }
+  },
+  "iglu": {
+    "legacyId": 3227
+  },
+  "assets": [
+    {
+      "name": "bw_grain_lut.png",
+      "assetHash": "b7cfc131e14b8caf552b7e50483611af23c7db8f43d0239479118a631e336bbe",
+      "hubAssetId": "1927146984623622"
+    },
+    {
+      "name": "bw_grain_overlay.png",
+      "assetHash": "caa63246e2cc7e32519d70555fdeed87272a992c13b7038a2589b4a01967fd28",
+      "hubAssetId": "2132083067515953"
+    }
+  ]
+}

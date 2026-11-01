@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "greenscreen",
+  "displayName": "Green Screen",
+  "description": "String for green screen remix layout type.",
+  "iglu": {}
+}

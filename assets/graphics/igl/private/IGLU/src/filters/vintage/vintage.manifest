@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "identifier": "new_york",
+  "displayName": "New York",
+  "description": "City-name color filter",
+  "iglu": {
+    "legacyId": 707
+  },
+  "assets": [
+    {
+      "name": "clut_vintage.png",
+      "assetHash": "feb6c7ef19e9024c5b213c4f742d097c72119c44d5a6a5cf0fe6b12602d7b61d",
+      "hubAssetId": "938461411878787"
+    }
+  ]
+}

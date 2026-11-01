@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "identifier": "whatsapp_cool_filter",
+  "displayName": "Whatsapp Cool Filter",
+  "description": "[IG Edits] Video effect name. With \"Whatsapp Cool Filter\", the creator can apply the WhatsApp Cool LUT to cool the frame with blue-leaning highlights and shadows.",
+  "assets": [
+    {
+      "name": "lut_cool.png",
+      "assetHash": "fe8cd6d46cf5c49f6e96c102d34edb3e9ac18556a7e0f497a7a8aed044aa5bfa",
+      "hubAssetId": "687272641076946"
+    }
+  ],
+  "iglu": {}
+}

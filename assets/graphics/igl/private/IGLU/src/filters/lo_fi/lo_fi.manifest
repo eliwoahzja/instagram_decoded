@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "identifier": "lo_fi",
+  "displayName": "Lo Fi",
+  "description": "[IG Edits] Color filter name. With \"Lo Fi\", the creator can apply the Lo-Fi look by running RGB through a lomo color LUT and then a radial vignette LUT keyed by distance-from-center.",
+  "iglu": {
+    "legacyId": 2
+  },
+  "assets": [
+    {
+      "name": "black_overlay_map.png",
+      "assetHash": "4f5b8cfd397d47bcb9ed7e894853352fbd19dfe5f4f78b8acd8c8fc5949e9306",
+      "hubAssetId": "1162927705774564"
+    },
+    {
+      "name": "lomo_map.png",
+      "assetHash": "47245606f6c354688ff617bff9249f84b3f720b02f9af0bc4951f8ab10bf204e",
+      "hubAssetId": "1277881657591092"
+    }
+  ]
+}

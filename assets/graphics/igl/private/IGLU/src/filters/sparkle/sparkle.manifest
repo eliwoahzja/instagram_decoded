@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "sparkle",
+  "displayName": "Sparkle",
+  "description": "[Instagram Edits] Effect browser - Label for an effect that adds twinkling sparkles throughout the video or subjects within the video. Character count for labels is 14 characters max.",
+  "iglu": {}
+}

@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "plain_frame",
+  "displayName": "Plain Frame",
+  "description": "[IG Edits] Video effect name. With \"Plain Frame\", the creator can overlay a colored bottom/right progress-bar border with random white speckle flakes tinted by `hue_uniform` and `lightness_uniform`.",
+  "iglu": {}
+}

@@ -1,0 +1,43 @@
+.class public final LX/6cg;
+.super LX/dPP;
+.source ""
+
+# interfaces
+.implements LX/rGb;
+
+
+# instance fields
+.field public final A00:Lcom/instagram/common/session/UserSession;
+
+
+# direct methods
+.method public constructor <init>(Lcom/instagram/common/session/UserSession;)V
+    .locals 0
+
+    .line 0
+    invoke-direct {p0}, Ljava/lang/Object;-><init>()V
+
+    .line 3
+    iput-object p1, p0, LX/6cg;->A00:Lcom/instagram/common/session/UserSession;
+
+    .line 5
+    return-void
+.end method
+
+
+# virtual methods
+.method public final onSessionWillEnd()V
+    .locals 2
+
+    .line 0
+    iget-object v1, p0, LX/6cg;->A00:Lcom/instagram/common/session/UserSession;
+
+    .line 2
+    const-class v0, LX/6cg;
+
+    .line 4
+    invoke-virtual {v1, v0}, LX/4Nb;->A03(Ljava/lang/Class;)V
+
+    .line 7
+    return-void
+.end method

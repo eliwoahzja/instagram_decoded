@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_hue_shift",
+  "displayName": "Hue shift",
+  "description": "[IG Edits] Video effect name shared across full-frame and subject-cutout surfaces. With \"Hue shift\", colors rotate around the color wheel, shifting their hue over time.",
+  "iglu": {
+    "legacyId": 2005,
+    "customization": [
+      {
+        "name": "speed",
+        "default": 0.31,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Speed",
+        "displayNameDescription": "[IG Edits] Slider label controlling the playback or animation speed of a video effect (noun, not a verb); exact range varies per effect."
+      },
+      {
+        "name": "opacity",
+        "default": 1.0,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Opacity",
+        "displayNameDescription": "[IG Edits] Slider label controlling the opacity (transparency) of an element added by a video effect (low = invisible, high = fully opaque); exact range varies per effect."
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "f681b23b",
+      "handle": "AQADqCtksr-s",
+      "md5": "0c85334fc1daff299e0cf1b76e6ffe89"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAG1XUCAt4F"
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "identifier": "text_path",
+  "displayName": "Text Path",
+  "description": "Text effect name. A text effect that animates text along a customizable path, creating dynamic motion effects for titles and captions.",
+  "assets": [
+    {
+      "name": "slide_right.png",
+      "assetHash": "52e2dbdb59490bccaab861be24f90f5c92346bc647711c6ef676ebe5fda3e438",
+      "hubAssetId": "26372106545782120"
+    }
+  ],
+  "iglu": {}
+}

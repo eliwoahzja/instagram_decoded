@@ -1,0 +1,49 @@
+[Filter IgluscriptVideoScaleUpFilter]
+[MaskBehavior alpha]
+
+# Snappy S-curve: gentle start, fast middle, gentle settle
+# Parametric sigmoid t³/(t³+(1-t)³)
+fun snapEase(f32 t) f32 {
+  f32 t3 = t * t * t;
+  f32 u = 1.0 - t;
+  f32 u3 = u * u * u;
+  return t3 / (t3 + u3);
+}
+
+[Init]
+fun init(Filter filter) {
+  filter.parameters = {
+    {center = {0.5, 0.5}, min = {0.0, 0.0}, max = {1.0, 1.0}},
+    {outro = 0.0, min = 0.0, max = 1.0, description = "0 = In, 1 = Out"},
+    {size = 0.85, min = 0.0, max = 1.0, description = "Starting Scale"},
+  };
+
+  filter.passes = {{
+      name = 'scaleFx,
+      igid = 'video_scale_opacity,
+      inputs = {'default},
+      uniforms = {
+        progress = 0.0,
+        scale = 0.001,
+        opacity = 0.0,
+        center = {0.5, 0.5},
+      }
+    }};
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  f32 p = getParameterFloat('progress);
+  f32 outro = getParameterFloat('outro);
+  if (outro > 0.5) { p = 1.0 - p; }
+  p = snapEase(p);
+
+  f32 size = mix(0.01, 0.95, getParameterFloat('size));
+  f32 scale = mix(size, 1.0, p);
+  f32 opacity = clamp(p * 1500.0, 0.0, 1.0);
+
+  setShaderUniform('scaleFx, 'progress, p);
+  setShaderUniform('scaleFx, 'scale, scale);
+  setShaderUniform('scaleFx, 'opacity, opacity);
+  setShaderUniform('scaleFx, 'center, getParameterVec2('center));
+}

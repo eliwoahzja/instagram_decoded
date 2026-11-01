@@ -1,0 +1,144 @@
+[Filter NeonRainbow]
+# "Neon Rainbow" — Rainbow overlay (screen blend) + skin-smoothing blur
+# + BRCOSA + saturation boost. Single fragment pass.
+# No LUT — uses only a rainbow overlay texture.
+#
+# Spark origin: colorPreset_skinSmoothing_neonRainbow (Effect ID 1545871872231684).
+# Overlay delivered via ARD.
+
+[Init]
+fun init(Filter filter)
+{
+    makeTexture('overlay);
+
+    filter.parameters = {
+        {blur_strength      = 0.155,  min = 0.0, max = 1.0,  description = "Skin-smoothing 9-tap blur mix amount"},
+        {blur_radius        = 0.003,  min = 0.0, max = 0.05, description = "Skin-smoothing kernel radius in normalized UV"},
+        {overlay_opacity    = 0.988,  min = 0.0, max = 1.0,  description = "Rainbow overlay blend strength (multiply blend)"},
+        {saturation         = 1.157,  min = 0.0, max = 2.0,  description = "Saturation boost (1.0 = no change; >1 increases)"},
+        {brightness         = 1.000,  min = 0.0, max = 2.0,  description = "BRCOSA brightness multiplier"},
+        {contrast           = 1.029,  min = 0.0, max = 2.0,  description = "BRCOSA contrast (1.0 = no change)"},
+        {vignette_strength  = 1.000,  min = 0.0, max = 1.0,  description = "Center face protection strength (0=none, 1=max)"},
+        {vignette_size      = 0.897,  min = 0.0, max = 1.0,  description = "Center protection radius (0=tiny, 1=wide)"},
+    };
+
+    filter.passes = {{
+      name = 'pass0,
+      inputs = {'default, 'overlay},
+      uniforms = {
+        blur_strength      = 0.155,
+        blur_radius        = 0.003,
+        overlay_opacity    = 0.988,
+        saturation         = 1.157,
+        brightness         = 1.000,
+        contrast           = 1.029,
+        vignette_strength  = 1.000,
+        vignette_size      = 0.897,
+      },
+      glslShader = glslNeonRainbow,
+    }};
+}
+
+string overlay_path = "overlay_path";
+string overlay_filename = "";
+
+[PreRender]
+fun preRender(Filter filter){
+    string overlay_filename_parameter = getParameterString(overlay_path);
+    if (overlay_filename_parameter != "") {
+        string new_overlay_filename = stringAppend("textureFilePath://", overlay_filename_parameter);
+        if (new_overlay_filename != overlay_filename) {
+            overlay_filename = new_overlay_filename;
+            loadTexture('overlay, overlay_filename);
+        }
+    }
+
+    f32 blr = getParameterFloat('blur_strength);
+    setShaderUniform('pass0, 'blur_strength, blr);
+
+    f32 blrad = getParameterFloat('blur_radius);
+    setShaderUniform('pass0, 'blur_radius, blrad);
+
+    f32 ov = getParameterFloat('overlay_opacity);
+    setShaderUniform('pass0, 'overlay_opacity, ov);
+
+    f32 sat = getParameterFloat('saturation);
+    setShaderUniform('pass0, 'saturation, sat);
+
+    f32 bri = getParameterFloat('brightness);
+    setShaderUniform('pass0, 'brightness, bri);
+
+    f32 ct = getParameterFloat('contrast);
+    setShaderUniform('pass0, 'contrast, ct);
+
+    f32 vs = getParameterFloat('vignette_strength);
+    setShaderUniform('pass0, 'vignette_strength, vs);
+
+    f32 vz = getParameterFloat('vignette_size);
+    setShaderUniform('pass0, 'vignette_size, vz);
+}
+
+#### GLSL shader ####
+
+string glslNeonRainbow = "
+    varying vec2 sourceTextureCoordinate;
+    BaseUniformsOpenGL;
+
+    uniform sampler2D auxSampler0;  // 'default (camera)
+    uniform sampler2D auxSampler1;  // 'overlay (rainbow)
+
+    uniform float blur_strength;
+    uniform float blur_radius;
+    uniform float overlay_opacity;
+    uniform float saturation;
+    uniform float brightness;
+    uniform float contrast;
+    uniform float vignette_strength;
+    uniform float vignette_size;
+
+    float luma(vec3 rgb) {
+      return dot(rgb, vec3(0.299, 0.587, 0.114));
+    }
+
+    void main() {
+      vec2 uv = sourceTextureCoordinate;
+
+      // Stage 1: 9-tap weighted skin-smoothing blur.
+      float r = blur_radius;
+      vec3 center = sampleInput(uv).rgb;
+      vec3 skinBlurred = center * (4.0 / 16.0);
+      skinBlurred += sampleInput(uv + vec2( r, 0.0)).rgb * (2.0 / 16.0);
+      skinBlurred += sampleInput(uv + vec2(-r, 0.0)).rgb * (2.0 / 16.0);
+      skinBlurred += sampleInput(uv + vec2(0.0,  r)).rgb * (2.0 / 16.0);
+      skinBlurred += sampleInput(uv + vec2(0.0, -r)).rgb * (2.0 / 16.0);
+      skinBlurred += sampleInput(uv + vec2( r,  r)).rgb * (1.0 / 16.0);
+      skinBlurred += sampleInput(uv + vec2( r, -r)).rgb * (1.0 / 16.0);
+      skinBlurred += sampleInput(uv + vec2(-r,  r)).rgb * (1.0 / 16.0);
+      skinBlurred += sampleInput(uv + vec2(-r, -r)).rgb * (1.0 / 16.0);
+      vec3 softened = mix(center, skinBlurred, blur_strength);
+
+      vec3 result = softened;
+
+      // Stage 2: BRCOSA.
+      result *= brightness;
+      result = (result - 0.5) * contrast + 0.5;
+      float l = luma(result);
+      result = mix(vec3(l), result, saturation);
+
+      result = clamp(result, 0.0, 1.0);
+
+      // Stage 3: Multiply blend rainbow overlay.
+      vec3 rainbow = texture2D(auxSampler1, uv).rgb;
+      vec3 multiplyBlend = result * rainbow;
+
+      // Radial vignette: protect face (center), full rainbow at edges.
+      vec2 centered = uv - 0.5;
+      float dist = length(centered) / max(vignette_size, 0.01);
+      float vignette = 1.0 - clamp(dist, 0.0, 1.0);
+      vignette = vignette * vignette * vignette_strength;
+      float alpha = (1.0 - vignette) * overlay_opacity;
+      result = mix(result, multiplyBlend, alpha);
+
+      gl_FragColor = toOutputFormat(vec4(result, 1.0));
+    }
+    ";

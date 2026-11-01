@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "identifier": "nashville",
+  "displayName": "Nashville",
+  "description": "[IG Edits] Color filter name. With \"Nashville\", the creator can apply the Instagram Nashville LUT, remapping each RGB channel through `map_nashville.png` for warm magenta highlights and teal shadows.",
+  "iglu": {
+    "legacyId": 15
+  },
+  "assets": [
+    {
+      "name": "map_nashville.png",
+      "assetHash": "791777935eb197947e95ec89c12e8fd0bf7bcc33f65314d50e2d9a3a67e1b218",
+      "hubAssetId": "1113114347567570"
+    }
+  ]
+}

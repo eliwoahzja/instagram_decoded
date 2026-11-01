@@ -1,0 +1,179 @@
+[Filter B_and_White_Glitch]
+# "B&W Glitch" — B&W LUT color grade + procedural horizontal static-band
+# glitch overlay. Ports Spark "B&W Glitch" (JSON-annotated) to a single
+# full-screen IGLUScript. The Spark source uses an 87-frame PNG image
+# sequence at 25fps (~3.5s loop) of a horizontal band of black/white
+# static that appears/disappears at varying vertical positions; most
+# frames are "off" (fully black) so the effect reads as intermittent
+# bursts. Reproduced procedurally here (no PNG image sequence bundled —
+# only the LUT is delivered via ARD) using bounded-time-seed hash math,
+# same pattern documented for feel_with_reel (D113810349).
+#
+# Structure: single pass, single asset (bw_glitch_lut.png). Shader:
+#   1. LUT color-grade the camera
+#   2. Compute band envelope (position + height, animated)
+#   3. Compute burst on/off gate (band visible ~30% of the time)
+#   4. Compute fast-flickering static noise
+#   5. Screen-blend the (envelope * noise * intensity) over the grade
+#
+# GOTCHA (from feel_with_reel D113810349): every hash/animation seed
+# uses `mod(floor(time * fps), N)` with small N (< ~20) so sin()
+# precision holds. Raw `floor(time * fps)` overflows over minutes and
+# silently kills the effect.
+
+[Init]
+fun init(Filter filter)
+{
+    makeTexture('lut);
+
+    filter.parameters = {
+        {strength = 0.963, min = 0.0, max = 1.0, description = "LUT mix strength"},
+        {glitch_intensity = 0.200, min = 0.0, max = 1.0, description = "Static band brightness"},
+        {glitch_rate = 0.467, min = 0.0, max = 1.0, description = "How often bursts appear"},
+        {rgb_shift = 0.558, min = 0.0, max = 1.0, description = "Chromatic aberration amount"},
+    };
+
+    filter.passes = {{
+      name = 'pass0,
+      inputs = {'default, 'lut},
+      uniforms = {
+        strength = 0.963,
+        glitch_intensity = 0.200,
+        glitch_rate = 0.467,
+        rgb_shift = 0.558,
+        time = 0.0,
+      },
+      glslShader = glslBwGlitch,
+    }};
+}
+
+string lut_path = "lut_path";
+string lut_filename = "";
+
+[PreRender]
+fun preRender(Filter filter){
+    string lut_filename_parameter = getParameterString(lut_path);
+    if (lut_filename_parameter != "") {
+        string new_lut_filename = stringAppend("textureFilePath://", lut_filename_parameter);
+        if (new_lut_filename != lut_filename) {
+            lut_filename = new_lut_filename;
+            loadTexture('lut, lut_filename);
+        }
+    }
+
+    f32 s = getParameterFloat('strength);
+    setShaderUniform('pass0, 'strength, s);
+
+    f32 gi = getParameterFloat('glitch_intensity);
+    setShaderUniform('pass0, 'glitch_intensity, gi);
+
+    f32 gr = getParameterFloat('glitch_rate);
+    setShaderUniform('pass0, 'glitch_rate, gr);
+
+    f32 rs = getParameterFloat('rgb_shift);
+    setShaderUniform('pass0, 'rgb_shift, rs);
+
+    # Use getLocalTime() for monotonic continuous animation.
+    f32 time = getLocalTime();
+    setShaderUniform('pass0, 'time, time);
+}
+
+#### GLSL shader ####
+
+string glslBwGlitch = "
+    varying vec2 sourceTextureCoordinate;
+    BaseUniformsOpenGL;
+
+    uniform sampler2D auxSampler0;
+    uniform sampler2D auxSampler1;
+    uniform sampler2D auxSampler2;
+
+    uniform float glitch_intensity;
+    uniform float glitch_rate;
+    uniform float rgb_shift;
+    uniform float time;
+
+    // 1D hash — good enough for coarse per-burst / per-band pseudorandom values.
+    float hash1(float x) {
+      return fract(sin(x * 12.9898) * 43758.5453);
+    }
+
+    // 2D salt-and-pepper hash for the pixel-scale static noise. Second arg
+    // shifts the seed each animation step so the static flickers.
+    float hash2(vec2 uv, float seed) {
+      return fract(sin(uv.x * 127.1 + uv.y * 311.7 + seed * 74.3) * 43758.5453);
+    }
+
+    void main() {
+      vec2 uv = sourceTextureCoordinate;
+
+      // ============================================================
+      // Pass 0 — RGB channel shift (chromatic aberration)
+      // Source: Spark's 3 vectorSwizzler chains (x001/0y01/00z1) with
+      // animated 2DTransformPack samplers (0.1s fast X-shift up to 0.02,
+      // 0.3s slow Y-shift up to 0.01). Same idea here — sample camera 3
+      // times at slightly offset UVs, keep R from #1, G from #2, B from
+      // #3, recombine. Offsets animated on bounded time hash.
+      // ============================================================
+      float xSeed = mod(floor(time * 10.0), 12.0);
+      float ySeed = mod(floor(time * 3.33), 15.0);
+      float shiftX = (hash1(xSeed) - 0.5) * 0.04 * rgb_shift;
+      float shiftY = (hash1(ySeed) - 0.5) * 0.02 * rgb_shift;
+      float r = sampleInput(uv + vec2(shiftX, shiftY)).r;
+      float g = sampleInput(uv).g;
+      float b = sampleInput(uv - vec2(shiftX, shiftY)).b;
+      vec4 texel = vec4(r, g, b, 1.0);
+
+      // ============================================================
+      // Pass 1 — B&W LUT color grade (drammatico pattern)
+      // ============================================================
+      texel.rgb = clamp(texel.rgb, 0.00781, 0.98438);
+      float x = texel.r / 8.0;
+      float y = texel.g / 8.0;
+      float z = texel.b;
+      float blueY = floor(z * 8.0) / 8.0;
+      float blueX = floor((z - blueY) * 64.0) / 8.0;
+      x += blueX;
+      y += blueY;
+      vec3 lutColor = texture2D(auxSampler1, vec2(x, y)).xyz;
+      vec3 result = mix(texel.rgb, lutColor, strength);
+
+      // ============================================================
+      // Pass 2 — procedural glitch band static overlay
+      // ============================================================
+
+      // Coarse time buckets — MUST bound each seed (feel_with_reel gotcha).
+      // Band position/height changes every ~333ms; on/off burst every ~500ms;
+      // static flickers at ~25fps within the burst.
+      float bandSeed = mod(floor(time * 3.0), 20.0);
+      float onSeed = mod(floor(time * 2.0), 15.0);
+      float staticSeed = mod(floor(time * 25.0), 8.0);
+
+      // Band center Y (5-95% of frame) + height (3-13% of frame). Each
+      // burst hits a new random position/height.
+      float bandY = hash1(bandSeed) * 0.9 + 0.05;
+      float bandH = hash1(bandSeed + 7.0) * 0.10 + 0.03;
+
+      // On/off gate — higher glitch_rate = more bursts on.
+      float onProb = hash1(onSeed + 13.0);
+      float onGate = step(1.0 - glitch_rate * 0.8, onProb);
+
+      // Soft vertical envelope around band center.
+      float dY = abs(uv.y - bandY);
+      float bandEnv = smoothstep(bandH, bandH * 0.4, dY);
+
+      // Fast-flickering binary static noise — sample dense to get chunky
+      // TV-like static grain.
+      float noise = hash2(uv * vec2(400.0, 300.0),
+                          staticSeed);
+      float staticRgb = step(0.5, noise);
+
+      // Screen-blend the static (masked by envelope, on-gate, and slider).
+      float mixAmt = bandEnv * onGate * glitch_intensity;
+      vec3 staticVec = vec3(staticRgb);
+      vec3 screened = vec3(1.0) - (vec3(1.0) - result) * (vec3(1.0) - staticVec);
+      result = mix(result, screened, mixAmt);
+
+      gl_FragColor = toOutputFormat(vec4(result, texel.a));
+    }
+    ";

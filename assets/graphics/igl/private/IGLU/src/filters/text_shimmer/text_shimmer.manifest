@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "text_shimmer",
+  "displayName": "Shimmer",
+  "description": "[Instagram Edits] Effect browser - Label for an effect that creates a glistening, shimmering light across the video or subjects within the video. Character count for labels is 14 characters max.",
+  "iglu": {}
+}

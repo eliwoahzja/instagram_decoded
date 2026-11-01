@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "identifier": "perpetua",
+  "displayName": "Perpetua",
+  "description": "[IG Edits] Color filter name. With \"Perpetua\", the creator can apply the Perpetua 3D LUT with a grain overlay blended on top via BlendOverlay at 35% opacity.",
+  "assets": [
+    {
+      "name": "perpetua_map.png",
+      "assetHash": "4434471d634523bd0f7193c88eae5ddc6274303c2d5848c1e8a4234a41b622e5",
+      "hubAssetId": "3195768320604980"
+    },
+    {
+      "name": "perpetua_overlay.png",
+      "assetHash": "6e3ba5c1203e819929e228de8b7e79a77cd76cd45652fde4ca15b82e027d367a",
+      "hubAssetId": "928093746617489"
+    }
+  ],
+  "iglu": {}
+}

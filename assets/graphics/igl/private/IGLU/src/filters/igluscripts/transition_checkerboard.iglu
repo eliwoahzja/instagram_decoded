@@ -1,0 +1,55 @@
+# IGLUSCRIPTCOLLISION_BYPASS: IGLUScript port of transition_checkerboard, QE-selectable for A/B vs TransitionCheckerboardFilter.
+[Filter TransitionCheckerboard]
+
+[Init]
+fun init(Filter filter) {
+  makeTexture('transition);
+  filter.passes = {{
+    name = 'grid,
+    inputs = {'default, 'transition},
+    shaderInputNames = {'default, 's_texture1},
+    uniforms = {
+      progress = 0.0,
+      cellSize = 270.0,
+      outputSize = {1024.0, 1024.0},
+    },
+    glslShader = glsl,
+  }};
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  setShaderUniform('grid, 'progress, max(getParameterFloat('progress), getParameterFloat('transition_progress)));
+  vec2 size = getTextureSize('default);
+  setShaderUniform('grid, 'outputSize, size);
+  setShaderUniform('grid, 'cellSize, 270.0 * (min(size.x, size.y) / 1080.0));
+}
+
+string glsl = "
+  varying vec2 sourceTextureCoordinate;
+  BaseUniformsOpenGL;
+  uniform sampler2D s_texture1;
+  uniform float progress;
+  uniform float cellSize;
+  uniform vec2 outputSize;
+  float fromRange(float x, float lo, float hi) { return (x - lo) / (hi - lo); }
+  float toRange(float x, float lo, float hi) { return lo + x * (hi - lo); }
+  float parabola(float x, float k) { return pow(4.0 * x * (1.0 - x), k); }
+  float random(vec2 st) { return fract(sin(dot(st.xy, vec2(12.9898, 78.233))) * 43758.5453); }
+  void main() {
+    vec2 uv = sourceTextureCoordinate;
+    vec2 st = uv * outputSize;
+    vec2 cellCoord = floor(st / cellSize);
+    vec4 a = sampleInput(uv);
+    vec4 b = texture2D(s_texture1, uv);
+    float t = random(cellCoord);
+    const float e = 0.65;
+    float prog = toRange(progress, -e, 1.0 + e);
+    float tran = clamp(fromRange(prog - t, -e, e), 0.0, 1.0);
+    float white = parabola(tran, 3.0);
+    float blend = smoothstep(-e, e, prog - t);
+    vec4 color = mix(a, b, blend);
+    color = vec4(color.rgb * pow(2.0, white), color.a);
+    gl_FragColor = toOutputFormat(color);
+  }
+";

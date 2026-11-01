@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_cutout_simple",
+  "displayName": "Cutout Simple",
+  "description": "[IG Edits] Video effect name. With \"Cutout Simple\", the creator can isolate the segmented subject by multiplying the input by the mask red channel, hiding the background.",
+  "iglu": {
+    "legacyId": 2100,
+    "subject": {
+      "enabled": true,
+      "fullFrameEnabled": true
+    }
+  }
+}

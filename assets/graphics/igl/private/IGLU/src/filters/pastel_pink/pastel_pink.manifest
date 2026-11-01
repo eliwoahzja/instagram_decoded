@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "identifier": "jaipur",
+  "displayName": "Jaipur",
+  "description": "City-name color filter",
+  "iglu": {
+    "legacyId": 709
+  },
+  "assets": [
+    {
+      "name": "clut_pastel_pink.png",
+      "assetHash": "8b1803d635730553ff9979d1e8e3acedc09d4ed26ce2218b1d386ebc3e72893d",
+      "hubAssetId": "25482174281485364"
+    }
+  ]
+}

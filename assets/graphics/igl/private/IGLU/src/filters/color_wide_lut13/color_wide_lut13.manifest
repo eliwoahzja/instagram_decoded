@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "identifier": "glow",
+  "displayName": "Glow",
+  "description": "[IG Edits] Color filter (color wide LUT) name. With \"Glow\", the creator can apply a warm radiant glow color grade to the video.",
+  "iglu": {
+    "legacyId": 5036
+  },
+  "assets": [
+    {
+      "name": "glow.lutpk",
+      "assetHash": "b3ff629ad085b45b390ecbbb5a9d3141c6eef300eaef28812cea2c038905124c",
+      "hubAssetId": "979443821088405"
+    }
+  ]
+}

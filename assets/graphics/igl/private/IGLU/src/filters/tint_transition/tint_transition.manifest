@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "tint_transition",
+  "displayName": "Tint Transition",
+  "description": "[IG Edits] Transition name. With \"Tint Transition\", the creator can wash the clip with an additive color tint by adding tint_color*intensity to the source RGB.",
+  "iglu": {}
+}

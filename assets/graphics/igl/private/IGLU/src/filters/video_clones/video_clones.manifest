@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_clones",
+  "displayName": "Clones",
+  "description": "Video effect name. A video effect is a creative visual element that can be applied to a video. With \"Clones\", the creator can create multiple copies of the subject in the video.",
+  "iglu": {
+    "legacyId": 2064,
+    "behavior": {
+      "type": "fixedIntro",
+      "durationMs": 4000,
+      "curve": "circularIn"
+    },
+    "customization": [
+      {
+        "name": "amount",
+        "default": 3,
+        "min": 1,
+        "max": 6,
+        "displayName": "Amount",
+        "displayNameDescription": "[IG Edits] Slider label controlling the magnitude or quantity of a video effect. Generic across many effects; exact range varies per effect.",
+        "displayMethod": "number"
+      },
+      {
+        "name": "duration",
+        "default": 4.0,
+        "min": 1.0,
+        "max": 10.0,
+        "displayName": "Duration",
+        "displayNameDescription": "[IG Edits] Slider label controlling how long a video effect's animation lasts; exact units and range vary per effect (seconds or normalized).",
+        "displayMethod": "time"
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "c5367e7e",
+      "handle": "AQAGPCtdCoJk",
+      "md5": "4dba025adf0e03b83b793607fbe599c8"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQADl0kdY1W1"
+    }
+  }
+}

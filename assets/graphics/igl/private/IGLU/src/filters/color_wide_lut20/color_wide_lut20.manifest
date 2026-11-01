@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "identifier": "lounge",
+  "displayName": "Lounge",
+  "description": "[IG Edits] Color filter name. With \"Lounge\", the creator can apply a warm dim lounge color grade by sampling the lounge.lutpk 3D LUT through the color_wide_lut pipeline.",
+  "iglu": {
+    "legacyId": 5043
+  },
+  "assets": [
+    {
+      "name": "lounge.lutpk",
+      "assetHash": "1aec627e0d08a4996140684f0977de8058885f49804ade44a9ae0f818421e4f8",
+      "hubAssetId": "1274863908112189"
+    }
+  ]
+}

@@ -1,0 +1,163 @@
+# IGLUSCRIPTCOLLISION_BYPASS: Intentional replacement of C++ native effect
+[Filter VideoChromaticPulse]
+# Light Pulse — pulsating exposure boost plus chromatic aberration.
+# Two passes: exposure pulse, then cubic-distortion colour separation.
+#
+# Carries both behaviors, selected in [PreRender] rather than in the shaders:
+#   useBeats false -> clock-driven, sin() pulse at `speed`
+#   useBeats true  -> beat-driven, the envelope supplies the pulse amount directly
+#
+# Both paths converge on the same three uniforms, so the shaders are shared verbatim.
+# useBeats is set by BeatReactiveController when a manifest declares beatReactive;
+# with no such manifest nothing writes it and the false default selects the clock.
+
+[Init]
+fun init(Filter filter) {
+  filter.parameters = {
+    # Normalized 0..1 sliders remapped in [PreRender] to the raw ranges:
+    #   intensity=0.333... -> raw 2.0 (the native kDefaultExposure)
+    #   speed=0.2916...    -> raw 1.75 (the native kDefaultPulseSpeed)
+    {intensity = 0.33333333, min = 0.0, max = 1.0, description = "Effect intensity"},
+    {speed = 0.29166667, min = 0.0, max = 1.0, description = "Pulse speed"},
+    {beatProgress = 0.0, min = 0.0, max = 1.0, description = "Beat-driven pulse amount"},
+    {useBeats = false, description = "True while the beat system is driving this effect"},
+  };
+
+  filter.passes = {{
+    name = 'exposure_pulse,
+    inputs = {'default},
+    uniforms = {
+      calculatedExposure = 1.0,
+    },
+    glslShader = glslExposurePulse,
+  },
+  {
+    name = 'chromatic_pulse,
+    inputs = {'exposure_pulse},
+    uniforms = {
+      distortion = 0.0,
+      aberration = 0.0,
+      outputSize = {1080.0, 1920.0},
+    },
+    glslShader = glslChromaticPulse,
+  }};
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  boolean useBeats = getParameterBoolean('useBeats);
+
+  f32 intensityNorm = getParameterFloat('intensity);
+  f32 intensity = mix(0.5, 5.0, intensityNorm);
+
+  # Clock path. Both the exposure curve and the aberration amount derive from the
+  # same sin() pulse; the beat path below replaces the pulse amount and simplifies
+  # the exposure to a linear ramp.
+  f32 time = getParameterFloat('time_sec);
+  f32 speedNorm = getParameterFloat('speed);
+  f32 pulseSpeed = mix(0.0, 6.0, speedNorm);
+
+  f32 exposurePulse = sin(time * pulseSpeed * 6.2831);
+  f32 exposurePulseCurve = (exposurePulse + 1.0) * 0.5;
+  exposurePulseCurve = pow(exposurePulseCurve, 0.0 - 0.2);
+  exposurePulseCurve = clamp(exposurePulseCurve, 0.0, 1.0 + (intensity / 10.0));
+  f32 calculatedExposure = 1.0 + (exposurePulseCurve - 1.0) * intensity;
+
+  f32 pulseCurve = (sin(time * pulseSpeed * 6.2831) + 1.0) * 0.5;
+  f32 pulseAmount = 1.0 - pow(pulseCurve, 0.2);
+
+  if (useBeats) {
+    f32 beat = getParameterFloat('beatProgress);
+    pulseAmount = beat;
+    calculatedExposure = 1.0 + beat * (intensity - 1.0);
+  }
+
+  calculatedExposure = max(calculatedExposure, 1.0);
+
+  f32 chromaticScale = intensity / 2.0;
+  f32 distortion = 0.0 - 0.03 * pulseAmount * chromaticScale;
+  f32 aberration = 0.175 * pulseAmount * 2.0 * chromaticScale;
+
+  setShaderUniform('exposure_pulse, 'calculatedExposure, calculatedExposure);
+  setShaderUniform('chromatic_pulse, 'distortion, distortion);
+  setShaderUniform('chromatic_pulse, 'aberration, aberration);
+
+  vec2 outputSize = getTextureSize('default);
+  setShaderUniform('chromatic_pulse, 'outputSize, outputSize);
+}
+
+#### Exposure Pulse Shader ####
+
+string glslExposurePulse = "
+  varying vec2 sourceTextureCoordinate;
+  BaseUniformsOpenGL;
+
+  uniform float calculatedExposure;
+
+  void main() {
+    vec2 uv = sourceTextureCoordinate;
+    vec4 base = sampleInput(uv);
+    vec4 color = vec4(base.rgb * calculatedExposure, base.a);
+    gl_FragColor = toOutputFormat(color);
+  }
+";
+
+#### Chromatic Aberration Shader ####
+
+string glslChromaticPulse = "
+  varying vec2 sourceTextureCoordinate;
+  BaseUniformsOpenGL;
+
+  uniform float aberration;
+  uniform float distortion;
+  uniform vec2 outputSize;
+
+  vec2 cubicDistortionUV(vec2 uv, float dist, vec2 center, vec2 size) {
+    float aspectRatio = size.x / size.y;
+    uv.x = 0.5 + (uv.x - 0.5) * aspectRatio;
+    vec2 dir = uv - center;
+    float d = length(dir);
+    vec2 duv = uv + dir * d * d * dist;
+    duv.x = 0.5 + (duv.x - 0.5) / aspectRatio;
+    return duv;
+  }
+
+  void main() {
+    vec2 center = vec2(0.5);
+    float aberr_offset = -1.0;
+    float steps = 10.0;
+
+    vec2 distortionUV = cubicDistortionUV(sourceTextureCoordinate, distortion, center, outputSize);
+    vec4 base = sampleInput(distortionUV);
+
+    vec4 color = vec4(0.0);
+    float offset = aberration * aberr_offset;
+
+    const float maxSteps = 20.0;
+    for (float i = 0.0; i < maxSteps; i++) {
+      if (i >= steps) break;
+      float currentStep = i / steps;
+
+      float aberrate = aberration * currentStep;
+
+      vec2 duvRG = cubicDistortionUV(distortionUV, aberrate + offset, center, outputSize);
+      vec4 rg = sampleInput(duvRG);
+      vec4 r = vec4(rg.r, 0.0, 0.0, rg.a) * 2.0;
+      vec4 g = vec4(0.0, rg.g, 0.0, rg.a);
+      color += mix(g, r, currentStep) / steps;
+
+      vec2 duvGB = cubicDistortionUV(distortionUV, -aberrate + offset, center, outputSize);
+      vec4 gb = sampleInput(duvGB);
+      vec4 g2 = vec4(0.0, gb.g, 0.0, gb.a);
+      vec4 b = vec4(0.0, 0.0, gb.b, gb.a) * 2.0;
+      color += mix(g2, b, currentStep) / steps;
+    }
+
+    color.r += base.r / steps;
+    color.g -= base.g / steps;
+    color.b += base.b / steps;
+    color.a = base.a;
+
+    gl_FragColor = toOutputFormat(color);
+  }
+";

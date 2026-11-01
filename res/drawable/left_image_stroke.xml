@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <stroke android:width="@dimen/circular_avatar_stroke_width" android:color="?igds_color_stroke" />
+    <corners android:topLeftRadius="@dimen/accent_edge_thickness" android:topRightRadius="0.0dp" android:bottomLeftRadius="@dimen/accent_edge_thickness" android:bottomRightRadius="0.0dp" />
+</shape>

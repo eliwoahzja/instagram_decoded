@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "identifier": "melbourne",
+  "displayName": "Melbourne",
+  "description": "City-name color filter",
+  "assets": [
+    {
+      "name": "brightcontrast_map.png",
+      "assetHash": "b18fec46cb4a38bc79de5c5e148cdb9e6bd0d512cad518d6b85990e2bf604ebb",
+      "hubAssetId": "1318937940070830"
+    }
+  ],
+  "iglu": {}
+}

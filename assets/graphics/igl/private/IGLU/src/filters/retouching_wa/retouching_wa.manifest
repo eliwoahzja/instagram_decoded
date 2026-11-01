@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "retouching_wa",
+  "displayName": "Retouching WA",
+  "description": "[IG Edits] Video effect name. With \"Retouching WA\", the creator can smooth skin via frequency separation driven by an on-device ML segmentation mask (no landmarks required).",
+  "iglu": {}
+}

@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "displayName": "Glitch out",
+  "description": "[IG Edits] Video overlay outro effect name. With \"Glitch out\", the creator overlays a 2-second linear outro of chromatic-glitch distortion that breaks the clip apart.",
+  "iglu": {
+    "legacyId": 5084,
+    "behavior": {
+      "type": "fixedOutro",
+      "durationMs": 2000,
+      "curve": "linear"
+    },
+    "customization": [],
+    "subject": {
+      "overlay": true
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAGrBcffot7"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "66a91902",
+      "handle": "AQAHMlGVdzM7",
+      "md5": "6ae89edaaeed258afe896ee79620c4f8"
+    }
+  }
+}

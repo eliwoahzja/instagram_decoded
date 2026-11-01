@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<set android:interpolator="@android:anim/accelerate_decelerate_interpolator" android:duration="@integer/direct_reel_reshare_friendly_bubble_anim_duration_total"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <translate android:duration="@integer/direct_reel_reshare_friendly_bubble_anim_duration_half" android:startOffset="3000" android:repeatCount="infinite" android:repeatMode="reverse" android:fromXDelta="@dimen/direct_reel_reshare_friendly_bubble_anim_from_x_delta" android:toXDelta="@dimen/abc_control_corner_material" />
+    <translate android:duration="@integer/direct_reel_reshare_friendly_bubble_anim_duration_half" android:startOffset="2500" android:repeatCount="infinite" android:repeatMode="reverse" android:fromYDelta="@dimen/direct_reel_reshare_friendly_bubble_anim_from_y_delta" android:toYDelta="@dimen/account_preview_media_end_card_stroke_width" />
+</set>

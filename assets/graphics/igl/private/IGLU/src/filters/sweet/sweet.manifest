@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "identifier": "68BE48A9-CC64-4BEA-8507-ECC7029ACA49",
+  "displayName": "Sweet",
+  "description": "[IG Edits] Video effect name. With \"Sweet\", the creator gets a face-tracked look — a LUT color grade plus a soft warm makeup tint on the cheeks and nose.",
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAFsuu6l_hw"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "ab9a86b4",
+      "handle": "AQAE0PxlS961",
+      "md5": "eec9826611df4446225f762d473103a1"
+    }
+  },
+  "iglu": {
+    "legacyId": 3226
+  },
+  "assets": [
+    {
+      "name": "sweet_lut.png",
+      "assetHash": "4b815e53c9329fc9704b19757ed47fa1c4a808f67f2311444efb5e6f2b0faf46",
+      "hubAssetId": "4406206432970701"
+    },
+    {
+      "name": "sweet_makeup.png",
+      "assetHash": "c7c0b569248b84251f080697e9dd50e27e365dd737e8be2d050b7da9d845e991",
+      "hubAssetId": "27982674954675538"
+    }
+  ]
+}

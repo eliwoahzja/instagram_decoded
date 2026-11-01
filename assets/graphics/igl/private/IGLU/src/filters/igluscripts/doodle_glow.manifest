@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "d9048c8c-96ff-44d8-be1a-770bf459ac47",
+  "displayName": "Doodle Glow",
+  "description": "[IG Edits] Drawing brush effect name. With \"Doodle Glow\", the creator can wrap brush strokes in a soft colored halo built from dilation plus Gaussian blur of the stroke alpha.",
+  "iglu": {}
+}

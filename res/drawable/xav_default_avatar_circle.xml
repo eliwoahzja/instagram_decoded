@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="@color/igds_prism_gray_02" />
+        </shape>
+    </item>
+    <item android:gravity="center" android:height="24.0dp" android:width="24.0dp">
+        <bitmap android:gravity="center" android:src="@drawable/fb_ic_profile_filled_24" android:tint="@color/igds_prism_gray_05" />
+    </item>
+</layer-list>

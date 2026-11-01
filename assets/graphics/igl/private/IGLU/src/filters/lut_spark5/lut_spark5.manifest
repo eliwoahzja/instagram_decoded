@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "identifier": "summer",
+  "displayName": "Summer",
+  "description": "[IG Edits] Color filter name. With \"Summer\", the creator can apply a sunny saturated warm-summer tone by remapping each pixel's RGB through a 3D color lookup table.",
+  "iglu": {
+    "legacyId": 822
+  },
+  "assets": [
+    {
+      "name": "summer.png",
+      "assetHash": "9d2d90d600650489a47cf80bc95175f6b5d80a787d90b197268f8966c487357e",
+      "hubAssetId": "1519272396581624"
+    },
+    {
+      "name": "summer_compressed.png",
+      "assetHash": "909465c84ddca3a55110932e5b19ba398abf9ec1fc616d143743b718f514e371",
+      "hubAssetId": "2006864947201876"
+    }
+  ]
+}

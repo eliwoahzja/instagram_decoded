@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "text_black_offset",
+  "displayName": "Black Offset",
+  "description": "Text effect with black offset",
+  "iglu": {}
+}

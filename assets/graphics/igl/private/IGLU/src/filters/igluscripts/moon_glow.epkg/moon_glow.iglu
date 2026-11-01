@@ -1,0 +1,283 @@
+[Filter MoonGlow]
+# "Moon Glow" — soft dreamy LUT filter: LUT grade + skin-smoothing blur +
+# subtle bloom + BRCOSA approximation + global rouge boost + procedural
+# film grain.
+#
+# Visual target: warm, soft, slightly bright with a dreamy bloom and
+# barely-visible film grain. Approximates Spark's BRCOSA + LUT +
+# bloom/blur/grain chain within a single IGLUScript fragment pass.
+#
+# Pipeline (single fragment pass, ordered for visual correctness):
+#
+#   Stage 1 — Wide soft-focus blur (skin smoothing / dreamy haze):
+#     9-tap weighted kernel (3x3 box-Gaussian approximation) at a host-
+#     tunable radius (`blur_radius`). Wider radius produces a stronger
+#     dreamy haze; smaller radius is closer to the original sharpness.
+#     Mix center with blurred result by `blur_strength` to dial in.
+#
+#   Stage 2 — 8x8 grid LUT (100% mix):
+#     Standard catalog LUT lookup with [0.05, 0.9] clamp. Mix is
+#     hardcoded at 100% (full LUT replacement — Spark used 100% too).
+#
+#   Stage 3 — Soft halation bloom (wide kernel additive glow):
+#     16-tap ring sample at a host-tunable wider radius (`bloom_radius`).
+#     Compute luma, threshold around 0.5 to extract bright regions
+#     (above-average luminance). Bloom contribution = wide_blur.rgb *
+#     brightness_mask * bloom_strength. Adds dreamy halation glow on
+#     highlights without fake-HDR over-bright.
+#
+#   Stage 4 — BRCOSA approximation in shader:
+#     - brightness  rgb *= brightness                               (default 1.1)
+#     - contrast    rgb = (rgb - 0.5) * contrast + 0.5              (default 0.9)
+#     - saturation  rgb = mix(luma, rgb, saturation)                (default 1.1)
+#     Spark spec was (1.1, 0.9, 1.1) on a base BRCOSA node; mirrored
+#     here. Tunable to allow live dial-in.
+#
+#   Stage 5 — Global rouge boost (frblair/now pattern):
+#     r *= 1.0 + rouge_strength. Coarse approximation of face-tracked
+#     rouge; lifts background reds too. Same caveat as soft_white /
+#     now / frblair (face-tracking gap, see proposal doc).
+#
+#   Stage 6 — Procedural film grain (super_8mm pattern, very subtle):
+#     3-frame hash cycling at 7fps, additive luminance offset centered
+#     on 0. Default `grain_strength` = 0.02 (so grain swing is
+#     +/- 0.02 added to RGB) — barely-visible film texture. If grain
+#     looks too strong, dial down; this is intentionally much lower
+#     than super_8mm's grain_opacity = 0.20.
+#
+# Final clamp to LDR [0,1] so brightness/bloom/rouge stack can't push
+# past 1.0.
+#
+# LUT delivered via ARD with effectId / assetHash baked into the
+# manifest (received from Neetika upload). Ready for review.
+#
+# Asset placement: moon_glow_lut.png lives at
+# `assets/moon_glow/moon_glow_lut.png`. Per BUCK glob inspection, files in
+# `assets/<filter>/` are NOT bundled into the production app — they are
+# dev-only for sample-app loading and screenshot tests. Production
+# loads via ARD by manifest effectId/assetHash. Same convention as
+# aesthetic_blur, glamy, prism, etc.
+#
+# Filter renamed from `moon` to `moon_glow` because there is an existing
+# C++ filter at `xplat/.../IGLU/src/filters/moon/` (legacyId 111, B&W
+# desaturation effect). IGLUScript would have silently replaced it on
+# Android per the collision-test rules. The two filters are visually
+# unrelated — this one is a warm dreamy LUT, that one is a B&W look.
+
+[Init]
+fun init(Filter filter)
+{
+    makeTexture('lut);
+
+    # 7 host-tunable parameters wired unconditionally in [PreRender]
+    # per CRA convention (filter.parameters declares min=0.0 — host-set
+    # zeros are valid input and must propagate).
+    filter.parameters = {
+        {bloom_strength  = 0.087,  min = 0.0, max = 1.0,  description = "Bloom additive contribution from luma-thresholded wide blur"},
+        {bloom_radius    = 0.009,  min = 0.0, max = 0.05, description = "Bloom sample ring radius in normalized UV (dialed-in default for goal-image match)"},
+        {blur_strength   = 0.375,  min = 0.0, max = 1.0,  description = "Skin-smoothing 9-tap blur mix amount"},
+        {blur_radius     = 0.004,  min = 0.0, max = 0.05, description = "Skin-smoothing kernel radius in normalized UV (dialed-in default for goal-image match)"},
+        {rouge_strength  = 0.033,  min = 0.0, max = 0.5,  description = "Global red channel lift (face-tracked rouge approximation)"},
+        {brightness      = 1.145,  min = 0.0, max = 2.0,  description = "BRCOSA brightness multiplier"},
+        {contrast        = 0.907,  min = 0.0, max = 2.0,  description = "BRCOSA contrast (1.0 = no change; <1 reduces, >1 increases)"},
+        {saturation      = 1.329,  min = 0.0, max = 2.0,  description = "BRCOSA saturation (1.0 = no change; 0.0 = grayscale; >1 boosts)"},
+        {grain_strength  = 0.020,  min = 0.0, max = 0.2,  description = "Procedural film grain magnitude (additive +/- swing)"},
+    };
+
+    filter.passes = {{
+      name = 'pass0,
+      inputs = {'default, 'lut},
+      uniforms = {
+        bloom_strength  = 0.087,
+        bloom_radius    = 0.009,
+        blur_strength   = 0.375,
+        blur_radius     = 0.004,
+        rouge_strength  = 0.033,
+        brightness      = 1.145,
+        contrast        = 0.907,
+        saturation      = 1.329,
+        grain_strength  = 0.020,
+      },
+      glslShader = glslMoonGlow,
+    }};
+}
+
+# Local-development asset path.
+string lut_path = "lut_path";
+string lut_filename = "";
+
+[PreRender]
+fun preRender(Filter filter){
+    string lut_filename_parameter = getParameterString(lut_path);
+    if (lut_filename_parameter != "") {
+        string new_lut_filename = stringAppend("textureFilePath://", lut_filename_parameter);
+        if (new_lut_filename != lut_filename) {
+            lut_filename = new_lut_filename;
+            loadTexture('lut, lut_filename);
+        }
+    }
+
+    # All 9 parameters wired unconditionally per CRA convention.
+    f32 bs = getParameterFloat('bloom_strength);
+    setShaderUniform('pass0, 'bloom_strength, bs);
+
+    f32 br = getParameterFloat('bloom_radius);
+    setShaderUniform('pass0, 'bloom_radius, br);
+
+    f32 blr = getParameterFloat('blur_strength);
+    setShaderUniform('pass0, 'blur_strength, blr);
+
+    f32 blrad = getParameterFloat('blur_radius);
+    setShaderUniform('pass0, 'blur_radius, blrad);
+
+    f32 rs = getParameterFloat('rouge_strength);
+    setShaderUniform('pass0, 'rouge_strength, rs);
+
+    f32 bri = getParameterFloat('brightness);
+    setShaderUniform('pass0, 'brightness, bri);
+
+    f32 ct = getParameterFloat('contrast);
+    setShaderUniform('pass0, 'contrast, ct);
+
+    f32 sat = getParameterFloat('saturation);
+    setShaderUniform('pass0, 'saturation, sat);
+
+    f32 gs = getParameterFloat('grain_strength);
+    setShaderUniform('pass0, 'grain_strength, gs);
+}
+
+#### GLSL shader ####
+
+string glslMoonGlow = "
+    varying vec2 sourceTextureCoordinate;
+    VideoShaderUniformsOpenGL;
+
+    uniform sampler2D auxSampler0;  // 'default (camera)
+    uniform sampler2D auxSampler1;  // 'lut
+
+    uniform float bloom_strength;
+    uniform float bloom_radius;
+    uniform float blur_strength;
+    uniform float blur_radius;
+    uniform float rouge_strength;
+    uniform float brightness;
+    uniform float contrast;
+    uniform float saturation;
+    uniform float grain_strength;
+
+    // 8x8 grid LUT sample (catalog convention: [0.05, 0.9] clamp).
+    vec3 applyLut(vec3 inRgb) {
+      vec3 c = clamp(inRgb, 0.05, 0.9);
+      float x = c.r / 8.0;
+      float y = c.g / 8.0;
+      float z = c.b;
+      float blueY = floor(z * 8.0) / 8.0;
+      float blueX = floor((z - blueY) * 64.0) / 8.0;
+      x += blueX;
+      y += blueY;
+      return texture2D(auxSampler1, vec2(x, y)).xyz;
+    }
+
+    // Standard luma weights (Rec. 601).
+    float luma(vec3 rgb) {
+      return dot(rgb, vec3(0.299, 0.587, 0.114));
+    }
+
+    void main() {
+      vec2 uv = sourceTextureCoordinate;
+
+      // ======================================================
+      // Stage 1: Wide soft-focus blur (9-tap weighted kernel).
+      // 3x3 sampling at +/- blur_radius offsets, weighted as a
+      // Gaussian approximation: center 4, edges 2, corners 1
+      // (sum 16). Smoothness scales with blur_radius without
+      // the sparkly look of large 5-tap cross blurs.
+      // ======================================================
+      float r = blur_radius;
+      vec3 center = sampleInput(uv).rgb;
+      vec3 skinBlurred = center * (4.0 / 16.0);
+      // Edges (4 cardinal taps, weight 2 each)
+      skinBlurred += sampleInput(uv + vec2( r, 0.0)).rgb * (2.0 / 16.0);
+      skinBlurred += sampleInput(uv + vec2(-r, 0.0)).rgb * (2.0 / 16.0);
+      skinBlurred += sampleInput(uv + vec2(0.0,  r)).rgb * (2.0 / 16.0);
+      skinBlurred += sampleInput(uv + vec2(0.0, -r)).rgb * (2.0 / 16.0);
+      // Corners (4 diagonal taps, weight 1 each)
+      skinBlurred += sampleInput(uv + vec2( r,  r)).rgb * (1.0 / 16.0);
+      skinBlurred += sampleInput(uv + vec2( r, -r)).rgb * (1.0 / 16.0);
+      skinBlurred += sampleInput(uv + vec2(-r,  r)).rgb * (1.0 / 16.0);
+      skinBlurred += sampleInput(uv + vec2(-r, -r)).rgb * (1.0 / 16.0);
+      vec3 softened = mix(center, skinBlurred, blur_strength);
+
+      // ======================================================
+      // Stage 2: LUT grade at 100% mix.
+      // ======================================================
+      vec3 graded = applyLut(softened);
+
+      // ======================================================
+      // Stage 3: Soft halation bloom — 16-tap wide ring + luma
+      // threshold extract. 8 cardinal+diagonal taps at 1x radius
+      // and 8 more at 1.5x radius for a smoother falloff. Compute
+      // luma of the wide blur, threshold around 0.5 to mask bright
+      // regions, then add scaled bloom contribution.
+      // ======================================================
+      float br = bloom_radius;
+      float br2 = bloom_radius * 1.5;
+      vec3 wideBlur =
+            sampleInput(uv + vec2( br,  0.0)).rgb
+          + sampleInput(uv + vec2(-br,  0.0)).rgb
+          + sampleInput(uv + vec2( 0.0,  br)).rgb
+          + sampleInput(uv + vec2( 0.0, -br)).rgb
+          + sampleInput(uv + vec2( br,   br)).rgb
+          + sampleInput(uv + vec2( br,  -br)).rgb
+          + sampleInput(uv + vec2(-br,   br)).rgb
+          + sampleInput(uv + vec2(-br,  -br)).rgb
+          + sampleInput(uv + vec2( br2,  0.0)).rgb
+          + sampleInput(uv + vec2(-br2,  0.0)).rgb
+          + sampleInput(uv + vec2( 0.0,  br2)).rgb
+          + sampleInput(uv + vec2( 0.0, -br2)).rgb
+          + sampleInput(uv + vec2( br2,  br2)).rgb
+          + sampleInput(uv + vec2( br2, -br2)).rgb
+          + sampleInput(uv + vec2(-br2,  br2)).rgb
+          + sampleInput(uv + vec2(-br2, -br2)).rgb;
+      wideBlur *= (1.0 / 16.0);
+      // Threshold mask: only contribute bloom from above-average-luma areas.
+      // Softer falloff so bright midtones still bloom slightly.
+      float bloomMask = smoothstep(0.4, 0.9, luma(wideBlur));
+      vec3 bloom = wideBlur * bloomMask * bloom_strength;
+
+      vec3 result = graded + bloom;
+
+      // ======================================================
+      // Stage 4: BRCOSA approximation.
+      // Order: brightness → contrast → saturation, mirroring Spark's
+      // BRCOSA node application order.
+      // ======================================================
+      result *= brightness;
+      result = (result - 0.5) * contrast + 0.5;
+      float l = luma(result);
+      result = mix(vec3(l), result, saturation);
+
+      // ======================================================
+      // Stage 5: Global rouge boost (frblair/now pattern).
+      // Uniform red lift; coarse approximation of face-tracked rouge.
+      // ======================================================
+      result.r *= 1.0 + rouge_strength;
+
+      // ======================================================
+      // Stage 6: Procedural film grain (super_8mm 3-frame hash @ 7fps).
+      // Centered on 0 so it adds +/- swing rather than always-bright;
+      // grain_strength is the half-amplitude so 0.02 → ±0.02 luminance
+      // jitter (very subtle).
+      // ======================================================
+      float frameIndex = mod(floor(time_sec * 7.0), 3.0);
+      float g = fract(sin(uv.x * 127.1 + uv.y * 311.7
+                          + frameIndex * 74.3) * 43758.5453);
+      result += (g - 0.5) * 2.0 * grain_strength;
+
+      // Clamp to LDR display range; brightness + bloom + rouge stack
+      // can otherwise push past 1.0.
+      result = clamp(result, 0.0, 1.0);
+
+      gl_FragColor = toOutputFormat(vec4(result, 1.0));
+    }
+    ";

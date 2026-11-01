@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "starlight",
+  "displayName": "Starlight",
+  "description": "[IG Edits] Color filter name. With \"Starlight\", the creator can apply a CLAHE local-contrast brighten pass that lifts dark regions and boosts saturation by 1.2x.",
+  "iglu": {}
+}

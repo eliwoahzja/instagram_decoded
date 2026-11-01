@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "text_distort_glow",
+  "displayName": "Distort Glow",
+  "description": "[IG Edits] Text effect name. With \"Distort Glow\", the creator can render text with animated noise warping plus an outer blurred glow halo and hue-shifting highlights.",
+  "iglu": {}
+}

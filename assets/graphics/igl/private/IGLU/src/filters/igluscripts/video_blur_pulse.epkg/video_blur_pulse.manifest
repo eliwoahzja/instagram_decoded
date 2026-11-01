@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_blur_pulse",
+  "displayName": "Blur pulse",
+  "description": "Video effects selection. Video blurs in and out.",
+  "iglu": {
+    "legacyId": 2036,
+    "customization": [
+      {
+        "name": "intensity",
+        "default": 0.5556,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Intensity",
+        "displayNameDescription": "[IG Edits] Slider label controlling the strength of a video effect. Generic across many effects (glow, blur, color, distortion, etc.); exact range varies per effect."
+      },
+      {
+        "name": "speed",
+        "default": 0.8,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Speed",
+        "displayNameDescription": "[IG Edits] Slider label controlling the playback or animation speed of a video effect (noun, not a verb); exact range varies per effect."
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "2bd5c2dd",
+      "handle": "AQAGL9RgyYhG",
+      "md5": "566d1f365b96d4c6f71f5fdc2d4c9d20"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAGgnXiM80G"
+    }
+  }
+}

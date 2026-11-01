@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "identifier": "C6242064-2DA2-472A-BA70-E8CBE5429503",
+  "displayName": "Night Club",
+  "description": "[IG Edits] Color filter name. Moody LUT color grade with an animated rainbow disco-lights overlay and a subtle beat pulse.",
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAFbeabtAtR"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "f77a03cb",
+      "handle": "AQAGZY_uBhzL",
+      "md5": "7ac30269a1ab7f7f26e02841314f9ba6"
+    }
+  },
+  "iglu": {
+    "legacyId": 3191
+  },
+  "assets": [
+    {
+      "name": "night_club_lut.png"
+    }
+  ]
+}

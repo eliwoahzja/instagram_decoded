@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "transition_zoom_warp",
+  "displayName": "Zoom Warp",
+  "description": "[IG Edits] Transition name. With \"Zoom Warp\", the creator can transition with a warping zoom that adds radial zoom blur and cubic lens distortion driven by transition velocity.",
+  "iglu": {}
+}

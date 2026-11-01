@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "screen_blend_with_color",
+  "displayName": "Screen Blend With Color",
+  "description": "[IG Edits] Video effect name. With \"Screen Blend With Color\", the creator can screen-blend the frame against a configurable blend_color at a chosen intensity.",
+  "iglu": {}
+}

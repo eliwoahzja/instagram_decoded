@@ -1,0 +1,53 @@
+.class public final Lcom/facebook/avatar/expresso/odr/franz/warmup/impl/WarmupBridgeImpl;
+.super Ljava/lang/Object;
+.source ""
+
+
+# static fields
+.field public static final dispatcher:LX/1un;
+
+.field public static final ioDispatcher:LX/1un;
+
+
+# instance fields
+.field public mHybridData:Lcom/facebook/jni/HybridData;
+
+
+# direct methods
+.method public static constructor <clinit>()V
+    .locals 4
+
+    sget-object v3, LX/1th;->A00:LX/1th;
+
+    const v2, 0x2602afd1
+
+    const/4 v1, 0x3
+
+    invoke-virtual {v3, v2, v1}, LX/4Lc;->A04(II)LX/1un;
+
+    move-result-object v0
+
+    sput-object v0, Lcom/facebook/avatar/expresso/odr/franz/warmup/impl/WarmupBridgeImpl;->dispatcher:LX/1un;
+
+    invoke-virtual {v3, v2, v1}, LX/4Lc;->A05(II)LX/1un;
+
+    move-result-object v0
+
+    sput-object v0, Lcom/facebook/avatar/expresso/odr/franz/warmup/impl/WarmupBridgeImpl;->ioDispatcher:LX/1un;
+
+    return-void
+.end method
+
+.method public static final synthetic access$nativeLoadAll(Lcom/facebook/avatar/expresso/odr/franz/warmup/impl/WarmupBridgeImpl;Ljava/lang/String;)V
+    .locals 0
+
+    invoke-direct {p0, p1}, Lcom/facebook/avatar/expresso/odr/franz/warmup/impl/WarmupBridgeImpl;->nativeLoadAll(Ljava/lang/String;)V
+
+    return-void
+.end method
+
+.method public static final native initHybrid(Lcom/facebook/tigon/iface/TigonServiceHolder;Ljava/lang/String;Ljava/lang/String;)Lcom/facebook/jni/HybridData;
+.end method
+
+.method private final native nativeLoadAll(Ljava/lang/String;)V
+.end method

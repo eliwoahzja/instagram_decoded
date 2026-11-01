@@ -1,0 +1,1 @@
+(function(){return getImagesSizes();function getImagesSizes(){const allImgs=document.querySelectorAll("img"),imageToSizes={};for(let i=0;i<allImgs.length;i++){const item=allImgs.item(i);if(!item)continue;const src=undefined;imageToSizes[item.src]={width:item.naturalWidth,height:item.naturalHeight}}return imageToSizes}})()

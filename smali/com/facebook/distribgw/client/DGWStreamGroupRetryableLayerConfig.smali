@@ -1,0 +1,272 @@
+.class public Lcom/facebook/distribgw/client/DGWStreamGroupRetryableLayerConfig;
+.super Ljava/lang/Object;
+.source ""
+
+
+# instance fields
+.field public final avoidDelayOnLastRetry:Z
+
+.field public final bgTeardownDelaySeconds:I
+
+.field public final bufferBgRequestsAfterTeardown:Z
+
+.field public final closeConnectionOnNetworkInterfaceChange:Z
+
+.field public final connectSchedulerConfig:Lcom/facebook/distribgw/client/DGWConnectSchedulerConfig;
+
+.field public final connectTimeoutSeconds:I
+
+.field public final enableEarlyFailOnSuspended:Z
+
+.field public final enableRetryPathSuspendedCheck:Z
+
+.field public final maxRetries:I
+
+.field public final serviceIdsToRetryOnSuspendedCsv:Ljava/lang/String;
+
+.field public final stopPingsOnSuspended:Z
+
+.field public final useNetworkInterfaceLayer:Z
+
+.field public final useStreamGroupsForConnectivity:Z
+
+
+# direct methods
+.method public constructor <init>(ZIIILcom/facebook/distribgw/client/DGWConnectSchedulerConfig;ZZZZZLjava/lang/String;ZZ)V
+    .locals 0
+
+    .line 0
+    invoke-direct {p0}, Ljava/lang/Object;-><init>()V
+
+    .line 3
+    iput-boolean p1, p0, Lcom/facebook/distribgw/client/DGWStreamGroupRetryableLayerConfig;->useStreamGroupsForConnectivity:Z
+
+    .line 5
+    iput p2, p0, Lcom/facebook/distribgw/client/DGWStreamGroupRetryableLayerConfig;->maxRetries:I
+
+    .line 7
+    iput p3, p0, Lcom/facebook/distribgw/client/DGWStreamGroupRetryableLayerConfig;->connectTimeoutSeconds:I
+
+    .line 9
+    iput p4, p0, Lcom/facebook/distribgw/client/DGWStreamGroupRetryableLayerConfig;->bgTeardownDelaySeconds:I
+
+    .line 11
+    iput-object p5, p0, Lcom/facebook/distribgw/client/DGWStreamGroupRetryableLayerConfig;->connectSchedulerConfig:Lcom/facebook/distribgw/client/DGWConnectSchedulerConfig;
+
+    .line 13
+    iput-boolean p6, p0, Lcom/facebook/distribgw/client/DGWStreamGroupRetryableLayerConfig;->closeConnectionOnNetworkInterfaceChange:Z
+
+    .line 15
+    iput-boolean p7, p0, Lcom/facebook/distribgw/client/DGWStreamGroupRetryableLayerConfig;->enableEarlyFailOnSuspended:Z
+
+    .line 17
+    iput-boolean p8, p0, Lcom/facebook/distribgw/client/DGWStreamGroupRetryableLayerConfig;->enableRetryPathSuspendedCheck:Z
+
+    .line 19
+    iput-boolean p9, p0, Lcom/facebook/distribgw/client/DGWStreamGroupRetryableLayerConfig;->bufferBgRequestsAfterTeardown:Z
+
+    .line 21
+    iput-boolean p10, p0, Lcom/facebook/distribgw/client/DGWStreamGroupRetryableLayerConfig;->stopPingsOnSuspended:Z
+
+    .line 23
+    iput-object p11, p0, Lcom/facebook/distribgw/client/DGWStreamGroupRetryableLayerConfig;->serviceIdsToRetryOnSuspendedCsv:Ljava/lang/String;
+
+    .line 25
+    iput-boolean p12, p0, Lcom/facebook/distribgw/client/DGWStreamGroupRetryableLayerConfig;->useNetworkInterfaceLayer:Z
+
+    .line 27
+    iput-boolean p13, p0, Lcom/facebook/distribgw/client/DGWStreamGroupRetryableLayerConfig;->avoidDelayOnLastRetry:Z
+
+    .line 29
+    return-void
+.end method
+
+.method public static newBuilder()LX/6zf;
+    .locals 1
+
+    .line 0
+    new-instance v0, LX/6zf;
+
+    .line 2
+    invoke-direct {v0}, LX/6zf;-><init>()V
+
+    .line 5
+    return-object v0
+.end method
+
+
+# virtual methods
+.method public toString()Ljava/lang/String;
+    .locals 2
+
+    .line 0
+    new-instance v1, Ljava/lang/StringBuilder;
+
+    .line 2
+    invoke-direct {v1}, Ljava/lang/StringBuilder;-><init>()V
+
+    .line 5
+    const-string/jumbo v0, "{useStreamGroupsForConnectivity: "
+
+    .line 8
+    invoke-virtual {v1, v0}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+
+    .line 11
+    iget-boolean v0, p0, Lcom/facebook/distribgw/client/DGWStreamGroupRetryableLayerConfig;->useStreamGroupsForConnectivity:Z
+
+    .line 13
+    invoke-virtual {v1, v0}, Ljava/lang/StringBuilder;->append(Z)Ljava/lang/StringBuilder;
+
+    .line 16
+    const-string v0, ", maxRetries: "
+
+    .line 18
+    invoke-virtual {v1, v0}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+
+    .line 21
+    iget v0, p0, Lcom/facebook/distribgw/client/DGWStreamGroupRetryableLayerConfig;->maxRetries:I
+
+    .line 23
+    invoke-virtual {v1, v0}, Ljava/lang/StringBuilder;->append(I)Ljava/lang/StringBuilder;
+
+    .line 26
+    const-string v0, ", connectTimeoutSeconds: "
+
+    .line 28
+    invoke-virtual {v1, v0}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+
+    .line 31
+    iget v0, p0, Lcom/facebook/distribgw/client/DGWStreamGroupRetryableLayerConfig;->connectTimeoutSeconds:I
+
+    .line 33
+    invoke-virtual {v1, v0}, Ljava/lang/StringBuilder;->append(I)Ljava/lang/StringBuilder;
+
+    .line 36
+    const-string v0, ", bgTeardownDelaySeconds: "
+
+    .line 38
+    invoke-virtual {v1, v0}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+
+    .line 41
+    iget v0, p0, Lcom/facebook/distribgw/client/DGWStreamGroupRetryableLayerConfig;->bgTeardownDelaySeconds:I
+
+    .line 43
+    invoke-virtual {v1, v0}, Ljava/lang/StringBuilder;->append(I)Ljava/lang/StringBuilder;
+
+    .line 46
+    const-string v0, ", connectSchedulerConfig: "
+
+    .line 48
+    invoke-virtual {v1, v0}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+
+    .line 51
+    iget-object v0, p0, Lcom/facebook/distribgw/client/DGWStreamGroupRetryableLayerConfig;->connectSchedulerConfig:Lcom/facebook/distribgw/client/DGWConnectSchedulerConfig;
+
+    .line 53
+    invoke-virtual {v0}, Ljava/lang/Object;->toString()Ljava/lang/String;
+
+    .line 56
+    move-result-object v0
+
+    .line 57
+    invoke-virtual {v1, v0}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+
+    .line 60
+    const-string v0, ", closeConnectionOnNetworkInterfaceChange: "
+
+    .line 62
+    invoke-virtual {v1, v0}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+
+    .line 65
+    iget-boolean v0, p0, Lcom/facebook/distribgw/client/DGWStreamGroupRetryableLayerConfig;->closeConnectionOnNetworkInterfaceChange:Z
+
+    .line 67
+    invoke-virtual {v1, v0}, Ljava/lang/StringBuilder;->append(Z)Ljava/lang/StringBuilder;
+
+    .line 70
+    const-string v0, ", enableEarlyFailOnSuspended: "
+
+    .line 72
+    invoke-virtual {v1, v0}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+
+    .line 75
+    iget-boolean v0, p0, Lcom/facebook/distribgw/client/DGWStreamGroupRetryableLayerConfig;->enableEarlyFailOnSuspended:Z
+
+    .line 77
+    invoke-virtual {v1, v0}, Ljava/lang/StringBuilder;->append(Z)Ljava/lang/StringBuilder;
+
+    .line 80
+    const-string v0, ", bufferBgRequestsAfterTeardown: "
+
+    .line 82
+    invoke-virtual {v1, v0}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+
+    .line 85
+    iget-boolean v0, p0, Lcom/facebook/distribgw/client/DGWStreamGroupRetryableLayerConfig;->bufferBgRequestsAfterTeardown:Z
+
+    .line 87
+    invoke-virtual {v1, v0}, Ljava/lang/StringBuilder;->append(Z)Ljava/lang/StringBuilder;
+
+    .line 90
+    const-string v0, ", stopPingsOnSuspended: "
+
+    .line 92
+    invoke-virtual {v1, v0}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+
+    .line 95
+    iget-boolean v0, p0, Lcom/facebook/distribgw/client/DGWStreamGroupRetryableLayerConfig;->stopPingsOnSuspended:Z
+
+    .line 97
+    invoke-virtual {v1, v0}, Ljava/lang/StringBuilder;->append(Z)Ljava/lang/StringBuilder;
+
+    .line 100
+    const-string v0, ", serviceIdsToRetryOnSuspendedCsv: "
+
+    .line 102
+    invoke-virtual {v1, v0}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+
+    .line 105
+    iget-object v0, p0, Lcom/facebook/distribgw/client/DGWStreamGroupRetryableLayerConfig;->serviceIdsToRetryOnSuspendedCsv:Ljava/lang/String;
+
+    .line 107
+    invoke-virtual {v1, v0}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+
+    .line 110
+    const-string v0, ", useNetworkInterfaceLayer: "
+
+    .line 112
+    invoke-virtual {v1, v0}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+
+    .line 115
+    iget-boolean v0, p0, Lcom/facebook/distribgw/client/DGWStreamGroupRetryableLayerConfig;->useNetworkInterfaceLayer:Z
+
+    .line 117
+    invoke-virtual {v1, v0}, Ljava/lang/StringBuilder;->append(Z)Ljava/lang/StringBuilder;
+
+    .line 120
+    const-string v0, ", avoidDelayOnLastRetry: "
+
+    .line 122
+    invoke-virtual {v1, v0}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+
+    .line 125
+    iget-boolean v0, p0, Lcom/facebook/distribgw/client/DGWStreamGroupRetryableLayerConfig;->avoidDelayOnLastRetry:Z
+
+    .line 127
+    invoke-virtual {v1, v0}, Ljava/lang/StringBuilder;->append(Z)Ljava/lang/StringBuilder;
+
+    .line 130
+    const-string/jumbo v0, "}"
+
+    .line 133
+    invoke-virtual {v1, v0}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+
+    .line 136
+    invoke-virtual {v1}, Ljava/lang/Object;->toString()Ljava/lang/String;
+
+    .line 139
+    move-result-object v0
+
+    .line 140
+    return-object v0
+.end method

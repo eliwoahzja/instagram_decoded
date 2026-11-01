@@ -1,0 +1,57 @@
+# IGLUSCRIPTCOLLISION_BYPASS: IGLUScript port of transition_datamosh, QE-selectable for A/B vs TransitionDatamoshFilter.
+[Filter TransitionDatamosh]
+
+[Init]
+fun init(Filter filter) {
+  makeTexture('transition);
+  filter.passes = {{
+    name = 'datamosh,
+    inputs = {'default, 'transition},
+    shaderInputNames = {'default, 's_texture1},
+    uniforms = { progress = 0.0, lineStretch = 0.2, intensity = 0.3 },
+    glslShader = glsl,
+  }};
+}
+
+fun easeInOutCubic(f32 t) f32 {
+  if (t < 0.5) {
+    return 4.0 * t * t * t;
+  } else {
+    f32 f = -2.0 * t + 2.0;
+    return 1.0 - pow(f, 3.0) / 2.0;
+  }
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  setShaderUniform('datamosh, 'progress, easeInOutCubic(getParameterFloat('progress)));
+}
+
+string glsl = "
+  varying vec2 sourceTextureCoordinate;
+  BaseUniformsOpenGL;
+  uniform sampler2D s_texture1;
+  uniform float progress;
+  uniform float lineStretch;
+  uniform float intensity;
+  float parabola(float x) { return 4.0 * x * (1.0 - x); }
+  vec2 dirFromLuma(float x) { x = x * 6.2831853072; return vec2(cos(x), sin(x)); }
+  void main() {
+    vec2 uv = sourceTextureCoordinate;
+    vec4 a = sampleInput(uv);
+    vec4 b = texture2D(s_texture1, uv);
+    vec3 lum = vec3(0.299, 0.587, 0.114);
+    float lumaA = dot(a.rgb, lum);
+    vec3 rgbDiff = abs(a.rgb - b.rgb);
+    float t = parabola(progress);
+    float horiz = dot(sampleInput(vec2(0.5, uv.y)).xyz, lum) - 0.5;
+    float vert = dot(sampleInput(vec2(uv.x, 0.5)).xyz, lum) - 0.5;
+    lumaA += (horiz + vert) * lineStretch * t;
+    vec2 offsetB = dirFromLuma(lumaA) * (1.0 - progress) * intensity;
+    a = sampleInput(uv);
+    b = texture2D(s_texture1, uv + offsetB);
+    vec3 blend = smoothstep(vec3(0.0), rgbDiff, vec3(progress));
+    vec4 color = vec4(mix(a.rgb, b.rgb, blend), 1.0);
+    gl_FragColor = toOutputFormat(color);
+  }
+";

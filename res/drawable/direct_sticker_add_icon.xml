@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="?igds_color_elevated_highlight_background" />
+            <size android:height="56.0dp" android:width="56.0dp" />
+        </shape>
+    </item>
+    <item android:drawable="@drawable/direct_sticker_add_icon__app_bitmap_0" android:left="@dimen/abc_floating_window_z" android:top="@dimen/abc_floating_window_z" android:right="@dimen/abc_floating_window_z" android:bottom="@dimen/abc_floating_window_z" />
+</layer-list>

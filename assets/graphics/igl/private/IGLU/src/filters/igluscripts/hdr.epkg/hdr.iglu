@@ -1,0 +1,132 @@
+[Filter HDR]
+# "HDR" -- Spark AR port. Effect ID 1713279925734629 (191M DAP, Lighting).
+#
+# Full Spark scene composition (per the exported bin):
+#   1. Full-frame LUT layer (BLUESKY.jpg): rectangle with material0 at
+#      opacity=0.75, alpha blend, patch-driven 8x8 grid LUT lookup.
+#   2. Face-tracked skin smoothing: retouchingMaterial with
+#      SkinSmoothingTexture at skinSmoothingFactor=1.
+#   3. Face-tracked blush overlay: blush(1) texture at opacity=0.108,
+#      alpha blend (SKIPPED -- requires face-mesh geometry).
+#   4. Face-tracked lips overlay: LIPSS(1) texture at opacity=0.159,
+#      multiply blend (SKIPPED -- requires face-mesh geometry).
+#
+# This IGLUScript port covers stages 1-2 (LUT + full-frame skin
+# smoothing approximated with a 9-tap blur). The face-tracked blush and
+# lips overlays are subtle (~11% and ~16% opacity, respectively) and
+# would require an ARClown-style C++ face-mesh port; those are parked
+# pending the Ren Liu face-mesh conversation.
+#
+# LUT delivered via ARD; local sample-app testing loads from
+# assets/hdr/hdr_lut.png via the lut_path string parameter.
+
+[Init]
+fun init(Filter filter)
+{
+    makeTexture('lut);
+
+    filter.parameters = {
+        {strength      = 0.989,  min = 0.0, max = 1.0,  description = "LUT mix strength (Spark material0 opacity = 0.75)"},
+        {blur_strength = 0.127,   min = 0.0, max = 1.0,  description = "Skin-smoothing 9-tap blur mix amount (Spark skinSmoothingFactor = 1)"},
+        {blur_radius   = 0.004, min = 0.0, max = 0.05, description = "Skin-smoothing kernel radius in normalized UV"},
+        {brightness    = 1.007,   min = 0.0, max = 2.0,  description = "Output brightness multiplier (1.0 = no-op)"},
+    };
+
+    filter.passes = {{
+      name = 'pass0,
+      inputs = {'default, 'lut},
+      uniforms = {
+        strength      = 0.989,
+        blur_strength = 0.127,
+        blur_radius   = 0.004,
+        brightness    = 1.007,
+      },
+      glslShader = glslHDR,
+    }};
+}
+
+string lut_path = "lut_path";
+string lut_filename = "";
+
+[PreRender]
+fun preRender(Filter filter){
+    string lut_filename_parameter = getParameterString(lut_path);
+    if (lut_filename_parameter != "") {
+        string new_lut_filename = stringAppend("textureFilePath://", lut_filename_parameter);
+        if (new_lut_filename != lut_filename) {
+            lut_filename = new_lut_filename;
+            loadTexture('lut, lut_filename);
+        }
+    }
+
+    f32 s = getParameterFloat('strength);
+    setShaderUniform('pass0, 'strength, s);
+
+    f32 blr = getParameterFloat('blur_strength);
+    setShaderUniform('pass0, 'blur_strength, blr);
+
+    f32 blrad = getParameterFloat('blur_radius);
+    setShaderUniform('pass0, 'blur_radius, blrad);
+
+    f32 b = getParameterFloat('brightness);
+    setShaderUniform('pass0, 'brightness, b);
+}
+
+#### GLSL shader ####
+
+string glslHDR = "
+    varying vec2 sourceTextureCoordinate;
+    BaseUniformsOpenGL;
+
+    uniform sampler2D auxSampler0;  // 'default (camera)
+    uniform sampler2D auxSampler1;  // 'lut
+
+    uniform float blur_strength;
+    uniform float blur_radius;
+    uniform float brightness;
+
+    // 8x8 grid LUT sample -- matches Spark's LUT patch chain math:
+    // clamp [0.0078125, 0.98438], /8, floor(z*8)/8 for row, floor((z-row)*64)/8 for col.
+    vec3 applyLut(vec3 inRgb) {
+      vec3 c = clamp(inRgb, 0.00781, 0.98438);
+      float x = c.r / 8.0;
+      float y = c.g / 8.0;
+      float z = c.b;
+      float blueY = floor(z * 8.0) / 8.0;
+      float blueX = floor((z - blueY) * 64.0) / 8.0;
+      x += blueX;
+      y += blueY;
+      return texture2D(auxSampler1, vec2(x, y)).xyz;
+    }
+
+    void main() {
+      vec2 uv = sourceTextureCoordinate;
+
+      // Stage 1: 9-tap weighted skin-smoothing blur (full-frame,
+      // approximates Sparks retouchingMaterial + SkinSmoothingTexture
+      // which is face-mesh only; we apply globally since we do not
+      // have face tracking in this IGLUScript port).
+      float r = blur_radius;
+      vec3 center = sampleInput(uv).rgb;
+      vec3 skinBlurred = center * (4.0 / 16.0);
+      skinBlurred += sampleInput(uv + vec2( r, 0.0)).rgb * (2.0 / 16.0);
+      skinBlurred += sampleInput(uv + vec2(-r, 0.0)).rgb * (2.0 / 16.0);
+      skinBlurred += sampleInput(uv + vec2(0.0,  r)).rgb * (2.0 / 16.0);
+      skinBlurred += sampleInput(uv + vec2(0.0, -r)).rgb * (2.0 / 16.0);
+      skinBlurred += sampleInput(uv + vec2( r,  r)).rgb * (1.0 / 16.0);
+      skinBlurred += sampleInput(uv + vec2( r, -r)).rgb * (1.0 / 16.0);
+      skinBlurred += sampleInput(uv + vec2(-r,  r)).rgb * (1.0 / 16.0);
+      skinBlurred += sampleInput(uv + vec2(-r, -r)).rgb * (1.0 / 16.0);
+      vec3 softened = mix(center, skinBlurred, blur_strength);
+
+      // Stage 2: LUT grade mixed at strength (Spark material0 opacity = 0.75).
+      vec3 graded = applyLut(softened);
+      vec3 result = mix(softened, graded, strength);
+
+      // Stage 3: brightness multiplier (no-op at default = 1.0).
+      result *= brightness;
+      result = clamp(result, 0.0, 1.0);
+
+      gl_FragColor = toOutputFormat(vec4(result, 1.0));
+    }
+    ";

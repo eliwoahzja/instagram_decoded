@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector android:height="185.0dp" android:width="160.0dp" android:viewportWidth="190.0" android:viewportHeight="220.0"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:aapt="http://schemas.android.com/aapt">
+    <path android:pathData="M13,66 L13,92" android:strokeColor="#5ac4f0" android:strokeWidth="8.0" android:strokeLineCap="round" />
+    <path android:pathData="M13,100 L13,118" android:strokeColor="#5ac4f0" android:strokeWidth="8.0" android:strokeLineCap="round" />
+    <path android:pathData="M177,60 L177,104" android:strokeColor="#5ac4f0" android:strokeWidth="8.0" android:strokeLineCap="round" />
+    <path android:pathData="M22,214 L22,56 C22,33 33,22 56,22 L134,22 C157,22 168,33 168,56 L168,214" android:strokeColor="@drawable/$nfc_tap_to_read_phone__0" android:strokeWidth="10.0" android:strokeLineCap="round" android:strokeLineJoin="round" />
+    <path android:pathData="M78,32 L112,32" android:strokeColor="#ff1877f2" android:strokeWidth="7.0" android:strokeLineCap="round" />
+</vector>

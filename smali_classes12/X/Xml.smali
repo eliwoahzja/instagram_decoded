@@ -1,0 +1,80 @@
+.class public final LX/Xml;
+.super Ljava/lang/Object;
+.source ""
+
+# interfaces
+.implements Ljava/lang/Runnable;
+
+
+# instance fields
+.field public final synthetic A00:Landroid/view/View;
+
+.field public final synthetic A01:LX/MI4;
+
+
+# direct methods
+.method public constructor <init>(Landroid/view/View;LX/MI4;)V
+    .locals 0
+
+    iput-object p2, p0, LX/Xml;->A01:LX/MI4;
+
+    iput-object p1, p0, LX/Xml;->A00:Landroid/view/View;
+
+    invoke-direct {p0}, Ljava/lang/Object;-><init>()V
+
+    return-void
+.end method
+
+
+# virtual methods
+.method public final run()V
+    .locals 5
+
+    iget-object v4, p0, LX/Xml;->A01:LX/MI4;
+
+    iget-object v3, p0, LX/Xml;->A00:Landroid/view/View;
+
+    iget-object v2, v4, LX/MI4;->A02:LX/C2J;
+
+    if-eqz v2, :cond_0
+
+    invoke-static {v4}, LX/MI4;->A00(LX/MI4;)Ljava/util/ArrayList;
+
+    move-result-object v0
+
+    invoke-virtual {v0}, Ljava/util/AbstractCollection;->isEmpty()Z
+
+    move-result v0
+
+    if-eqz v0, :cond_1
+
+    invoke-virtual {v2}, Landroid/widget/PopupWindow;->isShowing()Z
+
+    move-result v0
+
+    if-eqz v0, :cond_0
+
+    invoke-virtual {v2}, Landroid/widget/PopupWindow;->dismiss()V
+
+    :cond_0
+    return-void
+
+    :cond_1
+    const/4 v1, 0x0
+
+    invoke-virtual {v2, v1}, Landroid/widget/PopupWindow;->setFocusable(Z)V
+
+    const/16 v0, 0x28
+
+    invoke-virtual {v2, v3, v1, v0}, Landroid/widget/PopupWindow;->showAsDropDown(Landroid/view/View;II)V
+
+    const/4 v1, 0x3
+
+    new-instance v0, LX/UAh;
+
+    invoke-direct {v0, v4, v1}, LX/UAh;-><init>(Ljava/lang/Object;I)V
+
+    invoke-virtual {v2, v0}, Landroid/widget/PopupWindow;->setOnDismissListener(Landroid/widget/PopupWindow$OnDismissListener;)V
+
+    return-void
+.end method

@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "identifier": "lo_res",
+  "displayName": "Lo-Res",
+  "description": "[IG Edits] Video effect. With \"Lo-Res\", the creator can apply a degraded retro look that scales down, sharpens, posterizes via a JPEG-style pixelation pass, then composites a bright glow.",
+  "iglu": {
+    "legacyId": 1108
+  }
+}

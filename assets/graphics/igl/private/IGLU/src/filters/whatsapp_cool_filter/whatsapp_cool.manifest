@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "whatsapp_cool",
+  "displayName": "Cool",
+  "description": "[IG Edits] Color filter name. With \"Cool\", the creator can apply WhatsApp's Cool preset via a baked LUT that shifts the frame toward cooler blue tones.",
+  "iglu": {}
+}

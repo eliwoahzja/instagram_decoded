@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="string_0x7f130003">ເມືອງ</string>
+    <string name="string_0x7f130008">ຕື່ມໃສ່ອັດຕະໂນມັດດ້ວຍບັດຈາກບັນຊີໂຄສະນາຂອງທ່ານບໍ?</string>
+    <string name="string_0x7f13002c">ປິດໂປຣແກຣມທ່ອງເວັບ</string>
+    <string name="string_0x7f13002f">%1$s ຕ້ອງການໃຊ້ກ້ອງຖ່າຍຮູບຂອງອຸປະກອນ.</string>
+    <string name="string_0x7f130030">%1$s ຕ້ອງການໃຊ້ສະຖານທີ່ຂອງອຸປະກອນຂອງທ່ານ.</string>
+    <string name="string_0x7f130033">ອະນຸຍາດ</string>
+    <string name="string_0x7f130034">ບລັອກ</string>
+    <string name="string_0x7f13008d">ເກີດບາງຢ່າງຜິດພາດຂຶ້ນ</string>
+    <string name="string_0x7f13008e">ປິດໄວ້</string>
+    <string name="string_0x7f13008f">ອີເມວ</string>
+    <string name="string_0x7f130091">ເວັບໄຊທ໌ທີ່ທ່ານກໍາລັງເບິ່ງແມ່ນພະຍາຍາມເປີດແອັບພາຍນອກ. ທ່ານຕ້ອງການດໍາເນີນຕໍ່ບໍ?</string>
+    <string name="string_0x7f130092">ກັບຄືນ</string>
+    <string name="string_0x7f130093">ດຳເນີນການຕໍ່</string>
+    <string name="string_0x7f130094">ທ່ານກຳລັງອອກຈາກແອັບຂອງພວກເຮົາ</string>
+    <string name="string_0x7f130095">ສິ່ງນີ້ອາດຈະເປັນຍ້ອນຄວາມຜິດພາດທາງເຕັກນິກທີ່ພວກເຮົາກໍາລັງເຮັດວຽກເພື່ອແກ້ໄຂ. ລອງໂຫຼດເພຈນີ້ຄືນໃໝ່.</string>
+    <string name="string_0x7f130096">ໂຫຼດໃໝ່</string>
+    <string name="string_0x7f130097">ເພຈບໍ່ສາມາດໃຊ້ໄດ້ໃນຕອນນີ້</string>
+    <string name="string_0x7f130098">ນາມສະກຸນ</string>
+    <string name="string_0x7f130099">ບໍ່ສາມາດໂຫຼດເພຈໄດ້</string>
+    <string name="string_0x7f13009a">ເປີດດ້ວຍ...</string>
+    <string name="string_0x7f13009b">ເປີດໃນ %1$s</string>
+    <string name="string_0x7f13009c">ຕົວເລືອກເພີ່ມເຕີມ</string>
+    <string name="string_0x7f1300aa">ຊື່</string>
+    <string name="string_0x7f1300af">ຕອນນີ້ທ່ານກຳລັງເບິ່ງແບບເຕັມຈໍ. ປັດໄປທາງຊ້າຍ ຫຼືແຕະປຸ່ມຢ້ອນກັບເພື່ອອອກ.</string>
+    <string name="string_0x7f1300cb">ພວກເຮົາກຳລັງມີບັນຫາໃນການຕັ້ງຄ່າ %2$s ໃນ %1$s ໃນຂະນະນີ້. ທ່ານສາມາດລອງໃໝ່ອີກຄັ້ງ, ຫຼື ໃຊ້ %2$s ທີ່ເປັນພາສາອັງກິດ (ສະຫະລັດ ອາເມລິກາ) ໄດ້ໃນຕອນນີ້.</string>
+    <string name="string_0x7f1300cc">ຄາວໜຶ່ງ​ໃນ​ຂະ​ນະ​ທີ່​ພວກ​ເຮົາ​ຕັ້ງ​ຄ່າ %1$s…</string>
+    <string name="string_0x7f1300cd">ລອງໃໝ່ອີກຄັ້ງ</string>
+    <string name="string_0x7f1300ce">ສືບຕໍ່ເປັນພາສາອັງກິດ (ສະຫະລັດ)</string>
+    <string name="string_0x7f1300d0">ຍົກເລີກ</string>
+    <string name="string_0x7f1300da">ປິດ</string>
+    <string name="string_0x7f1300dd">ແຕະເພື່ອເພີ່ມບັດ</string>
+    <string name="string_0x7f13010b">ລະຫັດໄປສະນີ</string>
+    <string name="string_0x7f130192">ເຊື່ອມຕໍ່ແວ່ນຕາຂອງທ່ານແລ້ວ</string>
+    <string name="string_0x7f1301d3">ໂທລະສັບ</string>
+    <string name="string_0x7f1301d7">ຕັ້ງເວລາ</string>
+</resources>

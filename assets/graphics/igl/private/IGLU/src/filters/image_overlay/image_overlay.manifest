@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "image_overlay",
+  "displayName": "Image Overlay",
+  "description": "[IG Edits] Video effect name. With \"Image Overlay\", the creator can composite an overlay texture over the frame via alpha blending with content_transform positioning and strength fade.",
+  "iglu": {}
+}

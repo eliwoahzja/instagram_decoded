@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="true">
+        <shape>
+            <corners android:radius="@dimen/audio_bar_margin_bottom" />
+            <gradient android:startColor="?igds_color_active_row_background_gradient_start" android:endColor="?igds_color_active_row_background_gradient_end" android:angle="0.0" android:type="linear" />
+        </shape>
+    </item>
+    <item android:state_hovered="true">
+        <shape>
+            <corners android:radius="@dimen/audio_bar_margin_bottom" />
+            <gradient android:startColor="?igds_color_hover_row_background_gradient_start" android:endColor="?igds_color_hover_row_background_gradient_end" android:angle="0.0" android:type="linear" />
+        </shape>
+    </item>
+    <item>
+        <shape>
+            <solid android:color="?igds_color_primary_background" />
+        </shape>
+    </item>
+</selector>

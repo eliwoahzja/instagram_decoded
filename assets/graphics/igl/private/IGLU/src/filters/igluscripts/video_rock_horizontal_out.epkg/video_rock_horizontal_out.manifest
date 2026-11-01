@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "identifier": "15EBEF33-9E7A-491D-BF8B-5F78025AC553",
+  "displayName": "Rock out horizontal",
+  "description": "[IG Edits] Effect name shown in the video effects picker. This is the user-facing label for a video effect.",
+  "iglu": {
+    "legacyId": 3991,
+    "behavior": {
+      "type": "fixedOutro",
+      "durationMs": 1280,
+      "curve": "linear"
+    },
+    "customization": [
+      {
+        "name": "direction",
+        "defaultSelection": "left",
+        "available": [
+          "left",
+          "right"
+        ],
+        "displayName": "Direction"
+      },
+      {
+        "name": "duration",
+        "default": 1.28,
+        "min": 0.1,
+        "max": 5.0,
+        "displayName": "Duration",
+        "displayMethod": "time"
+      }
+    ]
+  },
+  "dependencies": [
+    "video_rock_horizontal_in"
+  ],
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAEZ73Xdzg9"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "c5b2796a",
+      "handle": "AQAKIZZ-gz42",
+      "md5": "9bd31d2761443c3912015afc183c52ae"
+    }
+  }
+}

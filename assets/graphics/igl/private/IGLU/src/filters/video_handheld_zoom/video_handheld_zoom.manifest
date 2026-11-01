@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_handheld_zoom",
+  "displayName": "Handheld zoom",
+  "description": "Video effect name. A video effect is a creative visual element that can be applied to a video. With \"Handheld zoom\", the creator can add a handheld camera movement with zoom effect.",
+  "iglu": {
+    "legacyId": 2068,
+    "behavior": {
+      "type": "fixedIntro",
+      "durationMs": 3000,
+      "curve": "linear"
+    },
+    "customization": [
+      {
+        "name": "speed",
+        "default": 0.1111111,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Speed",
+        "displayNameDescription": "[IG Edits] Slider label controlling the playback or animation speed of a video effect (noun, not a verb); exact range varies per effect."
+      },
+      {
+        "name": "intensity",
+        "default": 0.4444444,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Intensity",
+        "displayNameDescription": "[IG Edits] Slider label controlling the strength of a video effect. Generic across many effects (glow, blur, color, distortion, etc.); exact range varies per effect."
+      },
+      {
+        "name": "zoom",
+        "default": 0.1666667,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Zoom",
+        "displayNameDescription": "[IG Edits] Slider label controlling the zoom factor (scale toward/away from the subject) of a video effect; exact range varies per effect."
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "3b2e171e",
+      "handle": "AQAH6H0VnPoB",
+      "md5": "bfb8a5d03f5db345335acada432a8567"
+    }
+  },
+  "assets": [
+    {
+      "name": "perlin_noise.png",
+      "assetHash": "42393e620664a372495800bfcf40ca960aa0ab3e2ddfe42fbfe2b86098d33000",
+      "hubAssetId": "1259354255546062"
+    }
+  ],
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAGnzA1fj85"
+    }
+  }
+}

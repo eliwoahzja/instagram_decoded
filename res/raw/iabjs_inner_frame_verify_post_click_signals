@@ -1,0 +1,1 @@
+(function(signalsJSON,preSnapshotJSON,timeoutMs,intervalMs,requestId){window._META.IABInnerFrame.verifyPostClickSignalsAndroid(JSON.parse(signalsJSON),JSON.parse(preSnapshotJSON),parseInt(timeoutMs,10),intervalMs?parseInt(intervalMs,10):void 0,requestId)})

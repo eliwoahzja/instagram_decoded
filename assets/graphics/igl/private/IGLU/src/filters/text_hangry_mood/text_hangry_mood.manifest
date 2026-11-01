@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "text_hangry_mood",
+  "displayName": "Hangry Mood",
+  "description": "[IG Edits] Text effect name. With \"Hangry Mood\", the creator can render text as a wavy 3D-extruded dreamy mood with noise distortion, compound blur, and a soft glow halo over 12 chained passes.",
+  "iglu": {}
+}

@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "identifier": "1692D2AF-2528-438E-B11D-72053A825010",
+  "displayName": "Natural Skin",
+  "description": "[IG Edits] Color filter name. Soft natural LUT grade with a subtle saturation and red-channel boost for warmer skin tones.",
+  "ios": {
+    "previewAsset": {
+      "handle": "AQADtOlECDAH"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "f9741509",
+      "handle": "AQBgv6VKAwhZ",
+      "md5": "161ec7ec4a894fcce77d88a09d49fe96"
+    }
+  },
+  "iglu": {
+    "legacyId": 3103
+  },
+  "assets": [
+    {
+      "name": "natural_skin_lut.png",
+      "assetHash": "f8b6b5857aae385a143f7e8a71f7570d8e77d20af64f5e40f1d3801e14cc2ed7",
+      "hubAssetId": "1484950303647280"
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "blur_detection",
+  "displayName": "Blur Detection",
+  "description": "[IG Edits] Utility filter name. With \"Blur Detection\", the creator can sample RGB gradient magnitudes across the frame and reduce 2nd through 7th central moments to a 0-100 blurriness score.",
+  "iglu": {}
+}

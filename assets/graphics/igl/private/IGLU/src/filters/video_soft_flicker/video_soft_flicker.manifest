@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_soft_flicker",
+  "displayName": "Soft flicker",
+  "description": "Video effect name. A video effect is a creative visual element that can be applied to a video. With \"Soft flicker\", the creator can add a subtle flickering effect to the video.",
+  "iglu": {
+    "legacyId": 2049,
+    "customization": [
+      {
+        "name": "intensity",
+        "default": 0.125,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Intensity",
+        "displayNameDescription": "[IG Edits] Slider label controlling the strength of a video effect. Generic across many effects (glow, blur, color, distortion, etc.); exact range varies per effect."
+      },
+      {
+        "name": "speed",
+        "default": 0.667,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Speed",
+        "displayNameDescription": "[IG Edits] Slider label controlling the playback or animation speed of a video effect (noun, not a verb); exact range varies per effect."
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "c9da6cea",
+      "handle": "AQAIA1re5iCx",
+      "md5": "9ceef07d5f204967c523f8801d73e765"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAF1QVbjB-q"
+    }
+  }
+}

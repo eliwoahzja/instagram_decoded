@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "transition_light_wipe",
+  "displayName": "Light Wipe",
+  "description": "Video transition selection. Chooses to apply light wipe transition.",
+  "iglu": {}
+}

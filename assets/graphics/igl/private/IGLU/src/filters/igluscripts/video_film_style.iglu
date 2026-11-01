@@ -1,0 +1,427 @@
+[Filter VideoFilmStyle]
+
+[Init]
+fun init(Filter filter) {
+  filter.parameters = {
+    {intensity = 1.0, min = 0.0, max = 1.0, description = "Color intensity"},
+    {amount = 1.0, min = 0.0, max = 1.0, description = "Grain intensity"},
+    {size = 1.0, min = 0.0, max = 1.0, description = "Film burn intensity"},
+    {speed = 1.0, min = 0.0, max = 1.0, description = "Scratch amount"},
+
+    {strength = 1.0, min = 0.0, max = 1.0, description = "Effect strength"},
+    {scratchAmt = 1.0, min = 0.0, max = 10.0, description = "Scratch amount"},
+    {scratchDensity = 0.3, min = 0.0, max = 1.0, description = "Scratch density"},
+  };
+
+  #remote assets
+  makeTexture('video_film_style_burn);
+  makeTexture('fuji_astia_100f);
+
+  loadTexture('noiseTex, 'texture://TextEffectsSharedAssets/RgbaNoise256);
+
+  filter.passes = {
+    {
+      name = 'noise,
+      inputs = {'noiseTex},
+      uniforms = {
+        strength = 1.0,
+        noiseSize = {0.0, 0.0},
+        seed = 0.0,
+        framerate = 8.0,
+        time_sec = 0.0,
+      },
+      glslShader  = glslNoise,
+    },
+    {
+      name = 'blur,
+      inputs = {'noise},
+      uniforms = {
+        strength = 1.0,
+        blurAmt = 0.2,
+      },
+      glslShader  = glslBlur,
+    },
+    {
+      name = 'grainyFinal,
+      inputs = {'default, 'blur},
+      uniforms = {
+          strength = 1.0,
+          grainAmt = 0.2,
+          grainScale = 1.0,
+          grainContrast = -0.24,
+          grainBrightness = 0.0,
+          grainSaturation = 0.33,
+          brightness = 0.0,
+          contrast = 0.1,
+          dustAmt = 0.28,
+          scratchAmt = 1.0,
+          scratchDensity = 0.4,
+          sourceBlur = 0.2,
+          uInputImageSize = {0.0,0.0},
+          colorIntensity = 1.0,
+      },
+      glslShader  = grainyFinal,
+    },
+    {
+      name = 'lut,
+      inputs = {'grainyFinal, 'fuji_astia_100f},
+      uniforms = {
+        lut_size = {256.0, 16.0},
+        is_grayscale = 0.0,
+        strength = 1.0,
+      },
+      glslShader = lutGlsl,
+    },
+    {
+      name = 'compose,
+      inputs = {'lut, 'video_film_style_burn},
+      uniforms = {
+        strength = 1.0,
+      },
+      glslShader = composeGlsl,
+    }
+  };
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+
+  f32 colorIntensity = getParameterFloat('intensity );
+  f32 grainIntensity = getParameterFloat('amount ) * 0.5;
+  f32 filmBurnIntensity = getParameterFloat('size );
+  f32 scratchIntensity = getParameterFloat('speed );
+
+  setShaderUniform('compose, 'strength, filmBurnIntensity);
+
+  # set up noise/grain effects
+  vec2 size1K = {1024.0,1024.0};
+  setTextureSize('noise, size1K);
+  setShaderUniform('noise, 'noiseSize, size1K);
+
+  vec2 defSize = getTextureSize('default);
+  f32 strength = getParameterFloat('strength);
+  f32 scratchAmount = getParameterFloat('scratchAmt);
+
+  f32 time_sec = getParameterFloat('time_sec);
+
+  setShaderUniform('noise,'time_sec, time_sec );
+  setShaderUniform('noise,'strength, strength);
+  setShaderUniform('blur,'strength, strength);
+
+  setShaderUniform('lut,'strength, colorIntensity);
+
+  setShaderUniform('grainyFinal,'grainAmt, grainIntensity);
+  setShaderUniform('grainyFinal,'scratchAmt, scratchIntensity * 1.2);
+  setShaderUniform('grainyFinal,'scratchDensity, mix(0.3, 0.4, scratchIntensity) );
+  setShaderUniform('grainyFinal,'colorIntensity, 0.0);
+  setShaderUniform('grainyFinal,'brightness, 0.00 * strength);
+  setShaderUniform('grainyFinal,'contrast, 0.1 * strength);
+  setShaderUniform('grainyFinal,'sourceBlur, 0.2 * strength);
+  setShaderUniform('grainyFinal,'strength, 1.0);
+  setShaderUniform('grainyFinal,'uInputImageSize, defSize);
+  setShaderUniform('grainyFinal,'time_sec, time_sec );
+
+}
+
+
+#### GLSL shaders ####
+string glslNoise = "
+  precision highp float;
+  BaseUniformsOpenGL;
+  varying vec2 textureCoordinate;
+
+  uniform float time_sec;
+  uniform vec2 noiseSize;
+  uniform float seed;
+  uniform float framerate;
+
+  float hash11(float n) {
+    return fract(sin(n * 91.3458) * 47453.5453);
+  }
+
+  vec2 hash21(float n) {
+    return vec2(hash11(n), hash11(n + 13.137));
+  }
+
+  void main() {
+    // Quantize time to the film framerate so the grain ticks like a projector.
+    float t = floor(time_sec * framerate) + seed;
+
+    // Three per-frame UV offsets break the 256x256 RgbaNoise256 tile so the
+    // output never aligns to a texture seam.
+    vec2 o0 = hash21(t);
+    vec2 o1 = hash21(t + 17.0);
+    vec2 o2 = hash21(t + 91.7);
+
+    vec2 uv = textureCoordinate;
+
+    // Three samples at incommensurate scales and rotations. Using prime-ish
+    // scales (4.13, 5.71, 7.27) and a yx swap + skew prevents any of the
+    // three lattices from lining up, so the combined noise has no visible
+    // repetition or patchiness even though the source is only 256x256.
+    // fract() emulates GL_REPEAT — the sampler's wrap mode isn't guaranteed
+    // to be set to repeat, so clamp/edge would otherwise smear the tile edges.
+    vec4 n0 = texture2D(s_texture, fract(uv * 4.13 + o0));
+    vec4 n1 = texture2D(s_texture, fract(uv.yx * 5.71 + o1));
+    vec4 n2 = texture2D(s_texture, fract((uv + vec2(uv.y, -uv.x) * 0.5) * 7.27 + o2));
+
+    // Channel-swap the contributions and wrap with fract so the remix
+    // doesn't bias toward 0.5 (a plain average would look grey and patchy).
+    vec3 col = fract(n0.rgb * 1.7 + n1.gbr * 1.3 + n2.brg * 1.1);
+
+    gl_FragColor = vec4(col, 1.0);
+  }
+";
+
+string glslBlur = "
+  precision highp float;
+  BaseUniformsOpenGL;
+
+  varying vec2 textureCoordinate;
+  uniform float blurAmt;
+
+  void main() {
+    vec2 uv = textureCoordinate;
+    vec2 texel = 1.25 * blurAmt / vec2(1024.0);
+
+    vec4 sum = vec4(0.0);
+    sum += texture2D(s_texture, uv + vec2(-texel.x, -texel.y));
+    sum += texture2D(s_texture, uv + vec2(0.0, -texel.y));
+    sum += texture2D(s_texture, uv + vec2(texel.x, -texel.y));
+    sum += texture2D(s_texture, uv + vec2(-texel.x, 0.0));
+
+    sum += texture2D(s_texture, uv);
+
+    sum += texture2D(s_texture, uv + vec2(texel.x, 0.0));
+    sum += texture2D(s_texture, uv + vec2(-texel.x, texel.y));
+    sum += texture2D(s_texture, uv + vec2(0.0, texel.y));
+    sum += texture2D(s_texture, uv + vec2(texel.x, texel.y));
+    sum /= 9.0;
+
+    gl_FragColor = sum;
+  }
+";
+
+string grainyFinal = "
+
+  //uniform sampler2D auxSampler0; // or here?
+  uniform sampler2D auxSampler1;
+
+  varying vec2 textureCoordinate;
+  varying vec2 sourceTextureCoordinate;
+
+  uniform vec2 uInputImageSize;
+  uniform float grainAmt;
+  uniform float brightness;
+  uniform float contrast;
+  uniform float dustAmt;
+  uniform float scratchAmt;
+  uniform float scratchDensity;
+  uniform float grainContrast;
+  uniform float grainScale;
+  uniform float grainBrightness;
+  uniform float grainSaturation;
+  uniform float sourceBlur;
+  uniform float colorIntensity;
+
+  BaseUniformsOpenGL; // overall filter strength
+
+  vec2 mirror(vec2 v) {
+    vec2 m = mod(v, 2.0);
+    return mix(m, 2.0 - m, step(1.0, m));
+  }
+
+  float luma(vec3 color) { return dot(color, vec3(0.299, 0.587, 0.114)); }
+
+  float gammaCorrect(float color, float gamma) { return pow(color, float(1.0 / gamma)); }
+
+  float levelRange(float color, float minInput, float maxInput) {
+    return min(max(color - float(minInput), float(0.0)) / (float(maxInput) - float(minInput)),
+                float(1.0));
+  }
+
+  float levels(float color, float minInput, float gamma, float maxInput) {
+    return gammaCorrect(levelRange(color, minInput, maxInput), gamma);
+  }
+
+  vec3 gammaCorrect(vec3 color, float gamma) { return pow(color, vec3(1.0 / gamma)); }
+
+  vec3 levelRange(vec3 color, float minInput, float maxInput) {
+    return min(max(color - vec3(minInput), vec3(0.0)) / (vec3(maxInput) - vec3(minInput)),
+                vec3(1.0));
+  }
+
+  vec3 levels(vec3 color, float minInput, float gamma, float maxInput) {
+    return gammaCorrect(levelRange(color, minInput, maxInput), gamma);
+  }
+
+  vec4 linearScale(sampler2D tex, vec2 uv, vec2 scaleFactor) {
+    vec2 invScaleFactor = vec2(1.0) / scaleFactor;
+    vec2 g = floor(uv * scaleFactor) * invScaleFactor;
+    vec2 p = fract(uv * scaleFactor);
+
+    vec4 c = texture2D(tex, mirror(g));
+    vec4 c2 = texture2D(tex, mirror(g + vec2(invScaleFactor.x, 0.0)));
+    vec4 c3 = texture2D(tex, mirror(g + vec2(invScaleFactor.x, invScaleFactor.y)));
+    vec4 c4 = texture2D(tex, mirror(g + vec2(0.0, invScaleFactor.y)));
+
+    vec4 color = mix(mix(c, c2, p.x), mix(c4, c3, p.x), p.y);
+    return color;
+  }
+
+  vec3 brightnessContrast(vec3 value, float brightness, float contrast) {
+    return (value - 0.5 + brightness) * (1.0 + contrast) + 0.5;
+  }
+
+  float brightnessContrast(float value, float brightness, float contrast) {
+    return (value - 0.5 + brightness) * (1.0 + contrast) + 0.5;
+  }
+
+  vec3 saturation(vec3 color, float amount) {
+    return mix(vec3(dot(vec3(0.299, 0.587, 0.114), color)), color, amount);
+  }
+
+  void main() {
+
+    vec2 aspect = vec2(1.0, uInputImageSize.y / uInputImageSize.x);
+    vec2 texel = 1.0 / (aspect * 675.0);
+    vec2 uv = sourceTextureCoordinate * aspect.y;
+
+    // create dust
+    vec4 dustXS = linearScale(auxSampler1, uv, vec2(300.0));
+    vec4 dustS = linearScale(auxSampler1, uv, vec2(250.0));
+    vec4 dustM = linearScale(auxSampler1, uv, vec2(200.0));
+    vec4 dustL = linearScale(auxSampler1, uv, vec2(100.0));
+
+    vec4 scratches = linearScale(auxSampler1, uv, vec2(400.0, 1.5));
+
+    float cut = 1.0 - dustAmt;
+    dustXS = smoothstep(cut, 1.0, dustXS) * 2.0;
+    dustS = smoothstep(cut, 1.0, dustS) * 0.8;
+    dustM = smoothstep(cut, 1.0, dustM) * 0.7;
+    dustL = smoothstep(cut, 1.0, dustL) * 0.5;
+    float scut = 1.0 - scratchDensity;
+    scratches = smoothstep(scut, 1.0, scratches) * scratchAmt;
+
+
+    float dust = dustXS.r + dustS.r + dustM.r + dustL.r + scratches.r;
+    dust /= 4.0;
+
+    // sample grain
+    vec4 scaleXS = texture2D(auxSampler1, fract(uv * grainScale));
+    vec4 scaleS  = texture2D(auxSampler1, fract(vec2(1.0 - uv.x, uv.y) * 0.9 * grainScale));
+    vec4 scaleM  = texture2D(auxSampler1, fract(vec2(uv.x, 1.0 - uv.y) * 0.8 * grainScale));
+    vec4 scaleL  = texture2D(auxSampler1, fract(vec2(1.0 - uv) * 0.7 * grainScale));
+
+    vec4 grain = scaleXS * 3.0 + scaleS * 0.6 + scaleM * 0.3 + scaleL * 0.1;
+    grain /= 4.0;
+    grain = smoothstep(0.0, 1.0, grain);
+    grain.rgb = brightnessContrast(grain.rgb, grainBrightness, grainContrast);
+    grain = mix(grain, smoothstep(0.0, 1.0, grain), 0.9);
+    grain = grain * 2.0 - 1.0;
+
+    // increase grain saturation
+    grain.rgb = saturation(grain.rgb, grainSaturation) * 0.9;
+
+    // sample color
+    vec2 st = sourceTextureCoordinate;
+    vec4 color = sampleInput(st);
+    vec4 originalColor = color;
+
+    // add a slight blur
+    float blurAmt = 1.5;
+    vec4 blurColor = color;
+    blurColor += sampleInput(st + vec2(texel.x, 0.0) * blurAmt);
+    blurColor += sampleInput(st - vec2(texel.x, 0.0) * blurAmt);
+    blurColor += sampleInput(st + vec2(0.0, texel.y) * blurAmt);
+    blurColor += sampleInput(st - vec2(0.0, texel.y) * blurAmt);
+    blurColor /= 5.0;
+    color.rgb = mix(color.rgb, blurColor.rgb, sourceBlur);
+
+    // adjust levels
+    float l = luma(color.rgb);
+    color.rgb = levels(color.rgb, 0.0, 1.0, 1.0 + 0.1 * strength);
+
+    // warm the mids
+    float b = color.b;
+    color.r += smoothstep(0.6, 0.0, b) * smoothstep(0.3, 0.35, b) * 0.1 * strength;
+    color.b -= smoothstep(0.6, 0.0, b) * smoothstep(0.3, 0.35, b) * 0.1 * strength;
+
+    // brighten the shadows
+    color.rgb += 0.05 * smoothstep(0.5, 0.0, l) * strength;
+    color.rgb = brightnessContrast(color.rgb, brightness, contrast);
+
+    // crush the highlights
+    color.rgb -= 0.05 * smoothstep(0.75, 1.0, l) * strength;
+    color.r += strength * 0.05 * smoothstep(0.5, 1.0, l);
+
+    color = mix(originalColor, color, colorIntensity);
+
+    float alpha = color.a;
+    // add dust
+    color += strength * dust;
+    // add grain
+    color.rgb += grain.rgb * grainAmt;
+
+    color.a = alpha;
+
+    gl_FragColor = toOutputFormat( color );
+  }
+";
+
+string lutGlsl = "
+      varying vec2 sourceTextureCoordinate;
+      BaseUniformsOpenGL;
+
+      uniform sampler2D auxSampler1;
+      uniform vec2 lut_size;
+      uniform float is_grayscale;
+
+      vec3 colorLUT(vec3 color, sampler2D lut, vec2 lutSize) {
+        float widthInv = 1.0 / lutSize.x;
+        float heightInv = 1.0 / lutSize.y;
+        vec3 scaledColor = color.xyz * (lutSize.y - 1.0);
+        float bFrac = fract(scaledColor.z);
+        vec2 texc = (0.5 + scaledColor.xy) * vec2(widthInv, heightInv);
+        texc.x += (scaledColor.z - bFrac) * heightInv;
+        vec3 b0 = texture2D(lut, texc).xyz;
+        vec3 b1 = texture2D(lut, vec2(texc.x + heightInv, texc.y)).xyz;
+        color.xyz = mix(b0, b1, bFrac);
+        return color;
+      }
+
+      void main() {
+        vec4 texel = sampleInput(sourceTextureCoordinate);
+        vec3 color2 = colorLUT(texel.xyz, auxSampler1, lut_size);
+        vec3 luma = vec3(dot(texel.xyz, vec3(.299, .587, .114)));
+        // grayscale luts blend to neutral b&w instead of the original color
+        texel.xyz = mix(texel.xyz, luma, is_grayscale);
+        texel.xyz = mix(texel.xyz, color2, strength);
+        gl_FragColor = toOutputFormat(texel);
+      }
+";
+
+
+string composeGlsl = "
+  varying vec2 sourceTextureCoordinate;
+  BaseUniformsOpenGL;
+
+  // remote assets
+  uniform sampler2D auxSampler1;
+
+  vec3 screen(vec3 base, vec3 blend) {
+    return 1.0 - (1.0 - base) * (1.0 - blend);
+  }
+
+  void main() {
+    vec2 uv = sourceTextureCoordinate;
+    vec4 base = sampleInput(uv);
+
+    // remote assets
+    vec4 vid = texture2D(auxSampler1, uv);
+    vec3 blended = screen(base.rgb, vid.rgb);
+
+    vec3 result = mix(base.rgb, blended, strength * vid.a);
+    gl_FragColor = toOutputFormat(vec4(result, base.a));
+  }
+";

@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "identifier": "50250443-1143-4b77-be4f-e7ceb43f6c31",
+  "displayName": "Feel with Reel",
+  "description": "[IG Edits] Video effect name. With \"Feel with Reel\", the creator gets a vintage film look: LUT color grade, procedural dust and scratches, film grain, and a film-strip border.",
+  "ios": {
+    "previewAsset": {
+      "handle": "AQADn7DGKIGr"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "f707cc68",
+      "handle": "AQADwtYE1wd8",
+      "md5": "be0cf2c2aa5716f39dc7205eb88b14f1"
+    }
+  },
+  "iglu": {
+    "legacyId": 3201
+  },
+  "assets": [
+    {
+      "name": "feel_with_reel_lut.png",
+      "assetHash": "bb3beb52724191977025d8f0cc87ec45cb8552d76514edc950cbfb7e9c6af109",
+      "hubAssetId": "2287726172002422"
+    },
+    {
+      "name": "feel_with_reel_overlay.png",
+      "assetHash": "d9132eae7989ab2f9ec25054ac2b231f631673528ff63103bc8a496438d3671b",
+      "hubAssetId": "4387836818101658"
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "transition_wipe_right",
+  "displayName": "Wipe Right",
+  "description": "Video transition selection. Chooses to apply wipe right transition.",
+  "iglu": {}
+}

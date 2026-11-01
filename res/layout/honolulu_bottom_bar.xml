@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout android:layout_width="match_parent" android:layout_height="80.0dp"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <androidx.recyclerview.widget.RecyclerView android:layout_gravity="center_vertical" android:orientation="horizontal" android:id="@id/mode_switcher_recycler_view" android:clipToPadding="false" android:layout_width="match_parent" android:layout_height="wrap_content" />
+    <include layout="@layout/honolulu_gallery_button" />
+    <ImageButton android:layout_gravity="end|center" android:id="@id/camera_switch_button" android:background="@android:color/transparent" android:padding="10.0dp" android:layout_width="48.0dp" android:layout_height="48.0dp" android:layout_marginRight="10.0dp" android:src="@drawable/switch_camera_24" android:scaleType="fitCenter" android:tint="@android:color/white" android:layout_marginEnd="10.0dp" />
+</FrameLayout>

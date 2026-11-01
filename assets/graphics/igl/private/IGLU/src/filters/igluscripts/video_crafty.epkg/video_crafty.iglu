@@ -1,0 +1,168 @@
+[Filter VideoCrafty]
+# Crafty — choppy/posterized time distortion effect.
+# Ported from GLSL text animation: "Crafty Classic"
+#
+# Single-pass looping effect:
+#   Posterizes time for choppy animation, then applies horizontal offset
+#   and vertical scaling using a triangleWave helper.
+#
+# Carries both behaviors:
+#   useBeats false -> clock-driven, time_sec posterized by speed x posterization
+#   useBeats true  -> beat-driven, beatStep supplied as a step index per beat
+#
+# Either way the step index wraps at 12, which is the animation's natural period.
+# useBeats is set by BeatReactiveController when a manifest declares beatReactive;
+# with no such manifest nothing writes it and the false default selects the clock.
+
+[Init]
+fun init(Filter filter) {
+    filter.parameters = {
+        {speed = 1.0, min = 0.0, max = 1.0, description = "Animation speed"},
+        {intensity = 0.0, min = 0.0, max = 1.0},
+        {beatStep = 0.0, min = 0.0, max = 11.0, description = "Beat-driven step counter"},
+        {useBeats = false, description = "True while the beat system is driving this effect"},
+    };
+
+    filter.passes = {
+        {
+            name = 'pass0,
+            inputs = {'default},
+            uniforms = {
+                speed = 5.0,
+                posterization = 0.8,
+                vertical_scale = 0.2,
+                angle_intensity = 0.2,
+                horizontal_intensity = 0.03,
+                beatStep = 0.0,
+                useBeats = false,
+            },
+            glslShader = glslCrafty,
+            metalShader = metalCrafty,
+        },
+    };
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+    f32 speed = getParameterFloat('speed);
+    f32 speedMapped = speed * 3.0 + 2.0;
+    setShaderUniform('pass0, 'speed, speedMapped);
+
+    f32 intensity = getParameterFloat('intensity);
+    f32 verticalScale = intensity * 0.8 + 0.2;
+    setShaderUniform('pass0, 'vertical_scale, verticalScale);
+
+    f32 beatStep = getParameterFloat('beatStep);
+    setShaderUniform('pass0, 'beatStep, beatStep);
+
+    boolean useBeats = getParameterBoolean('useBeats);
+    setShaderUniform('pass0, 'useBeats, useBeats);
+}
+
+string glslCrafty = "
+    precision highp float;
+    varying vec2 sourceTextureCoordinate;
+
+    BaseUniformsOpenGL;
+    uniform float time_sec;
+    uniform float speed;
+    uniform float posterization;
+    uniform float vertical_scale;
+    uniform float angle_intensity;
+    uniform float horizontal_intensity;
+    uniform float beatStep;
+    uniform bool useBeats;
+
+    float triangleWave(float x) {
+        return abs(2.0 * fract(x) - 1.0);
+    }
+
+    float mirror(float x) {
+        return 1.0 - abs(mod(x, 2.0) - 1.0);
+    }
+
+    vec2 mirrorUV(vec2 uv) {
+        return vec2(mirror(uv.x), mirror(uv.y));
+    }
+
+    void main() {
+        vec2 uv = sourceTextureCoordinate;
+        float clockStep = time_sec * speed;
+        clockStep *= posterization;
+        clockStep = floor(clockStep);
+        clockStep /= posterization;
+        float t = mod(useBeats ? beatStep : clockStep, 12.0);
+
+        float divisions = cos(t * 0.63) + sin(t);
+        float angle = (uv.y - 0.5) * angle_intensity;
+        uv.x += (triangleWave(divisions * uv.x + angle) - 0.5) * horizontal_intensity;
+
+        float scale_y = triangleWave(divisions * uv.x) - 0.5;
+        scale_y *= vertical_scale;
+        uv.y -= 0.5;
+        uv.y *= 1.0 + scale_y;
+        uv.y += 0.5;
+
+        uv = mirrorUV(uv);
+          vec4 color = sampleInput(uv);
+          gl_FragColor = toOutputFormat(color);
+    }
+";
+
+string metalCrafty = "
+    struct fragmentOut { float4 _gl_FragColor [[color(0)]]; };
+    struct fragmentIn { float2 sourceTextureCoordinate [[user(locn1)]]; };
+
+    typedef struct {
+        float4x4 content_transform;
+        float4x4 texture_transform;
+        float time_sec;
+        float speed;
+        float posterization;
+        float vertical_scale;
+        float angle_intensity;
+        float horizontal_intensity;
+        float beatStep;
+        bool useBeats;
+    } Uniforms;
+
+    float triangleWave(float x) {
+        return abs(2.0 * fract(x) - 1.0);
+    }
+
+    float mirror(float x) {
+        return 1.0 - abs(fmod(x, 2.0) - 1.0);
+    }
+
+    float2 mirrorUV(float2 uv) {
+        return float2(mirror(uv.x), mirror(uv.y));
+    }
+
+    fragment fragmentOut fragmentShader(fragmentIn in [[stage_in]],
+                                        constant Uniforms & uniforms [[buffer(1)]],
+                                        DefaultInputs defaultInputs
+                                        ) {
+        float2 uv = in.sourceTextureCoordinate;
+        float clockStep = uniforms.time_sec * uniforms.speed;
+        clockStep *= uniforms.posterization;
+        clockStep = floor(clockStep);
+        clockStep /= uniforms.posterization;
+        float t = fmod(uniforms.useBeats ? uniforms.beatStep : clockStep, 12.0);
+
+        float divisions = cos(t * 0.63) + sin(t);
+        float angle = (uv.y - 0.5) * uniforms.angle_intensity;
+        uv.x += (triangleWave(divisions * uv.x + angle) - 0.5) * uniforms.horizontal_intensity;
+
+        float scale_y = triangleWave(divisions * uv.x) - 0.5;
+        scale_y *= uniforms.vertical_scale;
+        uv.y -= 0.5;
+        uv.y *= 1.0 + scale_y;
+        uv.y += 0.5;
+
+        uv = mirrorUV(uv);
+          float4 color = sampleInput(defaultInputs, uv);
+          fragmentOut out = {};
+          out._gl_FragColor = toOutputFormat(color);
+          return out;
+    }
+";

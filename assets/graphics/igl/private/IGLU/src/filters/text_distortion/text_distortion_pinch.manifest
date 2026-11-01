@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "text_distortion_pinch",
+  "displayName": "Pinch",
+  "description": "[IG Edits] Text effect name. With Pinch, the creator can add a distorted shrunken center with wide edges effect to their text.",
+  "iglu": {}
+}

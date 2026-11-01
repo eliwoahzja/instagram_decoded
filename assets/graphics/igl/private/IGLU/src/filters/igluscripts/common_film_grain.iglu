@@ -1,0 +1,222 @@
+[Filter FilmGrain]
+# Composable film grain filter (from Oscars/FilmGrain pipeline).
+# 3-pass pipeline: noise generation -> blur -> grain composite.
+# Use as a composable pass via igid = 'common_film_grain
+
+[Init]
+fun init(Filter filter) {
+  filter.parameters = {
+    {grainAmt = 0.2, min = 0.0, max = 1.0, description = "Film grain amount"},
+    {grainScale = 6.0, min = 0.1, max = 20.0, description = "Film grain scale"},
+    {dustAmt = 0.18, min = 0.0, max = 1.0, description = "Dust particle amount"},
+  };
+
+  filter.passes = {
+    {
+      name = 'noise,
+      inputs = {'default},
+      uniforms = {
+        scale = 1.0,
+        noiseSize = {1024.0, 1024.0},
+        seed = 0.0,
+        time = 0.0,
+        framerate = 8.0,
+      },
+      glslShader = glslNoise,
+    },
+    {
+      name = 'noiseBlur,
+      inputs = {'noise},
+      uniforms = {
+        blurAmt = 0.1,
+      },
+      glslShader = glslNoiseBlur,
+    },
+    {
+      name = 'grainComposite,
+      inputs = {'default, 'noiseBlur},
+      uniforms = {
+        outputSize = {1080.0, 1920.0},
+        grainAmt = 0.2,
+        grainScale = 6.0,
+        grainContrast = -0.24,
+        grainBrightness = 0.0,
+        grainSaturation = 0.33,
+        dustAmt = 0.18,
+        dustScale = 1.25,
+        sourceBlur = 0.5,
+        compositeStrength = 1.0,
+      },
+      glslShader = glslGrainComposite,
+    },
+  };
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  f32 time = getParameterFloat('time_sec);
+  # f32 time = getLocalTime(); # uncomment for sample-app testing (host doesn't push time_sec)
+  f32 grainAmt = getParameterFloat('grainAmt);
+  f32 grainScale = getParameterFloat('grainScale);
+  f32 dustAmt = getParameterFloat('dustAmt);
+  vec2 inputSize = getTextureSize('default);
+  print('time, time);
+
+  vec2 noiseRes = {1024.0, 1024.0};
+  setTextureSize('noise, noiseRes);
+  setShaderUniform('noise, 'noiseSize, noiseRes);
+  setShaderUniform('noise, 'time, time);
+  setShaderUniform('grainComposite, 'outputSize, inputSize);
+  setShaderUniform('grainComposite, 'grainAmt, grainAmt);
+  setShaderUniform('grainComposite, 'grainScale, grainScale);
+  setShaderUniform('grainComposite, 'dustAmt, dustAmt);
+}
+
+string glslNoise = "
+  precision highp float;
+  BaseUniformsOpenGL;
+  varying vec2 textureCoordinate;
+
+  uniform vec2 noiseSize;
+  uniform float seed;
+  uniform float scale;
+  uniform float time;
+  uniform float framerate;
+
+  float rand(vec2 p) {
+    vec3 p3 = fract(vec3(p.xyx) * 0.1031);
+    p3 += dot(p3, p3.yzx + 33.33);
+    return fract((p3.x + p3.y) * p3.z);
+  }
+
+  void main() {
+    float scl = mix(0.5, 2.0, scale);
+    vec2 uv = textureCoordinate * scl * noiseSize + seed;
+    float t = floor(time * framerate);
+    float r = rand(floor(uv) + t);
+    float g = rand(floor(uv + noiseSize) + t);
+    float b = rand(floor(uv + noiseSize * 2.0) + t);
+    gl_FragColor = vec4(r, g, b, 1.0);
+  }
+";
+
+string glslNoiseBlur = "
+  varying vec2 sourceTextureCoordinate;
+
+  uniform float blurAmt;
+
+  void main() {
+    vec2 uv = sourceTextureCoordinate;
+    vec2 texel = 1.25 * blurAmt / vec2(1024.0);
+
+    vec4 sum = vec4(0.0);
+    sum += sampleInput(uv + vec2(-texel.x, -texel.y));
+    sum += sampleInput(uv + vec2(0.0, -texel.y));
+    sum += sampleInput(uv + vec2(texel.x, -texel.y));
+    sum += sampleInput(uv + vec2(-texel.x, 0.0));
+    sum += sampleInput(uv);
+    sum += sampleInput(uv + vec2(texel.x, 0.0));
+    sum += sampleInput(uv + vec2(-texel.x, texel.y));
+    sum += sampleInput(uv + vec2(0.0, texel.y));
+    sum += sampleInput(uv + vec2(texel.x, texel.y));
+    sum /= 9.0;
+
+    gl_FragColor = sum;
+  }
+";
+
+string glslGrainComposite = "
+  varying vec2 sourceTextureCoordinate;
+
+  uniform sampler2D auxSampler1;
+
+  uniform vec2 outputSize;
+  uniform float grainAmt;
+  uniform float dustAmt;
+  uniform float dustScale;
+  uniform float grainContrast;
+  uniform float grainScale;
+  uniform float grainBrightness;
+  uniform float grainSaturation;
+  uniform float sourceBlur;
+  uniform float compositeStrength;
+
+  vec2 mirror(vec2 v) {
+    vec2 m = mod(v, 2.0);
+    return mix(m, 2.0 - m, step(1.0, m));
+  }
+
+  float luma(vec3 color) {
+    return dot(color, vec3(0.299, 0.587, 0.114));
+  }
+
+  vec4 linearScale(sampler2D tex, vec2 uv, float scaleFactor) {
+    float invScaleFactor = 1.0 / scaleFactor;
+    vec2 g = floor(uv * scaleFactor) * invScaleFactor;
+    vec2 p = fract(uv * scaleFactor);
+    vec4 c  = texture2D(tex, mirror(g));
+    vec4 c2 = texture2D(tex, mirror(g + vec2(invScaleFactor, 0.0)));
+    vec4 c3 = texture2D(tex, mirror(g + vec2(invScaleFactor, invScaleFactor)));
+    vec4 c4 = texture2D(tex, mirror(g + vec2(0.0, invScaleFactor)));
+    return mix(mix(c, c2, p.x), mix(c4, c3, p.x), p.y);
+  }
+
+  vec3 brightnessContrast(vec3 value, float brightness, float contrast) {
+    return (value - 0.5 + brightness) * (1.0 + contrast) + 0.5;
+  }
+
+  vec3 saturation(vec3 color, float amount) {
+    return mix(vec3(dot(vec3(0.299, 0.587, 0.114), color)), color, amount);
+  }
+
+  void main() {
+    vec2 aspect = vec2(1.0, outputSize.y / outputSize.x);
+    vec2 uv = sourceTextureCoordinate * aspect;
+
+    vec4 scaleXS = texture2D(auxSampler1, fract(uv / grainScale));
+    vec4 scaleS  = texture2D(auxSampler1, fract(vec2(1.0 - uv.x, uv.y) * 0.9 / grainScale));
+    vec4 scaleM  = texture2D(auxSampler1, fract(vec2(uv.x, 1.0 - uv.y) * 0.8 / grainScale));
+    vec4 scaleL  = texture2D(auxSampler1, fract(vec2(1.0 - uv) * 0.7 / grainScale));
+
+    vec4 grain = scaleXS * 3.0 + scaleS * 0.6 + scaleM * 0.3 + scaleL * 0.1;
+    grain /= 4.0;
+    grain = smoothstep(0.0, 1.0, grain);
+    grain.rgb = brightnessContrast(grain.rgb, grainBrightness, grainContrast);
+    grain = mix(grain, smoothstep(0.0, 1.0, grain), 0.9);
+    grain = grain * 2.0 - 1.0;
+
+    grain.rgb = saturation(grain.rgb, grainSaturation) * 0.9;
+
+    vec4 dustXS = linearScale(auxSampler1, uv, 300.0 / dustScale);
+    vec4 dustS  = linearScale(auxSampler1, uv, 250.0 / dustScale);
+    vec4 dustM  = linearScale(auxSampler1, uv, 200.0 / dustScale);
+    vec4 dustL  = linearScale(auxSampler1, uv, 100.0 / dustScale);
+
+    float cut = 1.0 - dustAmt;
+    dustXS = smoothstep(cut, 1.0, dustXS) * 2.0;
+    dustS  = smoothstep(cut, 1.0, dustS) * 0.8;
+    dustM  = smoothstep(cut, 1.0, dustM) * 0.7;
+    dustL  = smoothstep(cut, 1.0, dustL) * 0.5;
+
+    float dust = (dustXS.r + dustS.r + dustM.r + dustL.r) / 4.0;
+
+    vec2 texel = sourceBlur / (aspect * 675.0);
+    vec2 st = sourceTextureCoordinate + grain.xy * 0.002 * texel;
+    vec4 color = sampleInput(st);
+
+    color += sampleInput(st + vec2(texel.x, 0.0));
+    color += sampleInput(st - vec2(texel.x, 0.0));
+    color += sampleInput(st + vec2(0.0, texel.y));
+    color += sampleInput(st - vec2(0.0, texel.y));
+    color /= 5.0;
+
+    color.rgb /= max(color.a, 0.001);
+    color.rgb += grain.rgb * grainAmt;
+    color.rgb += dust;
+    color.rgb = clamp(color.rgb, 0.0, 1.0);
+    color.rgb *= color.a;
+
+    gl_FragColor = toOutputFormat(mix(sampleInput(sourceTextureCoordinate), color, compositeStrength));
+    // gl_FragColor.r += 2.;
+  }
+";

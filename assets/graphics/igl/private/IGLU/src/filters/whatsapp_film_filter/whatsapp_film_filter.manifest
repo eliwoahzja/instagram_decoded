@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "identifier": "whatsapp_film_filter",
+  "displayName": "Whatsapp Film Filter",
+  "description": "[IG Edits] Video effect name. With \"Whatsapp Film Filter\", the creator can apply the WhatsApp Film LUT for muted film-stock tones and contrast.",
+  "assets": [
+    {
+      "name": "lut_film.png",
+      "assetHash": "9c8592200dda206fca2c2e4168e3992e13690aa9ca71eeecc34cb102f412b0e4",
+      "hubAssetId": "847260878339458"
+    }
+  ],
+  "iglu": {}
+}

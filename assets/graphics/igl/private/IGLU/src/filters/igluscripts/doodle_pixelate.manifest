@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "19050bc9-a827-41ea-97a7-0858009da1ee",
+  "displayName": "Doodle Pixelate",
+  "description": "[IG Edits] Drawing brush effect name. With \"Doodle Pixelate\", the creator can quantize brush strokes to a grid of solid color blocks via floor(uv*size/pixelSize) sampling.",
+  "iglu": {}
+}

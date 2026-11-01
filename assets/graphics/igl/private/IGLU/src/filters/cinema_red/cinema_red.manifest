@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "identifier": "abu_dhabi",
+  "displayName": "Abu Dhabi",
+  "description": "City-name color filter",
+  "iglu": {
+    "legacyId": 703
+  },
+  "assets": [
+    {
+      "name": "clut_cinema_red.png",
+      "assetHash": "e63cc5f803bb3af2f61c1c09ff47df95a8390466819d70c34dd2a757e284f772",
+      "hubAssetId": "1275032664504071"
+    }
+  ]
+}

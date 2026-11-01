@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "text_distortion_wave",
+  "displayName": "Wave",
+  "description": "[IG Edits] Text effect name. With \"Wave\", the creator warps a text layer with a sinusoidal up-and-down wave that displaces letters across the baseline.",
+  "iglu": {}
+}

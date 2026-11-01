@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "text_hard_launch",
+  "displayName": "Hard Launch",
+  "description": "[IG Edits] Text preset name. A text preset is a combination of creative styles that can be applied to a text layer in a video.",
+  "iglu": {}
+}

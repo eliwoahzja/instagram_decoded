@@ -1,0 +1,183 @@
+.class public final LX/lck;
+.super LX/efO;
+.source ""
+
+# interfaces
+.implements LX/luA;
+
+
+# direct methods
+.method public constructor <init>(CC)V
+    .locals 2
+
+    const/4 v1, 0x1
+
+    invoke-direct {p0}, Ljava/lang/Object;-><init>()V
+
+    iput-char p1, p0, LX/efO;->A00:C
+
+    invoke-static {p1, p2, v1}, LX/1mx;->A00(III)I
+
+    move-result v0
+
+    int-to-char v0, v0
+
+    iput-char v0, p0, LX/efO;->A01:C
+
+    iput v1, p0, LX/efO;->A02:I
+
+    const/4 v0, 0x0
+
+    sput v0, Lredex/$StoreFenceHelper;->DUMMY_VOLATILE:I
+
+    return-void
+.end method
+
+
+# virtual methods
+.method public final bridge synthetic Adm(Ljava/lang/Comparable;)Z
+    .locals 1
+
+    invoke-static {}, LX/002;->createAndThrow()LX/002;
+
+    move-result-object v0
+
+    throw v0
+.end method
+
+.method public final bridge synthetic C1r()Ljava/lang/Comparable;
+    .locals 1
+
+    iget-char v0, p0, LX/efO;->A01:C
+
+    invoke-static {v0}, Ljava/lang/Character;->valueOf(C)Ljava/lang/Character;
+
+    move-result-object v0
+
+    return-object v0
+.end method
+
+.method public final bridge synthetic DS0()Ljava/lang/Comparable;
+    .locals 1
+
+    iget-char v0, p0, LX/efO;->A00:C
+
+    invoke-static {v0}, Ljava/lang/Character;->valueOf(C)Ljava/lang/Character;
+
+    move-result-object v0
+
+    return-object v0
+.end method
+
+.method public final equals(Ljava/lang/Object;)Z
+    .locals 2
+
+    instance-of v0, p1, LX/lck;
+
+    if-eqz v0, :cond_2
+
+    invoke-virtual {p0}, LX/lck;->isEmpty()Z
+
+    move-result v0
+
+    if-eqz v0, :cond_0
+
+    move-object v0, p1
+
+    check-cast v0, LX/lck;
+
+    invoke-virtual {v0}, LX/lck;->isEmpty()Z
+
+    move-result v0
+
+    if-nez v0, :cond_1
+
+    :cond_0
+    iget-char v1, p0, LX/efO;->A00:C
+
+    check-cast p1, LX/efO;
+
+    iget-char v0, p1, LX/efO;->A00:C
+
+    if-ne v1, v0, :cond_2
+
+    iget-char v1, p0, LX/efO;->A01:C
+
+    iget-char v0, p1, LX/efO;->A01:C
+
+    if-ne v1, v0, :cond_2
+
+    :cond_1
+    const/4 v0, 0x1
+
+    return v0
+
+    :cond_2
+    const/4 v0, 0x0
+
+    return v0
+.end method
+
+.method public final hashCode()I
+    .locals 2
+
+    invoke-virtual {p0}, LX/lck;->isEmpty()Z
+
+    move-result v0
+
+    if-eqz v0, :cond_0
+
+    const/4 v1, -0x1
+
+    return v1
+
+    :cond_0
+    iget-char v0, p0, LX/efO;->A00:C
+
+    mul-int/lit8 v1, v0, 0x1f
+
+    iget-char v0, p0, LX/efO;->A01:C
+
+    add-int/2addr v1, v0
+
+    return v1
+.end method
+
+.method public final isEmpty()Z
+    .locals 2
+
+    iget-char v1, p0, LX/efO;->A00:C
+
+    iget-char v0, p0, LX/efO;->A01:C
+
+    invoke-static {v1, v0}, LX/5B5;->A01(II)I
+
+    move-result v0
+
+    if-lez v0, :cond_0
+
+    const/4 v0, 0x1
+
+    return v0
+
+    :cond_0
+    const/4 v0, 0x0
+
+    return v0
+.end method
+
+.method public final toString()Ljava/lang/String;
+    .locals 3
+
+    iget-char v2, p0, LX/efO;->A00:C
+
+    const-string v1, ".."
+
+    iget-char v0, p0, LX/efO;->A01:C
+
+    invoke-static {v1, v2, v0}, LX/003;->A0D(Ljava/lang/String;CC)Ljava/lang/String;
+
+    move-result-object v0
+
+    return-object v0
+.end method

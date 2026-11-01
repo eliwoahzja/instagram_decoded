@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "identifier": "color_grading",
+  "displayName": "Color Grading",
+  "description": "[IG Edits] Color filter name. With \"Color Grading\", the creator can apply lift/gamma/gain grading with shadow/midtone/highlight tints, HSV saturation limit and channel bow correction.",
+  "iglu": {
+    "legacyId": 1112
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_sparkle",
+  "displayName": "Sparkle",
+  "description": "[IG Edits] Video effect name shared across full-frame and subject-cutout surfaces. With \"Sparkle\", twinkling sparkle particles are overlaid on the image.",
+  "iglu": {
+    "legacyId": 3016,
+    "customization": [
+      {
+        "name": "intensity",
+        "default": 0.0,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Intensity",
+        "displayNameDescription": "[IG Edits] Slider label controlling the strength of a video effect. Generic across many effects (glow, blur, color, distortion, etc.); exact range varies per effect."
+      },
+      {
+        "name": "amount",
+        "default": 0.7,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Amount",
+        "displayNameDescription": "[IG Edits] Slider label controlling the magnitude or quantity of a video effect. Generic across many effects; exact range varies per effect."
+      },
+      {
+        "name": "color",
+        "defaultSelection": "#FF00FF",
+        "available": [
+          "#FF00FF",
+          "#FFFFFF",
+          "#FFD600",
+          "#FF7A00",
+          "#FE1D37",
+          "#FF0169",
+          "#D300C5",
+          "#7638FA",
+          "#37038B",
+          "#1CD164",
+          "#0095F6",
+          "#AD88FC",
+          "#FDD5FD",
+          "#FFABE1",
+          "#FFC584",
+          "#FFF8C2",
+          "#09FF00",
+          "#FFFF00",
+          "#5AFAC7",
+          "#0000FF"
+        ],
+        "displayName": "Color",
+        "displayNameDescription": "[IG Edits] Color picker label. The user selects a color used by the video effect (e.g., glow tint, outline color, sparkle color); available palette varies per effect."
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "9a9d9e90",
+      "handle": "AQADoeIG6EwU",
+      "md5": "1fc3256e3caa09005e9ec0a199112831"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAGFjPvPgIJ"
+    }
+  }
+}

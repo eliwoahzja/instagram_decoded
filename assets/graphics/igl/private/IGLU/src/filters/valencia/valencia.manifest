@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "identifier": "valencia",
+  "displayName": "Valencia",
+  "description": "[IG Edits] Color filter name. With \"Valencia\", the creator can apply a per-channel curve map plus a saturation matrix and luma-driven gradient map for warm faded Valencia tones.",
+  "iglu": {
+    "legacyId": 25
+  },
+  "assets": [
+    {
+      "name": "gradient_map_valencia.png",
+      "assetHash": "73c429a6eb6b64a4f6583fac9eafe30414f23d43bfc3b9347ca72ee63a0f8f27",
+      "hubAssetId": "1387008269895665"
+    },
+    {
+      "name": "map_valencia.png",
+      "assetHash": "d4d437aaa24370b20be42c95a37599a54464ff0ca2a0449be5186619929e5846",
+      "hubAssetId": "1847615055957431"
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="oval">
+            <size android:height="23.0dp" android:width="23.0dp" />
+            <solid android:color="?igds_color_gradient_pink" />
+            <stroke android:width="3.0dp" android:color="@color/bds_black" />
+        </shape>
+    </item>
+    <item android:height="18.0dp" android:width="18.0dp" android:drawable="@drawable/highlights_rewind_circle_dark__app_bitmap_0" android:left="5.0dp" android:top="5.0dp" android:right="5.0dp" android:bottom="5.0dp" />
+</layer-list>

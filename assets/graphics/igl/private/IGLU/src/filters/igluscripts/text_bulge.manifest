@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "identifier": "text_bulge",
+  "displayName": "Text Bulge",
+  "description": "[IG Edits] Text effect name. With \"Text Bulge\", the creator can animate a radial UV bulge whose magnitude is driven over time by samples from a precomputed animation curve texture.",
+  "assets": [
+    {
+      "name": "bulge.png",
+      "assetHash": "66f2ba5c28527e8220ff67c0f64914252d82c641748ef76e767277738eae87ab",
+      "hubAssetId": "3641797072626941"
+    }
+  ],
+  "iglu": {}
+}

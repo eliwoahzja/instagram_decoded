@@ -1,0 +1,74 @@
+[Filter VideoLineWipeVertical]
+[MaskBehavior alpha]
+[InEditsApp]
+
+[Init]
+fun init(Filter filter) {
+    filter.parameters = {
+        {direction = 0.0, min = 0.0, max = 1.0, description = "Wipe direction"},
+        {amount = 0.1, min = 0.0, max = 0.5, description = "Edge smoothness"},
+        {outro = 0.0, min = 0.0, max = 1.0, description = "0 = In, 1 = Out"},
+    };
+
+    filter.passes = {
+        {
+            name = 'pass0,
+            inputs = {'default},
+            uniforms = {
+                progress = 0.0,
+                direction = 2.0,
+                amount = 0.05,
+                outro = 0.0,
+            },
+            glslShader = glsl,
+        },
+    };
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+    f32 progress = getParameterFloat('progress);
+    f32 direction = getParameterFloat('direction);
+    f32 amount = getParameterFloat('amount);
+    f32 outro = getParameterFloat('outro);
+
+    # keep amount off 0 so the smoothstep edge doesn't collapse
+    amount = max(0.001, amount);
+
+    setShaderUniform('pass0, 'progress, progress);
+    setShaderUniform('pass0, 'direction, direction);
+    setShaderUniform('pass0, 'amount, amount);
+    setShaderUniform('pass0, 'outro, outro);
+}
+
+string glsl = "
+    precision highp float;
+    varying vec2 sourceTextureCoordinate;
+    uniform float progress;
+    uniform float direction;
+    uniform float amount;
+    uniform float outro;
+
+    void main() {
+        vec2 uv = sourceTextureCoordinate;
+        vec4 color = sampleInput(uv);
+
+        vec2 guv = vec2(uv.x, max(UP, 0.0) + DOWN * uv.y);
+        float dirY = (direction-2.0) * 2.0 - 1.0;
+        vec2 dir = normalize(vec2(0.0, dirY));
+        float d = dot(guv, dir);
+        float minD = min(0.0, dir.x) + min(0.0, dir.y);
+        float maxD = max(0.0, dir.x) + max(0.0, dir.y);
+        float nd = (d - minD) / (maxD - minD);
+
+        float pIn = progress * (1.0 + 2.0 * amount) - amount;
+        float pOut = (1.0 - progress) * (1.0 + 2.0 * amount) - amount;
+        float maskIn = smoothstep(pIn - amount, pIn + amount, nd);
+        float maskOut = smoothstep(pOut - amount, pOut + amount, nd);
+        float mask = mix(maskIn, maskOut, outro);
+
+        color.a = color.a * (1.0-mask);
+        color.rgb *= color.a;
+        gl_FragColor = toOutputFormat(color);
+    }
+";

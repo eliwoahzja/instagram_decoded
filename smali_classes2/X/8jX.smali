@@ -1,0 +1,210 @@
+.class public abstract LX/8jX;
+.super Ljava/lang/Object;
+.source ""
+
+
+# direct methods
+.method public static final A00(LX/8jW;)Ljava/lang/Integer;
+    .locals 6
+
+    const v4, 0x5b289eb8
+
+    iget-object v0, p0, LX/3gI;->A01:LX/a0P;
+
+    invoke-interface {v0, v4}, LX/a0P;->GWK(I)LX/a0P;
+
+    move-result-object v3
+
+    if-nez v3, :cond_0
+
+    invoke-static {}, LX/5B5;->A07()V
+
+    invoke-static {}, LX/002;->createAndThrow()LX/002;
+
+    move-result-object v0
+
+    throw v0
+
+    :cond_0
+    const-string/jumbo v2, "itas-android"
+
+    sget-object v1, LX/56z;->A00:LX/56z;
+
+    new-instance v0, LX/1zr;
+
+    invoke-direct {v0, v1, v4, v2}, LX/1zr;-><init>(Ljava/util/List;ILjava/lang/String;)V
+
+    new-instance v2, LX/8jY;
+
+    invoke-direct {v2, v0, v3}, LX/3gI;-><init>(LX/1zr;LX/a0P;)V
+
+    iget-object v3, v2, LX/3gI;->A01:LX/a0P;
+
+    const/16 v0, 0x22
+
+    new-instance v1, LX/9hn;
+
+    invoke-direct {v1, v2, v0}, LX/9hn;-><init>(Ljava/lang/Object;I)V
+
+    const v0, 0x1db7e05f
+
+    invoke-interface {v3, v0, v1}, LX/a0P;->HbO(ILkotlin/jvm/functions/Function0;)Ljava/lang/Object;
+
+    move-result-object v0
+
+    check-cast v0, Ljava/lang/Boolean;
+
+    invoke-virtual {v0}, Ljava/lang/Boolean;->booleanValue()Z
+
+    move-result v0
+
+    if-nez v0, :cond_2
+
+    const/16 v0, 0x21
+
+    new-instance v1, LX/9hn;
+
+    invoke-direct {v1, v2, v0}, LX/9hn;-><init>(Ljava/lang/Object;I)V
+
+    const v0, -0x16467290
+
+    invoke-interface {v3, v0, v1}, LX/a0P;->HbO(ILkotlin/jvm/functions/Function0;)Ljava/lang/Object;
+
+    move-result-object v0
+
+    check-cast v0, Ljava/lang/Number;
+
+    invoke-virtual {v0}, Ljava/lang/Number;->intValue()I
+
+    move-result p0
+
+    :cond_1
+    invoke-static {p0}, Ljava/lang/Integer;->valueOf(I)Ljava/lang/Integer;
+
+    move-result-object v0
+
+    return-object v0
+
+    :cond_2
+    const v0, 0x62abb0f9
+
+    invoke-interface {v3, v0}, LX/a0P;->CpX(I)Ljava/lang/Boolean;
+
+    move-result-object v0
+
+    const/4 v2, 0x0
+
+    if-eqz v0, :cond_7
+
+    invoke-virtual {v0}, Ljava/lang/Boolean;->booleanValue()Z
+
+    move-result v1
+
+    :goto_0
+    const v0, -0xec4f550
+
+    invoke-interface {v3, v0}, LX/a0P;->Cpi(I)Ljava/lang/Integer;
+
+    move-result-object v0
+
+    if-eqz v0, :cond_6
+
+    invoke-virtual {v0}, Ljava/lang/Number;->intValue()I
+
+    move-result p0
+
+    :goto_1
+    if-eqz v1, :cond_3
+
+    const/4 v5, 0x1
+
+    if-nez p0, :cond_4
+
+    :cond_3
+    const/4 v5, 0x0
+
+    :cond_4
+    const v0, -0x15be53bb
+
+    invoke-interface {v3, v0}, LX/a0P;->Cpe(I)Lcom/google/common/collect/ImmutableList;
+
+    move-result-object v1
+
+    if-eqz v1, :cond_9
+
+    const/16 v0, 0xa
+
+    invoke-static {v1, v0}, LX/55A;->A0L(Ljava/lang/Iterable;I)I
+
+    move-result v0
+
+    new-instance v4, Ljava/util/ArrayList;
+
+    invoke-direct {v4, v0}, Ljava/util/ArrayList;-><init>(I)V
+
+    invoke-virtual {v1}, Ljava/util/AbstractCollection;->iterator()Ljava/util/Iterator;
+
+    move-result-object v3
+
+    :goto_2
+    invoke-interface {v3}, Ljava/util/Iterator;->hasNext()Z
+
+    move-result v0
+
+    if-eqz v0, :cond_8
+
+    invoke-interface {v3}, Ljava/util/Iterator;->next()Ljava/lang/Object;
+
+    move-result-object v2
+
+    check-cast v2, LX/a0P;
+
+    if-nez v2, :cond_5
+
+    invoke-static {}, LX/5B5;->A07()V
+
+    invoke-static {}, LX/002;->createAndThrow()LX/002;
+
+    move-result-object v0
+
+    throw v0
+
+    :cond_5
+    const/4 v1, 0x0
+
+    new-instance v0, LX/13h;
+
+    invoke-direct {v0, v1, v2}, LX/3gI;-><init>(LX/1zr;LX/a0P;)V
+
+    invoke-virtual {v4, v0}, Ljava/util/AbstractCollection;->add(Ljava/lang/Object;)Z
+
+    goto :goto_2
+
+    :cond_6
+    const/4 p0, 0x0
+
+    goto :goto_1
+
+    :cond_7
+    const/4 v1, 0x0
+
+    goto :goto_0
+
+    :cond_8
+    invoke-static {v4}, Lcom/google/common/collect/ImmutableList;->copyOf(Ljava/util/Collection;)Lcom/google/common/collect/ImmutableList;
+
+    move-result-object v0
+
+    invoke-virtual {v0}, Ljava/util/AbstractCollection;->size()I
+
+    move-result v2
+
+    :cond_9
+    if-nez v5, :cond_1
+
+    invoke-static {v2}, Ljava/lang/Integer;->valueOf(I)Ljava/lang/Integer;
+
+    move-result-object v0
+
+    return-object v0
+.end method

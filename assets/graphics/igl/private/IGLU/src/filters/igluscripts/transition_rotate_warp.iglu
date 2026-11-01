@@ -1,0 +1,103 @@
+# IGLUSCRIPTCOLLISION_BYPASS: IGLUScript port of transition_rotate_warp, QE-selectable for A/B vs RotateWarpTransitionFilter.
+[Filter TransitionRotateWarp]
+
+[Init]
+fun init(Filter filter) {
+  makeTexture('transition);
+  filter.passes = {{
+    name = 'rotate_warp,
+    inputs = {'default, 'transition},
+    shaderInputNames = {'default, 's_texture1},
+    uniforms = {
+      progress = 0.0,
+      rotation = 0.5,
+      outputSize = {1024.0, 1024.0},
+    },
+    glslShader = glsl,
+  }};
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  setShaderUniform('rotate_warp, 'progress, getParameterFloat('progress));
+  setShaderUniform('rotate_warp, 'outputSize, getTextureSize('default));
+}
+
+string glsl = "
+  varying vec2 sourceTextureCoordinate;
+  BaseUniformsOpenGL;
+  uniform sampler2D s_texture1;
+  uniform float progress;
+  uniform float rotation;
+  uniform vec2 outputSize;
+  mat2 rotate2d(float radians) {
+    float c = cos(radians);
+    float s = sin(radians);
+    return mat2(c, -s, s, c);
+  }
+  vec2 polar2cartesian(float radius, float angle) {
+    return vec2(cos(angle), sin(angle)) * radius;
+  }
+  vec2 cartesian2polar(vec2 st) {
+    return vec2(length(st), atan(st.y, st.x));
+  }
+  float ramp(float edge0, float edge1, float x) {
+    return clamp((x - edge0) / (edge1 - edge0), 0.0, 1.0);
+  }
+  float easeOutBack(float t, float s) {
+    t = t - 1.0;
+    return t * t * ((s + 1.0) * t + s) + 1.0;
+  }
+  void main() {
+    float PI = 3.14159265358979;
+    float TWO_PI = 6.28318530717958;
+    float BOUNCE = 1.70158;
+    float motionBlurSamples = 10.0;
+    vec2 uv = sourceTextureCoordinate;
+    uv.y = max(UP, 0.0) + DOWN * uv.y;
+    vec4 color = vec4(0.0);
+    float angleEnd = rotation * TWO_PI;
+    float fps = 60.0;
+    float sampleDelay = (1.0 / fps) / motionBlurSamples;
+    float halfAngle = angleEnd / 2.0;
+    float halfWidth = outputSize.x / 2.0;
+    float dd = halfWidth / tan(halfAngle);
+    vec2 center = vec2(0.5, 1.0 + dd / outputSize.y);
+    for (float i = 0.0; i < motionBlurSamples; i += 1.0) {
+      float t = clamp(progress - i * sampleDelay, 0.0, 1.0);
+      float ease = easeOutBack(t, BOUNCE * 0.85);
+      float angle = angleEnd * ease;
+      vec4 a;
+      vec4 b;
+      mat2 rot = rotate2d(angle);
+      vec2 st = (((uv - center) * outputSize) * rot) / outputSize + center;
+      vec2 hinge = vec2(1.0);
+      vec2 polarSt = cartesian2polar((st - hinge) * outputSize);
+      float hingeAngle = polarSt.y / TWO_PI + 0.5;
+      float hingeBlend = ramp(0.25, rotation + 0.25, hingeAngle);
+      {
+        float angleCoord = min(polarSt.y, -PI * 0.5);
+        vec2 cartSt = polar2cartesian(polarSt.x, angleCoord);
+        cartSt = cartSt / outputSize + hinge;
+        cartSt.y = max(UP, 0.0) + DOWN * cartSt.y;
+        a = sampleInput(cartSt);
+      }
+      {
+        mat2 rot2 = rotate2d(angle - angleEnd);
+        vec2 st2 = (((uv - center) * outputSize) * rot2) / outputSize + center;
+        bool leftSide = st2.x < 0.5;
+        vec2 hinge2 = leftSide ? vec2(0.0, 1.0) : vec2(1.0, 1.0);
+        vec2 polarSt2 = cartesian2polar((st2 - hinge2) * outputSize);
+        float angleCoord = leftSide ? max(polarSt2.y, -0.5 * PI) : min(polarSt2.y, -0.5 * PI);
+        vec2 cartSt = polar2cartesian(polarSt2.x, angleCoord);
+        cartSt = cartSt / outputSize + hinge2;
+        cartSt.y = max(UP, 0.0) + DOWN * cartSt.y;
+        b = texture2D(s_texture1, cartSt);
+      }
+      color += mix(a, b, hingeBlend);
+    }
+    color /= motionBlurSamples;
+    color.a = 1.0;
+    gl_FragColor = toOutputFormat(color);
+  }
+";

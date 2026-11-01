@@ -1,0 +1,121 @@
+[Filter SplitCam]
+# "Split Cam" — pure UV-manipulation filter with a single GLOBAL
+# animated zoom. As one zoom level loops over time, the texture wraps
+# (fract) to fill the canvas with N x N copies. All tiles share the
+# same zoom state — they all zoom in / zoom out together. Same Spark
+# patch behaviour: keyframe-driven scale fed into a wrap-mode texture
+# wrapper.
+#
+# Implementation:
+#   - Global scale animates between `scale_min` and `scale_max` via
+#     sin(time * zoom_speed) so the scale loops smoothly.
+#   - Center-zoom: `scaled = (uv - 0.5) / scale + 0.5`.
+#   - Tile via `fract(scaled)` (wrap mode).
+#   - Optional global mirror flip when scale crosses `flip_threshold`
+#     ("zooms past the plane" mirror effect).
+#
+# Pure UV math: no procedural overlays, no multi-pass rendering.
+
+[Init]
+fun init(Filter filter)
+{
+    filter.parameters = {
+        {scale_min = 0.150, min = 0.02, max = 1.0, description = "Minimum zoom scale (zoomed-OUT extreme; small = many tiles)"},
+        {scale_max = 1.500, min = 0.5,  max = 5.0, description = "Maximum zoom scale (zoomed-IN extreme; >1.0 = sample tighter than 1 tile)"},
+        {zoom_speed = 0.229, min = 0.02, max = 2.0, description = "Zoom oscillation rate in Hz"},
+        {partial_factor = 0.600, min = 0.0, max = 1.0, description = "Alternating-cycle zoom strength (0 = both half-strength, 1 = both full; cycles alternate between this fraction of scale_max and full scale_max)"},
+        {flip_threshold = 1.200, min = 0.5, max = 5.0, description = "Global mirror-flip threshold; when scale exceeds this, whole image flips vertically"},
+    };
+
+    filter.passes = {{
+      name = 'pass0,
+      inputs = {'default},
+      uniforms = {
+        scale_min = 0.150,
+        scale_max = 1.500,
+        zoom_speed = 0.229,
+        partial_factor = 0.600,
+        flip_threshold = 1.200,
+        time = 0.0,
+      },
+      glslShader = glslSplitCam,
+    }};
+}
+
+[PreRender]
+fun preRender(Filter filter){
+    f32 sn = getParameterFloat('scale_min);
+    setShaderUniform('pass0, 'scale_min, sn);
+
+    f32 sx = getParameterFloat('scale_max);
+    setShaderUniform('pass0, 'scale_max, sx);
+
+    f32 zs = getParameterFloat('zoom_speed);
+    setShaderUniform('pass0, 'zoom_speed, zs);
+
+    f32 pf = getParameterFloat('partial_factor);
+    setShaderUniform('pass0, 'partial_factor, pf);
+
+    f32 ft = getParameterFloat('flip_threshold);
+    setShaderUniform('pass0, 'flip_threshold, ft);
+
+    f32 time = getLocalTime();
+    setShaderUniform('pass0, 'time, time);
+}
+
+#### GLSL shader ####
+
+string glslSplitCam = "
+    varying vec2 sourceTextureCoordinate;
+    BaseUniformsOpenGL;
+
+    uniform sampler2D auxSampler0;  // 'default (camera)
+
+    uniform float scale_min;
+    uniform float scale_max;
+    uniform float zoom_speed;
+    uniform float partial_factor;
+    uniform float flip_threshold;
+    uniform float time;
+
+    void main() {
+      vec2 uv = sourceTextureCoordinate;
+
+      // Alternating-cycle zoom: every other cycle is a PARTIAL zoom
+      // (peak reaches partial_factor of the way from scale_min toward
+      // scale_max), the next is a FULL zoom (peak reaches scale_max).
+      // Gives a 1st-not-as-deep / 2nd-fully-zoomed pulsing rhythm.
+      //
+      // Each cycle is one positive half-sine (sin(phase * pi)) so the
+      // curve is 0 at both ends of the cycle and peaks at the middle.
+      // That means BOTH cycle ends sit at scale_min, so when the cycle
+      // index flips and effective_max changes, the scale is at
+      // scale_min on both sides of the boundary — NO JUMP. (Prior
+      // sin(phase * 2pi) variant put cycle ends at mid scale, which
+      // produced a visible jump when effective_max changed.)
+      float cycle_idx   = floor(time * zoom_speed);
+      float cycle_phase = fract(time * zoom_speed);            // [0, 1)
+      float is_full     = mod(cycle_idx, 2.0);                 // 0 or 1
+      float partial_max =
+          mix(scale_min, scale_max, partial_factor);
+      float effective_max = mix(partial_max, scale_max, is_full);
+
+      // 0 -> 1 -> 0 over [0, 1]; peaks at 0.5.
+      float zoom_curve = sin(cycle_phase * 3.1415927);
+      float scale = mix(scale_min, effective_max, zoom_curve);
+
+      // Center-zoom around canvas center, then wrap-tile via fract().
+      vec2 centered = uv - 0.5;
+      vec2 scaled   = centered / max(scale, 0.001) + 0.5;
+      vec2 wrapped  = fract(scaled);
+
+      // Optional global mirror-flip when scale exceeds flip_threshold.
+      // Whole image flips VERTICALLY so the cycle reads as the camera
+      // passing through and re-emerging.
+      float flip = step(flip_threshold, scale);
+      wrapped.y = mix(wrapped.y, 1.0 - wrapped.y, flip);
+
+      vec4 color = sampleInput(wrapped);
+      gl_FragColor = toOutputFormat(color);
+    }
+    ";

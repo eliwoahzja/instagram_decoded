@@ -1,0 +1,102 @@
+.class public abstract Lapp/morphe/extension/crimera/internal/google/common/cache/ForwardingCache$SimpleForwardingCache;
+.super Lapp/morphe/extension/crimera/internal/google/common/cache/ForwardingCache;
+.source "ForwardingCache.java"
+
+
+# annotations
+.annotation system Ldalvik/annotation/EnclosingClass;
+    value = Lapp/morphe/extension/crimera/internal/google/common/cache/ForwardingCache;
+.end annotation
+
+.annotation system Ldalvik/annotation/InnerClass;
+    accessFlags = 0x409
+    name = "SimpleForwardingCache"
+.end annotation
+
+.annotation system Ldalvik/annotation/Signature;
+    value = {
+        "<K:",
+        "Ljava/lang/Object;",
+        "V:",
+        "Ljava/lang/Object;",
+        ">",
+        "Lapp/morphe/extension/crimera/internal/google/common/cache/ForwardingCache<",
+        "TK;TV;>;"
+    }
+.end annotation
+
+
+# instance fields
+.field private final delegate:Lapp/morphe/extension/crimera/internal/google/common/cache/Cache;
+    .annotation system Ldalvik/annotation/Signature;
+        value = {
+            "Lapp/morphe/extension/crimera/internal/google/common/cache/Cache<",
+            "TK;TV;>;"
+        }
+    .end annotation
+.end field
+
+
+# direct methods
+.method public constructor <init>(Lapp/morphe/extension/crimera/internal/google/common/cache/Cache;)V
+    .locals 0
+    .annotation system Ldalvik/annotation/MethodParameters;
+        accessFlags = {
+            0x0
+        }
+        names = {
+            "delegate"
+        }
+    .end annotation
+
+    .annotation system Ldalvik/annotation/Signature;
+        value = {
+            "(",
+            "Lapp/morphe/extension/crimera/internal/google/common/cache/Cache<",
+            "TK;TV;>;)V"
+        }
+    .end annotation
+
+    .line 126
+    invoke-direct {p0}, Lapp/morphe/extension/crimera/internal/google/common/cache/ForwardingCache;-><init>()V
+
+    .line 127
+    invoke-static {p1}, Lapp/morphe/extension/crimera/internal/google/common/base/Preconditions;->checkNotNull(Ljava/lang/Object;)Ljava/lang/Object;
+
+    move-result-object p1
+
+    check-cast p1, Lapp/morphe/extension/crimera/internal/google/common/cache/Cache;
+
+    iput-object p1, p0, Lapp/morphe/extension/crimera/internal/google/common/cache/ForwardingCache$SimpleForwardingCache;->delegate:Lapp/morphe/extension/crimera/internal/google/common/cache/Cache;
+
+    return-void
+.end method
+
+
+# virtual methods
+.method public final delegate()Lapp/morphe/extension/crimera/internal/google/common/cache/Cache;
+    .locals 0
+    .annotation system Ldalvik/annotation/Signature;
+        value = {
+            "()",
+            "Lapp/morphe/extension/crimera/internal/google/common/cache/Cache<",
+            "TK;TV;>;"
+        }
+    .end annotation
+
+    .line 132
+    iget-object p0, p0, Lapp/morphe/extension/crimera/internal/google/common/cache/ForwardingCache$SimpleForwardingCache;->delegate:Lapp/morphe/extension/crimera/internal/google/common/cache/Cache;
+
+    return-object p0
+.end method
+
+.method public bridge synthetic delegate()Ljava/lang/Object;
+    .locals 0
+
+    .line 123
+    invoke-virtual {p0}, Lapp/morphe/extension/crimera/internal/google/common/cache/ForwardingCache$SimpleForwardingCache;->delegate()Lapp/morphe/extension/crimera/internal/google/common/cache/Cache;
+
+    move-result-object p0
+
+    return-object p0
+.end method

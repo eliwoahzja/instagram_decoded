@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "identifier": "65DC259E-989C-4A40-BDEC-31044962F1A7",
+  "displayName": "Moments",
+  "description": "[IG Edits] Video effect name. With \"Moments\", the creator can split the frame into a four-quadrant collage with two LUT-graded color tiles and two desaturated black-and-white tiles.",
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAD7f7IJA3t"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "83e8a12f",
+      "handle": "AQAPQwqr76Tb",
+      "md5": "e83117e9f534cb4e19d374d61b8ae27a"
+    }
+  },
+  "iglu": {
+    "legacyId": 3079
+  },
+  "assets": [
+    {
+      "name": "moments_lut.png",
+      "assetHash": "434a3f1af1843ad4ce258a5d2df819f6b46e4ad9b5483d5be7d1614baead221a",
+      "hubAssetId": "1877605436147227"
+    },
+    {
+      "name": "moments_noise.jpg",
+      "assetHash": "d2865ac89376d78e39ce0a5c3c59ee4e452faddff0c6eff792b6be88aa8df885",
+      "hubAssetId": "1848174365851247"
+    }
+  ]
+}

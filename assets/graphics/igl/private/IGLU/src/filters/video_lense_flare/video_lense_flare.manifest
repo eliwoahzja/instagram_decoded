@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_lense_flare",
+  "displayName": "Flare",
+  "description": "[IG Edits] Shared video/transition effect name. With \"Flare\", a lens-flare-style light streak or starburst is applied (in-clip or as a clip-to-clip transition).",
+  "iglu": {
+    "legacyId": 2050,
+    "customization": [
+      {
+        "name": "opacity",
+        "default": 1.0,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Opacity",
+        "displayNameDescription": "[IG Edits] Slider label controlling the opacity (transparency) of an element added by a video effect (low = invisible, high = fully opaque); exact range varies per effect."
+      },
+      {
+        "name": "amount",
+        "default": 0.25,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Amount",
+        "displayNameDescription": "[IG Edits] Slider label controlling the magnitude or quantity of a video effect. Generic across many effects; exact range varies per effect."
+      },
+      {
+        "name": "color",
+        "defaultSelection": "#FFFFFF",
+        "available": [
+          "#FFFFFF",
+          "#FFD600",
+          "#FF7A00",
+          "#FE1D37",
+          "#FF0169",
+          "#D300C5",
+          "#7638FA",
+          "#37038B",
+          "#1CD164",
+          "#0095F6",
+          "#AD88FC",
+          "#FDD5FD",
+          "#FFABE1",
+          "#FFC584",
+          "#FFF8C2",
+          "#09FF00",
+          "#FFFF00",
+          "#5AFAC7",
+          "#0000FF"
+        ],
+        "displayName": "Color",
+        "displayNameDescription": "[IG Edits] Color picker label. The user selects a color used by the video effect (e.g., glow tint, outline color, sparkle color); available palette varies per effect."
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "6029b31d",
+      "handle": "AQADMBu6MxUR",
+      "md5": "8d1848307d6ff7c93d9cc42e76836f1f"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAGDL-tkVVC"
+    }
+  }
+}

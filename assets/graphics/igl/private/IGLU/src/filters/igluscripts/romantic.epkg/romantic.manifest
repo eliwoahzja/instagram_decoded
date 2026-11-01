@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "identifier": "4A3982E3-B83E-41AE-BA3C-A289CB0E1CD3",
+  "displayName": "Romantic",
+  "description": "[IG Edits] Color preset filter name. Applies a romantic color grade with skin smoothing.",
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAGCEws7r7d"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "71091616",
+      "handle": "AQAHZeRJBjdc",
+      "md5": "7e2ace457a65dc138bb239908406166a"
+    }
+  },
+  "iglu": {
+    "legacyId": 3178
+  },
+  "assets": [
+    {
+      "name": "romantic_lut.png",
+      "assetHash": "5d3f2ca6eaa825bf41ad4aa82bca5b4c5c5b3fd932b684267b25f5b4dc409a3b",
+      "hubAssetId": "1338290988484029"
+    }
+  ]
+}

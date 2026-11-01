@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "text_bevel_gradient",
+  "displayName": "Bevel Gradient",
+  "description": "[IG Edits] Text effect name. With Bevel gradient, the creator can add a 3D edge with angled surfaces and a color gradient effect to their text.",
+  "iglu": {}
+}

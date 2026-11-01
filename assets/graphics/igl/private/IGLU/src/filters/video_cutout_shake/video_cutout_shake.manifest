@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_cutout_shake",
+  "displayName": "Shake",
+  "description": "[IG Edits] Effect or transition name shared across video, cutout, overlay, and transition surfaces. With \"Shake\", the image jitters or shakes as if the camera is unsteady.",
+  "iglu": {
+    "legacyId": 2107,
+    "customization": [
+      {
+        "name": "amount",
+        "default": 0.5,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Amount",
+        "displayNameDescription": "[IG Edits] Slider label controlling the magnitude or quantity of a video effect. Generic across many effects; exact range varies per effect."
+      },
+      {
+        "name": "speed",
+        "default": 0.5,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Speed",
+        "displayNameDescription": "[IG Edits] Slider label controlling the playback or animation speed of a video effect (noun, not a verb); exact range varies per effect."
+      },
+      {
+        "name": "size",
+        "default": 0.33,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Size",
+        "displayNameDescription": "[IG Edits] Slider label controlling the size or scale of an element produced by a video effect; exact units and range vary per effect."
+      }
+    ],
+    "subject": {
+      "enabled": true,
+      "fullFrameEnabled": true,
+      "typeSuggestions": [
+        "person",
+        "head"
+      ]
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "c4786442",
+      "handle": "AQAEXEUPUHGt",
+      "md5": "9fc5f9102474fecaaaa150b8ade8d2e5"
+    }
+  },
+  "assets": [
+    {
+      "name": "perlin_noise.png",
+      "assetHash": "42393e620664a372495800bfcf40ca960aa0ab3e2ddfe42fbfe2b86098d33000",
+      "hubAssetId": "1259354255546062"
+    }
+  ],
+  "ios": {
+    "previewAsset": {
+      "handle": "AQADGswAlp9m"
+    }
+  }
+}

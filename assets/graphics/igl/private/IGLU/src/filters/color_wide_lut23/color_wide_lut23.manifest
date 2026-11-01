@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "identifier": "redvelvet",
+  "displayName": "RedVelvet",
+  "description": "[IG Edits] Color filter name. With \"RedVelvet\", the creator can apply a deep red-velvet color grade by sampling the redvelvet.lutpk 3D LUT in the color_wide_lut shader.",
+  "iglu": {
+    "legacyId": 5046
+  },
+  "assets": [
+    {
+      "name": "redvelvet.lutpk",
+      "assetHash": "2aff90c41232f38c7e47813a830849cc84e8808898cb48ad50e9221d5a1f8112",
+      "hubAssetId": "948578794623828"
+    }
+  ]
+}

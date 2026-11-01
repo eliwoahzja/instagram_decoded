@@ -1,0 +1,14 @@
+.class public interface abstract Lcom/facebook/tigon/tigonobserver/interfaces/TigonRequestSucceeded;
+.super Ljava/lang/Object;
+.source ""
+
+# interfaces
+.implements Lcom/facebook/tigon/tigonobserver/interfaces/TigonRequestResponse;
+
+
+# virtual methods
+.method public abstract summary()LX/0MC;
+.end method
+
+.method public abstract tsEndedMs()J
+.end method

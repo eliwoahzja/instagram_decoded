@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "transition_datamosh",
+  "displayName": "Datamosh",
+  "description": "Video transition selection. Chooses to apply datamosh transition.",
+  "iglu": {}
+}

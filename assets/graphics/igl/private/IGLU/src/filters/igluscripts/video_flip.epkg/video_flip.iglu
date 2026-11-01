@@ -1,0 +1,75 @@
+# IGLUSCRIPTCOLLISION_BYPASS: Intentional replacement of C++ native effect
+[Filter VideoFlip]
+# Flip - mirrors the video horizontally on a repeating toggle.
+# Ported 1:1 from the C++ VideoFlipFilter single-pass shader.
+#
+# Carries both behaviors:
+#   useBeats false -> clock-driven toggle (time_sec / flipInterval)
+#   useBeats true  -> beat-driven toggle, beatProgress supplied per beat
+#
+# useBeats is set by BeatReactiveController when a manifest declares beatReactive;
+# with no such manifest nothing writes it and the false default selects the clock.
+
+[Init]
+fun init(Filter filter) {
+    filter.parameters = {
+        {speed = 0.5, min = 0.0, max = 1.0, description = "Flip speed"},
+        {center = {0.5, 0.5}, min = {0.0, 0.0}, max = {1.0, 1.0}, description = "Mirror axis"},
+        {useBeats = false, description = "True while the beat system is driving this effect"},
+        {beatProgress = 0.0, min = 0.0, max = 1.0, description = "Beat-driven flip toggle"},
+    };
+
+    filter.passes = {{
+        name = 'single_pass,
+        inputs = {'default},
+        uniforms = {
+            flipInterval = 0.5,
+            center = {0.5, 0.5},
+            useBeats = false,
+            beatProgress = 0.0,
+        },
+        glslShader = glslFlip,
+    }};
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+    # Matches the C++ lerp(kFlipIntervalMin 0.1, kFlipIntervalMax 0.9, speed).
+    # The shader uses the complement as the period, so a larger flipInterval flips FASTER.
+    f32 speed = getParameterFloat('speed);
+    f32 flipInterval = 0.1 + speed * (0.9 - 0.1);
+    setShaderUniform('single_pass, 'flipInterval, flipInterval);
+
+    vec2 center = getParameterVec2('center);
+    setShaderUniform('single_pass, 'center, center);
+
+    f32 beatProgress = getParameterFloat('beatProgress);
+    setShaderUniform('single_pass, 'beatProgress, beatProgress);
+
+    boolean useBeats = getParameterBoolean('useBeats);
+    setShaderUniform('single_pass, 'useBeats, useBeats);
+}
+
+string glslFlip = "
+    precision highp float;
+    varying vec2 sourceTextureCoordinate;
+    BaseUniformsOpenGL;
+    uniform float time_sec;
+
+    uniform float flipInterval;
+    uniform vec2 center;
+    uniform bool useBeats;
+    uniform float beatProgress;
+
+    void main() {
+        vec2 uv = sourceTextureCoordinate;
+
+        float inverseFlipInterval = 1.0 - flipInterval;
+        float clockToggle = mod(floor(time_sec / inverseFlipInterval), 2.0);
+        float toggle = useBeats ? beatProgress : clockToggle;
+
+        vec2 flippedUV = vec2(2.0 * center.x - uv.x, uv.y) * toggle + uv * (1.0 - toggle);
+        vec4 color = sampleInput(flippedUV);
+        gl_FragColor = toOutputFormat(color);
+    }
+";

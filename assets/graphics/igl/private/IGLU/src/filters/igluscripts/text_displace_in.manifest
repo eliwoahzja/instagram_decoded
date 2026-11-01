@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "identifier": "text_displace_in",
+  "displayName": "Text Displace In",
+  "description": "[IG Edits] Text effect name. With \"Text Displace In\", the creator can animate text in by sampling a baked scale/distortion curve and warping glyph UVs with golden-ratio noise.",
+  "assets": [
+    {
+      "name": "displace_in.png",
+      "assetHash": "b857707b9642cbf8c0a0a318af39116cff592a1e10c0d64c1a5946145501a2d5",
+      "hubAssetId": "1234560632154926"
+    }
+  ],
+  "iglu": {}
+}

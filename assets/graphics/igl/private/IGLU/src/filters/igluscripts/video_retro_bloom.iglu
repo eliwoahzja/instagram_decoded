@@ -1,0 +1,342 @@
+[Filter IgluscriptRetroBloomFilter]
+[MaskBehavior alpha]
+
+[Init]
+fun init(Filter filter) {
+
+  filter.parameters = {
+    {intensity      = 1.0, min = 0.0, max = 1.0, description = "Intensity"},
+    {amount           = 0.2, min = 0.0, max = 0.3, description = "Amount"},
+    {bloom_radius   = 0.3, min = 0.0, max = 1.0, description = "Bloom Radius"},
+    {size  = 0.5, min = 0.0, max = 1.0, description = "Streak Length"},
+    {speed       = 4.0, min = 3.0, max = 8.0, description = "Number of Rays"},
+    {rotation       = 45.0, min = 0.0, max = 90.0, description = "Rotation"},
+    {decay       = 0.83, min = 0.0, max = 2.0, description = "Decay"},
+  };
+
+  filter.passes = {
+    {
+      name = 'threshold,
+      inputs = {'default},
+      uniforms = {
+        threshold = 0.8,
+        feather = 0.1,
+        darken = 3.0,
+      },
+      glslShader = thresholdGlsl,
+    },
+    {
+      name = 'blurH,
+      inputs = {'threshold},
+      scale = {0.5, 0.5},
+      uniforms = {
+        inputSize = {1920.0, 1080.0},
+        axis = {1.0, 0.0},
+        numSamples = 40.0,
+        blurStep = 1.2,
+        falloffCurve = 0.9,
+      },
+      glslShader = gaussianBlur1DGlsl,
+    },
+    {
+      name = 'blurV,
+      inputs = {'blurH},
+      scale = {0.5, 0.5},
+      uniforms = {
+        inputSize = {1920.0, 1080.0},
+        axis = {0.0, 1.0},
+        numSamples = 40.0,
+        blurStep = 1.2,
+        falloffCurve = 0.9,
+      },
+      glslShader = gaussianBlur1DGlsl,
+    },
+    {
+      name = 'streaks,
+      inputs = {'threshold, 'blurV},
+      scale = {0.5, 0.5},
+      uniforms = {
+        inputSize = {1920.0, 1080.0},
+        numRays = 4.0,
+        rotation = 0.785,
+        streakLength = 0.5,
+        decayEff = 0.83,
+        stepScale = 1.0,
+        energyScale = 1.0,
+      },
+      glslShader = starglowStreaksGlsl,
+    },
+    {
+      name = 'blurH2,
+      inputs = {'streaks},
+      scale = {0.25, 0.25},
+      uniforms = {
+        inputSize = {1920.0, 1080.0},
+        axis = {1.0, 0.0},
+        numSamples = 40.0,
+        blurStep = 0.9,
+        falloffCurve = 4.5,
+      },
+      glslShader = gaussianBlur1DGlsl,
+    },
+    {
+      name = 'blurV2,
+      inputs = {'blurH2},
+      scale = {0.25, 0.25},
+      uniforms = {
+        inputSize = {1920.0, 1080.0},
+        axis = {0.0, 1.0},
+        numSamples = 40.0,
+        blurStep = 0.9,
+        falloffCurve = 4.5,
+      },
+      glslShader = gaussianBlur1DGlsl,
+    },
+    {
+      name = 'composite,
+      inputs = {'default, 'blurV2},
+      uniforms = {
+        starIntensity = 1.0,
+        tintColor = {0.7, 0.85, 1.0},
+      },
+      glslShader = starglowCompositeGlsl,
+    }
+  };
+}
+
+vec2 lastOutputSize = {-1.0, -1.0};
+
+# Streak taps per direction: the shader used to run 16, it now runs
+# kStreakTaps. The step is widened by kStreakTapsOld / kStreakTaps so the
+# streak still reaches the same distance.
+f32 kStreakTapsOld = 16.0;
+f32 kStreakTaps = 10.0;
+
+# Total weight of a merged streak: one centre tap plus (n - 1) symmetric pairs
+# whose weights are d^1..d^(n-1). Used to keep brightness fixed when the tap
+# count changes.
+fun streakEnergy(f32 d, f32 n) f32 {
+  f32 energy = 2.0 * n - 1.0;
+  if (abs(d - 1.0) >= 0.001) {
+    energy = 2.0 * (1.0 - pow(d, n)) / (1.0 - d) - 1.0;
+  }
+  return energy;
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+
+  vec2 outputSize = getTextureSize('default);
+  if (length(lastOutputSize - outputSize) > 0.00001) {
+    lastOutputSize = outputSize;
+    setShaderUniform('blurH,    'inputSize, outputSize);
+    setShaderUniform('blurV,    'inputSize, outputSize);
+    setShaderUniform('streaks,  'inputSize, outputSize);
+    setShaderUniform('blurH2,   'inputSize, outputSize);
+    setShaderUniform('blurV2,   'inputSize, outputSize);
+  }
+
+  f32 intensity     = getParameterFloat('intensity);
+  f32 thresholdVal  = getParameterFloat('amount) * 0.4;
+  f32 bloomRadius   = mix(1.0, 2.9, intensity); #getParameterFloat('bloom_radius);
+  f32 streakLength  = getParameterFloat('size) * 1.6;
+  f32 numRays       = getParameterFloat('speed);
+  f32 rotationDeg   = getParameterFloat('rotation);
+  f32 decay         = getParameterFloat('decay);
+
+  # Threshold pass — extract bright pixels
+  setShaderUniform('threshold, 'threshold, 1.01 - thresholdVal);
+  setShaderUniform('threshold, 'feather,   0.1);
+  setShaderUniform('threshold, 'darken,    3.0);
+
+  # Initial blur — softens the threshold output before streaks
+  f32 firstBlurStep    = 4.0 * bloomRadius;
+  f32 firstBlurFalloff = 3.0 * bloomRadius;
+  setShaderUniform('blurH, 'blurStep,     firstBlurStep);
+  setShaderUniform('blurH, 'falloffCurve, firstBlurFalloff);
+  setShaderUniform('blurV, 'blurStep,     firstBlurStep);
+  setShaderUniform('blurV, 'falloffCurve, firstBlurFalloff);
+
+  # Streak pass — radial rays, rotation in radians.
+  # Raising decay to stepScale keeps the falloff profile at the taps that
+  # remain, and rescaling by the ratio of the two weight sums keeps the streak
+  # brightness identical at any decay.
+  f32 rotationRad = radians(rotationDeg);
+  f32 stepScale = kStreakTapsOld / kStreakTaps;
+  f32 decayEff = pow(decay, stepScale);
+  f32 energyScale =
+      streakEnergy(decay, kStreakTapsOld) / streakEnergy(decayEff, kStreakTaps);
+  setShaderUniform('streaks, 'numRays,      numRays);
+  setShaderUniform('streaks, 'rotation,     rotationRad);
+  setShaderUniform('streaks, 'streakLength, streakLength);
+  setShaderUniform('streaks, 'decayEff,     decayEff);
+  setShaderUniform('streaks, 'stepScale,    stepScale);
+  setShaderUniform('streaks, 'energyScale,  energyScale);
+
+  # Final blur — broadens the streak glow
+  f32 finalBlurStep    = 1.0 * bloomRadius;
+  f32 finalBlurFalloff = 5.0 * bloomRadius;
+  setShaderUniform('blurH2, 'blurStep,     finalBlurStep);
+  setShaderUniform('blurH2, 'falloffCurve, finalBlurFalloff);
+  setShaderUniform('blurV2, 'blurStep,     finalBlurStep);
+  setShaderUniform('blurV2, 'falloffCurve, finalBlurFalloff);
+
+  # Composite — additive starglow normalized by ray count
+  f32 normalizedIntensity = intensity / max(1.0, numRays * 0.7);
+  setShaderUniform('composite, 'starIntensity, intensity);
+}
+
+# ==========================================================================
+# Threshold pass — extract bright pixels above threshold
+# ==========================================================================
+string thresholdGlsl = "
+precision highp float;
+
+varying vec2 sourceTextureCoordinate;
+BaseUniformsOpenGL;
+
+uniform float threshold;
+uniform float feather;
+uniform float darken;
+
+float luma(vec3 color) {
+  return dot(color, vec3(0.3, 0.6, 0.1));
+}
+
+void main() {
+  vec2 uv = sourceTextureCoordinate;
+  vec4 color = sampleInput(uv);
+
+  float l = luma(color.xyz);
+
+  color.rgb *= smoothstep(threshold - feather, threshold + feather, l);
+  color.rgb *= darken;
+  color.a = 1.0;
+
+  gl_FragColor = toOutputFormat(color);
+}
+";
+
+# ==========================================================================
+# 1D Gaussian blur — used for both horizontal and vertical passes,
+# and reused for both initial and final blur stages.
+# axis = (1,0) for horizontal, (0,1) for vertical.
+# ==========================================================================
+string gaussianBlur1DGlsl = "
+precision highp float;
+
+varying vec2 sourceTextureCoordinate;
+BaseUniformsOpenGL;
+
+uniform vec2 inputSize;
+uniform vec2 axis;
+uniform float numSamples;
+uniform float blurStep;
+uniform float falloffCurve;
+
+void main() {
+  vec4 texel = vec4(0.0);
+  float totalWeight = 0.0;
+
+  vec2 dir = axis / inputSize;
+
+  for (float i = 0.0; i < 32.0; i++) {
+    if (i >= numSamples) break;
+
+    float offset = (i - (numSamples - 1.0) * 0.5) * blurStep;
+    float weight = exp(-abs(offset) * falloffCurve / numSamples);
+
+    vec2 sampleCoord = sourceTextureCoordinate + dir * offset;
+    texel += sampleInput(sampleCoord) * weight;
+    totalWeight += weight;
+  }
+
+  gl_FragColor = toOutputFormat(texel / max(totalWeight, 0.0001));
+}
+";
+
+# ==========================================================================
+# Star streak pass — draws bidirectional radial streaks for N rays.
+# Multi-input: sampleInput = threshold (bright pixels), auxSampler1 = blurV
+# (initial bloom, additively combined with the streaks).
+# ==========================================================================
+string starglowStreaksGlsl = "
+precision highp float;
+
+varying vec2 sourceTextureCoordinate;
+BaseUniformsOpenGL;
+
+uniform sampler2D auxSampler1;
+
+uniform vec2 inputSize;
+uniform float numRays;
+uniform float rotation;
+uniform float streakLength;
+uniform float decayEff;
+uniform float stepScale;
+uniform float energyScale;
+
+void main() {
+  vec2 uv = sourceTextureCoordinate;
+  float stepPx = (2.0 + streakLength * 10.0) * stepScale;
+  float nnumRays = max(1.0, numRays);
+  float rayIterations = nnumRays;
+  float rayPairScale = 1.0;
+  float roundedRayCount = floor(nnumRays + 0.5);
+
+  // An even, integral ray count contains opposite ray pairs. Since every ray
+  // already samples both directions, the opposite ray repeats the same pair.
+  // Keep the original path for odd or fractional control values.
+  if (abs(nnumRays - roundedRayCount) < 0.0001 &&
+      mod(roundedRayCount, 2.0) == 0.0) {
+    rayIterations = nnumRays * 0.5;
+    rayPairScale = 2.0;
+  }
+
+  // Every ray shares the same centre tap, so fetch it once.
+  vec4 col = sampleInput(uv) * nnumRays;
+
+  for (float r = 0.0; r < 16.0; r++) {
+    if (r >= rayIterations) break;
+
+    float angle = (6.28318 / nnumRays) * r + rotation;
+    vec2 step = vec2(cos(angle), sin(angle)) * stepPx / inputSize;
+
+    float w = 1.0;
+    for (int i = 1; i < 10; i++) {
+      w *= decayEff;
+      col += (sampleInput(uv + step * float(i)) +
+              sampleInput(uv - step * float(i))) * (w * rayPairScale);
+    }
+  }
+
+  vec4 bloom = texture2D(auxSampler1, uv);
+
+  gl_FragColor = toOutputFormat(col * (0.1 * energyScale) + bloom);
+}
+";
+
+# ==========================================================================
+# Composite pass — additively blend starglow over the original frame
+# and apply tint.  Multi-input: sampleInput = default, auxSampler1 = glow.
+# ==========================================================================
+string starglowCompositeGlsl = "
+precision highp float;
+
+varying vec2 sourceTextureCoordinate;
+BaseUniformsOpenGL;
+
+uniform sampler2D auxSampler1;
+uniform float starIntensity;
+uniform vec3 tintColor;
+
+void main() {
+  vec2 uv = sourceTextureCoordinate;
+  vec4 original = sampleInput(uv);
+  vec3 glow = texture2D(auxSampler1, uv).rgb;
+
+  vec3 result = mix(original.rgb, (original.rgb + glow) * tintColor, starIntensity);
+
+  gl_FragColor = toOutputFormat(vec4(clamp(result, 0.0, 1.0), original.a));
+}
+";

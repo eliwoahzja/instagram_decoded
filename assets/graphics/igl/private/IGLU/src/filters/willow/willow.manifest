@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "identifier": "willow",
+  "displayName": "Willow",
+  "description": "[IG Edits] Video effect name. With \"Willow\", the creator can desaturate to luminance then remap through overlay, soft-light, vignette and border textures for a Willow film look.",
+  "iglu": {
+    "legacyId": 28
+  },
+  "assets": [
+    {
+      "name": "borderTexture.png",
+      "assetHash": "1052ca543756797755e15ce847d5ec7048232d1122b4eb1c76b4b0fdbf3541e3",
+      "hubAssetId": "793712783752519"
+    },
+    {
+      "name": "glow_field_willow.png",
+      "assetHash": "0ac21a15a99b0c9315d2ef17701dd7249b2cf8267a3bff01c2a2e70b3dcb557b",
+      "hubAssetId": "907236872047774"
+    },
+    {
+      "name": "map_willow.png",
+      "assetHash": "baf39dfa25fbf4ddd02e98d08443c20e191107553b72bbd940ac2c52e312674e",
+      "hubAssetId": "1025485747311928"
+    },
+    {
+      "name": "overlay_map81.png",
+      "assetHash": "e4173627ee4a73e2f774fa0118ddf6211035dccc1cb2ce2ab6b9c1daa4925479",
+      "hubAssetId": "1434638978208304"
+    },
+    {
+      "name": "soft_light100_willow.png",
+      "assetHash": "792d2b5e05074e1d4c12bda810829e37ad99063bb6c17aa87b839be44f4a9134",
+      "hubAssetId": "1556041099034370"
+    },
+    {
+      "name": "vignette_willow.png",
+      "assetHash": "65ba17968b7aaed97d7b2f556161fa48a5fcf601a143f2eb53d9259d3a6fb05c",
+      "hubAssetId": "918596747780253"
+    }
+  ]
+}

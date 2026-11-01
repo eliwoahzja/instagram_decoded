@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "identifier": "1de6677b-15df-406d-ab1d-32a12c2dae29",
+  "displayName": "LUT Demo",
+  "description": "[IG Edits] Example effect name. Applies a color lookup table (LUT) loaded from the effect package's own assets folder, demonstrating package-level texture delivery.",
+  "assets": [
+    {
+      "name": "lut_demo_clut.png",
+      "assetHash": "78573057336c1170fe6ca4b1dead406fabd8704b3590e213328902e85eaff6f3",
+      "hubAssetId": "1393471762102661"
+    }
+  ],
+  "iglu": {}
+}

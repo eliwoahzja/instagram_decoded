@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "transition_wipe_oval_in",
+  "displayName": "Wipe Oval In",
+  "description": "[IG Edits] Transition name. With \"Wipe Oval In\", the creator can transition into the next clip with a closing oval iris wipe that contracts inward to the center.",
+  "iglu": {}
+}

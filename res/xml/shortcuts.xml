@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut android:icon="@drawable/piko_settings_shortcut_icon" android:enabled="true" android:shortcutId="piko_settings" android:shortcutShortLabel="@string/piko_title_settings" android:shortcutLongLabel="@string/piko_title_settings" android:shortcutDisabledMessage="@string/piko_title_settings">
+        <intent android:targetPackage="com.instagram.android" android:action="app.morphe.extension.instagram.action.OPEN_PIKO_SETTINGS" android:targetClass="app.morphe.extension.instagram.settings.SettingsShortcutActivity" />
+    </shortcut>
+    <share-target android:targetClass="com.instagram.direct.share.handler.DirectShareHandlerActivity">
+        <data android:mimeType="text/plain" />
+        <category android:name="com.instagram.direct.share.handler.category.text.SHARE_TARGET" />
+    </share-target>
+    <share-target android:targetClass="com.instagram.direct.share.handler.DirectExternalMediaShareActivityPhoto">
+        <data android:mimeType="image/*" />
+        <category android:name="com.instagram.direct.share.handler.category.image.SHARE_TARGET" />
+    </share-target>
+</shortcuts>

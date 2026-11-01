@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "text_gradient_mono",
+  "displayName": "Gradient Mono",
+  "description": "[IG Edits] Text effect name. With \"Gradient Mono\", the creator can apply a single-hue vertical brightness gradient to text by shifting all HSL channels with grad=0.5-st.y per paragraph.",
+  "iglu": {}
+}

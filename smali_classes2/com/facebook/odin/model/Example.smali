@@ -1,0 +1,416 @@
+.class public final Lcom/facebook/odin/model/Example;
+.super LX/1hh;
+.source ""
+
+
+# annotations
+.annotation runtime Lkotlinx/serialization/Serializable;
+.end annotation
+
+
+# static fields
+.field public static final A05:Lcom/facebook/odin/model/Example;
+
+.field public static final A06:[LX/Esp;
+
+.field public static final Companion:Lcom/facebook/odin/model/Example$Companion;
+
+
+# instance fields
+.field public final A00:Lcom/facebook/odin/model/ExampleContext;
+
+.field public final A01:Ljava/lang/Long;
+
+.field public final A02:Ljava/lang/String;
+
+.field public final A03:Ljava/lang/String;
+
+.field public final A04:Ljava/util/HashMap;
+
+
+# direct methods
+.method public static constructor <clinit>()V
+    .locals 7
+
+    const/4 v3, 0x0
+
+    new-instance v0, Lcom/facebook/odin/model/Example$Companion;
+
+    invoke-direct {v0}, Ljava/lang/Object;-><init>()V
+
+    sput-object v0, Lcom/facebook/odin/model/Example;->Companion:Lcom/facebook/odin/model/Example$Companion;
+
+    sget-object v2, LX/4z2;->A03:LX/4z2;
+
+    const/16 v1, 0x1c
+
+    new-instance v0, LX/9em;
+
+    invoke-direct {v0, v1}, LX/9em;-><init>(I)V
+
+    invoke-static {v2, v0}, LX/4z1;->A00(LX/4z2;Lkotlin/jvm/functions/Function0;)LX/Esp;
+
+    move-result-object v0
+
+    filled-new-array {v3, v3, v0, v3, v3}, [LX/Esp;
+
+    move-result-object v0
+
+    sput-object v0, Lcom/facebook/odin/model/Example;->A06:[LX/Esp;
+
+    new-instance v6, Ljava/util/HashMap;
+
+    invoke-direct {v6}, Ljava/util/HashMap;-><init>()V
+
+    const-string/jumbo v4, "identity"
+
+    sget-object v2, Lcom/facebook/odin/model/ExampleContext;->A05:Lcom/facebook/odin/model/ExampleContext;
+
+    new-instance v1, Lcom/facebook/odin/model/Example;
+
+    move-object v5, v3
+
+    invoke-direct/range {v1 .. v6}, Lcom/facebook/odin/model/Example;-><init>(Lcom/facebook/odin/model/ExampleContext;Ljava/lang/Long;Ljava/lang/String;Ljava/lang/String;Ljava/util/HashMap;)V
+
+    sput-object v1, Lcom/facebook/odin/model/Example;->A05:Lcom/facebook/odin/model/Example;
+
+    return-void
+.end method
+
+.method public constructor <init>()V
+    .locals 6
+
+    const/4 v2, 0x0
+
+    const-string/jumbo v3, "identity"
+
+    sget-object v1, Lcom/facebook/odin/model/ExampleContext;->A05:Lcom/facebook/odin/model/ExampleContext;
+
+    new-instance v5, Ljava/util/HashMap;
+
+    invoke-direct {v5}, Ljava/util/HashMap;-><init>()V
+
+    move-object v0, p0
+
+    move-object v4, v2
+
+    invoke-direct/range {v0 .. v5}, Lcom/facebook/odin/model/Example;-><init>(Lcom/facebook/odin/model/ExampleContext;Ljava/lang/Long;Ljava/lang/String;Ljava/lang/String;Ljava/util/HashMap;)V
+
+    return-void
+.end method
+
+.method public constructor <init>(Lcom/facebook/odin/model/ExampleContext;Ljava/lang/Long;Ljava/lang/String;Ljava/lang/String;Ljava/util/HashMap;)V
+    .locals 1
+
+    .line 536870912
+    const/4 v0, 0x0
+
+    .line 536870913
+    invoke-static {p3, v0}, LX/5B5;->A0U(Ljava/lang/Object;I)V
+
+    .line 536870914
+    .line 536870915
+    .line 536870916
+    const/4 v0, 0x2
+
+    .line 536870917
+    invoke-static {p5, v0}, LX/5B5;->A0U(Ljava/lang/Object;I)V
+
+    .line 536870918
+    .line 536870919
+    .line 536870920
+    invoke-direct {p0}, Ljava/lang/Object;-><init>()V
+
+    .line 536870921
+    .line 536870922
+    .line 536870923
+    iput-object p3, p0, Lcom/facebook/odin/model/Example;->A02:Ljava/lang/String;
+
+    .line 536870924
+    .line 536870925
+    iput-object p1, p0, Lcom/facebook/odin/model/Example;->A00:Lcom/facebook/odin/model/ExampleContext;
+
+    .line 536870926
+    .line 536870927
+    iput-object p5, p0, Lcom/facebook/odin/model/Example;->A04:Ljava/util/HashMap;
+
+    .line 536870928
+    .line 536870929
+    iput-object p4, p0, Lcom/facebook/odin/model/Example;->A03:Ljava/lang/String;
+
+    .line 536870930
+    .line 536870931
+    iput-object p2, p0, Lcom/facebook/odin/model/Example;->A01:Ljava/lang/Long;
+
+    .line 536870932
+    .line 536870933
+    return-void
+.end method
+
+.method public synthetic constructor <init>(Lcom/facebook/odin/model/ExampleContext;Ljava/lang/Long;Ljava/lang/String;Ljava/lang/String;Ljava/util/HashMap;I)V
+    .locals 2
+
+    .line 268435456
+    invoke-direct {p0}, Ljava/lang/Object;-><init>()V
+
+    .line 268435457
+    .line 268435458
+    .line 268435459
+    and-int/lit8 v0, p6, 0x1
+
+    .line 268435460
+    .line 268435461
+    if-nez v0, :cond_0
+
+    .line 268435462
+    .line 268435463
+    const-string/jumbo p3, "identity"
+
+    .line 268435464
+    .line 268435465
+    .line 268435466
+    :cond_0
+    iput-object p3, p0, Lcom/facebook/odin/model/Example;->A02:Ljava/lang/String;
+
+    .line 268435467
+    .line 268435468
+    and-int/lit8 v0, p6, 0x2
+
+    .line 268435469
+    .line 268435470
+    if-nez v0, :cond_3
+
+    .line 268435471
+    .line 268435472
+    sget-object v0, Lcom/facebook/odin/model/ExampleContext;->A05:Lcom/facebook/odin/model/ExampleContext;
+
+    .line 268435473
+    .line 268435474
+    iput-object v0, p0, Lcom/facebook/odin/model/Example;->A00:Lcom/facebook/odin/model/ExampleContext;
+
+    .line 268435475
+    .line 268435476
+    :goto_0
+    and-int/lit8 v0, p6, 0x4
+
+    .line 268435477
+    .line 268435478
+    if-nez v0, :cond_2
+
+    .line 268435479
+    .line 268435480
+    new-instance v0, Ljava/util/HashMap;
+
+    .line 268435481
+    .line 268435482
+    invoke-direct {v0}, Ljava/util/HashMap;-><init>()V
+
+    .line 268435483
+    .line 268435484
+    .line 268435485
+    iput-object v0, p0, Lcom/facebook/odin/model/Example;->A04:Ljava/util/HashMap;
+
+    .line 268435486
+    .line 268435487
+    :goto_1
+    and-int/lit8 v0, p6, 0x8
+
+    .line 268435488
+    .line 268435489
+    const/4 v1, 0x0
+
+    .line 268435490
+    if-nez v0, :cond_1
+
+    .line 268435491
+    .line 268435492
+    iput-object v1, p0, Lcom/facebook/odin/model/Example;->A03:Ljava/lang/String;
+
+    .line 268435493
+    .line 268435494
+    :goto_2
+    and-int/lit8 v0, p6, 0x10
+
+    .line 268435495
+    .line 268435496
+    if-nez v0, :cond_4
+
+    .line 268435497
+    .line 268435498
+    iput-object v1, p0, Lcom/facebook/odin/model/Example;->A01:Ljava/lang/Long;
+
+    .line 268435499
+    .line 268435500
+    return-void
+
+    .line 268435501
+    :cond_1
+    iput-object p4, p0, Lcom/facebook/odin/model/Example;->A03:Ljava/lang/String;
+
+    .line 268435502
+    .line 268435503
+    goto :goto_2
+
+    .line 268435504
+    :cond_2
+    iput-object p5, p0, Lcom/facebook/odin/model/Example;->A04:Ljava/util/HashMap;
+
+    .line 268435505
+    .line 268435506
+    goto :goto_1
+
+    .line 268435507
+    :cond_3
+    iput-object p1, p0, Lcom/facebook/odin/model/Example;->A00:Lcom/facebook/odin/model/ExampleContext;
+
+    .line 268435508
+    .line 268435509
+    goto :goto_0
+
+    .line 268435510
+    :cond_4
+    iput-object p2, p0, Lcom/facebook/odin/model/Example;->A01:Ljava/lang/Long;
+
+    .line 268435511
+    .line 268435512
+    return-void
+.end method
+
+
+# virtual methods
+.method public final equals(Ljava/lang/Object;)Z
+    .locals 4
+
+    const/4 v3, 0x1
+
+    if-eq p0, p1, :cond_1
+
+    instance-of v0, p1, Lcom/facebook/odin/model/Example;
+
+    const/4 v2, 0x0
+
+    if-eqz v0, :cond_0
+
+    check-cast p1, Lcom/facebook/odin/model/Example;
+
+    iget-object v1, p0, Lcom/facebook/odin/model/Example;->A02:Ljava/lang/String;
+
+    iget-object v0, p1, Lcom/facebook/odin/model/Example;->A02:Ljava/lang/String;
+
+    invoke-static {v1, v0}, LX/5B5;->areEqual(Ljava/lang/Object;Ljava/lang/Object;)Z
+
+    move-result v0
+
+    if-eqz v0, :cond_0
+
+    iget-object v1, p0, Lcom/facebook/odin/model/Example;->A00:Lcom/facebook/odin/model/ExampleContext;
+
+    iget-object v0, p1, Lcom/facebook/odin/model/Example;->A00:Lcom/facebook/odin/model/ExampleContext;
+
+    invoke-static {v1, v0}, LX/5B5;->areEqual(Ljava/lang/Object;Ljava/lang/Object;)Z
+
+    move-result v0
+
+    if-eqz v0, :cond_0
+
+    iget-object v1, p0, Lcom/facebook/odin/model/Example;->A04:Ljava/util/HashMap;
+
+    iget-object v0, p1, Lcom/facebook/odin/model/Example;->A04:Ljava/util/HashMap;
+
+    invoke-static {v1, v0}, LX/5B5;->areEqual(Ljava/lang/Object;Ljava/lang/Object;)Z
+
+    move-result v0
+
+    if-eqz v0, :cond_0
+
+    iget-object v1, p0, Lcom/facebook/odin/model/Example;->A03:Ljava/lang/String;
+
+    iget-object v0, p1, Lcom/facebook/odin/model/Example;->A03:Ljava/lang/String;
+
+    invoke-static {v1, v0}, LX/5B5;->areEqual(Ljava/lang/Object;Ljava/lang/Object;)Z
+
+    move-result v0
+
+    if-eqz v0, :cond_0
+
+    iget-object v1, p0, Lcom/facebook/odin/model/Example;->A01:Ljava/lang/Long;
+
+    iget-object v0, p1, Lcom/facebook/odin/model/Example;->A01:Ljava/lang/Long;
+
+    invoke-static {v1, v0}, LX/5B5;->areEqual(Ljava/lang/Object;Ljava/lang/Object;)Z
+
+    move-result v0
+
+    if-nez v0, :cond_1
+
+    :cond_0
+    return v2
+
+    :cond_1
+    return v3
+.end method
+
+.method public final hashCode()I
+    .locals 3
+
+    iget-object v0, p0, Lcom/facebook/odin/model/Example;->A02:Ljava/lang/String;
+
+    invoke-virtual {v0}, Ljava/lang/String;->hashCode()I
+
+    move-result v0
+
+    mul-int/lit8 v1, v0, 0x1f
+
+    iget-object v0, p0, Lcom/facebook/odin/model/Example;->A00:Lcom/facebook/odin/model/ExampleContext;
+
+    invoke-virtual {v0}, Ljava/lang/Object;->hashCode()I
+
+    move-result v0
+
+    add-int/2addr v1, v0
+
+    mul-int/lit8 v1, v1, 0x1f
+
+    iget-object v0, p0, Lcom/facebook/odin/model/Example;->A04:Ljava/util/HashMap;
+
+    invoke-virtual {v0}, Ljava/lang/Object;->hashCode()I
+
+    move-result v0
+
+    add-int/2addr v1, v0
+
+    mul-int/lit8 v1, v1, 0x1f
+
+    iget-object v0, p0, Lcom/facebook/odin/model/Example;->A03:Ljava/lang/String;
+
+    const/4 v2, 0x0
+
+    if-nez v0, :cond_1
+
+    const/4 v0, 0x0
+
+    :goto_0
+    add-int/2addr v1, v0
+
+    mul-int/lit8 v1, v1, 0x1f
+
+    iget-object v0, p0, Lcom/facebook/odin/model/Example;->A01:Ljava/lang/Long;
+
+    if-eqz v0, :cond_0
+
+    invoke-virtual {v0}, Ljava/lang/Object;->hashCode()I
+
+    move-result v2
+
+    :cond_0
+    add-int/2addr v1, v2
+
+    return v1
+
+    :cond_1
+    invoke-virtual {v0}, Ljava/lang/String;->hashCode()I
+
+    move-result v0
+
+    goto :goto_0
+.end method

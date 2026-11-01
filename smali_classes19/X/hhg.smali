@@ -1,0 +1,19 @@
+.class public abstract LX/hhg;
+.super Ljava/lang/Object;
+.source ""
+
+
+# static fields
+.field public static final A00:Ljava/lang/Object;
+
+
+# direct methods
+.method public static constructor <clinit>()V
+    .locals 1
+
+    sget-object v0, Ljava/lang/Boolean;->FALSE:Ljava/lang/Boolean;
+
+    sput-object v0, LX/hhg;->A00:Ljava/lang/Object;
+
+    return-void
+.end method

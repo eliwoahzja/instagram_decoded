@@ -1,0 +1,162 @@
+[Filter SoftWhite]
+# "Soft White" — LUT color grading + subtle global skin-smoothing approximation.
+# Approximates Instagram's "Soft White" makeup-camera preset within the
+# constraints of IGLUScript (no face tracking available).
+#
+# Pipeline (single fragment pass):
+#   1. Sample camera source at center + 4 cross-pattern neighbors at a
+#      fixed small UV offset (~0.001).
+#   2. Average the 5 samples for a cheap 5-tap box blur (cross filter).
+#   3. Mix center with blurred result by `smooth_strength` (default 1.0)
+#      to produce a softened source image. At smooth_strength = 0 the
+#      blur is bypassed entirely (pass-through).
+#   4. Apply 8x8 grid LUT trilinear sampling to the softened source.
+#   5. Mix the LUT-graded image with the softened source at a HARDCODED
+#      28% — matches Spark's reference patch Alpha Blend at 28% on the
+#      LUT layer. Full LUT replacement (100%) over-exposes whites with
+#      this LUT, so the cap is intentionally part of the look (not a
+#      tunable). Same rationale as Gotham's omitted brightness multi-
+#      plier: let the LUT carry the look, fixed-blended to taste.
+#   6. Apply a small global red-channel lift (`rouge_strength`, default
+#      0.05) — coarse approximation of Spark's face-tracked rouge, since
+#      IGLUScript does not expose face-tracking inputs to the shader.
+#      Most visible on warm tones (skin, lips); also lifts background
+#      reds slightly. Same pattern as now.iglu / frblair.iglu.
+#
+# **Known gap vs Spark reference**: the Spark filter applies face-tracked
+# skin smoothing + face-tracked rouge / blush via face mesh / face landmark
+# inputs. IGLUScript does not expose face-tracking inputs to its shader
+# frame, so this implementation applies a global blur uniformly. Effect
+# is a barely-perceptible soft-focus that reduces fine texture and shadow
+# detail across the whole frame, not just on skin. If a future variant
+# requires face-only smoothing or face-tracked rouge, that needs a
+# separate face-mesh pipeline outside IGLUScript (see fast_retouching's
+# host-supplied mask pattern for catalog precedent).
+#
+# Same Forest-template pattern (`forest.iglu`) — proven, single-pass, two
+# params. LUT mix is hardcoded at 28% (see Stage 5 comment in shader).
+#
+# LUT delivered via ARD (effectId 1525908072485610, asset soft_white_lut.png).
+
+[Init]
+fun init(Filter filter)
+{
+    makeTexture('lut);
+
+    # Host-tunable parameters. Wired unconditionally in [PreRender] per
+    # CRA finding on black_and_white (filter.parameters declares
+    # min=0.0, so host-set zeros are valid input and must propagate).
+    filter.parameters = {
+        {smooth_strength = 1.0, min = 0.0, max = 1.0, description = "Global skin-smoothing approximation; subtle 5-tap cross blur"},
+        {rouge_strength = 0.05, min = 0.0, max = 0.5, description = "Global red channel boost; uniform red lift across the frame"},
+    };
+
+    filter.passes = {{
+      name = 'pass0,
+      inputs = {'default, 'lut},
+      uniforms = {
+        smooth_strength = 1.0,
+        rouge_strength = 0.05,
+      },
+      glslShader = glslSoftWhite,
+    }};
+}
+
+string lut_path = "lut_path";
+string lut_filename = "";
+
+[PreRender]
+fun preRender(Filter filter){
+    string lut_filename_parameter = getParameterString(lut_path);
+    if (lut_filename_parameter != "") {
+        string new_lut_filename = stringAppend("textureFilePath://", lut_filename_parameter);
+        if (new_lut_filename != lut_filename) {
+            lut_filename = new_lut_filename;
+            loadTexture('lut, lut_filename);
+        }
+    }
+
+    # Both parameters wired unconditionally per CRA convention.
+    f32 ss = getParameterFloat('smooth_strength);
+    setShaderUniform('pass0, 'smooth_strength, ss);
+
+    f32 r = getParameterFloat('rouge_strength);
+    setShaderUniform('pass0, 'rouge_strength, r);
+}
+
+#### GLSL shader ####
+
+string glslSoftWhite = "
+    varying vec2 sourceTextureCoordinate;
+    BaseUniformsOpenGL;
+
+    uniform sampler2D auxSampler0;
+    uniform sampler2D auxSampler1;
+
+    uniform float smooth_strength;
+    uniform float rouge_strength;
+
+    void main() {
+      vec2 uv = sourceTextureCoordinate;
+
+      // Stage 1+2: 5-tap cross-pattern blur for global skin-smoothing
+      // approximation. Fixed UV offset gives ~1px blur radius at typical
+      // camera resolutions (~1024px wide); softer at higher resolutions.
+      vec3 center = sampleInput(uv).rgb;
+      float d = 0.001;
+      vec3 blurred = center * 0.5;
+      blurred += sampleInput(uv + vec2(d, 0.0)).rgb * 0.125;
+      blurred += sampleInput(uv - vec2(d, 0.0)).rgb * 0.125;
+      blurred += sampleInput(uv + vec2(0.0, d)).rgb * 0.125;
+      blurred += sampleInput(uv - vec2(0.0, d)).rgb * 0.125;
+
+      // Stage 3: mix center with blurred by smooth_strength.
+      vec3 softened = mix(center, blurred, smooth_strength);
+
+      // Stage 4: 8x8 grid LUT trilinear sampling of the softened result.
+      //
+      // Clamp range [0.05, 0.9] mirrors the Spark FastLUT reference patch
+      // and is intentionally more aggressive than the textbook ½-pixel
+      // inset of [1/128, 127/128]. Reasons:
+      //   1. Authored LUTs are commonly NOT 512×512 (e.g. 719×718). At
+      //      non-multiple-of-8 widths, the 1/8 UV stride doesn't land on
+      //      exact tile pixel boundaries, so bilinear filtering at the
+      //      edge of a tile bleeds into the neighboring blue slice.
+      //   2. Many authored LUTs have unstable color content in the very
+      //      corner of each tile (compression artifacts, anti-aliasing,
+      //      LUT generator quirks). Sampling near the corner can return
+      //      e.g. red on a near-black input, which manifests as red
+      //      glitch pixels in dark areas of the output.
+      // Insetting 5% on each side of every tile keeps sampling well away
+      // from tile boundaries on typical authored LUTs.
+      vec3 c = clamp(softened, 0.05, 0.9);
+      float x = c.r / 8.0;
+      float y = c.g / 8.0;
+      float z = c.b;
+      float blueY = floor(z * 8.0) / 8.0;
+      float blueX = floor((z - blueY) * 64.0) / 8.0;
+      x += blueX;
+      y += blueY;
+      vec3 lutColor = texture2D(auxSampler1, vec2(x, y)).xyz;
+
+      // Stage 5: mix LUT-graded result with softened source at a fixed
+      // 28% — matches Spark reference patch's Alpha Blend on the LUT
+      // layer. Hardcoded (not a host-tunable uniform) because full LUT
+      // replacement over-exposes whites with this LUT and the cap is
+      // part of the look. Dynamic range of the input is preserved by
+      // the 72% softened component.
+      vec3 outRgb = mix(softened, lutColor, 0.28);
+
+      // Stage 6: global rouge boost (uniform red channel lift).
+      // Coarse approximation of Spark's face-tracked rouge. Subtle by
+      // default (rouge_strength = 0.05 → ~5% red lift). Most visible on
+      // warm tones (skin, lips); also lifts background reds. Same
+      // pattern as now.iglu / frblair.iglu.
+      outRgb.r *= 1.0 + rouge_strength;
+
+      // Clamp to LDR display range so the rouge boost can't push past 1.
+      outRgb = clamp(outRgb, 0.0, 1.0);
+
+      gl_FragColor = toOutputFormat(vec4(outRgb, 1.0));
+    }
+    ";

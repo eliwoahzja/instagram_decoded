@@ -1,0 +1,66 @@
+.class public final LX/hni;
+.super Ljava/lang/Object;
+.source ""
+
+# interfaces
+.implements LX/LcF;
+
+
+# instance fields
+.field public final synthetic A00:Lcom/instagram/shortdrama/seriespage/ShortDramaSeriesPageFragment;
+
+
+# direct methods
+.method public constructor <init>(Lcom/instagram/shortdrama/seriespage/ShortDramaSeriesPageFragment;)V
+    .locals 0
+
+    iput-object p1, p0, LX/hni;->A00:Lcom/instagram/shortdrama/seriespage/ShortDramaSeriesPageFragment;
+
+    invoke-direct {p0}, Ljava/lang/Object;-><init>()V
+
+    return-void
+.end method
+
+
+# virtual methods
+.method public final CS4()Z
+    .locals 5
+
+    iget-object v0, p0, LX/hni;->A00:Lcom/instagram/shortdrama/seriespage/ShortDramaSeriesPageFragment;
+
+    invoke-virtual {v0}, LX/Q84;->getSession()Lcom/instagram/common/session/UserSession;
+
+    move-result-object v4
+
+    const/4 v3, 0x0
+
+    invoke-static {v4, v3}, LX/011;->A0K(LX/4Nb;Z)LX/say;
+
+    move-result-object v2
+
+    const-wide v0, 0x8109470001344cL
+
+    invoke-static {v2, v0, v1}, LX/011;->A0y(Ljava/lang/Object;J)Z
+
+    move-result v0
+
+    if-nez v0, :cond_0
+
+    invoke-static {v4, v3}, LX/1na;->A02(LX/4Nb;Z)LX/say;
+
+    move-result-object v2
+
+    const-wide v0, 0x81094700083450L
+
+    invoke-static {v2, v0, v1}, LX/011;->A0y(Ljava/lang/Object;J)Z
+
+    move-result v0
+
+    if-eqz v0, :cond_1
+
+    :cond_0
+    const/4 v3, 0x1
+
+    :cond_1
+    return v3
+.end method

@@ -1,0 +1,380 @@
+.class public abstract synthetic LX/gHX;
+.super Ljava/lang/Object;
+.source ""
+
+
+# direct methods
+.method public static A00(Lcom/instagram/api/schemas/HorizonStickerTappableObject;I)Ljava/lang/Object;
+    .locals 0
+
+    sparse-switch p1, :sswitch_data_0
+
+    invoke-static {p1}, LX/024;->A07(I)Ljava/lang/IllegalArgumentException;
+
+    move-result-object p0
+
+    throw p0
+
+    :sswitch_0
+    invoke-interface {p0}, Lcom/instagram/api/schemas/HorizonStickerTappableObject;->DXf()LX/JyT;
+
+    move-result-object p0
+
+    return-object p0
+
+    :sswitch_1
+    invoke-interface {p0}, Lcom/instagram/api/schemas/HorizonStickerTappableObject;->DYr()Ljava/lang/String;
+
+    move-result-object p0
+
+    return-object p0
+
+    :sswitch_2
+    invoke-interface {p0}, Lcom/instagram/api/schemas/HorizonStickerTappableObject;->CIH()Ljava/lang/Double;
+
+    move-result-object p0
+
+    return-object p0
+
+    :sswitch_3
+    invoke-interface {p0}, Lcom/instagram/api/schemas/HorizonStickerTappableObject;->EIG()Ljava/lang/Integer;
+
+    move-result-object p0
+
+    return-object p0
+
+    :sswitch_4
+    invoke-interface {p0}, Lcom/instagram/api/schemas/HorizonStickerTappableObject;->BQk()Ljava/lang/String;
+
+    move-result-object p0
+
+    return-object p0
+
+    :sswitch_5
+    invoke-interface {p0}, Lcom/instagram/api/schemas/HorizonStickerTappableObject;->EJt()Ljava/lang/Integer;
+
+    move-result-object p0
+
+    return-object p0
+
+    :sswitch_6
+    invoke-interface {p0}, Lcom/instagram/api/schemas/HorizonStickerTappableObject;->C2E()Ljava/lang/Double;
+
+    move-result-object p0
+
+    return-object p0
+
+    :sswitch_7
+    invoke-interface {p0}, Lcom/instagram/api/schemas/HorizonStickerTappableObject;->EPM()Ljava/lang/Integer;
+
+    move-result-object p0
+
+    return-object p0
+
+    :sswitch_8
+    invoke-interface {p0}, Lcom/instagram/api/schemas/HorizonStickerTappableObject;->ET9()Ljava/lang/Integer;
+
+    move-result-object p0
+
+    return-object p0
+
+    :sswitch_9
+    invoke-interface {p0}, Lcom/instagram/api/schemas/HorizonStickerTappableObject;->BQI()Ljava/lang/String;
+
+    move-result-object p0
+
+    return-object p0
+
+    :sswitch_a
+    invoke-interface {p0}, Lcom/instagram/api/schemas/HorizonStickerTappableObject;->DD3()Ljava/lang/Double;
+
+    move-result-object p0
+
+    return-object p0
+
+    :sswitch_b
+    invoke-interface {p0}, Lcom/instagram/api/schemas/HorizonStickerTappableObject;->Dt8()Ljava/lang/Double;
+
+    move-result-object p0
+
+    return-object p0
+
+    :sswitch_c
+    invoke-interface {p0}, Lcom/instagram/api/schemas/HorizonStickerTappableObject;->DtO()Ljava/lang/Double;
+
+    move-result-object p0
+
+    return-object p0
+
+    :sswitch_d
+    invoke-interface {p0}, Lcom/instagram/api/schemas/HorizonStickerTappableObject;->DtT()Ljava/lang/Double;
+
+    move-result-object p0
+
+    return-object p0
+
+    :sswitch_e
+    invoke-interface {p0}, Lcom/instagram/api/schemas/HorizonStickerTappableObject;->getId()Ljava/lang/String;
+
+    move-result-object p0
+
+    return-object p0
+
+    :sswitch_f
+    invoke-interface {p0}, Lcom/instagram/api/schemas/HorizonStickerTappableObject;->DsW()Ljava/lang/Double;
+
+    move-result-object p0
+
+    return-object p0
+
+    :sswitch_10
+    invoke-interface {p0}, Lcom/instagram/api/schemas/HorizonStickerTappableObject;->DSS()Ljava/lang/Double;
+
+    move-result-object p0
+
+    return-object p0
+
+    :sswitch_11
+    invoke-interface {p0}, Lcom/instagram/api/schemas/HorizonStickerTappableObject;->DTj()Ljava/lang/Integer;
+
+    move-result-object p0
+
+    return-object p0
+
+    :sswitch_12
+    invoke-interface {p0}, Lcom/instagram/api/schemas/HorizonStickerTappableObject;->Bwf()Ljava/lang/String;
+
+    move-result-object p0
+
+    return-object p0
+
+    :sswitch_13
+    invoke-interface {p0}, Lcom/instagram/api/schemas/HorizonStickerTappableObject;->Cdk()Ljava/lang/String;
+
+    move-result-object p0
+
+    return-object p0
+
+    :sswitch_14
+    invoke-interface {p0}, Lcom/instagram/api/schemas/HorizonStickerTappableObject;->Bqk()Ljava/lang/String;
+
+    move-result-object p0
+
+    return-object p0
+
+    nop
+
+    :sswitch_data_0
+    .sparse-switch
+        -0x6e761353 -> :sswitch_0
+        -0x663f11a1 -> :sswitch_1
+        -0x48c76ed9 -> :sswitch_2
+        -0x433c7511 -> :sswitch_3
+        -0x3995d251 -> :sswitch_4
+        -0x2ce8b5a1 -> :sswitch_5
+        -0x213ccb0c -> :sswitch_6
+        -0x1f3d3f73 -> :sswitch_7
+        -0x173e0cd8 -> :sswitch_8
+        -0x12786f81 -> :sswitch_9
+        -0x266f082 -> :sswitch_a
+        0x78 -> :sswitch_b
+        0x79 -> :sswitch_c
+        0x7a -> :sswitch_d
+        0xd1b -> :sswitch_e
+        0x6be2dc6 -> :sswitch_f
+        0x41f7f97b -> :sswitch_10
+        0x56e12b11 -> :sswitch_11
+        0x60475897 -> :sswitch_12
+        0x73a026b5 -> :sswitch_13
+        0x73a76b5f -> :sswitch_14
+    .end sparse-switch
+.end method
+
+.method public static A01(Lcom/instagram/api/schemas/HorizonStickerTappableObject;)Ljava/util/Map;
+    .locals 3
+
+    invoke-static {}, LX/0E2;->A15()Ljava/util/LinkedHashMap;
+
+    move-result-object v2
+
+    const-string v1, "attribution"
+
+    invoke-interface {p0}, Lcom/instagram/api/schemas/HorizonStickerTappableObject;->BQI()Ljava/lang/String;
+
+    move-result-object v0
+
+    invoke-static {v1, v0, v2}, LX/2aD;->A08(Ljava/lang/Object;Ljava/lang/Object;Ljava/util/Map;)V
+
+    const-string v1, "attribution_url"
+
+    invoke-interface {p0}, Lcom/instagram/api/schemas/HorizonStickerTappableObject;->BQk()Ljava/lang/String;
+
+    move-result-object v0
+
+    invoke-static {v1, v0, v2}, LX/2aD;->A08(Ljava/lang/Object;Ljava/lang/Object;Ljava/util/Map;)V
+
+    const-string v1, "custom_text_color"
+
+    invoke-interface {p0}, Lcom/instagram/api/schemas/HorizonStickerTappableObject;->Bqk()Ljava/lang/String;
+
+    move-result-object v0
+
+    invoke-static {v1, v0, v2}, LX/2aD;->A08(Ljava/lang/Object;Ljava/lang/Object;Ljava/util/Map;)V
+
+    const-string v1, "display_type"
+
+    invoke-interface {p0}, Lcom/instagram/api/schemas/HorizonStickerTappableObject;->Bwf()Ljava/lang/String;
+
+    move-result-object v0
+
+    invoke-static {v1, v0, v2}, LX/2aD;->A08(Ljava/lang/Object;Ljava/lang/Object;Ljava/util/Map;)V
+
+    const-string v1, "end_time_ms"
+
+    invoke-interface {p0}, Lcom/instagram/api/schemas/HorizonStickerTappableObject;->C2E()Ljava/lang/Double;
+
+    move-result-object v0
+
+    invoke-static {v1, v0, v2}, LX/2aD;->A08(Ljava/lang/Object;Ljava/lang/Object;Ljava/util/Map;)V
+
+    const-string v1, "height"
+
+    invoke-interface {p0}, Lcom/instagram/api/schemas/HorizonStickerTappableObject;->CIH()Ljava/lang/Double;
+
+    move-result-object v0
+
+    invoke-static {v1, v0, v2}, LX/2aD;->A08(Ljava/lang/Object;Ljava/lang/Object;Ljava/util/Map;)V
+
+    const-string v1, "id"
+
+    invoke-interface {p0}, Lcom/instagram/api/schemas/HorizonStickerTappableObject;->getId()Ljava/lang/String;
+
+    move-result-object v0
+
+    invoke-static {v1, v0, v2}, LX/2aD;->A08(Ljava/lang/Object;Ljava/lang/Object;Ljava/util/Map;)V
+
+    const-string v1, "is_fb_sticker"
+
+    invoke-interface {p0}, Lcom/instagram/api/schemas/HorizonStickerTappableObject;->EIG()Ljava/lang/Integer;
+
+    move-result-object v0
+
+    invoke-static {v1, v0, v2}, LX/2aD;->A08(Ljava/lang/Object;Ljava/lang/Object;Ljava/util/Map;)V
+
+    const-string v1, "is_hidden"
+
+    invoke-interface {p0}, Lcom/instagram/api/schemas/HorizonStickerTappableObject;->EJt()Ljava/lang/Integer;
+
+    move-result-object v0
+
+    invoke-static {v1, v0, v2}, LX/2aD;->A08(Ljava/lang/Object;Ljava/lang/Object;Ljava/util/Map;)V
+
+    const-string v1, "is_pinned"
+
+    invoke-interface {p0}, Lcom/instagram/api/schemas/HorizonStickerTappableObject;->EPM()Ljava/lang/Integer;
+
+    move-result-object v0
+
+    invoke-static {v1, v0, v2}, LX/2aD;->A08(Ljava/lang/Object;Ljava/lang/Object;Ljava/util/Map;)V
+
+    const-string v1, "is_sticker"
+
+    invoke-interface {p0}, Lcom/instagram/api/schemas/HorizonStickerTappableObject;->ET9()Ljava/lang/Integer;
+
+    move-result-object v0
+
+    invoke-static {v1, v0, v2}, LX/2aD;->A08(Ljava/lang/Object;Ljava/lang/Object;Ljava/util/Map;)V
+
+    const-string v1, "media_type"
+
+    invoke-interface {p0}, Lcom/instagram/api/schemas/HorizonStickerTappableObject;->Cdk()Ljava/lang/String;
+
+    move-result-object v0
+
+    invoke-static {v1, v0, v2}, LX/2aD;->A08(Ljava/lang/Object;Ljava/lang/Object;Ljava/util/Map;)V
+
+    const-string v1, "rotation"
+
+    invoke-interface {p0}, Lcom/instagram/api/schemas/HorizonStickerTappableObject;->DD3()Ljava/lang/Double;
+
+    move-result-object v0
+
+    invoke-static {v1, v0, v2}, LX/2aD;->A08(Ljava/lang/Object;Ljava/lang/Object;Ljava/util/Map;)V
+
+    const-string v1, "start_time_ms"
+
+    invoke-interface {p0}, Lcom/instagram/api/schemas/HorizonStickerTappableObject;->DSS()Ljava/lang/Double;
+
+    move-result-object v0
+
+    invoke-static {v1, v0, v2}, LX/2aD;->A08(Ljava/lang/Object;Ljava/lang/Object;Ljava/util/Map;)V
+
+    const-string v1, "sticker_style_enum"
+
+    invoke-interface {p0}, Lcom/instagram/api/schemas/HorizonStickerTappableObject;->DTj()Ljava/lang/Integer;
+
+    move-result-object v0
+
+    invoke-static {v1, v0, v2}, LX/2aD;->A08(Ljava/lang/Object;Ljava/lang/Object;Ljava/util/Map;)V
+
+    invoke-interface {p0}, Lcom/instagram/api/schemas/HorizonStickerTappableObject;->DXf()LX/JyT;
+
+    move-result-object v0
+
+    if-eqz v0, :cond_0
+
+    invoke-interface {p0}, Lcom/instagram/api/schemas/HorizonStickerTappableObject;->DXf()LX/JyT;
+
+    move-result-object v0
+
+    invoke-static {v0}, LX/21T;->A0l(Ljava/lang/Object;)Ljava/lang/String;
+
+    move-result-object v0
+
+    invoke-static {v0, v2}, LX/C4H;->A1L(Ljava/lang/Object;Ljava/util/AbstractMap;)V
+
+    :cond_0
+    const-string v1, "tap_landing_id"
+
+    invoke-interface {p0}, Lcom/instagram/api/schemas/HorizonStickerTappableObject;->DYr()Ljava/lang/String;
+
+    move-result-object v0
+
+    invoke-static {v1, v0, v2}, LX/2aD;->A08(Ljava/lang/Object;Ljava/lang/Object;Ljava/util/Map;)V
+
+    const-string v1, "width"
+
+    invoke-interface {p0}, Lcom/instagram/api/schemas/HorizonStickerTappableObject;->DsW()Ljava/lang/Double;
+
+    move-result-object v0
+
+    invoke-static {v1, v0, v2}, LX/2aD;->A08(Ljava/lang/Object;Ljava/lang/Object;Ljava/util/Map;)V
+
+    const-string v1, "x"
+
+    invoke-interface {p0}, Lcom/instagram/api/schemas/HorizonStickerTappableObject;->Dt8()Ljava/lang/Double;
+
+    move-result-object v0
+
+    invoke-static {v1, v0, v2}, LX/2aD;->A08(Ljava/lang/Object;Ljava/lang/Object;Ljava/util/Map;)V
+
+    const-string v1, "y"
+
+    invoke-interface {p0}, Lcom/instagram/api/schemas/HorizonStickerTappableObject;->DtO()Ljava/lang/Double;
+
+    move-result-object v0
+
+    invoke-static {v1, v0, v2}, LX/2aD;->A08(Ljava/lang/Object;Ljava/lang/Object;Ljava/util/Map;)V
+
+    const-string v1, "z"
+
+    invoke-interface {p0}, Lcom/instagram/api/schemas/HorizonStickerTappableObject;->DtT()Ljava/lang/Double;
+
+    move-result-object v0
+
+    invoke-static {v1, v0, v2}, LX/0E2;->A17(Ljava/lang/Object;Ljava/lang/Object;Ljava/util/Map;)Ljava/util/Map;
+
+    move-result-object v0
+
+    return-object v0
+.end method

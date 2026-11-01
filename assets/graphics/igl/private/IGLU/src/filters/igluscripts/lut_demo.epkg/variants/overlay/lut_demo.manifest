@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "displayName": "LUT Demo",
+  "description": "[IG Edits] Variant of the LUT Demo effect that grades the clip with a different color lookup table delivered from the variant's own assets folder.",
+  "assets": [
+    {
+      "name": "lut_demo_clut.png",
+      "assetHash": "78573057336c1170fe6ca4b1dead406fabd8704b3590e213328902e85eaff6f3",
+      "hubAssetId": "1393471762102661"
+    },
+    {
+      "name": "lut_demo_overlay_clut.png",
+      "assetHash": "f272af03fa3078145ae23e892cbb3cca002d92b17b3f0eca236b64f126abb573",
+      "hubAssetId": "932967145776445"
+    }
+  ]
+}

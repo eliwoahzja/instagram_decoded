@@ -1,0 +1,244 @@
+[Filter ToxicGlitch]
+# "Toxic Glitch" — Adjust Colors → RGB Shift → LUT, in a single fragment pass.
+#
+# Spark patch chain (image 1):
+#   cameraTexture0
+#     -> Adjust Colors Shader (brightness=-0.0253, contrast=0, hue=0,
+#                              saturation=0, lightness=0, invert=off)
+#     -> RGB Shift Shader      (Amount=0.38182)
+#     -> FastColorLUT(1)       (LUT = "Island Vintage 2")
+#     -> material output
+#
+# We replicate this as a single fragment pass with three stacked stages.
+#
+# ── Stage 1: Adjust Colors ───────────────────────────────────────────────────────────────
+# At the Spark defaults shipped in the source patch (contrast=0, hue=0,
+# saturation=0, lightness=0, invert=off), the full HSL chain reduces to a
+# pure brightness offset on RGB:
+#   adjusted = base + brightness
+# The Spark scene used `brightness = -0.0253` (slight darkening); after
+# visual A/B in the sample app the author tuned this to `brightness = 0.032`
+# (slight brightening) which compensates for the sample-app vs Spark editor
+# color-pipeline delta seen across the catalog.
+#
+# ── Stage 2: RGB Shift Shader ────────────────────────────────────────────
+# Spark patch (image 2) implements chromatic aberration via two animated
+# 2D Transform Pack chains. Visual A/B against the Spark sample frames
+# (author screenshots) revealed the offset is sustained — it never drops
+# back to zero — so we ship a snap-and-hold model with a magnitude floor
+# rather than a QuarticIn ramp from zero. Constraints we match:
+#
+#   * HORIZONTAL ONLY — each Spark Transition End value is `(0.05, 0)` and
+#     `(0.06, 0)`. Y component is locked at zero.
+#   * Per-channel max X offsets: 0.05 (chain A) and 0.06 (chain B), each
+#     scaled by `rgb_shift_amount` so the host can dial overall intensity.
+#   * Random patches scale the per-cycle magnitude: end_range = 0.95
+#     (chain A) and 0.7 (chain B). Each cycle picks a fresh random scalar
+#     in [glitch_min_intensity * end_range, end_range] so the offset is
+#     always non-trivial.
+#   * Loop Animation Duration = 0.1 s (10 Hz cycle).
+#
+# Implementation:
+#   1. `glitch_rate` (default 10 Hz, matches Spark's 0.1s loop).
+#   2. Per-bucket SNAP-AND-HOLD: at the start of each cycle we hash a
+#      new random direction (±1) and magnitude in
+#      [glitch_min_intensity, 1.0] of the per-chain max. Offset stays
+#      constant for the whole bucket then snaps to a new random value.
+#   3. `glitch_min_intensity` (default 0.5) is the lower bound on per-
+#      cycle magnitude relative to max. 0.5 -> offset always between
+#      50% and 100% of max, so color separation is always visible. Set
+#      to 0.0 to allow occasional near-zero (with visible pauses); 1.0
+#      to lock to max (uniform shift, no random variation).
+#   4. Two independent random seeds drive R and B chains, sampled at
+#      offsets `(r_off_x, 0)` and `(b_off_x, 0)` — horizontal split.
+#   5. Final multiply by `final_mix` (default 0.6, Spark Multiply node).
+#
+# ── Stage 3: LUT ─────────────────────────────────────────────────────────
+# Same 8x8 grid trilinear sampling as black_and_white / spark_soft_nature.
+# `strength` controls the LUT mix.
+#
+# Time:
+#   We read `time_sec` as a parameter for production (host-driven). For
+#   sample-app local testing where the host may not be supplying time,
+#   uncomment the `getLocalTime()` line in [PreRender] (matches the
+#   color_leak / grainy convention in this catalog).
+#
+# LUT delivered via ARD (effectId / assetHash filled in once provided —
+# TODO placeholders in the manifest until then).
+
+[Init]
+fun init(Filter filter)
+{
+    makeTexture('lut);
+
+    # All parameters wired unconditionally in [PreRender] per CRA finding
+    # on black_and_white (filter.parameters declares min=0.0, so a host-set
+    # 0.0 is valid input and must propagate).
+    filter.parameters = {
+        {strength = 1.0, min = 0.0, max = 1.0, description = "LUT mix strength"},
+        {brightness = 0.032, min = -1.0, max = 1.0, description = "Adjust Colors brightness offset"},
+        {rgb_shift_amount = 0.482, min = 0.0, max = 2.0, description = "Horizontal RGB shift intensity; 1.0 matches Spark exactly"},
+        {final_mix = 0.796, min = 0.0, max = 2.0, description = "RGB Shift output multiplier"},
+        {glitch_rate = 6.783, min = 1.0, max = 20.0, description = "Glitch cycle rate in Hz; Spark default is 10"},
+        {glitch_min_intensity = 0.377, min = 0.0, max = 1.0, description = "Minimum per-cycle offset as fraction of max; higher means more constant separation"},
+    };
+
+    filter.passes = {{
+      name = 'pass0,
+      inputs = {'default, 'lut},
+      uniforms = {
+        strength = 1.0,
+        brightness = 0.032,
+        rgb_shift_amount = 0.482,
+        final_mix = 0.796,
+        glitch_rate = 6.783,
+        glitch_min_intensity = 0.377,
+        time = 0.0,
+      },
+      glslShader = glslToxicGlitch,
+    }};
+}
+
+string lut_path = "lut_path";
+string lut_filename = "";
+
+[PreRender]
+fun preRender(Filter filter){
+    string lut_filename_parameter = getParameterString(lut_path);
+    if (lut_filename_parameter != "") {
+        string new_lut_filename = stringAppend("textureFilePath://", lut_filename_parameter);
+        if (new_lut_filename != lut_filename) {
+            lut_filename = new_lut_filename;
+            loadTexture('lut, lut_filename);
+        }
+    }
+
+    # All four scalar parameters wired unconditionally — filter.parameters
+    # declares valid mins for each, so unguarded sets are correct.
+
+    f32 s = getParameterFloat('strength);
+    setShaderUniform('pass0, 'strength, s);
+
+    f32 b = getParameterFloat('brightness);
+    setShaderUniform('pass0, 'brightness, b);
+
+    f32 rsa = getParameterFloat('rgb_shift_amount);
+    setShaderUniform('pass0, 'rgb_shift_amount, rsa);
+
+    f32 fm = getParameterFloat('final_mix);
+    setShaderUniform('pass0, 'final_mix, fm);
+
+    f32 gr = getParameterFloat('glitch_rate);
+    setShaderUniform('pass0, 'glitch_rate, gr);
+
+    f32 gmi = getParameterFloat('glitch_min_intensity);
+    setShaderUniform('pass0, 'glitch_min_intensity, gmi);
+
+    # Time drives the per-bucket random RGB-shift jitter. Production uses
+    # the host-supplied `time_sec` parameter; uncomment the getLocalTime()
+    # line below for sample-app dev testing (matches color_leak / grainy
+    # convention in this catalog).
+    f32 time = getParameterFloat('time_sec);
+    # time = getLocalTime(); # uncomment for sample-app testing
+    setShaderUniform('pass0, 'time, time);
+}
+
+#### GLSL shader ####
+
+string glslToxicGlitch = "
+    varying vec2 sourceTextureCoordinate;
+    BaseUniformsOpenGL;
+
+    uniform sampler2D auxSampler0;
+    uniform sampler2D auxSampler1;
+    uniform sampler2D auxSampler2;
+
+    uniform float brightness;
+    uniform float rgb_shift_amount;
+    uniform float final_mix;
+    uniform float glitch_rate;
+    uniform float glitch_min_intensity;
+    uniform float time;
+
+    // Cheap 2D pseudo-random hash. Returns a value in roughly [0, 1).
+    float hash21(vec2 p) {
+      return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453);
+    }
+
+    void main() {
+      vec2 uv = sourceTextureCoordinate;
+
+      // Stage 2 setup: snap-and-hold horizontal RGB shift with a
+      // magnitude floor so color separation is always visible.
+      //   - bucket = which 1/glitch_rate window we are in
+      //   - per bucket: random sign and random magnitude in
+      //     [glitch_min_intensity, 1.0] of the per-chain Spark max
+      //   - offset is constant for the whole bucket then snaps to a new
+      //     random value at the next bucket boundary
+      float t_bucket = time * glitch_rate;
+      float bucket = floor(t_bucket);
+
+      // Per-cycle random magnitude with floor (always >= glitch_min_intensity)
+      float r_mag_rand = hash21(vec2(bucket, 1.0));
+      float b_mag_rand = hash21(vec2(bucket, 2.0));
+      float r_mag = mix(glitch_min_intensity, 1.0, r_mag_rand);
+      float b_mag = mix(glitch_min_intensity, 1.0, b_mag_rand);
+
+      // Apply Sparks per-chain end_range scaling (chain A: 0.95, chain B: 0.7)
+      r_mag = r_mag * 0.95;
+      b_mag = b_mag * 0.7;
+
+      // Per-cycle random direction (-1 or +1)
+      float r_sign = hash21(vec2(bucket, 3.0)) < 0.5 ? -1.0 : 1.0;
+      float b_sign = hash21(vec2(bucket, 4.0)) < 0.5 ? -1.0 : 1.0;
+
+      // Sparks Transition End_x values, scaled by rgb_shift_amount.
+      // rgb_shift_amount = 1.0 reproduces Sparks magnitude exactly.
+      float r_max_x = 0.05 * rgb_shift_amount;
+      float b_max_x = 0.06 * rgb_shift_amount;
+
+      float r_off_x = r_mag * r_sign * r_max_x;
+      float b_off_x = b_mag * b_sign * b_max_x;
+
+      // Y locked at 0 — horizontal-only per Spark patch
+      vec2 r_offset = vec2(r_off_x, 0.0);
+      vec2 b_offset = vec2(b_off_x, 0.0);
+
+      // ── Sample the input three times for the RGB split ──
+      // Stage 1 (Adjust Colors at Spark defaults) collapses to a constant
+      // brightness offset on RGB. Apply it equally to all three samples
+      // before the channel split.
+      vec4 samp_r = sampleInput(uv + r_offset);
+      vec4 samp_g = sampleInput(uv);
+      vec4 samp_b = sampleInput(uv + b_offset);
+      samp_r.rgb += vec3(brightness);
+      samp_g.rgb += vec3(brightness);
+      samp_b.rgb += vec3(brightness);
+
+      // Canonical RGB shift / chromatic aberration recombine.
+      vec4 shifted = vec4(samp_r.r, samp_g.g, samp_b.b, samp_g.a);
+
+      // Spark's final Multiply(0.6) at the RGB Shift Shader output.
+      shifted.rgb *= final_mix;
+
+      // ── Stage 3: LUT (same shader as black_and_white) ──
+      vec4 texel = shifted;
+      texel.rgb = clamp(texel.rgb, 0.00781, 0.98438);
+
+      float x = texel.r / 8.0;
+      float y = texel.g / 8.0;
+      float z = texel.b;
+
+      float blueY = floor(z * 8.0) / 8.0;
+      float blueX = floor((z - blueY) * 64.0) / 8.0;
+
+      x += blueX;
+      y += blueY;
+
+      vec3 color = texture2D(auxSampler1, vec2(x, y)).xyz;
+
+      texel = mix(texel, vec4(color, texel.a), strength);
+
+      gl_FragColor = toOutputFormat(texel);
+    }
+    ";

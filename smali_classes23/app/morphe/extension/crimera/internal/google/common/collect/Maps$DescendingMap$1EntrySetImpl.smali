@@ -1,0 +1,85 @@
+.class Lapp/morphe/extension/crimera/internal/google/common/collect/Maps$DescendingMap$1EntrySetImpl;
+.super Lapp/morphe/extension/crimera/internal/google/common/collect/Maps$EntrySet;
+.source "Maps.java"
+
+
+# annotations
+.annotation system Ldalvik/annotation/EnclosingMethod;
+    value = Lapp/morphe/extension/crimera/internal/google/common/collect/Maps$DescendingMap;->createEntrySet()Ljava/util/Set;
+.end annotation
+
+.annotation system Ldalvik/annotation/InnerClass;
+    accessFlags = 0x1
+    name = "EntrySetImpl"
+.end annotation
+
+.annotation system Ldalvik/annotation/Signature;
+    value = {
+        "Lapp/morphe/extension/crimera/internal/google/common/collect/Maps$EntrySet<",
+        "TK;TV;>;"
+    }
+.end annotation
+
+
+# instance fields
+.field final synthetic this$0:Lapp/morphe/extension/crimera/internal/google/common/collect/Maps$DescendingMap;
+
+
+# direct methods
+.method public constructor <init>(Lapp/morphe/extension/crimera/internal/google/common/collect/Maps$DescendingMap;)V
+    .locals 0
+    .annotation system Ldalvik/annotation/MethodParameters;
+        accessFlags = {
+            0x8010
+        }
+        names = {
+            "this$0"
+        }
+    .end annotation
+
+    .line 4336
+    iput-object p1, p0, Lapp/morphe/extension/crimera/internal/google/common/collect/Maps$DescendingMap$1EntrySetImpl;->this$0:Lapp/morphe/extension/crimera/internal/google/common/collect/Maps$DescendingMap;
+
+    invoke-direct {p0}, Lapp/morphe/extension/crimera/internal/google/common/collect/Maps$EntrySet;-><init>()V
+
+    return-void
+.end method
+
+
+# virtual methods
+.method public iterator()Ljava/util/Iterator;
+    .locals 0
+    .annotation system Ldalvik/annotation/Signature;
+        value = {
+            "()",
+            "Ljava/util/Iterator<",
+            "Ljava/util/Map$Entry<",
+            "TK;TV;>;>;"
+        }
+    .end annotation
+
+    .line 4344
+    iget-object p0, p0, Lapp/morphe/extension/crimera/internal/google/common/collect/Maps$DescendingMap$1EntrySetImpl;->this$0:Lapp/morphe/extension/crimera/internal/google/common/collect/Maps$DescendingMap;
+
+    invoke-virtual {p0}, Lapp/morphe/extension/crimera/internal/google/common/collect/Maps$DescendingMap;->entryIterator()Ljava/util/Iterator;
+
+    move-result-object p0
+
+    return-object p0
+.end method
+
+.method public map()Ljava/util/Map;
+    .locals 0
+    .annotation system Ldalvik/annotation/Signature;
+        value = {
+            "()",
+            "Ljava/util/Map<",
+            "TK;TV;>;"
+        }
+    .end annotation
+
+    .line 4339
+    iget-object p0, p0, Lapp/morphe/extension/crimera/internal/google/common/collect/Maps$DescendingMap$1EntrySetImpl;->this$0:Lapp/morphe/extension/crimera/internal/google/common/collect/Maps$DescendingMap;
+
+    return-object p0
+.end method

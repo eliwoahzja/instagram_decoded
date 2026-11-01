@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "iglu": {
+    "legacyId": 5074,
+    "customization": [],
+    "subject": {
+      "overlay": true
+    }
+  },
+  "displayName": "Crafty",
+  "description": "[IG Edits] Video overlay effect name. With \"Crafty\", the creator overlays a handmade, wobbly distortion animation onto the video while preserving the underlying clip.",
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAC5_wM5DU6"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "3a936351",
+      "handle": "AQAFutlWK_Yz",
+      "md5": "35e51190a5c1e4d6923e8fc4084877a0"
+    }
+  }
+}

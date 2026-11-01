@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "text_crafty",
+  "displayName": "Crafty",
+  "description": "Label for the Crafty text effect style. This is a text effect that users can add to their content. It animates with a handmade, crafted look with wobbly distortion.",
+  "iglu": {}
+}

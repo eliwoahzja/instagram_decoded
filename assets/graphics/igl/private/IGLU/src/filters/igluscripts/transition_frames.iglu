@@ -1,0 +1,93 @@
+# IGLUSCRIPTCOLLISION_BYPASS: IGLUScript port of transition_frames, QE-selectable for A/B vs TransitionFramesFilter.
+[Filter TransitionFrames]
+
+[Init]
+fun init(Filter filter) {
+  makeTexture('transition);
+  filter.passes = {{
+    name = 'frames,
+    inputs = {'default, 'transition},
+    shaderInputNames = {'default, 's_texture1},
+    uniforms = {
+      progress = 0.0,
+      slide_progress = 0.0,
+      outputSize = {1280.0, 720.0},
+      sizeScale = 1.0,
+      numFrames = 2.0,
+      cornerRadius = 215.0,
+      feather = 24.0,
+      padding = {55.0, 440.0},
+      frameColor = {0.0, 0.0, 0.0},
+    },
+    glslShader = glsl,
+  }};
+}
+
+fun ramp(f32 e0, f32 e1, f32 x) f32 {
+  return min(max((x - e0) / (e1 - e0), 0.0), 1.0);
+}
+
+fun easeInOutCubic(f32 t) f32 {
+  if (t < 0.5) {
+    return 4.0 * t * t * t;
+  } else {
+    f32 f = -2.0 * t + 2.0;
+    return 1.0 - pow(f, 3.0) / 2.0;
+  }
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  f32 p = max(getParameterFloat('progress), getParameterFloat('transition_progress));
+  setShaderUniform('frames, 'progress, p);
+  setShaderUniform('frames, 'slide_progress, easeInOutCubic(ramp(0.1, 0.95, p)));
+  vec2 size = getTextureSize('default);
+  setShaderUniform('frames, 'outputSize, size);
+  setShaderUniform('frames, 'sizeScale, min(size.x, size.y) / 1080.0);
+}
+
+string glsl = "
+  varying vec2 sourceTextureCoordinate;
+  BaseUniformsOpenGL;
+  uniform sampler2D s_texture1;
+  uniform float progress;
+  uniform float slide_progress;
+  uniform vec2 outputSize;
+  uniform float sizeScale;
+  uniform float numFrames;
+  uniform float cornerRadius;
+  uniform float feather;
+  uniform vec2 padding;
+  uniform vec3 frameColor;
+  float sdRoundBox(vec2 p, vec2 b, vec4 r) {
+    vec4 rr = r;
+    rr.xy = (p.x > 0.0) ? rr.xy : rr.zw;
+    rr.x = (p.y > 0.0) ? rr.x : rr.y;
+    vec2 q = abs(p) - b + rr.x;
+    return min(max(q.x, q.y), 0.0) + length(max(q, 0.0)) - rr.x;
+  }
+  float random(float n) { return fract(sin(n * 12.9898) * 43758.5453); }
+  float parabola(float x, float k) { return pow(4.0 * x * (1.0 - x), k); }
+  void main() {
+    vec2 uv = sourceTextureCoordinate;
+    float slideAnim = slide_progress;
+    float offset = slideAnim * numFrames;
+    float frameIndex = floor(uv.x + offset) / numFrames;
+    float thresh = random(frameIndex);
+    float blend = 1.0 - step(frameIndex, thresh);
+    vec2 frameUv = vec2(fract(uv.x + offset), uv.y);
+    vec4 a = sampleInput(frameUv);
+    vec4 b = texture2D(s_texture1, frameUv);
+    vec4 color = mix(a, b, blend);
+    vec2 st = frameUv * outputSize;
+    float frameAnim = parabola(progress, 0.5);
+    float cr = cornerRadius * sizeScale;
+    float fth = feather * sizeScale;
+    vec2 pad = padding * sizeScale;
+    float d = sdRoundBox(st - outputSize * 0.5, outputSize * 0.5 - pad * frameAnim, vec4(cr * frameAnim));
+    float frame = smoothstep(0.0 - fth * frameAnim, 1.0 + fth * frameAnim, d);
+    color.rgb = mix(color.rgb, frameColor.rgb, frame);
+    color = vec4(color.rgb, 1.0);
+    gl_FragColor = toOutputFormat(color);
+  }
+";

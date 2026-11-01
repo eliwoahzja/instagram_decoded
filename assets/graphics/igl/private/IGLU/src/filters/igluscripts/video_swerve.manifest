@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_swerve",
+  "displayName": "Swerve",
+  "description": "[IG Edits] Video effect name. With \"Swerve\", the creator can swerve the frame along a Catmull-Rom keyframe path with a rotation kick while zooming from 2.86x to 1x.",
+  "iglu": {
+    "legacyId": 3009,
+    "behavior": {
+      "type": "fixedIntro",
+      "durationMs": 667,
+      "curve": "linear"
+    },
+    "customization": [
+      {
+        "name": "duration",
+        "default": 0.667,
+        "min": 0.2,
+        "max": 3.0,
+        "displayName": "Duration",
+        "displayNameDescription": "[IG Edits] Slider label controlling how long a video effect's animation lasts; exact units and range vary per effect (seconds or normalized).",
+        "displayMethod": "time"
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "890d0985",
+      "handle": "AQAGZfvwkhAD",
+      "md5": "74329ddad463d6c07b65bef77b1802be"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAH2hKOK2HO"
+    }
+  }
+}

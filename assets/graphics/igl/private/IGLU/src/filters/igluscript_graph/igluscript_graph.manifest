@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "identifier": "igluscript_graph",
+  "displayName": "Igluscript Graph",
+  "description": "[IG Edits] Video effect name. With \"Igluscript Graph\", the creator can run a Spark-AR-derived IGLUScript node graph with bundled noise/gradient/displace textures to drive procedural mixes.",
+  "assets": [
+    {
+      "name": "bulge.png",
+      "assetHash": "66f2ba5c28527e8220ff67c0f64914252d82c641748ef76e767277738eae87ab",
+      "hubAssetId": "3641797072626941"
+    },
+    {
+      "name": "displace_in.png",
+      "assetHash": "b857707b9642cbf8c0a0a318af39116cff592a1e10c0d64c1a5946145501a2d5",
+      "hubAssetId": "1234560632154926"
+    },
+    {
+      "name": "gradient_blue.png",
+      "assetHash": "a7a61fa29c43bf1bccb75e7a68d4444e90ab427e469e52b958df7aa5232de962",
+      "hubAssetId": "25941471735480653"
+    },
+    {
+      "name": "gradient_orange.png",
+      "assetHash": "32edfea62f355125f02c7bdb00eca706f06850c52d7f9fdfe38f8dbed4b1622b",
+      "hubAssetId": "919213973916839"
+    },
+    {
+      "name": "gradient_pink.png",
+      "assetHash": "fb892dba754f50e08e6fbbe20ac51a0cf5231be919c5530030e423707600e5de",
+      "hubAssetId": "4293575507556975"
+    },
+    {
+      "name": "gradient_purple.png",
+      "assetHash": "cd63f4779b83d1655deeddede6b99421cd93852afd8384ad715b1f216e649510",
+      "hubAssetId": "1591050322203793"
+    },
+    {
+      "name": "gradient_rainbow.png",
+      "assetHash": "8cda6c8ab612a3a1d1852698fa38570d28e9374a4ddf11fd011619d42e2b5150",
+      "hubAssetId": "1628252791691606"
+    },
+    {
+      "name": "perlin_noise.png",
+      "assetHash": "42393e620664a372495800bfcf40ca960aa0ab3e2ddfe42fbfe2b86098d33000",
+      "hubAssetId": "1259354255546062"
+    },
+    {
+      "name": "rgba_noise_256.png",
+      "assetHash": "3415067e1e7cd2965854c813f34bdb028aed7f87695903797ff6ec62f156c506",
+      "hubAssetId": "1274215854629798"
+    },
+    {
+      "name": "slide_right.png",
+      "assetHash": "52e2dbdb59490bccaab861be24f90f5c92346bc647711c6ef676ebe5fda3e438",
+      "hubAssetId": "26372106545782120"
+    },
+    {
+      "name": "stretch.png",
+      "assetHash": "5143ee1fb6e226055af915ca371b734ad70b330f58d93ef3c403503e33129a99",
+      "hubAssetId": "1889347115032280"
+    }
+  ],
+  "iglu": {}
+}

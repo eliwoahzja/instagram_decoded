@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "s_shape",
+  "displayName": "S Shape",
+  "description": "[IG Edits] Video effect name. With \"S Shape\", the creator can play an animated camera move that swings the frame along an S-shaped damped oscillation with motion blur and a glow flash.",
+  "iglu": {}
+}

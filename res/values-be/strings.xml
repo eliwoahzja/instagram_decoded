@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="string_0x7f130002">Рэгіён</string>
+    <string name="string_0x7f130004">Адрас</string>
+    <string name="string_0x7f130006">Кв/пам. (неабавязкова)</string>
+    <string name="string_0x7f13002c">Закрыць браўзер</string>
+    <string name="string_0x7f130030">%1$s хоча выкарыстаць месцазнаходжанне вашай прылады.</string>
+    <string name="string_0x7f130033">Дазволіць</string>
+    <string name="string_0x7f130034">Заблакіраваць</string>
+    <string name="string_0x7f13008d">Нешта пайшло не так</string>
+    <string name="string_0x7f13008f">Электронная пошта</string>
+    <string name="string_0x7f130091">Вэб-сайт, які вы праглядаеце, спрабуе адкрыць знешнюю праграму. Ці хочаце вы працягнуць?</string>
+    <string name="string_0x7f130092">Назад</string>
+    <string name="string_0x7f130093">Працягнуць</string>
+    <string name="string_0x7f130094">Вы збіраецеся пакінуць нашу праграму</string>
+    <string name="string_0x7f130095">Магчыма, гэта звязана з тэхнічнай праблемай, якую мы ўжо вырашаем. Паспрабуйце перазагрузіць старонку.</string>
+    <string name="string_0x7f130096">Абнавіць</string>
+    <string name="string_0x7f130097">Старонка пакуль недаступная</string>
+    <string name="string_0x7f130098">Прозвішча</string>
+    <string name="string_0x7f130099">Немагчыма загрузіць Старонку</string>
+    <string name="string_0x7f13009b">Адкрыць у праграме \"%1$s\"</string>
+    <string name="string_0x7f13009c">Іншыя варыянты</string>
+    <string name="string_0x7f1300aa">Імя</string>
+    <string name="string_0x7f1300af">Вы выконваеце прагляд у поўнаэкранным рэжыме. Каб выйсці з яго, змахніце налева або націсніце кнопку \"Назад\".</string>
+    <string name="string_0x7f1300cb">Узніклі праблемы з устаноўкай мовы (%1$s) для праграмы \"%2$s\". Паўтарыце спробу ці выкарыстоўвайце \"%2$s\" на англійскай мове.</string>
+    <string name="string_0x7f1300cc">Пачакайце. Устанаўліваем мову (%1$s)…</string>
+    <string name="string_0x7f1300cd">Паўтарыць спробу</string>
+    <string name="string_0x7f1300ce">Перайсці на англійскую (ЗША)</string>
+    <string name="string_0x7f13010b">паштовы індэкс</string>
+    <string name="string_0x7f1301d7">Указанне часу</string>
+</resources>

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "identifier": "euphoria",
+  "displayName": "Euphoria",
+  "description": "[IG Edits] Color filter name. With \"Euphoria\", the creator can apply a stylized neon Euphoria color grade by sampling the euphoria.lutpk LUT and mixing by strength in the Euphoria shader.",
+  "attribution": "@euphoria",
+  "iglu": {
+    "legacyId": 5049
+  },
+  "assets": [
+    {
+      "name": "euphoria.lutpk",
+      "assetHash": "36adb54a96af62c1c91a98403cbca997da22d0ede9923bc8a07a6d89270942f5",
+      "hubAssetId": "975014128802241"
+    }
+  ]
+}

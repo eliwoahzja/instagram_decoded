@@ -1,0 +1,114 @@
+[Filter BlackGradient]
+# "Black Gradient" — fully procedural black gradient overlay. No LUT, no
+# assets, no ARD delivery: the ramp is computed in the shader.
+#
+# The Spark source is a full-screen PNG that is transparent across the top
+# of the frame and ramps to opaque black at the bottom. Reproduced here as
+# a shader-side alpha ramp composited over the camera image, so nothing
+# ships with the filter.
+#
+# RESPONSIVENESS (the one thing that actually matters here):
+# The ramp is driven by `textureCoordinate.y`, which the base vertex
+# shader emits as `a_texCoord + 0.5` \u2014 a raw 0..1 DESTINATION-space quad
+# coordinate that is NOT multiplied by `texture_transform`. Two
+# consequences, both deliberate:
+#   1. It is normalized to the frame, so the gradient stretches to fill any
+#      output size or aspect \u2014 exactly how the source PNG behaves as a
+#      full-screen overlay. There is intentionally NO aspect correction: a
+#      vertical linear ramp should stretch, unlike a vignette, whose radial
+#      distance does need aspect correction to stay circular.
+#   2. Because `texture_transform` is skipped, the ramp will not flip or
+#      slide when the input is cropped or re-oriented. Using
+#      `sourceTextureCoordinate` here would tie the gradient to the input
+#      sampling transform and break that.
+# Precedent for the varying choice: `gradient_transform.iglu`. NOTE its
+# `u_bottomColor`/`u_topColor` naming implies y = 0 is the bottom, but the
+# observed render on this path is the opposite — y = 0 lands at the visual
+# TOP — so the shader inverts y explicitly. Verified on screen, not from
+# the vertex-shader math, which is easy to misread because the Metal
+# `flipYMatrix` in `filters/common/Common.cpp` cancels a framebuffer-origin
+# difference rather than changing what the shader author sees.
+#
+# Parameters are user-adjustable (`gradient_*`), never the framework-owned
+# `strength` \u2014 see blue_sky / super_8mm. Host `strength` is kept as an
+# outer multiplier so the app can still fade the whole effect.
+
+[Init]
+fun init(Filter filter)
+{
+    # NOTE ON THE DUPLICATED DEFAULTS BELOW \u2014 the duplication is required, do
+    # not try to collapse it:
+    #   * `filter.parameters` is what actually governs at runtime. `[PreRender]`
+    #     re-reads each entry and pushes it via `setShaderUniform` every frame,
+    #     so these are the values that ship.
+    #   * The per-pass `uniforms` block is what DECLARES each uniform on the
+    #     pass. It cannot be dropped \u2014 see `fog.iglu`, which declares a `time`
+    #     entry there that is not a `filter.parameters` entry at all.
+    #   * Binding both to a shared `f32` constant does NOT work: the uniforms
+    #     block only accepts literals. A variable there fails at runtime with
+    #     "<name> is not a valid uniform type / MakePass: parsing uniforms
+    #     failed", even though `igluscripttool -n` still reports "all phases
+    #     succeeded" (that tool does not exercise TreeToFilterInfo/MakePass).
+    #     Verified empirically 2026-08-05.
+    # So: keep the two lists in sync by hand when re-dialing.
+    filter.parameters = {
+        {gradient_opacity = 1.0, min = 0.0, max = 1.0, description = "Opacity of the black gradient at the bottom edge"},
+        {gradient_height = 0.741, min = 0.0, max = 1.0, description = "Fraction of the frame height the gradient rises over, measured from the bottom"},
+        {gradient_curve = 1.690, min = 0.2, max = 4.0, description = "Falloff shape; 1.0 is linear, higher keeps the top of the ramp lighter for longer"},
+    };
+
+    filter.passes = {{
+      name = 'pass0,
+      inputs = {'default},
+      uniforms = {
+        gradient_opacity = 1.0,
+        gradient_height = 0.741,
+        gradient_curve = 1.690,
+      },
+      glslShader = glslGradient,
+    }};
+}
+
+[PreRender]
+fun preRender(Filter filter){
+    f32 o = getParameterFloat('gradient_opacity);
+    setShaderUniform('pass0, 'gradient_opacity, o);
+
+    f32 h = getParameterFloat('gradient_height);
+    setShaderUniform('pass0, 'gradient_height, h);
+
+    f32 c = getParameterFloat('gradient_curve);
+    setShaderUniform('pass0, 'gradient_curve, c);
+}
+
+#### GLSL shader ####
+
+string glslGradient = "
+    varying vec2 textureCoordinate;
+    varying vec2 sourceTextureCoordinate;
+    BaseUniformsOpenGL;
+
+    uniform float gradient_opacity;
+    uniform float gradient_height;
+    uniform float gradient_curve;
+
+    void main() {
+      vec4 texel = sampleInput(sourceTextureCoordinate);
+
+      // Anchor the ramp to the BOTTOM of the frame. `textureCoordinate.y`
+      // arrives 0 at the visual top on this path, so invert it first and
+      // measure the ramp upward from the bottom edge.
+      float yFromBottom = 1.0 - textureCoordinate.y;
+
+      // Guard the divide so gradient_height = 0.0 collapses to no gradient
+      // rather than producing a NaN across the whole frame.
+      float h = max(gradient_height, 0.0001);
+      float t = clamp((h - yFromBottom) / h, 0.0, 1.0);
+
+      float alpha = pow(t, max(gradient_curve, 0.0001)) * gradient_opacity * strength;
+
+      texel.rgb = mix(texel.rgb, vec3(0.0), alpha);
+
+      gl_FragColor = toOutputFormat(texel);
+    }
+    ";

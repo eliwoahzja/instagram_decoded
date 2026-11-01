@@ -1,0 +1,138 @@
+[Filter Cool]
+# "Cool" — LUT color grading + skin-smoothing blur + BRCOSA
+# tone matching + global rouge boost. Single fragment pass.
+#
+# Spark origin: colorPreset_skinSmoothing_coolLUT (Effect ID 855036845023730).
+# LUT delivered via ARD.
+
+[Init]
+fun init(Filter filter)
+{
+    makeTexture('lut);
+
+    filter.parameters = {
+        {blur_strength   = 0.155,  min = 0.0, max = 1.0,  description = "Skin-smoothing 9-tap blur mix amount"},
+        {blur_radius     = 0.003,  min = 0.0, max = 0.05, description = "Skin-smoothing kernel radius in normalized UV"},
+        {rouge_strength  = 0.050,  min = 0.0, max = 0.5,  description = "Global red channel lift (face-tracked rouge approximation)"},
+        {brightness      = 1.000,  min = 0.0, max = 2.0,  description = "BRCOSA brightness multiplier"},
+        {contrast        = 0.949,  min = 0.0, max = 2.0,  description = "BRCOSA contrast (1.0 = no change; <1 reduces, >1 increases)"},
+        {saturation      = 1.051,  min = 0.0, max = 2.0,  description = "BRCOSA saturation (1.0 = no change; 0.0 = grayscale; >1 boosts)"},
+    };
+
+    filter.passes = {{
+      name = 'pass0,
+      inputs = {'default, 'lut},
+      uniforms = {
+        blur_strength   = 0.155,
+        blur_radius     = 0.003,
+        rouge_strength  = 0.050,
+        brightness      = 1.000,
+        contrast        = 0.949,
+        saturation      = 1.051,
+      },
+      glslShader = glslCool,
+    }};
+}
+
+string lut_path = "lut_path";
+string lut_filename = "";
+
+[PreRender]
+fun preRender(Filter filter){
+    string lut_filename_parameter = getParameterString(lut_path);
+    if (lut_filename_parameter != "") {
+        string new_lut_filename = stringAppend("textureFilePath://", lut_filename_parameter);
+        if (new_lut_filename != lut_filename) {
+            lut_filename = new_lut_filename;
+            loadTexture('lut, lut_filename);
+        }
+    }
+
+    f32 blr = getParameterFloat('blur_strength);
+    setShaderUniform('pass0, 'blur_strength, blr);
+
+    f32 blrad = getParameterFloat('blur_radius);
+    setShaderUniform('pass0, 'blur_radius, blrad);
+
+    f32 rs = getParameterFloat('rouge_strength);
+    setShaderUniform('pass0, 'rouge_strength, rs);
+
+    f32 bri = getParameterFloat('brightness);
+    setShaderUniform('pass0, 'brightness, bri);
+
+    f32 ct = getParameterFloat('contrast);
+    setShaderUniform('pass0, 'contrast, ct);
+
+    f32 sat = getParameterFloat('saturation);
+    setShaderUniform('pass0, 'saturation, sat);
+}
+
+#### GLSL shader ####
+
+string glslCool = "
+    varying vec2 sourceTextureCoordinate;
+    BaseUniformsOpenGL;
+
+    uniform sampler2D auxSampler0;  // 'default (camera)
+    uniform sampler2D auxSampler1;  // 'lut
+
+    uniform float blur_strength;
+    uniform float blur_radius;
+    uniform float rouge_strength;
+    uniform float brightness;
+    uniform float contrast;
+    uniform float saturation;
+
+    // 8x8 grid LUT sample (catalog convention: [0.05, 0.9] clamp).
+    vec3 applyLut(vec3 inRgb) {
+      vec3 c = clamp(inRgb, 0.05, 0.9);
+      float x = c.r / 8.0;
+      float y = c.g / 8.0;
+      float z = c.b;
+      float blueY = floor(z * 8.0) / 8.0;
+      float blueX = floor((z - blueY) * 64.0) / 8.0;
+      x += blueX;
+      y += blueY;
+      return texture2D(auxSampler1, vec2(x, y)).xyz;
+    }
+
+    // Standard luma weights (Rec. 601).
+    float luma(vec3 rgb) {
+      return dot(rgb, vec3(0.299, 0.587, 0.114));
+    }
+
+    void main() {
+      vec2 uv = sourceTextureCoordinate;
+
+      // Stage 1: 9-tap weighted skin-smoothing blur.
+      float r = blur_radius;
+      vec3 center = sampleInput(uv).rgb;
+      vec3 skinBlurred = center * (4.0 / 16.0);
+      skinBlurred += sampleInput(uv + vec2( r, 0.0)).rgb * (2.0 / 16.0);
+      skinBlurred += sampleInput(uv + vec2(-r, 0.0)).rgb * (2.0 / 16.0);
+      skinBlurred += sampleInput(uv + vec2(0.0,  r)).rgb * (2.0 / 16.0);
+      skinBlurred += sampleInput(uv + vec2(0.0, -r)).rgb * (2.0 / 16.0);
+      skinBlurred += sampleInput(uv + vec2( r,  r)).rgb * (1.0 / 16.0);
+      skinBlurred += sampleInput(uv + vec2( r, -r)).rgb * (1.0 / 16.0);
+      skinBlurred += sampleInput(uv + vec2(-r,  r)).rgb * (1.0 / 16.0);
+      skinBlurred += sampleInput(uv + vec2(-r, -r)).rgb * (1.0 / 16.0);
+      vec3 softened = mix(center, skinBlurred, blur_strength);
+
+      // Stage 2: LUT grade at 100% mix.
+      vec3 graded = applyLut(softened);
+
+      vec3 result = graded;
+
+      // Stage 3: BRCOSA approximation.
+      result *= brightness;
+      result = (result - 0.5) * contrast + 0.5;
+      float l = luma(result);
+      result = mix(vec3(l), result, saturation);
+
+      // Stage 4: Global rouge boost.
+      result.r *= 1.0 + rouge_strength;
+
+      result = clamp(result, 0.0, 1.0);
+      gl_FragColor = toOutputFormat(vec4(result, 1.0));
+    }
+    ";

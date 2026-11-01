@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.facebook.fbui.drawable.custom.AppFbIconDrawable fbui:variant_filled="@drawable/fb_ic_hub_filled_16" fbui:variant_outline="@drawable/fb_ic_hub_outline_16"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:fbui="http://schemas.android.com/apk/res-auto" />

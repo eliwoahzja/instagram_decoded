@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CheckBox android:textSize="12.0sp" android:textStyle="bold" android:textColor="@drawable/color_filter_tray_button_text" android:id="@id/color_filter_button" android:background="@drawable/color_filter_tray_button" android:layout_width="wrap_content" android:layout_height="36.0dp" android:button="@android:color/transparent" android:minWidth="53.0dp" android:textAlignment="center" android:paddingHorizontal="12.0dp"
+  xmlns:android="http://schemas.android.com/apk/res/android" />

@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "transform",
+  "displayName": "Transform",
+  "description": "[IG Edits] Internal effect. With \"Transform\", the engine can apply an affine transform (translate/rotate/scale) to the video (developer-only utility).",
+  "iglu": {}
+}

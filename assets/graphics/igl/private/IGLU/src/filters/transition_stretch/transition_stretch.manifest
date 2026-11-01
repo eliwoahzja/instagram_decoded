@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "transition_stretch",
+  "displayName": "Stretch",
+  "description": "Video effect name. With \"Stretch\", the creator can imitate the effect of stretching the video clip outwards on the right side.",
+  "iglu": {}
+}

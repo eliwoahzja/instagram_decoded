@@ -1,0 +1,195 @@
+[Filter Now]
+# "Now" — LUT + dark vignette + global rouge + decorative frame +
+# host-supplied date overlay.
+#
+# Three ARD-delivered named inputs (extends the bas_a_droite pattern
+# of multi-asset loading):
+#   * 'lut       — color LUT, 8x8 grid (now_lut.png)
+#   * 'frame     — decorative border / frame (now_frame.png), composited
+#                 with normal alpha "over" blend
+#   * 'date_text — host-rendered date string as a transparent PNG,
+#                 composited just under the frame so the frame border
+#                 can occlude any overflow
+#
+# Pipeline (single fragment pass):
+#   1. Sample camera source.
+#   2. Apply LUT trilinear sampling, mix with `strength` (default 1.0).
+#   3. Boost red channel uniformly by `(1 + rouge_strength)` — coarse
+#      approximation of the Spark face-tracked rouge effect (see note
+#      below).
+#   4. Multiply RGB by `darkness` (default 0.80) — subtle dark vignette
+#      over the whole frame.
+#   5. Composite `'date_text` over the result via normal alpha blend.
+#      The host pushes a pre-rendered date PNG (DroidSerifItalic, size
+#      18, white, letter-spacing 7, centered, near the bottom). See
+#      "Date rendering integration" note below.
+#   6. Composite `'frame` over everything via normal alpha blend.
+#
+# **Date rendering integration (host-side, follow-up)**: IGLUScript
+# fragment shaders cannot rasterize glyphs from strings — there is no
+# font loader, no glyph atlas, no system-date access in the shader.
+# The catalog convention is for the HOST (FilterKit / IG / Edits) to
+# render the formatted date to a transparent PNG and push it to the
+# `'date_text` named input. The Spark equivalent is
+# `${DATE[datemedium]:titlecase}` rendered with DroidSerifItalic.
+#
+# Production wiring required (NOT in this diff, parallel to the
+# FilterIds.kt / UnifiedVideoEffectFilterNameUtil.kt mappings):
+#   - Android: format the date with the locale's medium style and
+#     title-case, rasterize via Canvas/Paint with DroidSerifItalic at
+#     18sp + letter-spacing 7, upload to a textured surface, push as
+#     `'date_text` named input.
+#   - iOS: equivalent with DateFormatter + UIKit text rendering.
+#
+# For sample-app local testing, bind a static "Date goes here" PNG
+# (or a pre-rendered date PNG) via the Custom Parameter `date_text_path`.
+#
+# **Known gap vs Spark reference (rouge)**: the Spark patch likely
+# applies rouge ONLY on tracked skin via a face mesh / face landmark
+# input. IGLUScript does not expose face-tracking inputs, so this
+# implementation applies rouge uniformly. Effect is most visible on
+# warm tones (skin, lips) and least visible on cool tones, but it does
+# also lift the red channel of any red object in the background.
+#
+# All assets delivered via ARD; effectIds and assetHashes will be
+# filled in once provided. **WIP — DO NOT LAND** while the manifest
+# carries TODO placeholders.
+#
+# Locally overrideable via Custom Parameters in the sample app:
+#   * `lut_path`        -> binds a textureFilePath:// to 'lut
+#   * `frame_path`      -> binds a textureFilePath:// to 'frame
+#   * `date_text_path`  -> binds a textureFilePath:// to 'date_text
+
+[Init]
+fun init(Filter filter)
+{
+    makeTexture('lut);
+    makeTexture('frame);
+    makeTexture('date_text);
+
+    # Host-tunable parameters. All have valid 0.0 minimums; we wire
+    # them unconditionally in [PreRender] so a host-set 0.0 takes effect
+    # (per CRA finding on black_and_white).
+    filter.parameters = {
+        {strength = 1.0, min = 0.0, max = 1.0, description = "LUT mix strength"},
+        {darkness = 0.80, min = 0.0, max = 1.0, description = "Global brightness multiplier; lower means darker vignette"},
+        {rouge_strength = 0.07, min = 0.0, max = 0.5, description = "Global red channel boost; uniform red lift across the frame"},
+    };
+
+    filter.passes = {{
+      name = 'pass0,
+      inputs = {'default, 'lut, 'frame, 'date_text},
+      uniforms = {
+        strength = 1.0,
+        darkness = 0.80,
+        rouge_strength = 0.07,
+      },
+      glslShader = glslNow,
+    }};
+}
+
+string lut_path = "lut_path";
+string lut_filename = "";
+string frame_path = "frame_path";
+string frame_filename = "";
+string date_text_path = "date_text_path";
+string date_text_filename = "";
+
+[PreRender]
+fun preRender(Filter filter){
+    string lut_filename_parameter = getParameterString(lut_path);
+    if (lut_filename_parameter != "") {
+        string new_lut_filename = stringAppend("textureFilePath://", lut_filename_parameter);
+        if (new_lut_filename != lut_filename) {
+            lut_filename = new_lut_filename;
+            loadTexture('lut, lut_filename);
+        }
+    }
+
+    string frame_filename_parameter = getParameterString(frame_path);
+    if (frame_filename_parameter != "") {
+        string new_frame_filename = stringAppend("textureFilePath://", frame_filename_parameter);
+        if (new_frame_filename != frame_filename) {
+            frame_filename = new_frame_filename;
+            loadTexture('frame, frame_filename);
+        }
+    }
+
+    string date_text_filename_parameter = getParameterString(date_text_path);
+    if (date_text_filename_parameter != "") {
+        string new_date_text_filename = stringAppend("textureFilePath://", date_text_filename_parameter);
+        if (new_date_text_filename != date_text_filename) {
+            date_text_filename = new_date_text_filename;
+            loadTexture('date_text, date_text_filename);
+        }
+    }
+
+    # All three uniforms wired unconditionally per CRA convention.
+    f32 s = getParameterFloat('strength);
+    setShaderUniform('pass0, 'strength, s);
+
+    f32 d = getParameterFloat('darkness);
+    setShaderUniform('pass0, 'darkness, d);
+
+    f32 r = getParameterFloat('rouge_strength);
+    setShaderUniform('pass0, 'rouge_strength, r);
+}
+
+#### GLSL shader ####
+
+string glslNow = "
+    varying vec2 sourceTextureCoordinate;
+    BaseUniformsOpenGL;
+
+    uniform sampler2D auxSampler0;
+    uniform sampler2D auxSampler1;
+    uniform sampler2D auxSampler2;
+    uniform sampler2D auxSampler3;
+
+    uniform float darkness;
+    uniform float rouge_strength;
+
+    void main() {
+      vec2 uv = sourceTextureCoordinate;
+      vec4 base = sampleInput(uv);
+
+      // Stage 1: 8x8 grid LUT trilinear sampling.
+      vec3 c = clamp(base.rgb, 0.00781, 0.98438);
+      float x = c.r / 8.0;
+      float y = c.g / 8.0;
+      float z = c.b;
+      float blueY = floor(z * 8.0) / 8.0;
+      float blueX = floor((z - blueY) * 64.0) / 8.0;
+      x += blueX;
+      y += blueY;
+      vec3 lutColor = texture2D(auxSampler1, vec2(x, y)).xyz;
+      base.rgb = mix(base.rgb, lutColor, strength);
+
+      // Stage 2: global rouge boost (uniform red channel lift).
+      // Approximation of the Spark face-tracked rouge effect; applied
+      // globally because IGLUScript does not expose face-tracking
+      // inputs. See header notes.
+      base.r *= 1.0 + rouge_strength;
+
+      // Stage 3: dark vignette multiplier (global brightness scale).
+      base.rgb *= darkness;
+
+      // Stage 4a: composite host-rendered date text via normal alpha
+      // blend. Host pushes a transparent PNG with the formatted date
+      // (DroidSerifItalic 18, white, letter-spacing 7, centered, near
+      // bottom). Sample-app testing binds via the date_text_path
+      // Custom Parameter; production hosts push the texture directly.
+      vec4 dateTex = texture2D(auxSampler3, uv);
+      base.rgb = mix(base.rgb, dateTex.rgb, dateTex.a);
+
+      // Stage 4b: frame overlay via normal alpha blend (over operator).
+      // Frame texture pixels with full alpha completely paint over the
+      // base; transparent regions of the frame let the base show.
+      // Frame is rendered LAST so its border can occlude any date
+      // overflow that drifts into the frame area.
+      vec4 frame = texture2D(auxSampler2, uv);
+      base.rgb = mix(base.rgb, frame.rgb, frame.a);
+
+      gl_FragColor = toOutputFormat(base);
+    }
+    ";

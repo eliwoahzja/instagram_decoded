@@ -1,0 +1,154 @@
+[Filter IgluscriptVideoEmphasisFilter]
+[MaskBehavior alpha]
+
+fun lerp(f32 a, f32 b, f32 t) f32 {
+  return a * (1.0 - t) + b * t;
+}
+
+f32 shakeDecay = 8.0;
+f32 shakeFreq = 40.0;
+
+[Init]
+fun init(Filter filter) {
+  filter.parameters = {
+    {center = {0.5, 0.5}, min = {0.0, 0.0}, max = {1.0, 1.0}},
+    {amount = 0.45, min = 0.0, max = 1.0, description = "Shake Intensity"},
+    {size = 0.45, min = 0.0, max = 1.0, description = "Scale Overshoot"},
+  };
+
+  filter.passes = {{
+      name = 'emphasisFx,
+      inputs = {'default},
+      uniforms = {
+        progress = 0.0,
+        scale = 0.001,
+        opacity = 0.0,
+        rotation = 0.0,
+        ghostScale = 1.0,
+        ghostOpacity = 0.0,
+        blurStrength = 0.0,
+        aspect = 1.0,
+        center = {0.5, 0.5},
+      },
+      glslShader = glsl
+    }};
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  f32 p = getParameterFloat('progress);
+  f32 shakeAmplitude = mix(0.1, 1.0, getParameterFloat('amount));
+  f32 overshoot = mix(1.05, 1.6, getParameterFloat('size));
+
+  # Scale phase: 0→0.33 ramps from 0 to overshoot, then eases back to 1.0
+  f32 scaleT = clamp(p / 0.33, 0.0, 1.0);
+  scaleT = pow(scaleT, 3.0);
+  f32 settleT = clamp((p - 0.33) / 0.25, 0.0, 1.0);
+  f32 scale = lerp(0.0, overshoot, scaleT);
+  scale = lerp(scale, 1.0, settleT);
+
+  # Shake phase: starts at p≈0.25, decays quickly
+  # rotation(t) = A * 2^(-d*t) * sin(w*t)
+  # rotation'(t) = A * 2^(-d*t) * (w*cos(w*t) - d*ln2*sin(w*t))
+  f32 shakeT = clamp((p - 0.25) / 0.75, 0.0, 1.0);
+  f32 rotation = 0.0;
+  f32 angularVelocity = 0.0;
+  if (p > 0.25) {
+    f32 envelope = pow(2.0, -shakeDecay * shakeT);
+    f32 sinVal = sin(shakeFreq * shakeT);
+    f32 cosVal = cos(shakeFreq * shakeT);
+    rotation = shakeAmplitude * envelope * sinVal;
+    f32 ln2 = 0.6931;
+    angularVelocity = abs(shakeAmplitude * envelope * (shakeFreq * cosVal - shakeDecay * ln2 * sinVal));
+  }
+
+  # Normalize against fixed reference amplitude (0.5) so ghost/blur scale with amount
+  f32 peakVelocity = 0.5 * shakeFreq;
+  f32 normalizedVel = clamp(angularVelocity / peakVelocity, 0.0, 1.0);
+
+  # Ghost + blur driven by angular velocity — effects track actual motion speed
+  f32 ghostOpacity = normalizedVel * 0.8;
+  f32 ghostScaleVal = lerp(1.0, 1.2, normalizedVel);
+  f32 blurStrength = normalizedVel * 0.5;
+
+  f32 opacity = clamp(p * 10.0, 0.0, 1.0);
+
+  vec2 size = getTextureSize('default);
+  f32 aspect = size.x / size.y;
+
+  setShaderUniform('emphasisFx, 'progress, p);
+  setShaderUniform('emphasisFx, 'scale, scale);
+  setShaderUniform('emphasisFx, 'opacity, opacity);
+  setShaderUniform('emphasisFx, 'rotation, rotation);
+  setShaderUniform('emphasisFx, 'ghostScale, ghostScaleVal);
+  setShaderUniform('emphasisFx, 'ghostOpacity, ghostOpacity);
+  setShaderUniform('emphasisFx, 'blurStrength, blurStrength);
+  setShaderUniform('emphasisFx, 'aspect, aspect);
+  setShaderUniform('emphasisFx, 'center, getParameterVec2('center));
+}
+
+string glsl = "varying vec2 sourceTextureCoordinate;
+
+BaseUniformsOpenGL;
+
+uniform float progress;
+uniform float scale;
+uniform float opacity;
+uniform float rotation;
+uniform float ghostScale;
+uniform float ghostOpacity;
+uniform float blurStrength;
+uniform float aspect;
+uniform vec2 center;
+
+vec2 transformUV(vec2 uv, float s, float rot) {
+  uv -= center;
+  uv.x *= aspect;
+  float cr = cos(-rot);
+  float sr = sin(-rot);
+  uv = vec2(cr * uv.x - sr * uv.y, sr * uv.x + cr * uv.y);
+  uv.x /= aspect;
+  uv /= max(s, 0.001);
+  uv += center;
+  return uv;
+}
+
+float isInside(vec2 uv) {
+  return step(0.0, uv.x) * step(uv.x, 1.0) * step(0.0, uv.y) * step(uv.y, 1.0);
+}
+
+void main() {
+  vec2 uv = sourceTextureCoordinate;
+
+  // Main subject
+  vec2 mainUV = transformUV(uv, scale, rotation);
+  vec4 mainColor = sampleInput(mainUV) * isInside(mainUV);
+
+  // Ghost duplicate — slightly larger scale, reduced opacity, trails behind
+  vec2 ghostUV = transformUV(uv, scale * ghostScale, rotation);
+  vec4 ghost = sampleInput(ghostUV) * isInside(ghostUV) * ghostOpacity;
+
+  // Rotational motion blur — samples at nearby rotation angles
+  vec4 blurColor = mainColor;
+  if (blurStrength > 0.001) {
+    blurColor = vec4(0.0);
+    const int SAMPLES = 8;
+    for (int i = 0; i < SAMPLES; i++) {
+      float t = float(i) / float(SAMPLES - 1) - 0.5;
+      float alt = mod(float(i), 2.0);
+      float alternate = mix(1.0,-8.0,alt);
+      float rotOffset = blurStrength * t;
+      vec2 blurUV = transformUV(uv, scale, rotation + rotOffset * alternate);
+      blurColor += sampleInput(blurUV) * isInside(blurUV);
+    }
+    blurColor /= float(SAMPLES);
+  }
+
+  // Composite: motion blur on main, ghost behind
+  vec4 color = mix(mainColor, blurColor, step(0.001, blurStrength));
+  color = color + ghost * (1.0 - color.a);
+  color *= opacity;
+
+  gl_FragColor = toOutputFormat(color);
+}
+";

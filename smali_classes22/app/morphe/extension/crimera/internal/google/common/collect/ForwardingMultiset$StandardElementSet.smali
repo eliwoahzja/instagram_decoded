@@ -1,0 +1,94 @@
+.class public Lapp/morphe/extension/crimera/internal/google/common/collect/ForwardingMultiset$StandardElementSet;
+.super Lapp/morphe/extension/crimera/internal/google/common/collect/Multisets$ElementSet;
+.source "ForwardingMultiset.java"
+
+
+# annotations
+.annotation system Ldalvik/annotation/EnclosingClass;
+    value = Lapp/morphe/extension/crimera/internal/google/common/collect/ForwardingMultiset;
+.end annotation
+
+.annotation system Ldalvik/annotation/InnerClass;
+    accessFlags = 0x1
+    name = "StandardElementSet"
+.end annotation
+
+.annotation system Ldalvik/annotation/Signature;
+    value = {
+        "Lapp/morphe/extension/crimera/internal/google/common/collect/Multisets$ElementSet<",
+        "TE;>;"
+    }
+.end annotation
+
+
+# instance fields
+.field final synthetic this$0:Lapp/morphe/extension/crimera/internal/google/common/collect/ForwardingMultiset;
+
+
+# direct methods
+.method public constructor <init>(Lapp/morphe/extension/crimera/internal/google/common/collect/ForwardingMultiset;)V
+    .locals 0
+    .annotation system Ldalvik/annotation/MethodParameters;
+        accessFlags = {
+            0x8010
+        }
+        names = {
+            "this$0"
+        }
+    .end annotation
+
+    .line 245
+    iput-object p1, p0, Lapp/morphe/extension/crimera/internal/google/common/collect/ForwardingMultiset$StandardElementSet;->this$0:Lapp/morphe/extension/crimera/internal/google/common/collect/ForwardingMultiset;
+
+    invoke-direct {p0}, Lapp/morphe/extension/crimera/internal/google/common/collect/Multisets$ElementSet;-><init>()V
+
+    return-void
+.end method
+
+
+# virtual methods
+.method public iterator()Ljava/util/Iterator;
+    .locals 0
+    .annotation system Ldalvik/annotation/Signature;
+        value = {
+            "()",
+            "Ljava/util/Iterator<",
+            "TE;>;"
+        }
+    .end annotation
+
+    .line 254
+    invoke-virtual {p0}, Lapp/morphe/extension/crimera/internal/google/common/collect/ForwardingMultiset$StandardElementSet;->multiset()Lapp/morphe/extension/crimera/internal/google/common/collect/Multiset;
+
+    move-result-object p0
+
+    invoke-interface {p0}, Lapp/morphe/extension/crimera/internal/google/common/collect/Multiset;->entrySet()Ljava/util/Set;
+
+    move-result-object p0
+
+    invoke-interface {p0}, Ljava/util/Set;->iterator()Ljava/util/Iterator;
+
+    move-result-object p0
+
+    invoke-static {p0}, Lapp/morphe/extension/crimera/internal/google/common/collect/Multisets;->elementIterator(Ljava/util/Iterator;)Ljava/util/Iterator;
+
+    move-result-object p0
+
+    return-object p0
+.end method
+
+.method public multiset()Lapp/morphe/extension/crimera/internal/google/common/collect/Multiset;
+    .locals 0
+    .annotation system Ldalvik/annotation/Signature;
+        value = {
+            "()",
+            "Lapp/morphe/extension/crimera/internal/google/common/collect/Multiset<",
+            "TE;>;"
+        }
+    .end annotation
+
+    .line 249
+    iget-object p0, p0, Lapp/morphe/extension/crimera/internal/google/common/collect/ForwardingMultiset$StandardElementSet;->this$0:Lapp/morphe/extension/crimera/internal/google/common/collect/ForwardingMultiset;
+
+    return-object p0
+.end method

@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "identifier": "cutout_slide",
+  "displayName": "Cutout Slide",
+  "description": "[IG Edits] Transition name. With \"Cutout Slide\", the creator can slide the segmented subject across the frame in repeating passes with motion-blur ghosting before settling into place.",
+  "iglu": {
+    "legacyId": 3063,
+    "behavior": {
+      "type": "fixedIntro",
+      "durationMs": 1000,
+      "curve": "linear"
+    }
+  }
+}

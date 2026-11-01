@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_bw_fade_out",
+  "displayName": "B&W fade",
+  "description": "Video effects selection. Fades video from color to black and white.",
+  "iglu": {
+    "legacyId": 2022,
+    "behavior": {
+      "type": "fixedIntro",
+      "durationMs": 2000,
+      "curve": "linear"
+    },
+    "customization": [
+      {
+        "name": "duration",
+        "default": 2.0,
+        "min": 0.25,
+        "max": 5.0,
+        "displayName": "Duration",
+        "displayNameDescription": "[IG Edits] Slider label controlling how long a video effect's animation lasts; exact units and range vary per effect (seconds or normalized).",
+        "displayMethod": "time"
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "3dc37c18",
+      "handle": "AQADq5t52wsX",
+      "md5": "079f3e1e764efe80374470520ede685f"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAGdwfHtp4O"
+    }
+  }
+}

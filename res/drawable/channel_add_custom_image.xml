@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="oval">
+            <size android:height="74.0dp" android:width="74.0dp" />
+            <solid android:color="?igds_color_elevated_highlight_background" />
+        </shape>
+    </item>
+    <item android:drawable="@drawable/channel_add_custom_image__app_bitmap_0" android:left="10.0dp" android:top="10.0dp" android:right="10.0dp" android:bottom="10.0dp" />
+</layer-list>

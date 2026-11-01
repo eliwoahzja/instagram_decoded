@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="string_0x7f130003">Ciutat</string>
+    <string name="string_0x7f130004">Adreça</string>
+    <string name="string_0x7f130008">Vols emplenar-ho automàticament amb la targeta del teu compte publicitari?</string>
+    <string name="string_0x7f13002c">Tancar el navegador</string>
+    <string name="string_0x7f130033">Permet</string>
+    <string name="string_0x7f130034">Bloqueja</string>
+    <string name="string_0x7f13008d">"S'ha produït un error"</string>
+    <string name="string_0x7f13008f">Correu electrònic</string>
+    <string name="string_0x7f130096">Actualitza</string>
+    <string name="string_0x7f130098">Cognom</string>
+    <string name="string_0x7f13009c">Més opcions</string>
+    <string name="string_0x7f1300aa">Nom</string>
+    <string name="string_0x7f1300cb">Tenim problemes per a configurar %2$s en %1$s. Ho pots tornar a provar o utilitzar %2$s en anglès (Estats Units) de moment.</string>
+    <string name="string_0x7f1300cc">"Espera un moment mentres s'instal·la el %1$s"</string>
+    <string name="string_0x7f1300cd">Torna-ho a provar</string>
+    <string name="string_0x7f1300da">Tanca</string>
+    <string name="string_0x7f1300dd">Toca per afegir la targeta</string>
+    <string name="string_0x7f13010b">Codi postal</string>
+    <string name="string_0x7f130192">Les teves ulleres estan connectades</string>
+    <string name="string_0x7f1301d3">Telèfon</string>
+    <string name="string_0x7f1301d7">"Defineix l'hora"</string>
+</resources>

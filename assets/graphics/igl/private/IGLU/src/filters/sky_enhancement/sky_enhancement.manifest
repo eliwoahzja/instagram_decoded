@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "sky_enhancement",
+  "displayName": "Sky Enhancement",
+  "description": "[IG Edits] Video effect name. With \"Sky Enhancement\", the creator can boost saturation and contrast only within sky regions identified by a sky-mask input texture.",
+  "iglu": {}
+}

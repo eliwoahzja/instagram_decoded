@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_zoom_out",
+  "displayName": "Zoom out",
+  "description": "Video effects selection. Video zooms out.",
+  "iglu": {
+    "legacyId": 2010,
+    "behavior": {
+      "type": "fixedIntro",
+      "durationMs": 3000,
+      "curve": "linear"
+    },
+    "customization": [
+      {
+        "name": "zoom",
+        "default": 2.3,
+        "min": 2.0,
+        "max": 4.0,
+        "displayName": "Zoom",
+        "displayNameDescription": "[IG Edits] Slider label controlling the zoom factor (scale toward/away from the subject) of a video effect; exact range varies per effect.",
+        "displayMethod": "percent"
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "107a4d90",
+      "handle": "AQAGWXNEgeW-",
+      "md5": "458ec99a5ff90d81860041772f9f2a02"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAI-bStg8b8"
+    }
+  }
+}

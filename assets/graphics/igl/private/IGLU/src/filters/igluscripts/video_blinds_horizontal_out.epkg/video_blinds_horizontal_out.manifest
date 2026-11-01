@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "identifier": "05d9e6d9-a996-4795-81e8-5fad6b19af26",
+  "displayName": "Blinds out horizontal",
+  "description": "[IG Edits] Effect name shown in the video effects picker. This is the user-facing label for a video effect.",
+  "iglu": {
+    "legacyId": 3122,
+    "behavior": {
+      "type": "fixedOutro",
+      "durationMs": 1600,
+      "curve": "quarticInOut"
+    },
+    "customization": [
+      {
+        "name": "direction",
+        "defaultSelection": "right",
+        "available": [
+          "left",
+          "right"
+        ],
+        "displayName": "Direction"
+      },
+      {
+        "name": "duration",
+        "default": 1.6,
+        "min": 1.0,
+        "max": 5.0,
+        "displayName": "Duration",
+        "displayMethod": "time"
+      },
+      {
+        "name": "amount",
+        "displayName": "Amount",
+        "default": 0.0,
+        "min": 0.0,
+        "max": 1.0
+      }
+    ]
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQADg78T_zjc"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "78f0a8c5",
+      "handle": "AQADpo0qdjJV",
+      "md5": "2ca1b59b2042b74a87a12f641a4c7f41"
+    }
+  },
+  "dependencies": [
+    "video_blinds_horizontal"
+  ]
+}

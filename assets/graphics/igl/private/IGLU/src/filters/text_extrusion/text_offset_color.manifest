@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "text_offset_color",
+  "displayName": "Offset Color",
+  "description": "[IG Edits] Text effect name. With \"Offset Color\", the creator can render text with a single offset shadow tinted to a contrasting hue-shifted color derived from the text color.",
+  "iglu": {}
+}

@@ -1,0 +1,65 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_cutout_fade_away",
+  "displayName": "Fade Away",
+  "description": "[Instagram Edits] Effects browser - Label for an effect that creates cross-dissolves in and out on special focal points. Character count for labels is 14 characters max.",
+  "iglu": {
+    "legacyId": 2110,
+    "customization": [
+      {
+        "name": "duration",
+        "default": 0.5,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Duration",
+        "displayNameDescription": "[IG Edits] Slider label controlling how long a video effect's animation lasts; exact units and range vary per effect (seconds or normalized).",
+        "displayMethod": "time"
+      },
+      {
+        "name": "zoom",
+        "default": 0.4,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Zoom",
+        "displayNameDescription": "[IG Edits] Slider label controlling the zoom factor (scale toward/away from the subject) of a video effect; exact range varies per effect."
+      },
+      {
+        "name": "offsetY",
+        "default": 0.0,
+        "min": -0.5,
+        "max": 0.5,
+        "displayName": "Vertical",
+        "displayNameDescription": "[IG Edits] Slider label controlling the vertical position or offset (Y axis) of a video effect; exact units and range vary per effect (pixels or normalized).",
+        "displayMethod": "percent"
+      },
+      {
+        "name": "filter",
+        "default": 0.3,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Filter",
+        "displayNameDescription": "[IG Edits] Slider label controlling the strength or amount of a color/visual filter applied by a video effect; exact range varies per effect."
+      }
+    ],
+    "subject": {
+      "enabled": true,
+      "fullFrameEnabled": false,
+      "typeSuggestions": [
+        "person",
+        "head"
+      ]
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "2467c809",
+      "handle": "AQAEJNjBgp94",
+      "md5": "9dff8b4c84448082b4b4c79cd0c55bf9"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAFCkfZywGy"
+    }
+  }
+}

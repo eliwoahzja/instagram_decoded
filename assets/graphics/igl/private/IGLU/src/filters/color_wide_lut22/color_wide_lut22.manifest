@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "identifier": "overexposed",
+  "displayName": "Overexposed",
+  "description": "[IG Edits] Color filter name. With \"Overexposed\", the creator can apply a blown-out high-key color grade by sampling the overexposed.lutpk 3D LUT in the color_wide_lut shader.",
+  "iglu": {
+    "legacyId": 5045
+  },
+  "assets": [
+    {
+      "name": "overexposed.lutpk",
+      "assetHash": "ae602dd1fc6dd083e5ca8ac1fd4e0db6129b7606724d9b684ca2d7790c6ac131",
+      "hubAssetId": "1676464873492901"
+    }
+  ]
+}

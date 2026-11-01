@@ -1,0 +1,365 @@
+[Filter Tiffy]
+# "Tiffy" — 5-layer film/vintage composite. Polaroid-style framed color
+# photo over a soft B&W background, with procedural film grain and
+# floating dust specks.
+#
+# Cloned (broadly) from polaroid.iglu (multi-layer 2-LUT inset pattern)
+# per Clone-then-Deviate. Layered architecture extended to 5 stages with
+# new procedural grain + dust specks, and a math-only B&W base instead
+# of a B&W LUT.
+#
+# Pipeline (single fragment pass, 5 logical layers bottom -> top):
+#
+#   Layer 1 — B&W base (math-only, no LUT)
+#   Layer 2 — Animated grain (procedural)
+#   Layer 3 — Color thumbnail inset (camera + LUT)
+#   Layer 4 — Frame overlay (asset, alpha-blended)
+#   Layer 5 — Floating dust specks (procedural, animated)
+#
+# === Layout / sizing model =============================================
+# Both the inset (Layer 3) and the frame (Layer 4) are CENTERED
+# horizontally on the canvas — no X-offset dial needed. Vertical position
+# is adjustable per layer.
+#
+#   Inset (Layer 3): width  = inset_scale * canvas_W
+#                    height = inset_scale * canvas_H
+#                    -> matches canvas aspect, displays photo natively.
+#
+#   Frame (Layer 4): BOUND to inset by fixed proportions, always.
+#                    width  = inset_w * kFrameToInsetW   (1.40)
+#                    height = inset_h * kFrameToInsetH   (1.77)
+#                    -> changing inset_scale also scales the frame so
+#                       the polaroid art always covers the photo with the
+#                       same proportional white-border margin.
+#
+#   Vertical offsets (CSS-vw style, per layer):
+#     offset_y_px = offset_y * canvas_W
+#     -> same dial value gives the same visual displacement on any
+#        canvas aspect.
+#
+# Time source: getLocalTime() (monotonic wall-clock) per the Time Source
+# skill-doc rule for continuous animations. The host's `time_sec` wraps
+# with the sample-app's video loop and would break grain/dust continuity.
+
+[Init]
+fun init(Filter filter)
+{
+    makeTexture('lut);
+    makeTexture('frame);
+
+    filter.parameters = {
+        # B&W base tunables.
+        {bw_contrast = 1.091, min = 0.0, max = 2.0, description = "B&W base contrast (1.0 = no change; <1 = mix(0.5, lum, c) flattens midtones)"},
+        {bw_lightness = -0.038, min = -0.2, max = 0.2, description = "B&W base lightness lift (added to luma after contrast)"},
+
+        # Layer 2 grain.
+        {grain_strength = 0.117, min = 0.0, max = 0.5, description = "Animated film grain bipolar amplitude"},
+
+        # Layer 3 color inset (matches canvas aspect; centered horizontally).
+        # The frame in Layer 4 is BOUND to these values via fixed
+        # proportions (1.40x wide, 1.77x tall), so changing inset_scale
+        # also scales the frame.
+        {inset_scale = 0.55, min = 0.05, max = 1.0, description = "Photo inset width and height as fraction of canvas (frame scales with this)"},
+        {inset_offset_y = 0.0, min = -0.6, max = 0.6, description = "Photo inset vertical offset in canvas-width units (CSS-vw style; +Y = down)"},
+
+        # Layer 4 frame: vertical offset only — size is locked to inset.
+        # Default -0.04 nudges the frame slightly up so the photo sits in
+        # the upper portion of the polaroid (white border thicker below).
+        {frame_offset_y = -0.04, min = -0.6, max = 0.6, description = "Frame vertical offset in canvas-width units (CSS-vw style; +Y = down)"},
+
+        # Layer 5 dust.
+        {dust_strength = 0.153, min = 0.0, max = 1.0, description = "Dust speckle stipple intensity (0 = none, 1 = heavy)"},
+    };
+
+    filter.passes = {{
+      name = 'pass0,
+      inputs = {'default, 'lut, 'frame},
+      uniforms = {
+        bw_contrast = 1.091,
+        bw_lightness = -0.038,
+        grain_strength = 0.117,
+        inset_scale = 0.55,
+        inset_offset_y = 0.0,
+        frame_offset_y = -0.04,
+        dust_strength = 0.153,
+        canvas_size = {1.0, 1.0},
+        time = 0.0,
+      },
+      glslShader = glslTiffy,
+    }};
+}
+
+# Custom Parameter strings for sample-app local-loading. Production wiring
+# uses setNamedInput; sample-app testing uses these.
+string lut_path = "lut_path";
+string lut_filename = "";
+string frame_path = "frame_path";
+string frame_filename = "";
+
+[PreRender]
+fun preRender(Filter filter){
+    string lut_filename_parameter = getParameterString(lut_path);
+    if (lut_filename_parameter != "") {
+        string new_lut_filename = stringAppend("textureFilePath://", lut_filename_parameter);
+        if (new_lut_filename != lut_filename) {
+            lut_filename = new_lut_filename;
+            loadTexture('lut, lut_filename);
+        }
+    }
+
+    string frame_filename_parameter = getParameterString(frame_path);
+    if (frame_filename_parameter != "") {
+        string new_frame_filename = stringAppend("textureFilePath://", frame_filename_parameter);
+        if (new_frame_filename != frame_filename) {
+            frame_filename = new_frame_filename;
+            loadTexture('frame, frame_filename);
+        }
+    }
+
+    f32 bwc = getParameterFloat('bw_contrast);
+    setShaderUniform('pass0, 'bw_contrast, bwc);
+
+    f32 bwl = getParameterFloat('bw_lightness);
+    setShaderUniform('pass0, 'bw_lightness, bwl);
+
+    f32 gs = getParameterFloat('grain_strength);
+    setShaderUniform('pass0, 'grain_strength, gs);
+
+    f32 isc = getParameterFloat('inset_scale);
+    setShaderUniform('pass0, 'inset_scale, isc);
+
+    f32 ioy = getParameterFloat('inset_offset_y);
+    setShaderUniform('pass0, 'inset_offset_y, ioy);
+
+    f32 foy = getParameterFloat('frame_offset_y);
+    setShaderUniform('pass0, 'frame_offset_y, foy);
+
+    f32 ds = getParameterFloat('dust_strength);
+    setShaderUniform('pass0, 'dust_strength, ds);
+
+    # Canvas dimensions, used for responsive (CSS-vw style) layout.
+    vec2 canvasSize = getTextureSize('default);
+    setShaderUniform('pass0, 'canvas_size, canvasSize);
+
+    # Use getLocalTime() for monotonic continuous animation (grain + dust drift).
+    f32 time = getLocalTime();
+    setShaderUniform('pass0, 'time, time);
+}
+
+#### GLSL shader ####
+
+string glslTiffy = "
+    varying vec2 sourceTextureCoordinate;
+    BaseUniformsOpenGL;
+
+    uniform sampler2D auxSampler0;  // 'default (camera)
+    uniform sampler2D auxSampler1;  // 'lut
+    uniform sampler2D auxSampler2;  // 'frame
+
+    uniform float bw_contrast;
+    uniform float bw_lightness;
+    uniform float grain_strength;
+    uniform float inset_scale;
+    uniform float inset_offset_y;
+    uniform float frame_offset_y;
+    uniform float dust_strength;
+    uniform vec2  canvas_size;
+    uniform float time;
+
+    // Frame-to-inset proportions (locked). Frame size always =
+    // inset size * (kFrameToInsetW, kFrameToInsetH) in pixels, so the
+    // polaroid white border around the photo is consistent at any scale.
+    const float kFrameToInsetW = 1.40;
+    const float kFrameToInsetH = 1.77;
+
+    // Rec.709 luma weights.
+    float luma(vec3 c) {
+      return dot(c, vec3(0.2126, 0.7152, 0.0722));
+    }
+
+    // 8x8 grid LUT lookup on auxSampler1.
+    vec3 lutLookup(vec3 inRgb) {
+      vec3 c = clamp(inRgb, 0.00781, 0.98438);
+      float x = c.r / 8.0;
+      float y = c.g / 8.0;
+      float z = c.b;
+      float blueY = floor(z * 8.0) / 8.0;
+      float blueX = floor((z - blueY) * 64.0) / 8.0;
+      x += blueX;
+      y += blueY;
+      return texture2D(auxSampler1, vec2(x, y)).xyz;
+    }
+
+    // Returns 1.0 if uv is in [0,1] for both axes, else 0.0.
+    float inBounds01(vec2 uv) {
+      return step(0.0, uv.x) * step(uv.x, 1.0)
+           * step(0.0, uv.y) * step(uv.y, 1.0);
+    }
+
+    // 1D pseudo-random hash for dust seeding.
+    float hash11(float x) {
+      return fract(sin(x * 12.9898) * 43758.5453);
+    }
+
+    // Distance from point p to a line SEGMENT [a, b].
+    // Used for procedural film scratches.
+    float distToSeg(vec2 p, vec2 a, vec2 b) {
+      vec2 ab = b - a;
+      vec2 ap = p - a;
+      float t = clamp(dot(ap, ab) / max(dot(ab, ab), 1e-6), 0.0, 1.0);
+      return length(ap - ab * t);
+    }
+
+    void main() {
+      vec2 uv = sourceTextureCoordinate;
+      vec4 cam = sampleInput(uv);
+
+      // ============================================================
+      // Layer 1: B&W base (math-only, no LUT).
+      // ============================================================
+      float lum = luma(cam.rgb);
+      float lum_c = mix(0.5, lum, bw_contrast);
+      float lum_cl = lum_c + bw_lightness;
+      vec3 result = vec3(lum_cl);
+
+      // ============================================================
+      // Layer 2: Animated grain (bipolar additive over B&W).
+      // ============================================================
+      float grain = fract(sin(dot(uv + time * 0.1, vec2(127.1, 311.7))) * 43758.5453);
+      float grain_signed = (grain - 0.5) * 2.0;
+      result += vec3(grain_signed * grain_strength);
+
+      // ============================================================
+      // Responsive layout setup. canvas_aspect_woverh = W / H.
+      // We express size + Y-offsets as fractions of CANVAS WIDTH (CSS
+      // 'vw' units) and convert to UV at the point of use.
+      //   px_to_uv_x = 1 / canvas_W
+      //   px_to_uv_y = 1 / canvas_H
+      // For something specified as 'fraction of canvas_W' (e.g. 'fw'):
+      //   in UV.x  ->  fw
+      //   in UV.y  ->  fw * (canvas_W / canvas_H) = fw * canvas_aspect
+      // ============================================================
+      float canvas_aspect_woverh =
+          canvas_size.x / max(canvas_size.y, 1.0);
+
+      // ============================================================
+      // Layer 3: Color thumbnail inset.
+      //   - Centered horizontally (UV.x = 0.5).
+      //   - Width  = inset_scale * canvas_W
+      //   - Height = inset_scale * canvas_H  (matches CANVAS aspect)
+      //   - In UV that's just (inset_scale, inset_scale) — square in
+      //     UV space, which on a non-square canvas renders as a
+      //     canvas-aspect-shaped rect.
+      // ============================================================
+      vec2  inset_size_uv = vec2(inset_scale, inset_scale);
+      vec2  inset_center  = vec2(
+          0.5,
+          0.5 + inset_offset_y * canvas_aspect_woverh);
+      vec2  inset_uv      = (uv - inset_center) / inset_size_uv + 0.5;
+      float in_inset      = inBounds01(inset_uv);
+      vec3  color_graded  = lutLookup(sampleInput(inset_uv).rgb);
+      result = mix(result, color_graded, in_inset);
+
+      // ============================================================
+      // Layer 4: Frame overlay (alpha-blended, BOUND TO INSET).
+      //   - Centered horizontally (UV.x = 0.5).
+      //   - width  = inset_w * kFrameToInsetW   (140% of inset width)
+      //   - height = inset_h * kFrameToInsetH   (177% of inset height)
+      // Inset width and height in UV are both inset_scale, so:
+      //   frame_w_uv = inset_scale * kFrameToInsetW
+      //   frame_h_uv = inset_scale * kFrameToInsetH
+      // ============================================================
+      float frame_w_uv = inset_scale * kFrameToInsetW;
+      float frame_h_uv = inset_scale * kFrameToInsetH;
+      vec2  frame_size_uv = vec2(frame_w_uv, frame_h_uv);
+      vec2  frame_center  = vec2(
+          0.5,
+          0.5 + frame_offset_y * canvas_aspect_woverh);
+      vec2  frame_uv      = (uv - frame_center) / frame_size_uv + 0.5;
+      float in_frame      = inBounds01(frame_uv);
+      vec4  frame_tex     = texture2D(auxSampler2, frame_uv);
+      result = mix(result, frame_tex.rgb, frame_tex.a * in_frame);
+
+      // ============================================================
+      // Layer 5: Film dust — 6-frame loop at 15 fps, SCREEN-blended.
+      // Each frame is a fully distinct random pattern (different seed)
+      // and a different density, so some frames are dense with specks +
+      // a scratch, and others are nearly empty. Three sub-layers:
+      //   A) dense fine pinpoints
+      //   B) rare brighter highlights
+      //   C) 0-2 short thin scratches per frame
+      // Composited via SCREEN blend: result = 1 - (1-base)*(1-dust).
+      // ============================================================
+      float frame_idx_f = floor(mod(time * 15.0, 6.0));
+      float fseed = frame_idx_f * 7.31 + 0.137;
+
+      // Per-frame density [0.10, 1.00]: re-rolled each frame so some
+      // frames look nearly empty, some look dense.
+      float frame_density =
+          0.10 + 0.90 * hash11(fseed * 17.13);
+
+      float dust_alpha = 0.0;
+
+      // ---- Sub-layer A: dense fine specks, density-modulated.
+      {
+        vec2  dUv  = uv * 180.0;
+        vec2  cell = floor(dUv);
+        float h    = fract(sin(cell.x * 31.7 + cell.y * 73.3
+                               + fseed * 91.7) * 43758.5453);
+        float thr  = mix(0.995, 0.960, frame_density);
+        float lit  = smoothstep(thr, 1.0, h);
+        float bri  = 0.30 + 0.70 * fract(h * 17.31);
+        dust_alpha += lit * bri;
+      }
+
+      // ---- Sub-layer B: rare brighter highlights.
+      {
+        vec2  dUv  = uv * 90.0;
+        vec2  cell = floor(dUv);
+        float h    = fract(sin(cell.x * 41.7 + cell.y * 19.1
+                               + fseed * 53.7) * 43758.5453);
+        float thr  = mix(0.999, 0.985, frame_density);
+        float lit  = smoothstep(thr, 1.0, h);
+        dust_alpha += lit * 0.85;
+      }
+
+      // ---- Sub-layer C: 0-2 short scratches per frame.
+      // Each scratch has a ~45% per-frame existence probability,
+      // anchored at a random endpoint with a short directional length
+      // (5-12% of canvas width). Aspect-corrected so distance is
+      // isotropic in pixel space.
+      float aspect_safe = max(canvas_aspect_woverh, 1e-4);
+      for (int s = 0; s < 2; s++) {
+        float si = float(s);
+        float exists = step(0.55,
+            hash11(fseed * 11.7 + si * 3.13));
+        vec2 p0 = vec2(
+            hash11(fseed * 7.13  + si * 19.71),
+            hash11(fseed * 13.31 + si * 23.77));
+        float ang = hash11(fseed * 29.7 + si * 31.13) * 6.2832;
+        float len = mix(0.05, 0.12,
+            hash11(fseed * 19.7 + si * 13.13));
+        vec2 p1 = p0 + vec2(cos(ang), sin(ang)) * len;
+        // Aspect-correct UV distance to segment.
+        vec2 uvIso = vec2(uv.x, uv.y / aspect_safe);
+        vec2 a_iso = vec2(p0.x, p0.y / aspect_safe);
+        vec2 b_iso = vec2(p1.x, p1.y / aspect_safe);
+        float dist = distToSeg(uvIso, a_iso, b_iso);
+        float scratch =
+            exists * smoothstep(0.003, 0.0005, dist) * 0.55;
+        dust_alpha += scratch;
+      }
+
+      dust_alpha = clamp(dust_alpha, 0.0, 1.0);
+
+      // Screen blend: result = 1 - (1-base)*(1-overlay).
+      // dust_strength scales the dust luminance before blending.
+      vec3 dust_overlay = vec3(dust_alpha * dust_strength);
+      result = 1.0 - (1.0 - result) * (1.0 - dust_overlay);
+
+      // Final clamp to LDR display range.
+      result = clamp(result, 0.0, 1.0);
+
+      gl_FragColor = toOutputFormat(vec4(result, cam.a));
+    }
+    ";

@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "text_distortion_marbled",
+  "displayName": "Marbled",
+  "description": "[IG Edits] Text effect name. With Marbled, the creator can add a feathered design effect similar to latte art to their text.",
+  "iglu": {}
+}

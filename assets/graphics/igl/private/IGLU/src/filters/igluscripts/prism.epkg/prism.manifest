@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "identifier": "6A8D8CA3-1138-4912-98F4-77B09AA562FD",
+  "displayName": "Prism Glow",
+  "description": "[IG Edits] Color filter name. With \"Prism\", the creator gets a LUT-graded background with two offset, masked camera copies and a screen-blended rainbow light overlay.",
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAFZsLhTUT_"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "7d429710",
+      "handle": "AQAFmAAGxyYJ",
+      "md5": "d7ba1f38beb7b3da3c1c08e77dac93cd"
+    }
+  },
+  "iglu": {
+    "legacyId": 3114
+  },
+  "assets": [
+    {
+      "name": "prism_lut.png",
+      "assetHash": "07f7cddfb66ef657ed60f7e28ad350ae3a7152c56b32875f9b96698df4413e8c",
+      "hubAssetId": "2005540966712543"
+    },
+    {
+      "name": "prism_overlay.png",
+      "assetHash": "11a41fe3c7d4da3816ac87a0b195463f0b918fb51d43c0b631e006eba6af6190",
+      "hubAssetId": "1499598241607787"
+    },
+    {
+      "name": "prism_mask_left.png",
+      "assetHash": "044e79fbc9fc010a88eabb7842c7369fb9d62172bb7bdbd6b061c7144c47a6ce",
+      "hubAssetId": "1865766884105009"
+    },
+    {
+      "name": "prism_mask_right.png",
+      "assetHash": "02b71def44f7367dbf8969c3a52c58e050fff7ffcf563e8a24b60bda375548f2",
+      "hubAssetId": "1358716879647739"
+    }
+  ]
+}

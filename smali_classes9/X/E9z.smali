@@ -1,0 +1,272 @@
+.class public final LX/E9z;
+.super LX/Q84;
+.source ""
+
+# interfaces
+.implements LX/Peq;
+
+
+# static fields
+.field public static final __redex_internal_original_name:Ljava/lang/String; = "CreatorAIReadyFragment"
+
+
+# instance fields
+.field public final A00:LX/Esp;
+
+.field public final A01:LX/Esp;
+
+.field public final A02:LX/Esp;
+
+.field public final A03:Ljava/lang/String;
+
+
+# direct methods
+.method public constructor <init>()V
+    .locals 5
+
+    invoke-direct {p0}, LX/Q84;-><init>()V
+
+    const/16 v0, 0x18
+
+    invoke-static {p0, v0}, LX/220;->A0j(Ljava/lang/Object;I)LX/Esp;
+
+    move-result-object v0
+
+    iput-object v0, p0, LX/E9z;->A01:LX/Esp;
+
+    const-string v0, "creator_ai_preparation_fragment"
+
+    iput-object v0, p0, LX/E9z;->A03:Ljava/lang/String;
+
+    const/16 v0, 0xd4
+
+    new-instance v4, LX/E4I;
+
+    invoke-direct {v4, v0}, LX/E4I;-><init>(I)V
+
+    const/16 v0, 0xaa
+
+    new-instance v1, LX/F2V;
+
+    invoke-direct {v1, p0, v0}, LX/F2V;-><init>(Ljava/lang/Object;I)V
+
+    const/16 v0, 0x18b
+
+    invoke-static {v1, v0}, LX/16V;->A14(Lkotlin/jvm/functions/Function0;I)LX/Esp;
+
+    move-result-object v3
+
+    const-class v0, LX/EIe;
+
+    invoke-static {v0}, LX/194;->A0q(Ljava/lang/Class;)LX/1nj;
+
+    move-result-object v2
+
+    const/16 v0, 0x98
+
+    invoke-static {v3, v0}, LX/194;->A0o(Ljava/lang/Object;I)LX/E4q;
+
+    move-result-object v1
+
+    const/16 v0, 0x93
+
+    invoke-static {v3, v1, v4, v2, v0}, LX/16V;->A0T(Ljava/lang/Object;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;LX/Lmv;I)LX/0kb;
+
+    move-result-object v0
+
+    iput-object v0, p0, LX/E9z;->A02:LX/Esp;
+
+    const/4 v1, 0x1
+
+    new-instance v0, LX/ArG;
+
+    invoke-direct {v0, p0, v1}, LX/ArG;-><init>(Ljava/lang/Object;I)V
+
+    invoke-static {v0}, LX/0NI;->A00(Lkotlin/jvm/functions/Function0;)LX/Esp;
+
+    move-result-object v0
+
+    iput-object v0, p0, LX/E9z;->A00:LX/Esp;
+
+    return-void
+.end method
+
+.method public static final A00(LX/E9z;)V
+    .locals 4
+
+    iget-object v3, p0, LX/E9z;->A01:LX/Esp;
+
+    invoke-static {v3}, LX/16V;->A11(LX/Esp;)Ljava/lang/String;
+
+    move-result-object v0
+
+    if-eqz v0, :cond_0
+
+    invoke-virtual {v0}, Ljava/lang/String;->length()I
+
+    move-result v0
+
+    if-eqz v0, :cond_0
+
+    invoke-virtual {p0}, LX/Q84;->getSession()Lcom/instagram/common/session/UserSession;
+
+    move-result-object v1
+
+    invoke-virtual {p0}, Landroidx/fragment/app/Fragment;->requireActivity()Landroidx/fragment/app/FragmentActivity;
+
+    move-result-object v0
+
+    new-instance v2, LX/PJv;
+
+    invoke-direct {v2, v0, v1}, LX/PJv;-><init>(Landroid/app/Activity;Lcom/instagram/common/session/UserSession;)V
+
+    invoke-static {v3}, LX/16V;->A11(LX/Esp;)Ljava/lang/String;
+
+    move-result-object v1
+
+    invoke-virtual {p0}, LX/4Ka;->getAnalyticsModule()LX/9PW;
+
+    move-result-object v0
+
+    invoke-virtual {v2, v0, v1}, LX/PJv;->A01(LX/9PW;Ljava/lang/String;)V
+
+    return-void
+
+    :cond_0
+    invoke-virtual {p0}, LX/Q84;->getSession()Lcom/instagram/common/session/UserSession;
+
+    move-result-object v1
+
+    invoke-virtual {p0}, Landroidx/fragment/app/Fragment;->requireActivity()Landroidx/fragment/app/FragmentActivity;
+
+    move-result-object v0
+
+    new-instance v3, LX/PJv;
+
+    invoke-direct {v3, v0, v1}, LX/PJv;-><init>(Landroid/app/Activity;Lcom/instagram/common/session/UserSession;)V
+
+    invoke-virtual {p0}, LX/4Ka;->getAnalyticsModule()LX/9PW;
+
+    move-result-object v2
+
+    invoke-static {p0}, LX/20W;->A0x(LX/Q84;)Ljava/lang/String;
+
+    move-result-object v1
+
+    sget-object v0, LX/M2b;->A00:LX/M2b;
+
+    invoke-virtual {v3, v2, v0, v1}, LX/PJv;->A00(LX/9PW;LX/Vhq;Ljava/lang/String;)V
+
+    return-void
+.end method
+
+
+# virtual methods
+.method public final getModuleName()Ljava/lang/String;
+    .locals 1
+
+    iget-object v0, p0, LX/E9z;->A03:Ljava/lang/String;
+
+    return-object v0
+.end method
+
+.method public final onBackPressed()Z
+    .locals 1
+
+    iget-object v0, p0, LX/E9z;->A02:LX/Esp;
+
+    invoke-interface {v0}, LX/Esp;->getValue()Ljava/lang/Object;
+
+    move-result-object v0
+
+    check-cast v0, LX/EIe;
+
+    iget-object v0, v0, LX/EIe;->A03:LX/GhC;
+
+    invoke-interface {v0}, LX/GhC;->getValue()Ljava/lang/Object;
+
+    move-result-object v0
+
+    check-cast v0, LX/COA;
+
+    iget-boolean v0, v0, LX/COA;->A00:Z
+
+    if-eqz v0, :cond_0
+
+    const/4 v0, 0x0
+
+    return v0
+
+    :cond_0
+    invoke-static {p0}, LX/E9z;->A00(LX/E9z;)V
+
+    const/4 v0, 0x1
+
+    return v0
+.end method
+
+.method public final onCreateView(Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Landroid/os/Bundle;)Landroid/view/View;
+    .locals 3
+
+    const v0, 0x40a6e256
+
+    invoke-static {v0}, LX/3Et;->A02(I)I
+
+    move-result v2
+
+    const/16 v0, 0xa
+
+    new-instance v1, LX/ahj;
+
+    invoke-direct {v1, p0, v0}, LX/ahj;-><init>(Ljava/lang/Object;I)V
+
+    const v0, -0x652cb0e4
+
+    invoke-static {v1, v0}, LX/2DF;->A01(Ljava/lang/Object;I)LX/2DG;
+
+    move-result-object v1
+
+    invoke-static {p0}, LX/21X;->A1a(LX/4Ka;)Z
+
+    move-result v0
+
+    invoke-static {p0, v1, v0}, LX/HbU;->A03(LX/4Ka;LX/snk;Z)Landroidx/compose/ui/platform/ComposeView;
+
+    move-result-object v1
+
+    const v0, 0x518054bd
+
+    invoke-static {v0, v2}, LX/3Et;->A09(II)V
+
+    return-object v1
+.end method
+
+.method public final onViewCreated(Landroid/view/View;Landroid/os/Bundle;)V
+    .locals 5
+
+    invoke-static {p1}, LX/5B5;->A0Q(Ljava/lang/Object;)V
+
+    invoke-super {p0, p1, p2}, LX/4Ka;->onViewCreated(Landroid/view/View;Landroid/os/Bundle;)V
+
+    sget-object v4, LX/0ho;->A06:LX/0ho;
+
+    invoke-virtual {p0}, Landroidx/fragment/app/Fragment;->getViewLifecycleOwner()LX/00T;
+
+    move-result-object v3
+
+    invoke-static {v3}, LX/0hx;->A00(LX/00T;)LX/0hr;
+
+    move-result-object v2
+
+    const/4 v1, 0x0
+
+    const/16 v0, 0x29
+
+    invoke-static {v4, v3, p0, v1, v0}, LX/55W;->A02(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;LX/HAU;I)LX/55W;
+
+    move-result-object v0
+
+    invoke-static {v0, v2}, LX/020;->A1S(LX/snk;LX/mkc;)V
+
+    return-void
+.end method

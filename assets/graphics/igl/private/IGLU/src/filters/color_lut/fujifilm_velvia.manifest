@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "identifier": "fujifilm_velvia",
+  "displayName": "Fujifilm Velvia",
+  "description": "[IG Edits] Color filter name. With \"Fujifilm Velvia\", the creator can apply a Fujifilm Velvia film emulation LUT (boosted saturation, vivid landscape greens/reds) via the 3D LUT shader.",
+  "assets": [
+    {
+      "name": "clut_kodachrome.png",
+      "assetHash": "ee0e9ceb33117605765455f2af31a17421c650afc9b8267f6bed5988546e19d3",
+      "hubAssetId": "787974297140944"
+    }
+  ],
+  "iglu": {}
+}

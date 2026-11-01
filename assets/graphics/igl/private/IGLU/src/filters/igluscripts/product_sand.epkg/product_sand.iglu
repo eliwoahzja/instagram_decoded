@@ -1,0 +1,210 @@
+[Filter ProductSand]
+[MaskBehavior composite]
+
+[Init]
+fun init(Filter filter) {
+  # Declares the named mask input that the host binds to the object silhouette.
+  makeTexture('mask);
+
+  filter.parameters = {
+    {grainSize = 4.8, min = 3.0, max = 24.0, description = "Grain Size (px)"},
+    {speed = 0.3, min = 0.0, max = 4.0, description = "Flow Speed"},
+    {flowAmount = 0.2, min = 0.0, max = 2.0, description = "Flow Amount"},
+    {wobble = 1.0, min = 0.0, max = 1.0, description = "Grain Wobble"},
+    {brightnessJitter = 0.9, min = 0.0, max = 1.0, description = "Brightness Jitter"},
+    {opacity = 0.5, min = 0.0, max = 1.0, description = "Sand Opacity"},
+    {additive = 1.0, min = 0.0, max = 1.0, description = "Additive Particles"},
+  };
+
+  filter.passes = {
+    {
+      name = 'sand,
+      inputs = {'default, 'mask},
+      uniforms = {
+        outputSize = {1080.0, 1920.0},
+        uTime = 0.0,
+        grainSize = 7.0,
+        flowAmount = 1.0,
+        wobble = 0.35,
+        brightnessJitter = 0.2,
+        opacity = 1.0,
+        additive = 0.0,
+      },
+      glslShader = sandGlsl,
+    }
+  };
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  vec2 size = getTextureSize('default);
+
+  f32 t = getParameterFloat('time_sec) * getParameterFloat('speed);
+
+  setShaderUniform('sand, 'outputSize, size);
+  setShaderUniform('sand, 'uTime, t);
+  setShaderUniform('sand, 'grainSize, getParameterFloat('grainSize));
+  setShaderUniform('sand, 'flowAmount, getParameterFloat('flowAmount));
+  setShaderUniform('sand, 'wobble, getParameterFloat('wobble));
+  setShaderUniform('sand, 'brightnessJitter, getParameterFloat('brightnessJitter));
+  setShaderUniform('sand, 'opacity, getParameterFloat('opacity));
+  setShaderUniform('sand, 'additive, getParameterFloat('additive));
+}
+
+string sandGlsl = "
+precision highp float;
+
+varying vec2 sourceTextureCoordinate;
+BaseUniformsOpenGL;
+
+uniform sampler2D auxSampler1;
+
+uniform vec2 outputSize;
+uniform float uTime;
+uniform float grainSize;
+uniform float flowAmount;
+uniform float wobble;
+uniform float brightnessJitter;
+uniform float opacity;
+uniform float additive;
+
+#define NOISE_OFFSET_1 100.0
+#define NOISE_OFFSET_2 50.0
+#define NOISE_OFFSET_4 25.0
+#define WAVE_AMPLITUDE 0.5
+#define WAVE_SPEED 0.25
+#define NOISE_SCALE 0.6
+#define LARGE_FLOW_WEIGHT 0.77
+#define MEDIUM_FLOW_WEIGHT 0.06
+#define SMALL_FLOW_WEIGHT 0.71
+#define LARGE_FLOW_SCALE 1.54
+#define MEDIUM_FLOW_SCALE 0.20
+#define SMALL_FLOW_SCALE 1.5
+#define FBM_SCALE_DEFAULT 1.2
+#define PARTICLE_EDGE_FADE 0.2
+#define RANDOM_SEED_1 123.456
+#define RANDOM_SEED_2 789.012
+#define GRAIN_RADIUS 0.5
+
+float maskCoverage(vec4 c) {
+  return max(c.r, max(c.g, c.b));
+}
+
+float randomParticle(vec2 st) {
+  return fract(sin(dot(st, vec2(12.9898, 78.233))) * 43758.5453123);
+}
+
+float noiseParticle(vec2 st) {
+  vec2 i = floor(st);
+  vec2 f = fract(st);
+
+  float a = randomParticle(i);
+  float b = randomParticle(i + vec2(1.0, 0.0));
+  float c = randomParticle(i + vec2(0.0, 1.0));
+  float d = randomParticle(i + vec2(1.0, 1.0));
+
+  vec2 u = f * f * (3.0 - 2.0 * f);
+
+  return mix(a, b, u.x) + (c - a) * u.y * (1.0 - u.x) + (d - b) * u.x * u.y;
+}
+
+float fbmParticle(vec2 st, float scale) {
+  vec2 pos = st * scale;
+  float value = 0.0;
+  float amplitude = 0.5;
+  float frequency = 1.0;
+
+  value += amplitude * noiseParticle(pos * frequency);
+  frequency *= 2.0; amplitude *= 0.5;
+  value += amplitude * noiseParticle(pos * frequency);
+  frequency *= 2.0; amplitude *= 0.5;
+  value += amplitude * noiseParticle(pos * frequency);
+
+  return value * 1.12;
+}
+
+vec2 calculateFlowScale(vec2 pos, float time, float scale, float timeSpeed, float offsetX, float offsetY, float fbmScale, float aspectRatio) {
+  vec2 aspectScale = vec2(max(aspectRatio, 1.0), max(1.0 / aspectRatio, 1.0));
+  vec2 aspectPos = pos * aspectScale;
+
+  vec2 timeOffset = vec2(time * timeSpeed, time * timeSpeed * 0.7) * 6.0;
+  vec2 scaledPos = aspectPos * NOISE_SCALE * scale + timeOffset;
+
+  float angle = time * 0.1;
+  float sr = sin(angle);
+  float cr = cos(angle);
+  mat2 rot = mat2(cr, -sr, sr, cr);
+  scaledPos = rot * scaledPos;
+
+  return vec2(fbmParticle(scaledPos + vec2(offsetX, offsetY), fbmScale) - 0.5,
+              fbmParticle(scaledPos + vec2(offsetX + NOISE_OFFSET_1, offsetY), fbmScale) - 0.5);
+}
+
+vec2 getFlowFieldParticle(vec2 pos, float time, float aspectRatio) {
+  vec2 flow = vec2(0.0);
+  flow += calculateFlowScale(pos, time, LARGE_FLOW_SCALE, 0.5, 0.0, 0.0, FBM_SCALE_DEFAULT, aspectRatio) * LARGE_FLOW_WEIGHT;
+  flow += calculateFlowScale(pos, time, MEDIUM_FLOW_SCALE, 0.8, NOISE_OFFSET_2, 0.0, FBM_SCALE_DEFAULT, aspectRatio) * MEDIUM_FLOW_WEIGHT;
+  flow += calculateFlowScale(pos, time, SMALL_FLOW_SCALE, 1.2, NOISE_OFFSET_4, 0.0, FBM_SCALE_DEFAULT, aspectRatio) * SMALL_FLOW_WEIGHT;
+  return flow;
+}
+
+void main() {
+  vec2 uv = sourceTextureCoordinate;
+  vec4 base = sampleInput(uv);
+
+  float time = uTime * WAVE_SPEED;
+  float aspectRatio = outputSize.x / outputSize.y;
+
+  vec2 ndc = uv * 2.0 - 1.0;
+  vec2 flowField = getFlowFieldParticle(ndc, time, aspectRatio);
+  vec2 baseNdc = ndc - flowField * WAVE_AMPLITUDE * flowAmount;
+  vec2 baseUv = baseNdc * 0.5 + 0.5;
+
+  vec2 cells = max(outputSize / max(grainSize, 1.0), vec2(1.0));
+  vec2 grid = baseUv * cells;
+  vec2 cellId = floor(grid);
+
+  float bestCoverage = 0.0;
+  vec2 bestCell = cellId;
+  float bestRandom = 0.0;
+
+  for (int j = -1; j <= 1; j++) {
+    for (int i = -1; i <= 1; i++) {
+      vec2 neighbour = cellId + vec2(float(i), float(j));
+      float rnd = randomParticle(neighbour);
+
+      float s1 = sin(rnd * RANDOM_SEED_1 + time * 2.9);
+      float c1 = cos(rnd * RANDOM_SEED_1 + time * 2.9);
+      float s2 = sin(rnd * RANDOM_SEED_2 + time * 3.3);
+      float c2 = cos(rnd * RANDOM_SEED_2 + time * 3.3);
+      vec2 jitter = vec2(0.7 * s1 + 0.3 * c1, 0.7 * s2 + 0.3 * c2) * wobble;
+
+      vec2 center = neighbour + 0.5 + jitter;
+      float coverage = clamp(1.0 - length(grid - center) / GRAIN_RADIUS, 0.0, 1.0);
+
+      if (coverage > bestCoverage) {
+        bestCoverage = coverage;
+        bestCell = neighbour;
+        bestRandom = rnd;
+      }
+    }
+  }
+
+  vec2 grainUv = clamp((bestCell + 0.5) / cells, vec2(0.0), vec2(1.0));
+  vec3 grainColor = sampleInput(grainUv).rgb;
+
+  float brightnessAmount = (bestRandom - 0.5) * 2.0 * brightnessJitter;
+  vec3 brightnessTarget = brightnessAmount > 0.0 ? vec3(1.0) : vec3(0.0);
+  grainColor = mix(grainColor, brightnessTarget, abs(brightnessAmount));
+
+  float grainMask = maskCoverage(texture2D(auxSampler1, grainUv));
+  float opacityFactor = smoothstep(0.0, PARTICLE_EDGE_FADE, grainMask);
+  float alpha = bestCoverage * opacityFactor * opacity;
+
+  vec3 blended = mix(base.rgb, grainColor, alpha);
+  vec3 added = base.rgb + grainColor * alpha;
+  vec3 color = mix(blended, added, additive);
+
+  gl_FragColor = toOutputFormat(vec4(color, base.a));
+}
+";

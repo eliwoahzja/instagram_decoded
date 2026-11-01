@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "identifier": "transition_asset_mask",
+  "displayName": "Asset Mask",
+  "description": "[IG Edits] Transition name. With \"Asset Mask\", the creator can transition between two clips using a custom grayscale asset image as the reveal mask.",
+  "assets": [
+    {
+      "name": "asset_input.mp4",
+      "assetHash": "180b7da8a1536d6d8ec97b831299193bcb94c9aee0aa9ca7cab13a981bd9d90c",
+      "hubAssetId": "2132489777510686"
+    }
+  ],
+  "iglu": {}
+}

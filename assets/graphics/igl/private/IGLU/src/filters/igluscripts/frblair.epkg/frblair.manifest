@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "identifier": "941FFCC0-983F-4E25-8EFD-9B16C4CF76AA",
+  "displayName": "Frblair",
+  "description": "[IG Edits] Video effect name. With \"Frblair\", the creator can apply a warm cinematic LUT, radial RGB chromatic aberration, tinted screen-blended film grain, flat lift and red rouge boost.",
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAF-bJyN3Us"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "dec55d3c",
+      "handle": "AQAF1EL7Mofq",
+      "md5": "875870a63e79ccd78ad2b85976d14f54"
+    }
+  },
+  "iglu": {
+    "legacyId": 3082
+  },
+  "assets": [
+    {
+      "name": "frblair_lut.png",
+      "assetHash": "d8d1c6d11c1b90ae82a72623be5bf4bebea0d41e51ae130e02ef75606474c4b0",
+      "hubAssetId": "919734937709287"
+    },
+    {
+      "name": "frblair_grain.jpg",
+      "assetHash": "14667e1c572175cec316c66f98b4fe0202d9da8c22e24716ee20167b933326a8",
+      "hubAssetId": "4402438226704771"
+    }
+  ]
+}

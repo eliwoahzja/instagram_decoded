@@ -1,0 +1,23 @@
+[Filter VideoRockHorizontalOut]
+[MaskBehavior alpha]
+
+[Init]
+fun init(Filter filter) {
+  filter.passes = {{
+      name = 'rockHOut,
+      igid = 'video_rock_horizontal_in,
+      inputs = {'default},
+      uniforms = {},
+    }};
+
+  filter.parameters = {
+    {direction = 0.0, min = 0.0, max = 1.0, description = "0 = Center-to-left, 1 = Center-to-right"},
+  };
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  setShaderUniform('rockHOut, 'progress, getParameterFloat('progress));
+  setShaderUniform('rockHOut, 'direction, getParameterFloat('direction));
+  setShaderUniform('rockHOut, 'outro, 1.0);
+}

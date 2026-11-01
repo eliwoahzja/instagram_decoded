@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.facebook.fbui.drawable.custom.AppBitmapDrawable fbui:fbui_src="@drawable/instagram_app_edits_outline_24" fbui:fbui_tint="@color/abc_decor_view_status_guard_light"
+  xmlns:fbui="http://schemas.android.com/apk/res-auto" />

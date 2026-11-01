@@ -1,0 +1,1 @@
+(function(osVersion){window.localStorage.setItem("session-aa-os-version",osVersion)})

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="string_0x7f130002">Estado</string>
+    <string name="string_0x7f130003">Siyudad</string>
+    <string name="string_0x7f130004">Adres</string>
+    <string name="string_0x7f130008">Awtomatikong tubagan sa card gikan s aimong account sa ad?</string>
+    <string name="string_0x7f13002c">Isirado ang browser</string>
+    <string name="string_0x7f13002e">Ang %1$s gustong mogamit sa camera ug mikropono sa imong device.</string>
+    <string name="string_0x7f13002f">Ang %1$s gustong mogamit sa camera sa device.</string>
+    <string name="string_0x7f130030">Gusto gamiton sa %1$s ang lokasyon sa imong device.</string>
+    <string name="string_0x7f130031">Ang %1$s gustong mogamit sa mikropono sa imong device.</string>
+    <string name="string_0x7f130032">Palihug tuguti tanang media nga mogamit og file chooser</string>
+    <string name="string_0x7f130033">Tuguti</string>
+    <string name="string_0x7f130034">I-block</string>
+    <string name="string_0x7f130035">I-minimize ang browser</string>
+    <string name="string_0x7f130036">Balik</string>
+    <string name="string_0x7f130037">Magpadayon</string>
+    <string name="string_0x7f130038">Adunay mga problema sa sertipiko sa seguridad para niini nga site</string>
+    <string name="string_0x7f130039">Balik</string>
+    <string name="string_0x7f13003a">Sayop sa seguridad</string>
+    <string name="string_0x7f13008e">Ibalewala</string>
+    <string name="string_0x7f130091">Ang website nga imong gitan-aw nagsulay og abli sa external nga app. Gusto ba nimong mopadayon?</string>
+    <string name="string_0x7f130092">Balik</string>
+    <string name="string_0x7f130093">Padayon</string>
+    <string name="string_0x7f130094">Mobiya ka sa among app</string>
+    <string name="string_0x7f130095">Kini lagmit nga tungod sa teknikal nga sayop nga gipaningkamotan namong matarong. Sulayi sa pag-reload kini nga pahina.</string>
+    <string name="string_0x7f130096">I-refresh</string>
+    <string name="string_0x7f130097">Dili available sa pagkakaron ang pahina.</string>
+    <string name="string_0x7f130098">Apelyido</string>
+    <string name="string_0x7f130099">Dili ma-load ang pahina</string>
+    <string name="string_0x7f13009a">Ablihi gamit ang ...</string>
+    <string name="string_0x7f13009b">Ablihi sa %1$s</string>
+    <string name="string_0x7f13009c">Dugang pang mga opsyon</string>
+    <string name="string_0x7f1300aa">Ngalan</string>
+    <string name="string_0x7f1300af">Gitan-aw nimo karon ang kinatibuk-ang screen. I-swipe sa wala o pinduta balik ang pindutanan sa exit.</string>
+    <string name="string_0x7f1300cf">Kasaysayan sa link. I-double tap para sa lista sa mga link sa mga website nga nabisita nimo sa miagi.</string>
+    <string name="string_0x7f1300d0">Ikansela</string>
+    <string name="string_0x7f1300da">Isirado</string>
+    <string name="string_0x7f1300dd">Pinduta aron idugang ang kard</string>
+    <string name="string_0x7f130119">Kumpirmaha ang billing adres sama sa pagpadala</string>
+    <string name="string_0x7f13011a">[brand o issuer sa kard] image sa kard</string>
+    <string name="string_0x7f13011b">I-expand ang impormasyon sa awtomatikong tubagan ug mga kontrol</string>
+    <string name="string_0x7f130126">Makahibalo og dugang</string>
+    <string name="string_0x7f1301d3">Telepono</string>
+</resources>

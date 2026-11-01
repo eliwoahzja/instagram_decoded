@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<set android:shareInterpolator="false"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <scale android:interpolator="@anim/fbui_popover_window_overshoot_interpolator" android:duration="@integer/config_see_all_screen_anim_time" android:pivotX="@dimen/fbui_popover_window_anim_pivot_center" android:pivotY="@dimen/fbui_popover_window_anim_pivot_top" android:fromXScale="@dimen/fbui_popover_window_anim_min_scale" android:toXScale="@dimen/account_group_management_text_line_height_multiplier" android:fromYScale="@dimen/fbui_popover_window_anim_min_scale" android:toYScale="@dimen/account_group_management_text_line_height_multiplier" />
+    <alpha android:interpolator="@android:anim/linear_interpolator" android:duration="@integer/config_see_all_screen_anim_time" android:fromAlpha="@dimen/fbui_popover_window_anim_enter_min_alpha" android:toAlpha="@dimen/account_group_management_text_line_height_multiplier" />
+</set>

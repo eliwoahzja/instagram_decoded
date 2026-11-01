@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "identifier": "soft_light",
+  "displayName": "Soft Light",
+  "description": "Filter name for a soft lighting effect",
+  "iglu": {
+    "legacyId": 1104
+  }
+}

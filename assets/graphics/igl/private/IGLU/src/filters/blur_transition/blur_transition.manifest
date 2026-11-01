@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "blur_transition",
+  "displayName": "Blur Transition",
+  "description": "[IG Edits] Transition name. With \"Blur Transition\", the creator can blend the clip into a multi-pass box+variable blur driven by a triangle-pulse progress curve, with an exposure boost at peak.",
+  "iglu": {}
+}

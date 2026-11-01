@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "identifier": "7fea61ad-b54d-4079-8c4f-7e880a740f09",
+  "displayName": "Product Outline",
+  "description": "[IG Visual Discovery] Product highlight effect name. With \"Product Outline\", an animated glowing rim traces the silhouette of the product a viewer selected in a paused reel.",
+  "iglu": {
+    "customization": [
+      {
+        "name": "thickness",
+        "default": 10,
+        "min": 0,
+        "max": 25
+      },
+      {
+        "name": "softness",
+        "default": 0.15,
+        "min": 0,
+        "max": 1
+      },
+      {
+        "name": "speed",
+        "default": 0.5,
+        "min": 0,
+        "max": 3
+      },
+      {
+        "name": "sharpness",
+        "default": 2,
+        "min": 0.5,
+        "max": 16
+      },
+      {
+        "name": "radialMod",
+        "default": 2,
+        "min": 1,
+        "max": 4
+      },
+      {
+        "name": "baseOpacity",
+        "default": 0.25,
+        "min": 0,
+        "max": 1
+      },
+      {
+        "name": "opacity",
+        "default": 1,
+        "min": 0,
+        "max": 1
+      }
+    ]
+  }
+}

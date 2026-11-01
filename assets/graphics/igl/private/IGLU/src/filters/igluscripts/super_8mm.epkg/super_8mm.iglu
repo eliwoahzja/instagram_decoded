@@ -1,0 +1,226 @@
+[Filter Super8mm]
+# "Super 8mm" — LUT + procedural film grain (3 frames @ 7fps) +
+# procedural rounded-rectangle frame overlay with sepia tint and
+# subtle per-frame jitter.
+#
+# Pipeline (single fragment pass):
+#   1. Sample camera source.
+#   2. Apply 8x8 grid LUT trilinear sampling, mix with `strength`
+#      (default 1.0).
+#   3. Procedural film grain — 3 frames cycling at 7fps:
+#        frame_index = mod(floor(time * 7.0), 3.0)
+#        grain = fract(sin(uv.x * 127.1 + uv.y * 311.7
+#                          + frame_index * 74.3) * 43758.5453)
+#      Screen-blended over the LUT-graded image at `grain_opacity`
+#      (default 0.20). Three distinct hash seeds give a true 3-frame
+#      cycle of grain patterns rather than a continuous noise sweep.
+#   4. Animated sepia tint over the inner area:
+#        sepia_anim  = sin(time * 0.8) * 0.5 + 0.5      (0..1)
+#        sepia_alpha = sepia_strength * sepia_anim       (0..0.15)
+#      Sepia color hardcoded at vec3(1.0, 0.9, 0.7) — warm yellow-
+#      brown, approximated from the reference frames.
+#   5. Procedural rounded-rectangle border (replaces the original
+#      Spark filter's 127-frame texture sequence — see note below):
+#        - Standard rounded-box SDF (Inigo Quilez form) with extents
+#          = (0.5 - border_radius) and corner radius = border_radius.
+#        - smoothstep edge softening of width `border_softness`.
+#        - Mask multiplied by `border_strength` (default 0.85) to keep
+#          the black border slightly translucent at peak.
+#        - Subtle per-frame UV jitter (~0.5% of frame width) at the
+#          7fps grain rate mimics the film-registration shift visible
+#          in the reference frame sequence.
+#
+# Known gap vs Spark reference (frame animation):
+# The original Spark filter uses 127 pre-rendered frame textures
+# (~6.3s loop @ 20fps). Those frame assets are not loadable at
+# runtime through the IGLUScript catalog, so this implementation
+# approximates the same look procedurally with the rounded-rect SDF
+# + sepia tint + 7fps registration jitter. Visual intent matches the
+# reference frame sequence; exact 127-frame replay is out of scope
+# for this single-pass shader.
+#
+# Sepia color is hardcoded vec3(1.0, 0.9, 0.7); if a future variant
+# needs a tunable color, split into three scalar uniforms (sepia_r,
+# sepia_g, sepia_b) per the catalog convention of preferring scalar
+# floats over vec2/vec3 parameters.
+#
+# LUT delivered via ARD; effectId / assetHash filled in once provided
+# — TODO placeholders in the manifest until then.
+
+[Init]
+fun init(Filter filter)
+{
+    makeTexture('lut);
+
+    # Host-tunable parameters. Wired unconditionally in [PreRender] per
+    # CRA finding on black_and_white.
+    filter.parameters = {
+        {lut_strength = 0.80, min = 0.0, max = 1.0, description = "LUT mix strength"},
+        {grain_opacity = 0.11, min = 0.0, max = 1.0, description = "Procedural grain screen blend opacity"},
+        {border_radius = 0.14, min = 0.0, max = 0.49, description = "Rounded rectangle corner radius (also frame border thickness scale)"},
+        {border_softness = 0.06, min = 0.0, max = 0.2, description = "Border edge smoothstep softness"},
+        {border_strength = 0.85, min = 0.0, max = 1.0, description = "Border opacity at peak"},
+        {sepia_strength = 0.10, min = 0.0, max = 1.0, description = "Animated sepia tint peak opacity"},
+    };
+
+    filter.passes = {{
+      name = 'pass0,
+      inputs = {'default, 'lut},
+      uniforms = {
+        lut_strength = 0.80,
+        grain_opacity = 0.11,
+        border_radius = 0.14,
+        border_softness = 0.06,
+        border_strength = 0.85,
+        sepia_strength = 0.10,
+        time = 0.0,
+      },
+      glslShader = glslSuper8mm,
+    }};
+}
+
+string lut_path = "lut_path";
+string lut_filename = "";
+
+[PreRender]
+fun preRender(Filter filter){
+    string lut_filename_parameter = getParameterString(lut_path);
+    if (lut_filename_parameter != "") {
+        string new_lut_filename = stringAppend("textureFilePath://", lut_filename_parameter);
+        if (new_lut_filename != lut_filename) {
+            lut_filename = new_lut_filename;
+            loadTexture('lut, lut_filename);
+        }
+    }
+
+    # All seven uniforms wired unconditionally per CRA convention.
+    # Note: we deliberately rename `strength` -> `lut_strength` to avoid
+    # the framework-owned `BaseUniformsOpenGL.strength` auto-declared
+    # uniform whose default value is hardcoded to 1.0 by the runtime
+    # (see lesson on this in `igluscript-create.md`). Renaming gives us
+    # a clean tunable knob that respects the .iglu's declared default.
+    f32 s = getParameterFloat('lut_strength);
+    setShaderUniform('pass0, 'lut_strength, s);
+
+    f32 go = getParameterFloat('grain_opacity);
+    setShaderUniform('pass0, 'grain_opacity, go);
+
+    f32 br = getParameterFloat('border_radius);
+    setShaderUniform('pass0, 'border_radius, br);
+
+    f32 bs = getParameterFloat('border_softness);
+    setShaderUniform('pass0, 'border_softness, bs);
+
+    f32 bst = getParameterFloat('border_strength);
+    setShaderUniform('pass0, 'border_strength, bst);
+
+    f32 ss = getParameterFloat('sepia_strength);
+    setShaderUniform('pass0, 'sepia_strength, ss);
+
+    # Time drives grain frame index, sepia opacity, and frame jitter.
+    # Production reads the host-supplied `time_sec` parameter; uncomment
+    # getLocalTime() for sample-app dev (matches color_leak / grainy /
+    # toxic_glitch / flicker_flashing_vid convention).
+    f32 time = getParameterFloat('time_sec);
+    # time = getLocalTime(); # uncomment for sample-app testing
+    setShaderUniform('pass0, 'time, time);
+}
+
+#### GLSL shader ####
+
+string glslSuper8mm = "
+    varying vec2 sourceTextureCoordinate;
+    BaseUniformsOpenGL;
+
+    uniform sampler2D auxSampler0;
+    uniform sampler2D auxSampler1;
+    uniform sampler2D auxSampler2;
+
+    uniform float lut_strength;
+    uniform float grain_opacity;
+    uniform float border_radius;
+    uniform float border_softness;
+    uniform float border_strength;
+    uniform float sepia_strength;
+    uniform float time;
+
+    // Pseudo-random hash, seeded by uv + frame index.
+    float hash3(vec2 uv, float frame) {
+      return fract(sin(uv.x * 127.1 + uv.y * 311.7 + frame * 74.3) * 43758.5453);
+    }
+
+    // Standard rounded-box SDF (Inigo Quilez form).
+    // p: query point, b: half-extents, r: corner radius.
+    float sdRoundBox(vec2 p, vec2 b, float r) {
+      vec2 q = abs(p) - b + vec2(r);
+      return min(max(q.x, q.y), 0.0) + length(max(q, vec2(0.0))) - r;
+    }
+
+    void main() {
+      vec2 uv = sourceTextureCoordinate;
+
+      // Stage 1: 8x8 grid LUT trilinear sampling.
+      vec4 base = sampleInput(uv);
+      vec3 c = clamp(base.rgb, 0.00781, 0.98438);
+      float x = c.r / 8.0;
+      float y = c.g / 8.0;
+      float z = c.b;
+      float blueY = floor(z * 8.0) / 8.0;
+      float blueX = floor((z - blueY) * 64.0) / 8.0;
+      x += blueX;
+      y += blueY;
+      vec3 lutColor = texture2D(auxSampler1, vec2(x, y)).xyz;
+      vec3 graded = mix(base.rgb, lutColor, lut_strength);
+
+      // Stage 2: procedural film grain — 3 frames @ 7fps, screen-blended.
+      float frame_index = mod(floor(time * 7.0), 3.0);
+      float g = hash3(uv, frame_index);
+      vec3 grain_rgb = vec3(g);
+      vec3 screened = vec3(1.0) - (vec3(1.0) - graded) * (vec3(1.0) - grain_rgb);
+      vec3 grained = mix(graded, screened, grain_opacity);
+
+      // Stage 3: animated sepia tint.
+      float sepia_anim = sin(time * 0.8) * 0.5 + 0.5;
+      float sepia_alpha = sepia_strength * sepia_anim;
+      vec3 sepia_color = vec3(1.0, 0.9, 0.7);
+      vec3 tinted = mix(grained, sepia_color, sepia_alpha);
+
+      // Stage 4: procedural rounded-rectangle frame.
+      // Steady micro-jitter at 7fps + occasional stochastic flicker
+      // jumps (~15% of frames get a 4x-amplitude jump) approximate
+      // the film-registration shift visible in the reference frames
+      // and add the larger flicker-style jumps mixed in with the
+      // steady drift.
+      float jit_idx = floor(time * 7.0);
+      float h_x_steady = fract(sin(jit_idx * 12.9898) * 43758.5453);
+      float h_y_steady = fract(sin(jit_idx * 78.233)  * 43758.5453);
+      float h_gate     = fract(sin(jit_idx * 53.789)  * 43758.5453);
+      float h_x_flick  = fract(sin(jit_idx * 17.123)  * 43758.5453);
+      float h_y_flick  = fract(sin(jit_idx * 91.456)  * 43758.5453);
+
+      // Steady micro-jitter (~0.5% of frame width).
+      vec2 jitter = vec2(
+        (h_x_steady - 0.5) * 0.005,
+        (h_y_steady - 0.5) * 0.005
+      );
+      // Stochastic flicker jump (~25% of frames, ~5x amplitude).
+      float flicker_gate = step(0.75, h_gate);
+      jitter += flicker_gate * vec2(
+        (h_x_flick - 0.5) * 0.025,
+        (h_y_flick - 0.5) * 0.025
+      );
+
+      vec2 p = uv - vec2(0.5) + jitter;
+      // Asymmetric box extents: super-thin L/R border (0.05x of
+      // border_radius) and modest top/bottom border (0.55x of
+      // border_radius). Inner cutout reaches very close to the L/R
+      // edges, matching the reference film-frame look.
+      vec2 b = vec2(0.5 - border_radius * 0.05, 0.5 - border_radius * 0.55);
+      float dist = sdRoundBox(p, b, border_radius);
+      float border_mask = smoothstep(-border_softness, 0.0, dist) * border_strength;
+
+      vec3 finalRgb = mix(tinted, vec3(0.0), border_mask);
+
+      gl_FragColor = toOutputFormat(vec4(finalRgb, 1.0));
+    }
+    ";

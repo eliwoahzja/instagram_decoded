@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "identifier": "D5989CEB-2B19-4738-AFD8-6F229E926A20",
+  "displayName": "Teddy Bear Glitter",
+  "description": "[IG Edits] Video effect name. Face-tracked look combining makeup and sparkle face textures, plus flat ear and nose decals anchored to the face.",
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAE3OErenpJ"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "bde82fbc",
+      "handle": "AQAHBFMjzshq",
+      "md5": "4ba9ef2af9b9c5665b78287a6fbf2fe6"
+    }
+  },
+  "iglu": {
+    "legacyId": 3199
+  },
+  "assets": [
+    {
+      "name": "teddy_bear_glitter_face_texture.png",
+      "assetHash": "ebac5a1d76c2ff920bab710fa35e60210edbd9be8fa5079d1154182c1ac3c5fe",
+      "hubAssetId": "1990022225720545"
+    },
+    {
+      "name": "teddy_bear_glitter_ears.png",
+      "assetHash": "2f85f01685ae75eb8cd9ed793dfc642afeca6ffedea844aa73712629629fc5fe",
+      "hubAssetId": "1828868775151322"
+    },
+    {
+      "name": "teddy_bear_glitter_lut.png",
+      "assetHash": "03f4001310746865c92a3731cfb7cc4eba05b61492b6c5ebb32755e84b8a6519",
+      "hubAssetId": "1324337503072386"
+    },
+    {
+      "name": "teddy_bear_glitter_glitter.png",
+      "assetHash": "287ceae308c09fd60ea7c59bffdd57b63927fba9cc1de945433c093a601a90a6",
+      "hubAssetId": "1021081980552434"
+    },
+    {
+      "name": "teddy_bear_glitter_nose.png",
+      "assetHash": "e60ed5f61feedb9441978779c7c3cce22b5ed686aaa0c192d78d017499688f86",
+      "hubAssetId": "1735798277439111"
+    }
+  ]
+}

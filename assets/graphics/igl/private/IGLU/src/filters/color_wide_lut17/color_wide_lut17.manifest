@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "identifier": "jade",
+  "displayName": "Jade",
+  "description": "[IG Edits] Color filter name. With \"Jade\", the creator can remap pixel RGB through the Jade 3D LUT for a cool green jade-tinted tone.",
+  "iglu": {
+    "legacyId": 5040
+  },
+  "assets": [
+    {
+      "name": "jade.lutpk",
+      "assetHash": "80acd0e76aa1e9c8a10fbc0d952d0163eca65e54d4332907ebbfa4092e7cab08",
+      "hubAssetId": "1751348419556692"
+    }
+  ]
+}

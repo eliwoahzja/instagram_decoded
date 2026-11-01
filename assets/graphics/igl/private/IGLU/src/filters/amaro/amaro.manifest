@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "identifier": "amaro",
+  "displayName": "Amaro",
+  "description": "[IG Edits] Color filter name. With \"Amaro\", the creator can apply the Amaro grade via a per-channel blackboard overlay LUT followed by a row-banded color map for a bright, hazy vintage look.",
+  "iglu": {
+    "legacyId": 24
+  },
+  "assets": [
+    {
+      "name": "blackboard.png",
+      "assetHash": "6ee32275f0b08fb4bee58193a4d8a16d3d24f2db94f58192df6bdc11d5ad7081",
+      "hubAssetId": "894545610234702"
+    },
+    {
+      "name": "map_amaro.png",
+      "assetHash": "8ee73af6abf24f1d061567dbf43970bb0c3a491006f22abb729b856435fcfb8e",
+      "hubAssetId": "949684377483341"
+    },
+    {
+      "name": "overlay.png",
+      "assetHash": "84b56063e8efd2fa742bd5a62235c378606dc3406613606f99f3c4044b20e31a",
+      "hubAssetId": "1236494364700999"
+    }
+  ]
+}

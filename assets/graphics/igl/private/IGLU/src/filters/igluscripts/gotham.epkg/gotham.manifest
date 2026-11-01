@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "identifier": "3B192091-87E4-4882-818C-879D6617B1CF",
+  "displayName": "Gotham",
+  "description": "[IG Edits] Color filter name. With \"Gotham\", the creator can apply a high-contrast Gotham-style LUT grade with a subtle radial center brightening highlight.",
+  "ios": {
+    "previewAsset": {
+      "handle": "AQBjtDWeGzxX"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "4acad947",
+      "handle": "AQAD1dKbcV3d",
+      "md5": "460c356a230a982bc5ec97160ee3eb4b"
+    }
+  },
+  "iglu": {
+    "legacyId": 3081
+  },
+  "assets": [
+    {
+      "name": "gotham_lut.png",
+      "assetHash": "518fdb965a6d1e6a5ac3620d30b948cc8c9dca8da71354531699260f405f0ac3",
+      "hubAssetId": "1426816376141388"
+    }
+  ]
+}

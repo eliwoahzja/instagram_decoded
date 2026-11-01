@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "transition_stretch_vertical",
+  "displayName": "Stretch Vertical",
+  "description": "[IG Edits] Transition name. With \"Stretch Vertical\", the creator can transition between clips by stretching the frame vertically with chromatic-aberration distortion and a zoom blur kick.",
+  "iglu": {}
+}

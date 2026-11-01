@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="#00ffffff" />
+    <corners android:radius="@dimen/abc_action_bar_elevation_material" />
+    <stroke android:width="@dimen/account_preview_media_end_card_stroke_width" android:color="@color/bds_grey_1" />
+    <padding android:left="@dimen/account_preview_media_end_card_stroke_width" android:top="@dimen/account_preview_media_end_card_stroke_width" android:right="@dimen/account_preview_media_end_card_stroke_width" android:bottom="@dimen/account_preview_media_end_card_stroke_width" />
+</shape>

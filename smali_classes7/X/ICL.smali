@@ -1,0 +1,107 @@
+.class public abstract LX/ICL;
+.super Ljava/lang/Object;
+.source ""
+
+
+# direct methods
+.method public static A00(Ljava/lang/Integer;)Ljava/lang/String;
+    .locals 0
+
+    invoke-virtual {p0}, Ljava/lang/Number;->intValue()I
+
+    move-result p0
+
+    packed-switch p0, :pswitch_data_0
+
+    const-string p0, "UNKNOWN"
+
+    return-object p0
+
+    :pswitch_0
+    const-string p0, "BARCELONA"
+
+    return-object p0
+
+    :pswitch_1
+    const-string p0, "FACEBOOK"
+
+    return-object p0
+
+    :pswitch_2
+    const-string p0, "FACEBOOK_LITE"
+
+    return-object p0
+
+    :pswitch_3
+    const-string p0, "INSTAGRAM"
+
+    return-object p0
+
+    :pswitch_4
+    const-string p0, "INSTAGRAM_LITE"
+
+    return-object p0
+
+    :pswitch_5
+    const-string p0, "MESSENGER"
+
+    return-object p0
+
+    :pswitch_6
+    const-string p0, "MLITE"
+
+    return-object p0
+
+    :pswitch_7
+    const-string p0, "OCULUS"
+
+    return-object p0
+
+    :pswitch_8
+    const-string p0, "VIBES"
+
+    return-object p0
+
+    :pswitch_9
+    const-string p0, "AURA"
+
+    return-object p0
+
+    :pswitch_a
+    const-string p0, "GIZMO"
+
+    return-object p0
+
+    :pswitch_b
+    const-string p0, "ECLIPSE"
+
+    return-object p0
+
+    :pswitch_c
+    const-string p0, "WEARABLES"
+
+    return-object p0
+
+    :pswitch_d
+    const-string p0, "WHATSAPP"
+
+    return-object p0
+
+    :pswitch_data_0
+    .packed-switch 0x0
+        :pswitch_0
+        :pswitch_1
+        :pswitch_2
+        :pswitch_3
+        :pswitch_4
+        :pswitch_5
+        :pswitch_6
+        :pswitch_7
+        :pswitch_8
+        :pswitch_9
+        :pswitch_a
+        :pswitch_b
+        :pswitch_c
+        :pswitch_d
+    .end packed-switch
+.end method

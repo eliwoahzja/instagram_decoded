@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "brightness_transition",
+  "displayName": "Brightness Transition",
+  "description": "[IG Edits] Transition name. With \"Brightness Transition\", the creator can transition by multiplying source RGB by (1+strength) to ramp the clip toward white as the transition progresses.",
+  "iglu": {}
+}

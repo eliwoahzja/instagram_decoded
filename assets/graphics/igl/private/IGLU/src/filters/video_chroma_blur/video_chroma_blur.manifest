@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_chroma_blur",
+  "displayName": "Chroma blur",
+  "description": "[IG Edits] Video effect name. A video effect is a creative visual element that can be applied to a video. With \"Chroma blur\", the creator can apply a blurred rainbow outline effect to their video.",
+  "iglu": {
+    "legacyId": 2075,
+    "customization": [
+      {
+        "name": "intensity",
+        "default": 0.0,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Intensity",
+        "displayNameDescription": "[IG Edits] Slider label controlling the strength of a video effect. Generic across many effects (glow, blur, color, distortion, etc.); exact range varies per effect."
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "b9f40626",
+      "handle": "AQADX4MM3-js",
+      "md5": "a1ed9b9b4ea9dbc4960392e518487ef0"
+    }
+  },
+  "assets": [
+    {
+      "name": "perlin_noise.png",
+      "assetHash": "42393e620664a372495800bfcf40ca960aa0ab3e2ddfe42fbfe2b86098d33000",
+      "hubAssetId": "1259354255546062"
+    }
+  ],
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAHSiSo1RG3"
+    }
+  }
+}

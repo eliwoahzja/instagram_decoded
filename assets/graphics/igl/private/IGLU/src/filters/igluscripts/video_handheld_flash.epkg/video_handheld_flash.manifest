@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_handheld_flash",
+  "displayName": "Handheld flash",
+  "description": "[IG Edits] Video effect name shared across full-frame and subject-cutout surfaces. With \"Handheld flash\", the video simulates a handheld camera with intermittent flash bursts.",
+  "iglu": {
+    "legacyId": 2053,
+    "customization": [
+      {
+        "name": "intensity",
+        "default": 0.5,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Intensity",
+        "displayNameDescription": "[IG Edits] Slider label controlling the strength of a video effect. Generic across many effects (glow, blur, color, distortion, etc.); exact range varies per effect."
+      },
+      {
+        "name": "speed",
+        "default": 0.5,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Speed",
+        "displayNameDescription": "[IG Edits] Slider label controlling the playback or animation speed of a video effect (noun, not a verb); exact range varies per effect."
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "35ee984e",
+      "handle": "AQAI4oNUVFwc",
+      "md5": "84efbe1bb036155e0e430f527f0a3407"
+    }
+  },
+  "assets": [
+    {
+      "name": "perlin_noise.png",
+      "assetHash": "42393e620664a372495800bfcf40ca960aa0ab3e2ddfe42fbfe2b86098d33000",
+      "hubAssetId": "1259354255546062"
+    }
+  ],
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAD2g-xRyom"
+    }
+  }
+}

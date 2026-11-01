@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_grid_collage",
+  "displayName": "Grid collage",
+  "description": "Video effect name. A video effect is a creative visual element that can be applied to a video. With \"Grid collage\", the creator can display the video in a grid-like collage format.",
+  "iglu": {
+    "legacyId": 2051,
+    "behavior": {
+      "type": "fixedIntro",
+      "durationMs": 2000,
+      "curve": "linear"
+    },
+    "customization": [
+      {
+        "name": "duration",
+        "default": 2.0,
+        "min": 0.5,
+        "max": 5.0,
+        "displayName": "Duration",
+        "displayNameDescription": "[IG Edits] Slider label controlling how long a video effect's animation lasts; exact units and range vary per effect (seconds or normalized).",
+        "displayMethod": "time"
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "816ecbda",
+      "handle": "AQADmhIfeClG",
+      "md5": "a9d29d30e13e2ade1aba5a5e5442ae2b"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAQKmuT5cMf"
+    }
+  }
+}

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="?igds_color_gradient_blue" />
+    <corners android:radius="@dimen/ai_agent_share_profile_sticker_padding" />
+    <stroke android:width="@dimen/abc_control_corner_material" android:color="?igds_color_icon_on_media" />
+</shape>

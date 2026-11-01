@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "identifier": "rise",
+  "displayName": "Rise",
+  "description": "[IG Edits] Color filter name. With \"Rise\", the creator can apply the Instagram Rise LUT, lifting shadows with a warm soft-light overlay and a `blackboard` blowout for sunlit glow.",
+  "iglu": {
+    "legacyId": 23
+  },
+  "assets": [
+    {
+      "name": "blackboard.png",
+      "assetHash": "6ee32275f0b08fb4bee58193a4d8a16d3d24f2db94f58192df6bdc11d5ad7081",
+      "hubAssetId": "894545610234702"
+    },
+    {
+      "name": "map_rise.png",
+      "assetHash": "ec49107e5b8566f03f6fa22ebaa811920182f77fcb4edd57f2c06da498f032c1",
+      "hubAssetId": "1965368470685846"
+    },
+    {
+      "name": "overlay.png",
+      "assetHash": "84b56063e8efd2fa742bd5a62235c378606dc3406613606f99f3c4044b20e31a",
+      "hubAssetId": "1236494364700999"
+    }
+  ]
+}

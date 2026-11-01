@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "identifier": "f6effa7a-13df-4ee0-8f82-feeef8bcc124",
+  "displayName": "Wipe in diagonal",
+  "description": "[IG Edits] Effect name shown in the video effects picker. This is the user-facing label for a video effect.",
+  "iglu": {
+    "legacyId": 3134,
+    "behavior": {
+      "type": "fixedIntro",
+      "durationMs": 1000,
+      "curve": "quadraticInOut"
+    },
+    "customization": [
+      {
+        "name": "direction",
+        "defaultSelection": "top-left",
+        "available": [
+          "top-left",
+          "top-right",
+          "bottom-left",
+          "bottom-right"
+        ],
+        "displayName": "Wipe Direction"
+      },
+      {
+        "name": "duration",
+        "default": 1.0,
+        "min": 0.5,
+        "max": 5.0,
+        "displayName": "Duration",
+        "displayMethod": "time"
+      },
+      {
+        "name": "amount",
+        "displayName": "Amount",
+        "default": 0.1,
+        "min": 0.0,
+        "max": 1.0
+      }
+    ]
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQADp6UaTthe"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "7b1babab",
+      "handle": "AQAMb7-7ilh6",
+      "md5": "050507bcf1110fa8b631e409bdbc1289"
+    }
+  },
+  "dependencies": [
+    "video_linear_wipe_diagonal"
+  ]
+}

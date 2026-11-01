@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "text_hard_shadow",
+  "displayName": "Hard Shadow",
+  "description": "Text effect with hard shadow",
+  "iglu": {}
+}

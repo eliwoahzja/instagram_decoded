@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_cutout_bw_pulse",
+  "displayName": "B&W pulse",
+  "description": "[IG Edits] Video effect name shared across full-frame and subject-cutout surfaces. With \"B&W pulse\", the video pulses between color and black-and-white in rhythm.",
+  "iglu": {
+    "subject": {
+      "enabled": true,
+      "fullFrameEnabled": false
+    }
+  }
+}

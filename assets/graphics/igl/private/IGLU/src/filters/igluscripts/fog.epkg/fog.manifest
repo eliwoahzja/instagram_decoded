@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "identifier": "272B5FA2-A704-4A6A-811C-1DDCCAECD950",
+  "displayName": "Fog",
+  "description": "[IG Edits] Video effect name. With \"Fog\", the creator gets a color grade with rising procedural smoke drifting over the image.",
+  "ios": {
+    "previewAsset": {
+      "handle": "AQBjgWhUtpEt"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "ec4990ad",
+      "handle": "AQAKZTxSWFTt",
+      "md5": "bf6474a0f1193ec889892266581db24f"
+    }
+  },
+  "iglu": {
+    "legacyId": 3209
+  },
+  "assets": [
+    {
+      "name": "fog_lut.png",
+      "assetHash": "e093d252ca0db525d89e8c16978cb504c8d1d14432cea8671f334bbeb2b50da6",
+      "hubAssetId": "1060719209728425"
+    }
+  ]
+}

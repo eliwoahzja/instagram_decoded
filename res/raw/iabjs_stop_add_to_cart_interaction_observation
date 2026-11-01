@@ -1,0 +1,1 @@
+(function(observationId){const stopObservation=window.__iabjs_stopAddToCartInteractionObservation;"function"==typeof stopObservation&&stopObservation(observationId)})

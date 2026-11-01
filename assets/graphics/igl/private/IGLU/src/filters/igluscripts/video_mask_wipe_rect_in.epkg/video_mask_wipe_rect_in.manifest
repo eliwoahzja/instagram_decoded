@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "identifier": "3b29ef2f-7d28-4399-b45f-124aec33facc",
+  "displayName": "Wipe in square",
+  "description": "[IG Edits] Effect name shown in the video effects picker. This is the user-facing label for a video effect.",
+  "iglu": {
+    "legacyId": 3149,
+    "behavior": {
+      "type": "fixedIntro",
+      "durationMs": 1500,
+      "curve": "quarticInOut"
+    },
+    "customization": [
+      {
+        "name": "duration",
+        "default": 1.5,
+        "min": 0.5,
+        "max": 5.0,
+        "displayName": "Duration",
+        "displayMethod": "time"
+      },
+      {
+        "name": "amount",
+        "displayName": "Amount",
+        "default": 0.05,
+        "min": 0.0,
+        "max": 1.0
+      }
+    ]
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAGPNyR6iB8"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "b328bdde",
+      "handle": "AQBga7ztOzXt",
+      "md5": "65742560b9b339175b437ef2f48f07e7"
+    }
+  },
+  "dependencies": [
+    "video_mask_wipe_rect"
+  ]
+}

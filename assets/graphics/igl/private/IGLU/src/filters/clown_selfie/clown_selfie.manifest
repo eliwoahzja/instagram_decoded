@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "identifier": "3B8117BA-800F-409D-9F02-B16089D3B4A9",
+  "displayName": "Clown Selfie",
+  "description": "[IG Edits] Video effect name. With \"Clown Selfie\", the creator gets a face-tracked clown makeup overlay composited over a LUT color-graded camera scene.",
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAHQmi_QTvj"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "c0ad04ed",
+      "handle": "AQAGWZtVq906",
+      "md5": "19d3b8ef437677a2e48ef5d7605fb0a9"
+    }
+  },
+  "iglu": {
+    "legacyId": 3194
+  },
+  "assets": [
+    {
+      "name": "clown_selfie_face_texture.png",
+      "assetHash": "6412901772b0922b4efa48a5521aee5baec951bf719d1cdf5a42bd0284692834",
+      "hubAssetId": "2045668050167897"
+    },
+    {
+      "name": "clown_selfie_lut.png",
+      "assetHash": "654783c031dff66f4068d3e9f15ccddd2c14416d608a1f426d2e3ce8556f1c58",
+      "hubAssetId": "1569966794498978"
+    }
+  ]
+}

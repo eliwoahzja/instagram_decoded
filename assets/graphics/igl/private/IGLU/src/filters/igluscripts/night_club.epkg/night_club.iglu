@@ -1,0 +1,171 @@
+[Filter NightClub]
+# "Night Club" -- Spark AR port. Previously "Blocked" in tracker
+# (could not open in Spark editor); unblocked by bin extraction.
+#
+# Scene composition (per bin):
+#   Layer 1 (bg, scaleX/Y=1.25): solid black backdrop (all-black
+#     shading factors on the material -- just a backing layer).
+#   Layer 2 (LUT, fullscreen): camera -> 8x8 grid LUT color grade.
+#     Spark clamp is [0.04781, 0.98438] (wider than typical
+#     [0.00781, 0.98438]); matching exactly.
+#   Layer 3 (LUT JJ, same LUT material): duplicate LUT rectangle
+#     with subtle animated pulse (scale [1,1] -> [1.01, 1.01] over
+#     0.3s looped = ~1% zoom pulse + 1 degree rotation, ~3.3 Hz).
+#   Layer 4 (rainbow, scaleX/Y=1.25, multiply blend, opacity 0.55):
+#     `builtin.shaders.gradient` with random color animation on
+#     1s cycle -- disco lights washing over the scene.
+#
+# IGLUScript port simplifications:
+#   - Merged base + duplicate LUT layers into a single LUT pass with
+#     beat-pulse UV sampling (equivalent effect).
+#   - Rainbow overlay: replaced Spark's random-color-every-1s pop
+#     with a smooth HSV rainbow sweep (rotates over time). More
+#     visually pleasing than Spark's jarring color pops.
+#   - Beat pulse preserved: subtle 1% zoom + slight rotation at
+#     ~3.3 Hz via a sine on getLocalTime().
+#
+# LUT delivered via ARD; local sample-app testing loads from
+# assets/night_club/night_club_lut.png (extracted BLUSKY EDITED
+# VERSI JPG from bin -- 524783855663bb80aa83eeb955f2b53e.jpg).
+
+[Init]
+fun init(Filter filter)
+{
+    makeTexture('lut);
+
+    filter.parameters = {
+        {strength            = 1.0,    min = 0.0,  max = 1.0,   description = "LUT mix strength (0 = camera passthrough, 1 = full grade)"},
+        {rainbow_opacity     = 0.491,   min = 0.0,  max = 1.0,   description = "Rainbow disco overlay multiply blend strength (Spark: 0.55)"},
+        {rainbow_speed       = 0.081,   min = 0.0,  max = 2.0,   description = "Rainbow sweep rotation speed in revolutions/sec"},
+        {rainbow_saturation  = 1.0,    min = 0.0,  max = 1.0,   description = "Rainbow color saturation (0 = grayscale sweep, 1 = full disco)"},
+        {rainbow_scale       = 0.993,    min = 0.5,  max = 10.0,  description = "Rainbow bands per screen (higher = more color bands)"},
+        {pulse_amount        = 0.016,   min = 0.0,  max = 0.05,  description = "Beat pulse zoom amplitude (Spark: 0.01 = 1%)"},
+        {pulse_rate          = 3.254,   min = 0.5,  max = 10.0,  description = "Beat pulse frequency in Hz (Spark: ~3.3 Hz = 200 BPM)"},
+    };
+
+    filter.passes = {{
+      name = 'pass0,
+      inputs = {'default, 'lut},
+      uniforms = {
+        strength           = 1.0,
+        rainbow_opacity    = 0.491,
+        rainbow_speed      = 0.081,
+        rainbow_saturation = 1.0,
+        rainbow_scale      = 0.993,
+        pulse_amount       = 0.016,
+        pulse_rate         = 3.254,
+        time               = 0.0,
+      },
+      glslShader = glslNightClub,
+    }};
+}
+
+string lut_path = "lut_path";
+string lut_filename = "";
+
+[PreRender]
+fun preRender(Filter filter){
+    string lut_filename_parameter = getParameterString(lut_path);
+    if (lut_filename_parameter != "") {
+        string new_lut_filename = stringAppend("textureFilePath://", lut_filename_parameter);
+        if (new_lut_filename != lut_filename) {
+            lut_filename = new_lut_filename;
+            loadTexture('lut, lut_filename);
+        }
+    }
+
+    f32 s = getParameterFloat('strength);
+    setShaderUniform('pass0, 'strength, s);
+    f32 ro = getParameterFloat('rainbow_opacity);
+    setShaderUniform('pass0, 'rainbow_opacity, ro);
+    f32 rsp = getParameterFloat('rainbow_speed);
+    setShaderUniform('pass0, 'rainbow_speed, rsp);
+    f32 rsa = getParameterFloat('rainbow_saturation);
+    setShaderUniform('pass0, 'rainbow_saturation, rsa);
+    f32 rsc = getParameterFloat('rainbow_scale);
+    setShaderUniform('pass0, 'rainbow_scale, rsc);
+    f32 pa = getParameterFloat('pulse_amount);
+    setShaderUniform('pass0, 'pulse_amount, pa);
+    f32 pr = getParameterFloat('pulse_rate);
+    setShaderUniform('pass0, 'pulse_rate, pr);
+
+    f32 t = getLocalTime();
+    setShaderUniform('pass0, 'time, t);
+}
+
+#### GLSL shader ####
+
+string glslNightClub = "
+    varying vec2 sourceTextureCoordinate;
+    BaseUniformsOpenGL;
+
+    uniform sampler2D auxSampler0;  // 'default (camera)
+    uniform sampler2D auxSampler1;  // 'lut
+
+    uniform float rainbow_opacity;
+    uniform float rainbow_speed;
+    uniform float rainbow_saturation;
+    uniform float rainbow_scale;
+    uniform float pulse_amount;
+    uniform float pulse_rate;
+    uniform float time;
+
+    // 8x8 grid LUT lookup, matching Spark's Night Club clamp of
+    // [0.04781, 0.98438] (wider than typical [0.00781, 0.98438]).
+    vec3 applyLut(vec3 inRgb) {
+      vec3 c = clamp(inRgb, 0.04781, 0.98438);
+      float x = c.r / 8.0;
+      float y = c.g / 8.0;
+      float z = c.b;
+      float blueY = floor(z * 8.0) / 8.0;
+      float blueX = floor((z - blueY) * 64.0) / 8.0;
+      x += blueX;
+      y += blueY;
+      return texture2D(auxSampler1, vec2(x, y)).xyz;
+    }
+
+    // Compact HSV -> RGB (Iñigo Quilez pattern).
+    vec3 hsv2rgb(vec3 c) {
+      vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
+      vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);
+      return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
+    }
+
+    void main() {
+      vec2 uv = sourceTextureCoordinate;
+
+      // ============================================================
+      // Beat pulse: subtle sine-driven 1% zoom (matches Spark's
+      // 0.3s-looped 1% scale animation on the LUT JJ layer).
+      // Sample the camera at a slightly-pulsed UV.
+      // ============================================================
+      float pulse = 1.0 + pulse_amount * sin(time * pulse_rate * 6.2831853);
+      vec2 pulsed_uv = (uv - vec2(0.5)) / pulse + vec2(0.5);
+
+      // ============================================================
+      // Layer 1: LUT color grade (camera -> LUT).
+      // ============================================================
+      vec3 cam = sampleInput(pulsed_uv).rgb;
+      vec3 graded = applyLut(cam);
+      vec3 base = mix(cam, graded, strength);
+
+      // ============================================================
+      // Layer 2: procedural HSV rainbow disco overlay.
+      // Linear gradient along a rotating axis; color phase scrolls
+      // slowly in time for a continuous disco-lights sweep.
+      // Multiply blend at rainbow_opacity (Spark default: 0.55).
+      // ============================================================
+      float ang = time * rainbow_speed * 6.2831853;
+      vec2 dir = vec2(cos(ang), sin(ang));
+      vec2 uv_centered = uv - vec2(0.5);
+      float axis_pos = dot(uv_centered, dir);
+      float hue = fract(axis_pos * rainbow_scale + time * 0.1);
+      vec3 rainbow = hsv2rgb(vec3(hue, rainbow_saturation, 1.0));
+
+      vec3 multiplied = base * rainbow;
+      vec3 result = mix(base, multiplied, rainbow_opacity);
+      result = clamp(result, 0.0, 1.0);
+
+      gl_FragColor = toOutputFormat(vec4(result, 1.0));
+    }
+    ";

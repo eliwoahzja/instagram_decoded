@@ -1,0 +1,125 @@
+# IGLUSCRIPTCOLLISION_BYPASS: Intentional IGLUScript implementation of the C++ transition_cube effect, selected per-user via QE for A/B against CubeTransitionFilter.
+[Filter TransitionCube]
+
+[Init]
+fun init(Filter filter) {
+  makeTexture('transition);
+  # 'default = clip A (outgoing); 'transition = host-supplied clip B (incoming).
+  # iOS binds the aux sampler by name, so 'transition maps to GLSL 's_texture1.
+  filter.passes = {{
+    name = 'cube,
+    inputs = {'default, 'transition},
+    shaderInputNames = {'default, 's_texture1},
+    uniforms = {
+      transition_progress = 0.0,
+      outputSize = {1024.0, 1024.0},
+      persp = 0.7,
+      unzoom = 0.0,
+      cornerRadius = 40.0,
+    },
+    glslShader = glsl,
+  }};
+
+  filter.parameters = {
+    {persp = 0.7, min = 0.0, max = 1.0, description = "Perspective amount"},
+    {unzoom = 0.0, min = 0.0, max = 1.0, description = "Zoom-out amount"},
+    {cornerRadius = 40.0, min = 0.0, max = 200.0, description = "Cube edge corner radius (px at 1080)"},
+  };
+}
+
+# easeInOutQuartic — matches CubeTransitionFilter::updateUniforms (C++ pre-eases progress).
+fun easeInOutQuartic(f32 t) f32 {
+  if (t < 0.5) {
+    return 8.0 * t * t * t * t;
+  } else {
+    f32 f = -2.0 * t + 2.0;
+    return 1.0 - pow(f, 4.0) / 2.0;
+  }
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  # Forward eased progress each frame (else the shader freezes on clip A).
+  f32 p = getParameterFloat('progress);
+  setShaderUniform('cube, 'transition_progress, easeInOutQuartic(p));
+
+  # outputSize from the default input; cornerRadius scaled by min(w,h)/1080 (C++ getSizeScale()).
+  vec2 size = getTextureSize('default);
+  setShaderUniform('cube, 'outputSize, size);
+
+  f32 sizeScale = min(size.x, size.y) / 1080.0;
+  setShaderUniform('cube, 'cornerRadius, getParameterFloat('cornerRadius) * sizeScale);
+
+  setShaderUniform('cube, 'persp, getParameterFloat('persp));
+  setShaderUniform('cube, 'unzoom, getParameterFloat('unzoom));
+}
+
+# Ported from CubeTransitionFilter::fragShaderCubeGL(): aux sampler second_input ->
+# s_texture1 (iOS name binding), inBounds() without all()/lessThan() (shaderc-unsupported).
+string glsl = "
+  precision highp float;
+
+  varying vec2 sourceTextureCoordinate;
+
+  BaseUniformsOpenGL;
+
+  uniform float transition_progress;
+  uniform vec2 outputSize;
+  uniform sampler2D s_texture1;
+  uniform float persp;
+  uniform float unzoom;
+  uniform float cornerRadius;
+
+  // adapted from https://gl-transitions.com/editor/cube
+  // explicit comparisons (not all(lessThan(...))): shaderc/SkSL lacks those builtins.
+  bool inBounds(vec2 p) { return p.x > 0.0 && p.y > 0.0 && p.x < 1.0 && p.y < 1.0; }
+
+  vec2 xskew(vec2 p, float persp, float center) {
+    float x = mix(p.x, 1.0 - p.x, center);
+    return ((vec2(x, (p.y - 0.5 * (1.0 - persp) * x) / (1.0 + (persp - 1.0) * x)) -
+             vec2(0.5 - abs(center - 0.5), 0.0)) *
+                vec2(0.5 / abs(center - 0.5) * (center < 0.5 ? 1.0 : -1.0), 1.0) +
+            vec2(center < 0.5 ? 0.0 : 1.0, 0.0));
+  }
+
+  // Scalar radius (simplified from gl-transitions' vec4-per-corner): avoids writing
+  // to a function param, which shaderc's transpiled Metal can't compile (const-by-value).
+  float sdRoundBox(vec2 p, vec2 b, float r) {
+    vec2 q = abs(p) - b + r;
+    return min(max(q.x, q.y), 0.0) + length(max(q, 0.0)) - r;
+  }
+
+  void main() {
+    vec2 uv = sourceTextureCoordinate;
+
+    float uz = unzoom * 2.0 * (0.5 - abs(0.5 - transition_progress));
+    float prog = 1.0 - transition_progress;
+    vec2 p = -uz * 0.5 + (1.0 + uz) * uv;
+
+    vec2 uvFrom =
+        xskew((p - vec2(prog, 0.0)) / vec2(1.0 - prog, 1.0), 1.0 - mix(prog, 0.0, persp), 0.0);
+    vec2 uvTo = xskew(p / vec2(prog, 1.0), mix(pow(prog, 2.0), 1.0, persp), 1.0);
+
+    const float feather = 1.0;
+    float rad = cornerRadius * smoothstep(0.5, 0.45, abs(transition_progress - 0.5));
+    vec2 stFrom = uvFrom * outputSize;
+    float dFrom = sdRoundBox(stFrom - outputSize * 0.5, outputSize * 0.5, rad);
+    float frameFrom = 1.0 - smoothstep(0.0 - feather, 1.0 + feather, dFrom);
+
+    vec2 stTo = uvTo * outputSize;
+    float dTo = sdRoundBox(stTo - outputSize * 0.5, outputSize * 0.5, rad);
+    float frameTo = 1.0 - smoothstep(0.0 - feather, 1.0 + feather, dTo);
+
+    // TODO: remove branching
+    vec4 color = vec4(0.0, 0.0, 0.0, 1.0);
+    if (inBounds(uvFrom)) {
+      color = texture2D(s_texture1, uvFrom);
+      color.rgb *= frameFrom;
+    } else if (inBounds(uvTo)) {
+      color = sampleInput(uvTo);
+      color.rgb *= frameTo;
+    }
+
+    gl_FragColor = toOutputFormat(color);
+  }
+";

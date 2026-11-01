@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_cutout_scatter_brain",
+  "displayName": "Scatter Brain",
+  "description": "[Instagram Edits] Effects browser - Label for an effect that scatters and resizes selected objects to create a collage theme. Character count for labels is 14 characters max.",
+  "iglu": {
+    "legacyId": 5073,
+    "customization": [
+      {
+        "name": "duration",
+        "default": 0.16,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Duration",
+        "displayNameDescription": "[IG Edits] Slider label controlling how long a video effect's animation lasts; exact units and range vary per effect (seconds or normalized).",
+        "displayMethod": "time"
+      },
+      {
+        "name": "size",
+        "default": 0.39,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Size",
+        "displayNameDescription": "[IG Edits] Slider label controlling the size or scale of an element produced by a video effect; exact units and range vary per effect."
+      },
+      {
+        "name": "variation",
+        "default": 0.42,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Variation",
+        "displayNameDescription": "[IG Edits] Slider label controlling the amount of randomness or variation in a video effect (e.g., randomized sizes/positions of repeated elements); exact range varies per effect."
+      },
+      {
+        "name": "inFront",
+        "default": 1.0,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "In Front",
+        "displayNameDescription": "[IG Edits] Toggle/slider label controlling whether the video effect's elements render in front of or behind the subject; exact control type and range vary per effect."
+      },
+      {
+        "name": "clones",
+        "default": 9.0,
+        "min": 1.0,
+        "max": 20.0,
+        "displayName": "Clones",
+        "displayNameDescription": "[IG Edits] Slider label controlling the number of duplicate copies of the subject rendered by a video effect; exact range varies per effect.",
+        "displayMethod": "number"
+      }
+    ],
+    "subject": {
+      "overlay": true
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "4478d6cf",
+      "handle": "AQADAGZnyP4s",
+      "md5": "df0c8b9f4dea9d6d7df61248fc4f0b92"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQADLWosHgOI"
+    }
+  }
+}

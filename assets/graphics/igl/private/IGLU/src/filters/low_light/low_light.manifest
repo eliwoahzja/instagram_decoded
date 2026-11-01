@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "low_light",
+  "displayName": "Low Light",
+  "description": "[IG Edits] Video effect name. With \"Low Light\", the creator can brighten dim footage using a multi-pass guided-filter pyramid that lifts shadows while suppressing noise.",
+  "iglu": {}
+}

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_cutout_bulge_2",
+  "displayName": "Bulge 2",
+  "description": "[IG Edits] Video effect name. With \"Bulge 2\", the creator can overlay a stronger radial bulge sprite that pushes pixels outward from frame center for an exaggerated lens distortion.",
+  "iglu": {
+    "legacyId": 5078,
+    "subject": {
+      "overlay": true
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQADKWoHZF10"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "80122df4",
+      "handle": "AQADRMmgbnQc",
+      "md5": "75ed7995bbbbe7393cce73e61394f841"
+    }
+  },
+  "assets": [
+    {
+      "name": "bulge.png",
+      "assetHash": "66f2ba5c28527e8220ff67c0f64914252d82c641748ef76e767277738eae87ab",
+      "hubAssetId": "3641797072626941"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+/**
+ * (c) Meta Platforms, Inc. and affiliates. Confidential and proprietary.
+ *
+ * Reads the raw <html lang> attribute and `window.Shopify.country`. Built from
+ * xplat/js/hxp/iab_inner_frame/src/innerFramePageLocale.js; do not edit by
+ * hand.
+ *
+ * @generated SignedSource<<43a7987e12fec0568d3b3dcecd88e6be>>
+ * @format
+ * @nolint
+ * @lightSyntaxTransform
+ * @no-auto-requires
+ * @noframework
+ * @oncall browser_agentic_interfaces
+ * @preserve-whitespace
+ * @providesInline fb.inner_frame_page_locale
+ */
+void(()=>{"use strict";var r={d:(e,t)=>{for(var n in t)r.o(t,n)&&!r.o(e,n)&&Object.defineProperty(e,n,{enumerable:!0,get:t[n]})},o:(e,t)=>Object.prototype.hasOwnProperty.call(e,t)},o={};function a(e){if("string"!=typeof e)return;const t=e.trim();return""===t?void 0:t}function u(e){var t;try{return a(null==(t=null==e?void 0:e.documentElement)?void 0:t.lang)}catch(n){return}}function c(e){var t,n;try{const l=null==(t=null==e?void 0:e.querySelector)?void 0:t.call(e,"html[lang]");return a(null==(n=null==l?void 0:l.getAttribute)?void 0:n.call(l,"lang"))}catch(l){return}}function i(e){var t;try{const n=null==(t=null==e?void 0:e.Shopify)?void 0:t.country;return"string"==typeof n?n:void 0}catch(n){return}}function v(e=document,t=window){var n;return{page_locale:null!=(n=u(e))?n:c(e),page_country:i(t)}}r.d(o,{default:()=>v}),window.innerFramePageLocale=o.default})(),window.innerFramePageLocale()

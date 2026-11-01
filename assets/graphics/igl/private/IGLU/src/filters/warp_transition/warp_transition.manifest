@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "warp_transition",
+  "displayName": "Warp Transition",
+  "description": "[IG Edits] Transition name. With \"Warp Transition\", the creator can blend between clips with a horizontal UV stretch and a triangle-pulsed directional motion blur.",
+  "iglu": {}
+}

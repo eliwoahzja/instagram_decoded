@@ -1,0 +1,44 @@
+[Filter IgluscriptVideoBlackoutFilter]
+
+[Init]
+fun init(Filter filter) {
+  filter.passes = {{
+      name = 'blackout, inputs = {'default},
+      uniforms = {
+        progress = 0.0,
+        fadeColor = {0.0, 0.0, 0.0},
+        inOutSwitch = 0.0,
+      },
+      glslShader = glsl
+    }};
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  # Get behavior parameters from parameter map (set by JNI/keyframe system)
+  f32 progressValue = getParameterFloat('progress);
+
+  # Apply to shader uniform
+  setShaderUniform('blackout, 'progress, progressValue);
+}
+
+string glsl = "precision highp float;
+
+varying vec2 sourceTextureCoordinate;
+
+BaseUniformsOpenGL;
+
+uniform float progress; // normalized 0-1
+uniform vec3 fadeColor; // unused for now
+uniform float inOutSwitch;
+
+
+void main() {
+  vec2 uv = sourceTextureCoordinate;
+
+  float progressDirection = mix(progress, 1.0 - progress, inOutSwitch);
+  vec4 color = sampleInput(uv) * (1.0 - progressDirection);
+  color.a = 1.0;
+  gl_FragColor = toOutputFormat(color);
+}
+";

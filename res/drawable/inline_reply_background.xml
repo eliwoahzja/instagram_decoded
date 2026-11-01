@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<inset android:insetLeft="@dimen/account_preview_media_end_card_stroke_width" android:insetRight="@dimen/account_preview_media_end_card_stroke_width" android:insetTop="@dimen/account_preview_media_end_card_stroke_width"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <shape android:shape="rectangle">
+        <solid android:color="?igds_color_secondary_background" />
+        <corners android:topLeftRadius="@dimen/abc_dialog_padding_material" android:topRightRadius="@dimen/abc_dialog_padding_material" android:bottomLeftRadius="0.0dp" android:bottomRightRadius="0.0dp" />
+    </shape>
+</inset>

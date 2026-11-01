@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "transition_wipe_oval_out",
+  "displayName": "Wipe Oval Out",
+  "description": "[IG Edits] Transition name. With \"Wipe Oval Out\", the creator can transition into the next clip with an expanding oval iris wipe that opens outward from the center.",
+  "iglu": {}
+}

@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "frame_gradient",
+  "displayName": "Frame Gradient",
+  "description": "[IG Edits] Video effect name. With \"Frame Gradient\", the creator can derive a two-color gradient by averaging pixels from upper-left and lower-right of the frame and rendering them as a smooth ramp.",
+  "iglu": {}
+}

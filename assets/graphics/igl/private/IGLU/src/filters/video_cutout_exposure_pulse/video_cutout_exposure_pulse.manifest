@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_cutout_exposure_pulse",
+  "displayName": "Exposure Pulse",
+  "description": "[Instagram Edits] Effect browser - Label for an effect that alternates between overexposure and regular exposure in the video or subjects within the video.",
+  "iglu": {
+    "legacyId": 2086,
+    "customization": [
+      {
+        "name": "speed",
+        "default": 1.0,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Speed",
+        "displayNameDescription": "[IG Edits] Slider label controlling the playback or animation speed of a video effect (noun, not a verb); exact range varies per effect."
+      }
+    ],
+    "subject": {
+      "enabled": true,
+      "fullFrameEnabled": true,
+      "typeSuggestions": [
+        "person",
+        "head",
+        "clothing"
+      ]
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "720d065f",
+      "handle": "AQAFraHZ9Ntf",
+      "md5": "c9e283ce0509501f79582f84950018bc"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAL-wUpDbfR"
+    }
+  }
+}

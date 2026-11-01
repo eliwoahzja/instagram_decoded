@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.facebook.optic.view.AspectRatioFrameLayout android:layout_gravity="center" android:id="@id/preview_root_view" android:layout_width="match_parent" android:layout_height="match_parent"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <androidx.cardview.widget.CardView android:layout_gravity="center" android:id="@id/preview_container" android:layout_width="match_parent" android:layout_height="wrap_content" app:cardBackgroundColor="@android:color/transparent" app:cardCornerRadius="8.0dp">
+        <ImageView android:layout_gravity="center" android:id="@id/image_preview" android:layout_width="match_parent" android:layout_height="match_parent" android:scaleType="centerCrop" android:adjustViewBounds="true" android:keepScreenOn="true" />
+        <view android:layout_gravity="center" android:id="@id/video_preview" android:visibility="gone" android:layout_width="match_parent" android:layout_height="match_parent" android:keepScreenOn="true" class="android.view.SurfaceView" />
+        <ImageView android:layout_gravity="center" android:id="@id/invalid_media_image" android:visibility="gone" android:layout_width="@dimen/avatar_size_ridiculously_xlarge" android:layout_height="@dimen/avatar_size_ridiculously_xlarge" android:src="@drawable/gallery_invalid_media" />
+        <ImageButton android:id="@id/media_delete_button" android:background="@drawable/round_button_bg" android:padding="6.0dp" android:visibility="gone" android:layout_width="32.0dp" android:layout_height="32.0dp" android:src="@drawable/gallery_delete_button" android:scaleType="fitCenter" />
+    </androidx.cardview.widget.CardView>
+</com.facebook.optic.view.AspectRatioFrameLayout>

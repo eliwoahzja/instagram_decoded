@@ -1,0 +1,583 @@
+.class public final LX/1tB;
+.super Ljava/lang/Object;
+.source ""
+
+
+# instance fields
+.field public final A00:I
+
+.field public final A01:J
+
+.field public final A02:J
+
+.field public final A03:LX/1tC;
+
+.field public final A04:LX/1tG;
+
+.field public final A05:Ljava/lang/String;
+
+
+# direct methods
+.method public constructor <init>(LX/1tE;)V
+    .locals 2
+
+    invoke-direct {p0}, Ljava/lang/Object;-><init>()V
+
+    iget-object v0, p1, LX/1tE;->A03:LX/1tC;
+
+    const-string v1, "Required value was null."
+
+    if-eqz v0, :cond_0
+
+    iput-object v0, p0, LX/1tB;->A03:LX/1tC;
+
+    iget-wide v0, p1, LX/1tE;->A02:J
+
+    iput-wide v0, p0, LX/1tB;->A02:J
+
+    iget-wide v0, p1, LX/1tE;->A01:J
+
+    iput-wide v0, p0, LX/1tB;->A01:J
+
+    iget v0, p1, LX/1tE;->A00:I
+
+    iput v0, p0, LX/1tB;->A00:I
+
+    iget-object v0, p1, LX/1tE;->A04:Ljava/lang/String;
+
+    iput-object v0, p0, LX/1tB;->A05:Ljava/lang/String;
+
+    iget-object v0, p1, LX/1tE;->A05:LX/1tG;
+
+    iput-object v0, p0, LX/1tB;->A04:LX/1tG;
+
+    return-void
+
+    :cond_0
+    new-instance v0, Ljava/lang/IllegalStateException;
+
+    invoke-direct {v0, v1}, Ljava/lang/IllegalStateException;-><init>(Ljava/lang/String;)V
+
+    throw v0
+.end method
+
+
+# virtual methods
+.method public final A00()LX/1tE;
+    .locals 5
+
+    iget-object v4, p0, LX/1tB;->A04:LX/1tG;
+
+    iget-object v0, v4, LX/1tG;->A02:Ljava/io/File;
+
+    new-instance v3, LX/1tE;
+
+    invoke-direct {v3, v0}, LX/1tE;-><init>(Ljava/io/File;)V
+
+    iget-object v0, v4, LX/1tG;->A03:Ljava/net/URL;
+
+    iget-object v2, v3, LX/1tE;->A05:LX/1tG;
+
+    iput-object v0, v2, LX/1tG;->A03:Ljava/net/URL;
+
+    iget-object v0, v4, LX/1tG;->A00:LX/5SV;
+
+    iput-object v0, v2, LX/1tG;->A00:LX/5SV;
+
+    iget-object v0, p0, LX/1tB;->A03:LX/1tC;
+
+    iput-object v0, v3, LX/1tE;->A03:LX/1tC;
+
+    iget-wide v0, p0, LX/1tB;->A02:J
+
+    iput-wide v0, v3, LX/1tE;->A02:J
+
+    iget v0, p0, LX/1tB;->A00:I
+
+    iput v0, v3, LX/1tE;->A00:I
+
+    iget-wide v0, p0, LX/1tB;->A01:J
+
+    iput-wide v0, v3, LX/1tE;->A01:J
+
+    iget-object v0, v4, LX/1tG;->A01:LX/1tF;
+
+    invoke-static {v0}, LX/5B5;->A0Q(Ljava/lang/Object;)V
+
+    iput-object v0, v2, LX/1tG;->A01:LX/1tF;
+
+    iget-object v0, p0, LX/1tB;->A05:Ljava/lang/String;
+
+    iput-object v0, v3, LX/1tE;->A04:Ljava/lang/String;
+
+    return-object v3
+.end method
+
+.method public final A01()Lorg/json/JSONObject;
+    .locals 8
+
+    new-instance v3, Lorg/json/JSONObject;
+
+    invoke-direct {v3}, Lorg/json/JSONObject;-><init>()V
+
+    iget-object v4, p0, LX/1tB;->A04:LX/1tG;
+
+    iget-object v0, v4, LX/1tG;->A02:Ljava/io/File;
+
+    if-eqz v0, :cond_0
+
+    const-string/jumbo v1, "mSourceFile"
+
+    invoke-virtual {v0}, Ljava/io/File;->getPath()Ljava/lang/String;
+
+    move-result-object v0
+
+    invoke-virtual {v3, v1, v0}, Lorg/json/JSONObject;->put(Ljava/lang/String;Ljava/lang/Object;)Lorg/json/JSONObject;
+
+    :cond_0
+    iget-object v0, v4, LX/1tG;->A03:Ljava/net/URL;
+
+    if-eqz v0, :cond_1
+
+    invoke-static {v0}, Ljava/lang/String;->valueOf(Ljava/lang/Object;)Ljava/lang/String;
+
+    move-result-object v1
+
+    const-string/jumbo v0, "mUrl"
+
+    invoke-virtual {v3, v0, v1}, Lorg/json/JSONObject;->put(Ljava/lang/String;Ljava/lang/Object;)Lorg/json/JSONObject;
+
+    :cond_1
+    iget-object v7, v4, LX/1tG;->A00:LX/5SV;
+
+    if-eqz v7, :cond_3
+
+    const-string/jumbo v6, "mDrawable"
+
+    new-instance v5, Lorg/json/JSONObject;
+
+    invoke-direct {v5}, Lorg/json/JSONObject;-><init>()V
+
+    iget-object v2, v7, LX/5SV;->A01:Ljava/lang/Object;
+
+    instance-of v0, v2, LX/Ktx;
+
+    if-eqz v0, :cond_2
+
+    check-cast v2, LX/Ktx;
+
+    if-eqz v2, :cond_2
+
+    const-string/jumbo v1, "serializedDrawableDataJson"
+
+    invoke-virtual {v2}, LX/Ktx;->A00()Ljava/lang/String;
+
+    move-result-object v0
+
+    invoke-virtual {v5, v1, v0}, Lorg/json/JSONObject;->put(Ljava/lang/String;Ljava/lang/Object;)Lorg/json/JSONObject;
+
+    :cond_2
+    const-string/jumbo v1, "disableBackground"
+
+    iget-boolean v0, v7, LX/5SV;->A02:Z
+
+    invoke-virtual {v5, v1, v0}, Lorg/json/JSONObject;->put(Ljava/lang/String;Z)Lorg/json/JSONObject;
+
+    const-string/jumbo v1, "disableForeground"
+
+    iget-boolean v0, v7, LX/5SV;->A03:Z
+
+    invoke-virtual {v5, v1, v0}, Lorg/json/JSONObject;->put(Ljava/lang/String;Z)Lorg/json/JSONObject;
+
+    invoke-virtual {v3, v6, v5}, Lorg/json/JSONObject;->put(Ljava/lang/String;Ljava/lang/Object;)Lorg/json/JSONObject;
+
+    :cond_3
+    iget-object v0, p0, LX/1tB;->A03:LX/1tC;
+
+    invoke-virtual {v0}, LX/1tC;->A09()Lorg/json/JSONObject;
+
+    move-result-object v1
+
+    const-string/jumbo v0, "mSourceTimeRange"
+
+    invoke-virtual {v3, v0, v1}, Lorg/json/JSONObject;->put(Ljava/lang/String;Ljava/lang/Object;)Lorg/json/JSONObject;
+
+    const-string/jumbo v2, "mPhotoDurationUs"
+
+    iget-wide v0, p0, LX/1tB;->A02:J
+
+    invoke-virtual {v3, v2, v0, v1}, Lorg/json/JSONObject;->put(Ljava/lang/String;J)Lorg/json/JSONObject;
+
+    const-string/jumbo v2, "mMediaOriginalDurationMs"
+
+    iget-wide v0, p0, LX/1tB;->A01:J
+
+    invoke-virtual {v3, v2, v0, v1}, Lorg/json/JSONObject;->put(Ljava/lang/String;J)Lorg/json/JSONObject;
+
+    const-string/jumbo v1, "mOutputFps"
+
+    iget v0, p0, LX/1tB;->A00:I
+
+    invoke-virtual {v3, v1, v0}, Lorg/json/JSONObject;->put(Ljava/lang/String;I)Lorg/json/JSONObject;
+
+    iget-object v0, v4, LX/1tG;->A01:LX/1tF;
+
+    invoke-virtual {v0}, Ljava/lang/Enum;->name()Ljava/lang/String;
+
+    move-result-object v1
+
+    const-string/jumbo v0, "mInputMediaType"
+
+    invoke-virtual {v3, v0, v1}, Lorg/json/JSONObject;->put(Ljava/lang/String;Ljava/lang/Object;)Lorg/json/JSONObject;
+
+    iget-object v1, p0, LX/1tB;->A05:Ljava/lang/String;
+
+    if-eqz v1, :cond_4
+
+    const-string/jumbo v0, "mSourceMediaOrigin"
+
+    invoke-virtual {v3, v0, v1}, Lorg/json/JSONObject;->put(Ljava/lang/String;Ljava/lang/Object;)Lorg/json/JSONObject;
+
+    :cond_4
+    return-object v3
+.end method
+
+.method public final A02()Z
+    .locals 2
+
+    iget-object v0, p0, LX/1tB;->A04:LX/1tG;
+
+    iget-object v1, v0, LX/1tG;->A01:LX/1tF;
+
+    sget-object v0, LX/1tF;->A02:LX/1tF;
+
+    if-ne v1, v0, :cond_0
+
+    const/4 v0, 0x1
+
+    return v0
+
+    :cond_0
+    const/4 v0, 0x0
+
+    return v0
+.end method
+
+.method public final A03()Z
+    .locals 2
+
+    iget-object v0, p0, LX/1tB;->A04:LX/1tG;
+
+    iget-object v0, v0, LX/1tG;->A02:Ljava/io/File;
+
+    if-eqz v0, :cond_0
+
+    invoke-virtual {v0}, Ljava/io/File;->getPath()Ljava/lang/String;
+
+    move-result-object v1
+
+    const-string/jumbo v0, "video/mp4"
+
+    invoke-static {v1, v0}, LX/Asz;->A00(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+
+    move-result-object v1
+
+    const/16 v0, 0x9f6
+
+    invoke-static {v0}, LX/000;->A00(I)Ljava/lang/String;
+
+    move-result-object v0
+
+    invoke-virtual {v0, v1}, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
+
+    move-result v0
+
+    if-eqz v0, :cond_0
+
+    const/4 v0, 0x1
+
+    return v0
+
+    :cond_0
+    const/4 v0, 0x0
+
+    return v0
+.end method
+
+.method public final A04()Z
+    .locals 2
+
+    iget-object v0, p0, LX/1tB;->A04:LX/1tG;
+
+    iget-object v1, v0, LX/1tG;->A01:LX/1tF;
+
+    sget-object v0, LX/1tF;->A03:LX/1tF;
+
+    if-ne v1, v0, :cond_0
+
+    const/4 v0, 0x1
+
+    return v0
+
+    :cond_0
+    const/4 v0, 0x0
+
+    return v0
+.end method
+
+.method public final A05()Z
+    .locals 2
+
+    iget-object v0, p0, LX/1tB;->A04:LX/1tG;
+
+    iget-object v1, v0, LX/1tG;->A01:LX/1tF;
+
+    sget-object v0, LX/1tF;->A04:LX/1tF;
+
+    if-ne v1, v0, :cond_0
+
+    const/4 v0, 0x1
+
+    return v0
+
+    :cond_0
+    const/4 v0, 0x0
+
+    return v0
+.end method
+
+.method public final A06()Z
+    .locals 7
+
+    iget-object v0, p0, LX/1tB;->A04:LX/1tG;
+
+    iget-object v6, v0, LX/1tG;->A02:Ljava/io/File;
+
+    const/4 v5, 0x0
+
+    if-eqz v6, :cond_1
+
+    iget-wide v3, p0, LX/1tB;->A02:J
+
+    const-wide/16 v1, 0x0
+
+    cmp-long v0, v3, v1
+
+    if-gez v0, :cond_0
+
+    invoke-virtual {v6}, Ljava/io/File;->getPath()Ljava/lang/String;
+
+    move-result-object v1
+
+    const-string/jumbo v0, "video/mp4"
+
+    invoke-static {v1, v0}, LX/Asz;->A00(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+
+    move-result-object v1
+
+    const-string/jumbo v0, "image"
+
+    invoke-static {v1, v0, v5}, LX/5BY;->A10(Ljava/lang/CharSequence;Ljava/lang/CharSequence;Z)Z
+
+    move-result v0
+
+    if-eqz v0, :cond_1
+
+    :cond_0
+    const/4 v5, 0x1
+
+    :cond_1
+    return v5
+.end method
+
+.method public final A07()Z
+    .locals 3
+
+    invoke-virtual {p0}, LX/1tB;->A06()Z
+
+    move-result v0
+
+    const/4 v2, 0x0
+
+    if-nez v0, :cond_1
+
+    invoke-virtual {p0}, LX/1tB;->A03()Z
+
+    move-result v0
+
+    if-nez v0, :cond_1
+
+    iget-object v0, p0, LX/1tB;->A04:LX/1tG;
+
+    iget-object v1, v0, LX/1tG;->A01:LX/1tF;
+
+    sget-object v0, LX/1tF;->A06:LX/1tF;
+
+    if-eq v1, v0, :cond_0
+
+    sget-object v0, LX/1tF;->A05:LX/1tF;
+
+    if-ne v1, v0, :cond_1
+
+    :cond_0
+    const/4 v2, 0x1
+
+    :cond_1
+    return v2
+.end method
+
+.method public final equals(Ljava/lang/Object;)Z
+    .locals 7
+
+    const/4 v6, 0x1
+
+    if-eq p0, p1, :cond_0
+
+    const/4 v5, 0x0
+
+    if-eqz p1, :cond_1
+
+    invoke-virtual {p0}, Ljava/lang/Object;->getClass()Ljava/lang/Class;
+
+    move-result-object v1
+
+    invoke-virtual {p1}, Ljava/lang/Object;->getClass()Ljava/lang/Class;
+
+    move-result-object v0
+
+    invoke-virtual {v1, v0}, Ljava/lang/Object;->equals(Ljava/lang/Object;)Z
+
+    move-result v0
+
+    if-eqz v0, :cond_1
+
+    check-cast p1, LX/1tB;
+
+    iget-wide v3, p0, LX/1tB;->A02:J
+
+    iget-wide v1, p1, LX/1tB;->A02:J
+
+    cmp-long v0, v3, v1
+
+    if-nez v0, :cond_1
+
+    iget-wide v3, p0, LX/1tB;->A01:J
+
+    iget-wide v1, p1, LX/1tB;->A01:J
+
+    cmp-long v0, v3, v1
+
+    if-nez v0, :cond_1
+
+    iget v1, p0, LX/1tB;->A00:I
+
+    iget v0, p1, LX/1tB;->A00:I
+
+    if-ne v1, v0, :cond_1
+
+    iget-object v1, p0, LX/1tB;->A04:LX/1tG;
+
+    iget-object v0, p1, LX/1tB;->A04:LX/1tG;
+
+    invoke-virtual {v1, v0}, Ljava/lang/Object;->equals(Ljava/lang/Object;)Z
+
+    move-result v0
+
+    if-eqz v0, :cond_1
+
+    iget-object v1, p0, LX/1tB;->A03:LX/1tC;
+
+    iget-object v0, p1, LX/1tB;->A03:LX/1tC;
+
+    invoke-virtual {v1, v0}, Ljava/lang/Object;->equals(Ljava/lang/Object;)Z
+
+    move-result v0
+
+    if-eqz v0, :cond_1
+
+    :cond_0
+    return v6
+
+    :cond_1
+    return v5
+.end method
+
+.method public final hashCode()I
+    .locals 11
+
+    iget-object v2, p0, LX/1tB;->A04:LX/1tG;
+
+    iget-object v3, v2, LX/1tG;->A02:Ljava/io/File;
+
+    iget-object v4, v2, LX/1tG;->A03:Ljava/net/URL;
+
+    iget-object v5, v2, LX/1tG;->A00:LX/5SV;
+
+    iget-object v6, p0, LX/1tB;->A03:LX/1tC;
+
+    iget-wide v0, p0, LX/1tB;->A02:J
+
+    invoke-static {v0, v1}, Ljava/lang/Long;->valueOf(J)Ljava/lang/Long;
+
+    move-result-object v7
+
+    iget-wide v0, p0, LX/1tB;->A01:J
+
+    invoke-static {v0, v1}, Ljava/lang/Long;->valueOf(J)Ljava/lang/Long;
+
+    move-result-object v8
+
+    iget v0, p0, LX/1tB;->A00:I
+
+    invoke-static {v0}, Ljava/lang/Integer;->valueOf(I)Ljava/lang/Integer;
+
+    move-result-object v9
+
+    iget-object v10, v2, LX/1tG;->A01:LX/1tF;
+
+    filled-new-array/range {v3 .. v10}, [Ljava/lang/Object;
+
+    move-result-object v0
+
+    invoke-static {v0}, Ljava/util/Arrays;->hashCode([Ljava/lang/Object;)I
+
+    move-result v0
+
+    return v0
+.end method
+
+.method public final toString()Ljava/lang/String;
+    .locals 3
+
+    :try_start_0
+    invoke-virtual {p0}, LX/1tB;->A01()Lorg/json/JSONObject;
+
+    move-result-object v0
+
+    invoke-virtual {v0}, Ljava/lang/Object;->toString()Ljava/lang/String;
+
+    move-result-object v0
+
+    invoke-static {v0}, LX/5B5;->A0C(Ljava/lang/Object;)V
+
+    return-object v0
+    :try_end_0
+    .catch Lorg/json/JSONException; {:try_start_0 .. :try_end_0} :catch_0
+
+    :catch_0
+    move-exception v0
+
+    filled-new-array {v0}, [Ljava/lang/Object;
+
+    move-result-object v2
+
+    const-string v1, "MediaTrackSegment"
+
+    const-string v0, "Failed to convert MediaTrackSegment to JSON"
+
+    invoke-static {v1, v0, v2}, LX/0fh;->A00(Ljava/lang/String;Ljava/lang/String;[Ljava/lang/Object;)V
+
+    const-string v0, ""
+
+    return-object v0
+.end method

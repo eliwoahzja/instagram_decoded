@@ -1,0 +1,1 @@
+(function(cssSelector){const form=document.querySelector(cssSelector||"form"),elementFound=!!form;let scrollSuccess=!1;if(form)try{form.scrollIntoView({behavior:"smooth",block:"start"}),scrollSuccess=!0}catch{scrollSuccess=!1}return{elementFound:elementFound,scrollSuccess:scrollSuccess}})

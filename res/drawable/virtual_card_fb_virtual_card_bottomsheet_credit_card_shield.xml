@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.facebook.fbui.drawable.custom.AppThemedDrawable fbui:variant_dark="@drawable/virtual_card_fb_virtual_card_bottomsheet_credit_card_shield__dark" fbui:variant_light="@drawable/virtual_card_fb_virtual_card_bottomsheet_credit_card_shield__light"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:fbui="http://schemas.android.com/apk/res-auto" />

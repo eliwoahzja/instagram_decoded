@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "identifier": "reyes",
+  "displayName": "Reyes",
+  "description": "[IG Edits] Color filter name. With \"Reyes\", the creator can apply the Reyes 3D LUT for a faded vintage grade with lifted shadows and desaturated tones.",
+  "assets": [
+    {
+      "name": "reyes_map.png",
+      "assetHash": "e945b1e1b6970e6db412a50bb079611151add0d4f5d8c49b17afd248f4e97526",
+      "hubAssetId": "1967295693867624"
+    }
+  ],
+  "iglu": {}
+}

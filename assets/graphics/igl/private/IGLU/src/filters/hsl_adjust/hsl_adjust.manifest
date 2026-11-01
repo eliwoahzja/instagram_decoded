@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "hsl_adjust",
+  "displayName": "HSL Adjust",
+  "description": "[IG Edits] Color filter name. With \"HSL Adjust\", the creator can shift hue, scale saturation, and scale lightness within 8 smoothstep-weighted hue bands (red, orange, yellow, green, etc.).",
+  "iglu": {}
+}

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="oval">
+            <size android:height="18.0dp" android:width="18.0dp" />
+            <solid android:color="?igds_color_elevated_background" />
+        </shape>
+    </item>
+    <item android:height="12.0dp" android:width="12.0dp" android:left="3.0dp" android:top="3.0dp" android:right="3.0dp" android:bottom="3.0dp">
+        <bitmap android:src="@drawable/instagram_reshare_pano_outline_16" android:tint="?igds_color_primary_icon" />
+    </item>
+</layer-list>

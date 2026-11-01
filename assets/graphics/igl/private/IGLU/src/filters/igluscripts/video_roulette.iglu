@@ -1,0 +1,73 @@
+[Filter IgluscriptVideoRouletteFilter]
+
+[Init]
+fun init(Filter filter) {
+  filter.parameters = {
+    {duration = 1.5, min = 0.3, max = 5.0},
+    {amount = 6.0, min = 1.0, max = 18.0}
+  };
+
+  filter.passes = {{
+      name = 'h_scroll, inputs = {'default},
+      uniforms = {
+        progress = 0.0,
+        scrollDistance = 6.0,
+      },
+      glslShader = glsl
+    }};
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  f32 progressValue = getParameterFloat('progress);
+  setShaderUniform('h_scroll, 'progress, progressValue);
+
+  # Round amount to a whole number for a clean scroll loop count.
+  f32 rawAmount = getParameterFloat('amount);
+  f32 scrollDistance = round(rawAmount);
+  setShaderUniform('h_scroll, 'scrollDistance, scrollDistance);
+}
+
+string glsl = "precision highp float;
+
+varying vec2 sourceTextureCoordinate;
+
+BaseUniformsOpenGL;
+
+uniform float progress;
+uniform float scrollDistance;
+
+const int SAMPLES = 25;
+
+vec4 dirBlur(vec2 uv, vec2 dir){
+  vec3 acc = vec3(0.0);
+  float delta = 2.0 / float(SAMPLES);
+  for (int i  = 0; i <  SAMPLES; ++i){
+    float t = float(i) * delta - 1.0;
+    vec2 sampleUV = fract(uv + dir * t);
+    acc += sampleInput(sampleUV).rgb;
+  }
+  return vec4(acc/float(SAMPLES),1.0);
+}
+
+void main() {
+  vec2 uv = sourceTextureCoordinate;
+  float t = clamp(progress, 0.0, 1.0);
+
+  float shiftX = t * scrollDistance;
+  uv = fract(uv + vec2(shiftX, 0.0));
+
+  float blurCurve = 1.0 - abs(progress - 0.5) * 2.0;
+  blurCurve = clamp(blurCurve, 0.0,1.0);
+
+  // Scale blur by animation speed: 0 at min amount (1), full at default (6) and above
+  float blurScale = clamp((scrollDistance - 1.0) / 5.0, 0.0, 1.0);
+
+  float r = radians(0.0);
+  vec2 dir = vec2(cos(r),sin(r)) * (0.1 * blurCurve * blurScale);
+
+  vec4 color = dirBlur(uv,dir);
+
+  gl_FragColor = toOutputFormat(color);
+}
+";

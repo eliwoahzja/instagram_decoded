@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "iglu": {
+    "customization": [
+      {
+        "name": "intensity",
+        "default": 1.0,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Intensity",
+        "displayNameDescription": "[IG Edits] Slider label controlling the strength of a video effect. Generic across many effects (glow, blur, color, distortion, etc.); exact range varies per effect."
+      },
+      {
+        "name": "speed",
+        "default": 0.622,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Speed",
+        "displayNameDescription": "[IG Edits] Slider label controlling the playback or animation speed of a video effect (noun, not a verb); exact range varies per effect."
+      },
+      {
+        "name": "beatProgress",
+        "default": 0.0,
+        "min": 0.0,
+        "max": 1.0,
+        "beatReactive": {
+          "mode": "envelope",
+          "envelope": {
+            "attack": 0.2,
+            "decay": 0.2,
+            "sustain": 0.8,
+            "release": 0.15,
+            "curve": "easeOut",
+            "timing": "beatRelative",
+            "minDuration": 0.1,
+            "maxDuration": 1.0
+          },
+          "range": [
+            0.0,
+            1.0
+          ]
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "chromatic_aberration",
+  "displayName": "Chromatic Aberration",
+  "description": "[IG Edits] Video effect name. With \"Chromatic Aberration\", the creator can split the red and blue channels by a horizontal offset to create a lens-fringe RGB shift.",
+  "iglu": {}
+}

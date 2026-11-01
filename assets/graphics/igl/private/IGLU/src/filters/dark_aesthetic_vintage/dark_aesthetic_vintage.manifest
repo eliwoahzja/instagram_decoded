@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "identifier": "8dc1a7fc-6d2d-4b7e-879c-65d00007abcc",
+  "displayName": "Dark Aesthetic Vintage",
+  "description": "[IG Edits] Video effect name. With \"Dark Aesthetic Vintage\", the creator gets a face-tracked vintage look — moody LUT color grade plus a blush and lip multiply overlay on the face.",
+  "iglu": {
+    "legacyId": 3214
+  },
+  "assets": [
+    {
+      "name": "dark_aesthetic_vintage_lut.png",
+      "assetHash": "84c64946ce32e982a40ac8de6733760f467f77f5bf4eb7b46a02057973e913fd",
+      "hubAssetId": "1566880678424297"
+    },
+    {
+      "name": "dark_aesthetic_vintage_makeup.png",
+      "assetHash": "07f4be8fd14d345609e65da9de33c46079de30610ce84bea0bb8d8508c031d4e",
+      "hubAssetId": "1589745912856817"
+    }
+  ]
+}

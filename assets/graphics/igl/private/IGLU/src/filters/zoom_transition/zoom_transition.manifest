@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "zoom_transition",
+  "displayName": "Zoom Transition",
+  "description": "[IG Edits] Transition name. With \"Zoom Transition\", the creator can blend between clips with a radial zoom blur that ramps out from the frame center.",
+  "iglu": {}
+}

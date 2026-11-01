@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_bulge_2",
+  "displayName": "Bulge 2",
+  "description": "[IG Edits] Video effect name. With \"Bulge 2\", the creator can apply a pulsing radial bulge distortion driven by a precomputed animation texture.",
+  "iglu": {
+    "legacyId": 3035,
+    "customization": [
+      {
+        "name": "speed",
+        "default": 0.0,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Speed",
+        "displayNameDescription": "[IG Edits] Slider label controlling the playback or animation speed of a video effect (noun, not a verb); exact range varies per effect."
+      },
+      {
+        "name": "size",
+        "default": 0.0,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Size",
+        "displayNameDescription": "[IG Edits] Slider label controlling the size or scale of an element produced by a video effect; exact units and range vary per effect."
+      }
+    ]
+  },
+  "assets": [
+    {
+      "name": "bulge.png",
+      "assetHash": "66f2ba5c28527e8220ff67c0f64914252d82c641748ef76e767277738eae87ab",
+      "hubAssetId": "3641797072626941"
+    }
+  ],
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAFq2r4Yu5S"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "3dc5f5bb",
+      "handle": "AQAC_-UtguFr",
+      "md5": "c68fd991e0f79e409dba9212da75e041"
+    }
+  }
+}

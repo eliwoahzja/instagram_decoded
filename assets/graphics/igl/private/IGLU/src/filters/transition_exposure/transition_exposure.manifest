@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "transition_exposure",
+  "displayName": "Exposure",
+  "description": "Title for Exposure button in Video Editing tool.",
+  "iglu": {}
+}

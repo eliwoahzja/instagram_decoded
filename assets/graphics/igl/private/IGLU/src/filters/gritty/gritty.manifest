@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "identifier": "gritty",
+  "displayName": "Gritty",
+  "description": "Filter name for a gritty, high-contrast textured look",
+  "iglu": {
+    "legacyId": 1101
+  }
+}

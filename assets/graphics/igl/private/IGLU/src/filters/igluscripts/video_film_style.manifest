@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "identifier": "a24e3c6e-b334-447a-a9f4-797c4e1276dd",
+  "displayName": "Film Style",
+  "description": "Name of a video color filter that emulates the look of classic film stocks",
+  "iglu": {
+    "legacyId": 3070,
+    "customization": [
+      {
+        "name": "intensity",
+        "default": 0.7,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Color Intensity",
+        "displayNameDescription": "[IG Edits] Slider label controlling the strength of a video effect. Generic across many effects (glow, blur, color, distortion, etc.); exact range varies per effect."
+      },
+      {
+        "name": "amount",
+        "default": 0.5,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Grain Intensity",
+        "displayNameDescription": "[IG Edits] Slider label controlling the strength of a video effect. Generic across many effects (glow, blur, color, distortion, etc.); exact range varies per effect."
+      },
+      {
+        "name": "size",
+        "default": 1.0,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Film Burn Intensity",
+        "displayNameDescription": "[IG Edits] Slider label controlling the strength of a video effect. Generic across many effects (glow, blur, color, distortion, etc.); exact range varies per effect."
+      },
+      {
+        "name": "speed",
+        "default": 0.35,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Texture Opacity",
+        "displayNameDescription": "[IG Edits] Slider label controlling the strength of a video effect. Generic across many effects (glow, blur, color, distortion, etc.); exact range varies per effect."
+      }
+    ]
+  },
+  "assets": [
+    {
+      "name": "video_film_style_burn.mp4",
+      "assetHash": "3c844be6b95e75dfcad64174edf7bb554bb6008f428647b998ad4186fd5dda7a",
+      "hubAssetId": "1266487932326137"
+    },
+    {
+      "name": "fuji_astia_100f.png",
+      "assetHash": "d0c11be566c1d1abdf52d339e14dd49310a43c7e089749e19d10e5af5e142529",
+      "hubAssetId": "1909159739760320"
+    }
+  ]
+}

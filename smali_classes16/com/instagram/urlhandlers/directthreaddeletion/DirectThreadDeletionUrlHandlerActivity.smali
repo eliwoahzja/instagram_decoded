@@ -1,0 +1,43 @@
+.class public final Lcom/instagram/urlhandlers/directthreaddeletion/DirectThreadDeletionUrlHandlerActivity;
+.super Lcom/instagram/urlhandler/UserSessionUrlHandlerActivity;
+.source ""
+
+
+# direct methods
+.method public constructor <init>()V
+    .locals 0
+
+    invoke-direct {p0}, Lcom/instagram/base/activity/BaseFragmentActivity;-><init>()V
+
+    return-void
+.end method
+
+
+# virtual methods
+.method public final A2U(Landroid/os/Bundle;Landroid/os/Bundle;Lcom/instagram/common/session/UserSession;)V
+    .locals 2
+
+    invoke-static {p3}, LX/5B5;->A0R(Ljava/lang/Object;)V
+
+    invoke-static {p0, p3}, LX/194;->A0N(Landroidx/fragment/app/FragmentActivity;LX/1ok;)LX/3VC;
+
+    move-result-object v1
+
+    const-string v0, "deeplink"
+
+    invoke-static {v0}, LX/P7c;->A01(Ljava/lang/String;)LX/P7c;
+
+    move-result-object v0
+
+    invoke-virtual {v1, v0}, LX/3VC;->A0E(Landroidx/fragment/app/Fragment;)V
+
+    const/4 v0, 0x0
+
+    iput-boolean v0, v1, LX/3VC;->A0E:Z
+
+    invoke-virtual {v1}, LX/3VC;->A09()V
+
+    invoke-virtual {v1}, LX/3VC;->A06()V
+
+    return-void
+.end method

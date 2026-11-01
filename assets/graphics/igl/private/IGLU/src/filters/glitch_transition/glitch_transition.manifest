@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "glitch_transition",
+  "displayName": "Glitch Transition",
+  "description": "[IG Edits] Transition name. With \"Glitch Transition\", the creator can transition between clips with posterized random-noise UV distortion that pulses with transition_progress.",
+  "iglu": {}
+}

@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "scale",
+  "displayName": "Scale",
+  "description": "Label for the scale control in the transform tool",
+  "iglu": {}
+}

@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "identifier": "wavy",
+  "displayName": "Wavy",
+  "description": "Label for the Wavy text animation style, which animates the text by moving it in a wavelike motion line by line.",
+  "iglu": {
+    "legacyId": 1109
+  }
+}

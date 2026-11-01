@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.facebook.fbui.drawable.custom.AppBitmapDrawable fbui:fbui_src="@drawable/instagram_ar_stickers_prism_outline_24" fbui:fbui_tint="?igds_color_primary_icon"
+  xmlns:fbui="http://schemas.android.com/apk/res-auto" />

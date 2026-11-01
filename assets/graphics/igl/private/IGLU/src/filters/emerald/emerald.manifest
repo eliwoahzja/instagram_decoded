@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "identifier": "emerald",
+  "displayName": "Emerald",
+  "description": "Filter name evoking emerald green tones",
+  "iglu": {
+    "legacyId": 1012
+  },
+  "assets": [
+    {
+      "name": "lut_emerald.png",
+      "assetHash": "859eb157d517207f1b9e4427eeacc3aaf4c3cf1261b73310a84a91eaf0a8cd71",
+      "hubAssetId": "1255864212662349"
+    }
+  ]
+}

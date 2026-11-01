@@ -1,0 +1,43 @@
+.class public final Lcom/facebook/papaya/odmp/TrainerRunner;
+.super Lcom/facebook/jni/HybridClassBase;
+.source ""
+
+
+# direct methods
+.method public static constructor <clinit>()V
+    .locals 1
+
+    const-string v0, "papaya-odmp"
+
+    invoke-static {v0}, LX/3xZ;->loadLibrary(Ljava/lang/String;)Z
+
+    return-void
+.end method
+
+.method public constructor <init>(Lcom/facebook/papaya/odmp/IWorkflowFactory;)V
+    .locals 0
+
+    invoke-static {p1}, LX/5B5;->A0Q(Ljava/lang/Object;)V
+
+    invoke-direct {p0}, Lcom/facebook/jni/HybridClassBase;-><init>()V
+
+    invoke-direct {p0, p1}, Lcom/facebook/papaya/odmp/TrainerRunner;->initHybrid(Lcom/facebook/papaya/odmp/IWorkflowFactory;)V
+
+    return-void
+.end method
+
+.method private final native initHybrid(Lcom/facebook/papaya/odmp/IWorkflowFactory;)V
+.end method
+
+.method private final native nativeRun()V
+.end method
+
+
+# virtual methods
+.method public run()V
+    .locals 0
+
+    invoke-direct {p0}, Lcom/facebook/papaya/odmp/TrainerRunner;->nativeRun()V
+
+    return-void
+.end method

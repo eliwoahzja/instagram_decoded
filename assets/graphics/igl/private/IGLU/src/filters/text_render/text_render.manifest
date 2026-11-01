@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "text_render",
+  "displayName": "Text Render",
+  "description": "[IG Edits] Renders variable-length glyph path data into a source texture.",
+  "iglu": {}
+}

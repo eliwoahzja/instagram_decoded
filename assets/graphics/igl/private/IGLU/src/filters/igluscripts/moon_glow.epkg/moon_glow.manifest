@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "identifier": "4684BE7E-7C65-48E4-9A12-028DA4710BBF",
+  "displayName": "Moon Glow",
+  "description": "[IG Edits] Color filter name. With \"Moon Glow\", the creator gets a soft dreamy LUT grade with subtle bloom, skin smoothing, a warm rouge boost, and barely-visible film grain.",
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAK7S8bMota"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "3182ec64",
+      "handle": "AQBoGZ5lFwsc",
+      "md5": "01ac563c1233c7f71ff3df354692959c"
+    }
+  },
+  "iglu": {
+    "legacyId": 3115
+  },
+  "assets": [
+    {
+      "name": "moon_glow_lut.png",
+      "assetHash": "ec09af6b13bbc0c7d46b5a88ff6ffdb9f396a033515e696e779ad16f845f4e0a",
+      "hubAssetId": "1433401271876986"
+    }
+  ]
+}

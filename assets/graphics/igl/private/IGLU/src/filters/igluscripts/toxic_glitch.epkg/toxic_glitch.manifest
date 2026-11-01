@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "identifier": "B817D5A8-D682-4B45-9763-4CEB60A8E68D",
+  "displayName": "Toxic Glitch",
+  "description": "[IG Edits] Video effect name. With \"Toxic Glitch\", the creator can apply a brightness lift then a snap-and-hold horizontal RGB channel shift glitch, finished with a vintage LUT grade.",
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAFtdghkc_d"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "97e2365d",
+      "handle": "AQAGkrz3byW3",
+      "md5": "de9d8d2905730e82473c0bfd0061f12f"
+    }
+  },
+  "iglu": {
+    "legacyId": 3076
+  },
+  "assets": [
+    {
+      "name": "toxic_glitch_lut.png",
+      "assetHash": "d30dcf61785e0e48d4dd1c7baa6b67c8080603cc55bfa7d241b39cac0284a87c",
+      "hubAssetId": "2072681469960249"
+    }
+  ]
+}

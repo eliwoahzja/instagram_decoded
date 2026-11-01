@@ -1,0 +1,133 @@
+[Filter VideoDreamcatcher]
+[Init]
+fun init(Filter filter)
+{
+  # Manifest-pumped slots. Names must match manifest asset names
+  # (sans file extension) so RemoteAssetMediaEffectUpdater knows
+  # which slot each asset feeds.
+  makeTexture('dreamcatcher_lights);
+  makeTexture('dreamcatcher);
+
+  filter.parameters = {
+    {intensity = 0.7, min = 0.0, max = 1.0, description = "Master effect intensity"},
+    {size = 1.5, min = 0.01, max = 20.0, description = "Film grain scale"},
+    {dustAmt = 0.18, min = 0.0, max = 1.0, description = "Dust particle amount"},
+    {alignment = {0.5, 0.5}, description = "Lights overlay alignment center"},
+  };
+
+  filter.passes = {
+    {
+      name = 'colorGrade,
+      inputs = {'default, 'dreamcatcher_lights},
+      uniforms = {
+        lutSize = {1024.0, 32.0},
+        lutStrength = 1.0,
+      },
+      glslShader = glslLut,
+    },
+    {
+      name = 'grain,
+      inputs = {'colorGrade},
+      igid = 'common_film_grain,
+      uniforms = {
+        grainAmt = 5.2,
+        grainScale = 1.5,
+        dustAmt = 0.18,
+      },
+    },
+    {
+      name = 'compose,
+      inputs = {'grain, 'dreamcatcher},
+      uniforms = {
+        strength = 1.0,
+        alignment = {0.5, 0.5},
+      },
+      glslShader = glslCompose,
+    },
+  };
+}
+
+string lut_path = "lut_path";
+string lut_filename = "";
+
+[PreRender]
+fun preRender(Filter filter)
+{
+  f32 intensity = getParameterFloat('intensity);
+  f32 size = getParameterFloat('size);
+  f32 dustAmt = getParameterFloat('dustAmt);
+
+  # Scale so intensity = 0.7 reproduces the original visual defaults.
+  f32 grainAmt = intensity * 0.2857143;          # 0.2 / 0.7
+  f32 lutStrength = min(intensity * 1.4285714, 1.0);  # 1.0 / 0.7, capped
+  f32 mixAmount = min(intensity * 2.0, 1.0);     # 2:1 mapping, capped at 1
+
+  setShaderUniform('grain, 'grainAmt, grainAmt);
+  setShaderUniform('grain, 'grainScale, size);
+  setShaderUniform('grain, 'dustAmt, dustAmt);
+  setShaderUniform('colorGrade, 'lutStrength, lutStrength);
+  setShaderUniform('compose, 'strength, mixAmount);
+
+  string lut_filename_parameter = getParameterString(lut_path);
+  if (lut_filename_parameter != "") {
+    string new_lut_filename = stringAppend("textureFilePath://", lut_filename_parameter);
+    if (new_lut_filename != lut_filename) {
+      lut_filename = new_lut_filename;
+      loadTexture('dreamcatcher_lights, lut_filename);
+    }
+  }
+}
+
+string glslLut = "
+  varying vec2 sourceTextureCoordinate;
+  BaseUniformsOpenGL;
+
+  uniform sampler2D auxSampler0;
+  uniform sampler2D auxSampler1;
+
+  uniform vec2 lutSize;
+  uniform float lutStrength;
+
+  vec3 colorLUTStrip(vec3 color, sampler2D lutTex, vec2 lutSz) {
+    float widthInv = 1.0 / lutSz.x;
+    float heightInv = 1.0 / lutSz.y;
+    vec3 scaledColor = color.xyz * (lutSz.y - 1.0);
+    float bFrac = fract(scaledColor.z);
+    vec2 texc = (0.5 + scaledColor.xy) * vec2(widthInv, heightInv);
+    texc.x += (scaledColor.z - bFrac) * heightInv;
+    vec3 b0 = texture2D(lutTex, texc).xyz;
+    vec3 b1 = texture2D(lutTex, vec2(texc.x + heightInv, texc.y)).xyz;
+    return mix(b0, b1, bFrac);
+  }
+
+  void main() {
+    vec4 base = sampleInput(sourceTextureCoordinate);
+    vec3 graded = colorLUTStrip(base.rgb, auxSampler1, lutSize);
+    vec3 result = mix(base.rgb, graded, lutStrength);
+    gl_FragColor = toOutputFormat(vec4(result, base.a));
+  }
+  ";
+
+string glslCompose = "
+  varying vec2 sourceTextureCoordinate;
+  BaseUniformsOpenGL;
+
+  uniform sampler2D auxSampler1;
+  uniform vec2 alignment;
+
+  vec3 screen(vec3 base, vec3 blend) {
+    return 1.0 - (1.0 - base) * (1.0 - blend);
+  }
+
+  void main() {
+    vec2 uv = sourceTextureCoordinate;
+    vec4 base = sampleInput(uv);
+
+    vec2 overlayUv = uv - (alignment - vec2(0.5, 0.5));
+    vec4 vid = texture2D(auxSampler1, overlayUv);
+
+    vec3 blended = screen(base.rgb, vid.rgb);
+    vec3 result = mix(base.rgb, blended, vid.a * strength);
+    gl_FragColor = toOutputFormat(vec4(result, base.a));
+  }
+  ";

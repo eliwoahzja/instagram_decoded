@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_swipe_up",
+  "displayName": "Swipe up",
+  "description": "[IG Edits] Video effect name. With \"Swipe up\", the creator can slide the frame upward along a Catmull-Rom curve with a vertical motion blur peaking mid-animation.",
+  "iglu": {
+    "legacyId": 3010,
+    "behavior": {
+      "type": "fixedIntro",
+      "durationMs": 1500,
+      "curve": "cubicOut"
+    },
+    "customization": [
+      {
+        "name": "duration",
+        "default": 1.5,
+        "min": 0.3,
+        "max": 5.0,
+        "displayName": "Duration",
+        "displayNameDescription": "[IG Edits] Slider label controlling how long a video effect's animation lasts; exact units and range vary per effect (seconds or normalized).",
+        "displayMethod": "time"
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "f5ed82fa",
+      "handle": "AQAE0anxmm0E",
+      "md5": "a360462db73171e1e7dfe1e265d7fa3a"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAHSxoQhEAi"
+    }
+  }
+}

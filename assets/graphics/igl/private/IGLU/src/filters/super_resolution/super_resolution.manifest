@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "identifier": "super_resolution",
+  "displayName": "Super Resolution",
+  "description": "[IG Edits] Video effect name. With \"Super Resolution\", the creator can upscale the frame 2x using bicubic interpolation plus a pre-trained per-pixel filter-bank that refines the Y channel.",
+  "assets": [
+    {
+      "name": "filterdata.png",
+      "assetHash": "6161ff90b10b1e747f88502a1e8ab7f93187b04b8c7747aaa23b9fcd88b31ea4",
+      "hubAssetId": "4451418055080229"
+    }
+  ],
+  "iglu": {}
+}

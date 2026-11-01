@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="string_0x7f130002">Штат/Облус</string>
+    <string name="string_0x7f130003">Шаар</string>
+    <string name="string_0x7f130004">Дарек</string>
+    <string name="string_0x7f130006">Батир/имарат (милдеттүү эмес)</string>
+    <string name="string_0x7f13002c">Браузерди жабуу</string>
+    <string name="string_0x7f13002f">%1$s түзмөгүңүздүн камерасын колдонгусу келет.</string>
+    <string name="string_0x7f130030">%1$s сиздин түрмөгүңүздүн жайгашкан жерлерин колдонгону жатат.</string>
+    <string name="string_0x7f130033">Уруксат берүү</string>
+    <string name="string_0x7f130034">Бөгөттөө</string>
+    <string name="string_0x7f130038">Бул сайттын коопсуздук сертификаты боюнча маселелер келип чыкты</string>
+    <string name="string_0x7f130039">Артка</string>
+    <string name="string_0x7f13003a">Коопсуздук катасы</string>
+    <string name="string_0x7f13008d">Кандайдыр бир катачылык кетти</string>
+    <string name="string_0x7f13008f">Электрондук почта дареги</string>
+    <string name="string_0x7f130091">Сиз көрүп жаткан вебсайт тышкы колдонмону ачууга аракет кылып жатат. Улантууну каалайсызбы?</string>
+    <string name="string_0x7f130092">Артка</string>
+    <string name="string_0x7f130093">Улантуу</string>
+    <string name="string_0x7f130094">Сиз биздин колдонмодон чыгып жатасыз</string>
+    <string name="string_0x7f130095">Бул биз чечип жаткан техникалык көйгөйдөн улам болуп жатат окшойт. Баракчаны кайра жүктөп көрүңүз.</string>
+    <string name="string_0x7f130096">Жаңылоо</string>
+    <string name="string_0x7f130097">Баракча учурда жеткиликтүү эмес</string>
+    <string name="string_0x7f130098">Фамилияңыз</string>
+    <string name="string_0x7f130099">Баракча жүктөлбөй жатат.</string>
+    <string name="string_0x7f13009a">...жардамы менен ачуу</string>
+    <string name="string_0x7f13009b">%1$s ачуу</string>
+    <string name="string_0x7f13009c">Кошумча параметрлер</string>
+    <string name="string_0x7f1300aa">Атыңыз</string>
+    <string name="string_0x7f1300af">Сиз азыр толук экранда көрүп жатасыз. Чыгуу үчүн солго серпиңиз же артка баскычын басыңыз.</string>
+    <string name="string_0x7f1300cb">Учурда %2$s колдонмосун %1$s тилде орнотууда кыйынчылыктар болуп жатат. Кайра аракет кылып көрүңүз же азырынча %2$s колдонмосун англис тилинде иштетип туруңуз.</string>
+    <string name="string_0x7f1300cc">Бир аз күтө туруңуз. Тил орнотулууда: %1$s...</string>
+    <string name="string_0x7f1300cd">Кайра аракет кылыңыз</string>
+    <string name="string_0x7f1300ce">Англис тилинде (US) улантуу</string>
+    <string name="string_0x7f13010b">Почта индекси</string>
+    <string name="string_0x7f1301d7">Убакыт коюу</string>
+</resources>

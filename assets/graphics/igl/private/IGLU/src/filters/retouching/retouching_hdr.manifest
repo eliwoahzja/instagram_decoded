@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "retouching_hdr",
+  "displayName": "Retouching HDR",
+  "description": "[IG Edits] Video effect name. With \"Retouching HDR\", the creator can run the frequency-separation skin-smoothing pipeline on HDR (extended range) input while keeping facial details.",
+  "iglu": {}
+}

@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "transition_zoom_bounce",
+  "displayName": "Zoom Bounce",
+  "description": "[IG Edits] Text animation name. With Zoom Bounce, the words appear to enlarge quickly with a zoom then back to regular perspective.",
+  "iglu": {}
+}

@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "text_extrusion_3d",
+  "displayName": "3D Offset",
+  "description": "Text effect with 3D offset",
+  "iglu": {}
+}

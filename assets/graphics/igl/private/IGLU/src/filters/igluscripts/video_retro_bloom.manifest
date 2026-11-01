@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "identifier": "c8d1e6f9-3a5b-4c7d-8e2f-9b4a1c6d3e8f",
+  "displayName": "Retro Bloom",
+  "description": "[IG Edits] Video effect name. With \"Retro Bloom\", the creator can extract bright highlights and add a multi-pass gaussian bloom with rotated anamorphic star-streak rays for a retro lens-flare glow.",
+  "iglu": {
+    "legacyId": 3047,
+    "customization": [
+      {
+        "name": "intensity",
+        "default": 1.0,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Intensity",
+        "displayNameDescription": "[IG Edits] Slider label controlling the strength of a video effect. Generic across many effects (glow, blur, color, distortion, etc.); exact range varies per effect."
+      },
+      {
+        "name": "amount",
+        "default": 0.2,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Amount",
+        "displayNameDescription": "[IG Edits] Slider label controlling the size or scale of an element produced by a video effect; exact units and range vary per effect.",
+        "displayMethod": "percent"
+      },
+      {
+        "name": "speed",
+        "default": 4,
+        "min": 3,
+        "max": 8,
+        "displayMethod": "number",
+        "displayName": "Number of streaks",
+        "displayNameDescription": "[IG Edits] Slider label controlling the number of rays in the effect."
+      },
+      {
+        "name": "size",
+        "default": 0.25,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Size",
+        "displayNameDescription": "[IG Edits] Slider label controlling the size of the streaks in the effect.",
+        "displayMethod": "percent"
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "c8512d1b",
+      "handle": "AQAFklZHhO4Q",
+      "md5": "d58fb29231ae68e3f5eea76f6f853972"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAEnvsl09NR",
+      "isImageFormat": true
+    }
+  }
+}

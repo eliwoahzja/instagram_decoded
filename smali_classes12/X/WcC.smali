@@ -1,0 +1,80 @@
+.class public final LX/WcC;
+.super Ljava/lang/Object;
+.source ""
+
+# interfaces
+.implements LX/Znl;
+
+
+# instance fields
+.field public A00:LX/BR6;
+
+
+# virtual methods
+.method public final AXl(LX/BxI;LX/A7V;)Z
+    .locals 2
+
+    invoke-static {p2}, LX/5B5;->A0Q(Ljava/lang/Object;)V
+
+    invoke-static {p1}, LX/5B5;->A0R(Ljava/lang/Object;)V
+
+    invoke-virtual {p2}, LX/A7V;->A06()LX/ASq;
+
+    move-result-object v1
+
+    sget-object v0, LX/ASq;->A0J:LX/ASq;
+
+    if-ne v1, v0, :cond_1
+
+    sget-object v0, LX/BxI;->A05:LX/BxI;
+
+    if-eq p1, v0, :cond_0
+
+    sget-object v0, LX/BxI;->A07:LX/BxI;
+
+    if-ne p1, v0, :cond_1
+
+    :cond_0
+    const/4 v0, 0x1
+
+    return v0
+
+    :cond_1
+    const/4 v0, 0x0
+
+    return v0
+.end method
+
+.method public final AdY(Landroid/view/View;LX/BxI;LX/BR4;LX/A7V;I)V
+    .locals 3
+
+    invoke-static {p4}, LX/5B5;->A0Q(Ljava/lang/Object;)V
+
+    invoke-static {p2}, LX/5B5;->A0R(Ljava/lang/Object;)V
+
+    if-eqz p1, :cond_0
+
+    sget-object v0, LX/7lf;->A03:LX/7lf;
+
+    new-instance v2, Landroid/graphics/RectF;
+
+    invoke-direct {v2}, Landroid/graphics/RectF;-><init>()V
+
+    invoke-static {v2, p1}, LX/7lf;->A0T(Landroid/graphics/RectF;Landroid/view/View;)V
+
+    :goto_0
+    iget-object v1, p0, LX/WcC;->A00:LX/BR6;
+
+    invoke-static {p2, p3, p5}, LX/K9J;->A00(LX/BxI;LX/BR4;I)LX/K9J;
+
+    move-result-object v0
+
+    invoke-virtual {v1, v2, v0, p4}, LX/BR6;->FpT(Landroid/graphics/RectF;LX/K9J;LX/A7V;)V
+
+    return-void
+
+    :cond_0
+    const/4 v2, 0x0
+
+    goto :goto_0
+.end method

@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "identifier": "37ea1aad-143e-4cc3-b823-927cd992fa5b",
+  "displayName": "Slide bump in horizontal",
+  "description": "[IG Edits] Effect name shown in the video effects picker. This is the user-facing label for a video effect.",
+  "iglu": {
+    "legacyId": 3157,
+    "behavior": {
+      "type": "fixedIntro",
+      "durationMs": 2480,
+      "curve": "linear"
+    },
+    "customization": [
+      {
+        "name": "direction",
+        "defaultSelection": "left",
+        "available": [
+          "left",
+          "right"
+        ],
+        "displayName": "Direction"
+      },
+      {
+        "name": "duration",
+        "default": 2.48,
+        "min": 0.1,
+        "max": 5.0,
+        "displayName": "Duration",
+        "displayMethod": "time"
+      }
+    ]
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAFcXjvGtmB"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "e4f7941c",
+      "handle": "AQAFoApL4LmI",
+      "md5": "785097dbec1ec760ef5dc76199059591"
+    }
+  }
+}

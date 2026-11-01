@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:gravity="center" android:id="@id/friend_map_warning_indicator_outline">
+        <shape android:shape="oval">
+            <solid android:color="?igds_color_secondary_background" />
+            <size android:height="@dimen/account_discovery_bottom_gap" android:width="@dimen/account_discovery_bottom_gap" />
+        </shape>
+    </item>
+    <item android:gravity="center" android:id="@id/friend_map_warning_indicator" android:height="@dimen/account_discovery_bottom_gap" android:width="@dimen/account_discovery_bottom_gap" android:left="@dimen/account_preview_media_end_card_stroke_width">
+        <bitmap android:src="@drawable/instagram_warning_filled_12" android:tint="?igds_color_gradient_orange" />
+    </item>
+</layer-list>

@@ -1,0 +1,64 @@
+# IGLUSCRIPTCOLLISION_BYPASS: IGLUScript port of transition_flare, QE-selectable for A/B vs TransitionFlareFilter.
+[Filter TransitionFlare]
+
+[Init]
+fun init(Filter filter) {
+  makeTexture('transition);
+  filter.passes = {{
+    name = 'flare,
+    inputs = {'default, 'transition},
+    shaderInputNames = {'default, 's_texture1},
+    uniforms = {
+      progress = 0.0,
+      outputSize = {1024.0, 1024.0},
+      flareColor = {1.0, 0.918, 0.671, 1.0},
+      flarePosition = {-1.0, 1.0},
+    },
+    glslShader = glsl,
+  }};
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  setShaderUniform('flare, 'progress, max(getParameterFloat('progress), getParameterFloat('transition_progress)));
+  setShaderUniform('flare, 'outputSize, getTextureSize('default));
+}
+
+string glsl = "
+  varying vec2 sourceTextureCoordinate;
+  BaseUniformsOpenGL;
+  uniform sampler2D s_texture1;
+  uniform float progress;
+  uniform vec2 outputSize;
+  uniform vec4 flareColor;
+  uniform vec2 flarePosition;
+  float fromRange(float val, float minVal, float maxVal) { return (val - minVal) / (maxVal - minVal); }
+  vec2 scaleUV(vec2 uv, vec2 origin, vec2 s) { return (uv - origin) / s + origin; }
+  vec4 exposure(vec4 color, float e) { return vec4(pow(2.0, e) * color.rgb, color.a); }
+  float smoothCurveSegment(float t, float previousStep, float currentStep, float startRange, float endRange) {
+    float alpha = clamp(fromRange(t, startRange, endRange), 0.0, 1.0);
+    return mix(previousStep, currentStep, smoothstep(0.0, 1.0, alpha));
+  }
+  float radialGradientIn(vec2 uv) {
+    float aspect = outputSize.x / outputSize.y;
+    vec2 centeredUV = uv - 0.5;
+    centeredUV.x = centeredUV.x * aspect;
+    return 1.0 - length(centeredUV) / length(vec2(aspect * 0.5, 0.5));
+  }
+  void main() {
+    vec2 uv = sourceTextureCoordinate;
+    float curveA = smoothCurveSegment(progress, 0.0, 1.0, 0.0, 0.4);
+    float curveB = smoothCurveSegment(progress, curveA, 0.0, 0.4, 1.0);
+    vec4 a = sampleInput(uv);
+    vec4 b = texture2D(s_texture1, uv);
+    vec4 sampled = mix(a, b, step(0.4, progress));
+    float exposureValue = smoothstep(0.8, 1.0, curveB);
+    vec4 exposed = exposure(sampled, exposureValue);
+    float flareScale = curveB * 8.0 + 1.0;
+    vec2 flareUV = scaleUV(flarePosition + uv, vec2(0.5, 0.5), vec2(flareScale, flareScale));
+    float gradient = clamp(radialGradientIn(flareUV), 0.0, 1.0);
+    vec4 flare = flareColor * gradient;
+    vec4 texel = clamp(exposed + flare, 0.0, 1.0);
+    gl_FragColor = toOutputFormat(texel);
+  }
+";

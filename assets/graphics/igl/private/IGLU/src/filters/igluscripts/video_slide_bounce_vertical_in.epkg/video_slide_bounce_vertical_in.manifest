@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "identifier": "8f0b91fd-1f4b-4b57-9611-6b715623db80",
+  "displayName": "Slide bump in vertical",
+  "description": "[IG Edits] Effect name shown in the video effects picker. This is the user-facing label for a video effect.",
+  "iglu": {
+    "legacyId": 3159,
+    "behavior": {
+      "type": "fixedIntro",
+      "durationMs": 2520,
+      "curve": "linear"
+    },
+    "customization": [
+      {
+        "name": "direction",
+        "defaultSelection": "up",
+        "available": [
+          "down",
+          "up"
+        ],
+        "displayName": "Direction"
+      },
+      {
+        "name": "duration",
+        "default": 2.52,
+        "min": 0.1,
+        "max": 5.0,
+        "displayName": "Duration",
+        "displayMethod": "time"
+      }
+    ]
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAGLepy7jUh"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "a24be24f",
+      "handle": "AQBgSb0DoSWj",
+      "md5": "b014c6a92ad2d64e453a65cc9431c57c"
+    }
+  }
+}

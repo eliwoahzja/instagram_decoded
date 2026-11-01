@@ -1,0 +1,131 @@
+[Filter SparkLowLight]
+# "Spark Low Light" — LUT color grading + two-light brightness model.
+#
+# Note on the filter slug: this filter is registered as `spark_low_light`
+# (not `low_light`) because the bare name `low_light` is already taken
+# by the existing C++ native filter
+# (`DECLARE_FILTER("low_light", low_light::LowLightFilter)` in
+# AllFiltersFactory.cpp). On Android, IGLUScript effects take precedence
+# over C++ native effects, so an .iglu named `low_light.iglu` would
+# silently replace the C++ Low Light in production. The `spark_` prefix
+# distinguishes the IGLUScript implementation from the legacy C++
+# implementation while keeping the user-facing displayName "Low Light".
+#
+# Single-pass IGLUScript. The LUT half is identical to black_and_white /
+# spark_soft_nature (8x8 grid trilinear sampling). The lighting half
+# exposes the Spark scene-light pattern (20% ambient + 80% directional)
+# as two independent host-tunable knobs.
+#
+# LUT delivered via ARD (effectId / assetHash filled in once provided —
+# TODO placeholders in the manifest until then).
+#
+# Lighting model:
+#   Spark scene used 20% ambient + 80% directional, both pure white.
+#   On a flat plane facing the directional light, that math reduces to
+#   color * (0.2 + 0.8) = color * 1.0 (no-op at default). black_and_white
+#   collapses both lights into a single `brightness` knob; here we expose
+#   them separately so the host can dial each independently.
+#
+#   final.rgb = lutGraded.rgb * (ambient_strength + directional_strength)
+#
+#   Defaults (matching Spark scene):
+#     ambient_strength = 0.2
+#     directional_strength = 0.8
+#   Sum = 1.0 (no-op multiplier). Adjust either knob to brighten or dim
+#   the post-LUT output. No directional falloff is applied; both knobs
+#   act as flat global multipliers per the simplified two-light model.
+
+[Init]
+fun init(Filter filter)
+{
+    makeTexture('lut);
+
+    # Host-tunable parameters. All four have valid 0.0 minimums; we wire
+    # them unconditionally in [PreRender] so a host-set 0.0 takes effect
+    # (per CRA finding on black_and_white).
+    filter.parameters = {
+        {strength = 1.0, min = 0.0, max = 1.0, description = "LUT mix strength"},
+        {ambient_strength = 0.2, min = 0.0, max = 2.0, description = "Ambient light intensity (flat global lift)"},
+        {directional_strength = 0.8, min = 0.0, max = 2.0, description = "Directional light intensity (flat global multiplier)"},
+    };
+
+    filter.passes = {{
+      name = 'pass0,
+      inputs = {'default, 'lut},
+      uniforms = {
+        strength = 1.0,
+        ambient_strength = 0.2,
+        directional_strength = 0.8,
+      },
+      glslShader = glslSparkLowLight,
+    }};
+}
+
+string lut_path = "lut_path";
+string lut_filename = "";
+
+[PreRender]
+fun preRender(Filter filter){
+    string lut_filename_parameter = getParameterString(lut_path);
+    if (lut_filename_parameter != "") {
+        string new_lut_filename = stringAppend("textureFilePath://", lut_filename_parameter);
+        if (new_lut_filename != lut_filename) {
+            lut_filename = new_lut_filename;
+            loadTexture('lut, lut_filename);
+        }
+    }
+
+    # All three parameters wired unconditionally per CRA convention.
+
+    f32 s = getParameterFloat('strength);
+    setShaderUniform('pass0, 'strength, s);
+
+    f32 amb = getParameterFloat('ambient_strength);
+    setShaderUniform('pass0, 'ambient_strength, amb);
+
+    f32 dir = getParameterFloat('directional_strength);
+    setShaderUniform('pass0, 'directional_strength, dir);
+}
+
+#### GLSL shader ####
+
+string glslSparkLowLight = "
+    varying vec2 sourceTextureCoordinate;
+    BaseUniformsOpenGL;
+
+    uniform sampler2D auxSampler0;
+    uniform sampler2D auxSampler1;
+    uniform sampler2D auxSampler2;
+
+    uniform float ambient_strength;
+    uniform float directional_strength;
+
+    void main() {
+      vec4 texel = sampleInput(sourceTextureCoordinate);
+
+      // Stage 1: 8x8 grid LUT trilinear sampling
+      texel.rgb = clamp(texel.rgb, 0.00781, 0.98438);
+
+      float x = texel.r / 8.0;
+      float y = texel.g / 8.0;
+      float z = texel.b;
+
+      float blueY = floor(z * 8.0) / 8.0;
+      float blueX = floor((z - blueY) * 64.0) / 8.0;
+
+      x += blueX;
+      y += blueY;
+
+      vec3 color = texture2D(auxSampler1, vec2(x, y)).xyz;
+
+      texel = mix(texel, vec4(color, texel.a), strength);
+
+      // Stage 2: two-light brightness model.
+      // Sum of ambient + directional as a flat global multiplier.
+      // Defaults 0.2 + 0.8 = 1.0 (no-op). Each knob host-tunable.
+      float light = ambient_strength + directional_strength;
+      texel.rgb *= light;
+
+      gl_FragColor = toOutputFormat(texel);
+    }
+    ";

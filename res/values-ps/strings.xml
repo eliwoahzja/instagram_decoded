@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="string_0x7f130002">ایالت</string>
+    <string name="string_0x7f130004">پته</string>
+    <string name="string_0x7f13002c">براوزر بند کړئ</string>
+    <string name="string_0x7f13002f">%1$s غواړي ستاسو د وسیلې کیمره وکاروي.</string>
+    <string name="string_0x7f130030">%1$s غواړي چې ستاسې د وسيلې موقعيت وکاروي.</string>
+    <string name="string_0x7f130033">اجازه ورکړئ</string>
+    <string name="string_0x7f130034">بلاک کول</string>
+    <string name="string_0x7f130039">شاته تګ</string>
+    <string name="string_0x7f13008d">څه تیروتنه وشوه</string>
+    <string name="string_0x7f13008f">بريښنالیک</string>
+    <string name="string_0x7f130091">هغه ویب پاڼه چې تاسو یې ګورئ د بهرنۍ اپلیکیشن د پرانستلو هڅه کوي. ایا تاسو غواړئ چې دوام ورکړئ؟</string>
+    <string name="string_0x7f130092">شاته وګرځئ</string>
+    <string name="string_0x7f130093">ادامه ورکړئ</string>
+    <string name="string_0x7f130094">تاسو زموږ اپلیکیشن پریږدئ</string>
+    <string name="string_0x7f130095">دا ممکن د هغې تخنیکي تېروتنې له امله وي، چې موږ یې د حلولو په لټه کې یو. د دې پاڼې د بیا پرانیستلو هڅه وکړئ.</string>
+    <string name="string_0x7f130096">تازه یې کړئ</string>
+    <string name="string_0x7f130097">پاڼه اوس مهال د لاسرسي وړ نه ده</string>
+    <string name="string_0x7f130098">وروستی نوم</string>
+    <string name="string_0x7f130099">پاڼه نه شي لوډ کیدلی</string>
+    <string name="string_0x7f13009a">له ... سره یې پرانیزئ</string>
+    <string name="string_0x7f13009b">په %1$s کې یې پرانیزئ</string>
+    <string name="string_0x7f13009c">نور اختيارونه</string>
+    <string name="string_0x7f1300aa">لومړی نوم</string>
+    <string name="string_0x7f1300af">تاسو اوس بشپړه سکرین ګورئ. د وتلو لپاره کڼ اړخ ته کش ورکړئ یا د شاته تڼۍ ته فشار ورکړئ.</string>
+    <string name="string_0x7f1300cb">موږ همدا اوس په %1$s کې د %2$s په ترتیب کولو کې ستونزه لرو. تاسو کولی شئ بیا هڅه وکړئ، یا د اوس لپاره په انګلیسي (امریکا) کې %2$s وکاروئ.</string>
+    <string name="string_0x7f1300cc">یوازې د یوې شیبې لپاره منتظر اوسئ کله چې موږ %1$s ترتیب کوو...</string>
+    <string name="string_0x7f1300cd">بیا هڅه وکړئ</string>
+    <string name="string_0x7f1300ce">په امریکايي انګلیسي دوام ورکړئ</string>
+    <string name="string_0x7f1301d3">ټیلیفون</string>
+</resources>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_enabled="true" android:state_checked="true" android:drawable="@drawable/prism_checkbox_checked" />
+    <item android:state_enabled="false" android:state_checked="true">
+        <layer-list>
+            <item>
+                <shape android:shape="rectangle">
+                    <size android:height="@dimen/abc_dialog_padding_material" android:width="@dimen/abc_dialog_padding_material" />
+                    <corners android:radius="@dimen/base_user_row_username_drawable_padding" />
+                    <solid android:color="@color/checkbox_background_color_selector" />
+                </shape>
+            </item>
+            <item android:gravity="center" android:left="@dimen/abc_action_bar_elevation_material" android:top="@dimen/abc_action_bar_elevation_material" android:right="@dimen/abc_action_bar_elevation_material" android:bottom="@dimen/abc_action_bar_elevation_material">
+                <bitmap android:src="@drawable/instagram_check_pano_filled_16" android:tint="@color/checkbox_disabled_tint" />
+            </item>
+        </layer-list>
+    </item>
+    <item android:state_enabled="false" android:state_checked="false">
+        <layer-list>
+            <item>
+                <shape android:shape="rectangle">
+                    <size android:height="@dimen/abc_dialog_padding_material" android:width="@dimen/abc_dialog_padding_material" />
+                    <corners android:radius="@dimen/base_user_row_username_drawable_padding" />
+                    <stroke android:width="@dimen/afi_indicator_arrow_margin_top" android:color="@color/checkbox_disabled_tint" />
+                    <solid android:color="@color/checkbox_background_color_selector" />
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+    <item android:state_checked="false" android:drawable="@drawable/prism_checkbox_unchecked_ax_fix" />
+</selector>

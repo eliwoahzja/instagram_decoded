@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_wavy",
+  "displayName": "Sway",
+  "description": "Video effect name. With \"Sway\", the creator can imitate the effect of a camera slowly moving slightly up on one side then up on the opposite side.",
+  "iglu": {
+    "legacyId": 2030,
+    "customization": [
+      {
+        "name": "speed",
+        "default": 0.3611111,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Speed",
+        "displayNameDescription": "[IG Edits] Slider label controlling the playback or animation speed of a video effect (noun, not a verb); exact range varies per effect."
+      },
+      {
+        "name": "zoom",
+        "default": 0.1851852,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Zoom",
+        "displayNameDescription": "[IG Edits] Slider label controlling the zoom factor (scale toward/away from the subject) of a video effect; exact range varies per effect."
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "f3052a10",
+      "handle": "AQAE-QcEDwdS",
+      "md5": "9407fe4a3fe0fa181a570567153ea9ee"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAHy1tNNu1W"
+    }
+  }
+}

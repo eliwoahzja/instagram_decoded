@@ -1,0 +1,6 @@
+{
+  "assets/npu_sr_qnn/libs.spo": "f3f94151402c7cfa0d9a46cb57dc76c4c6f860257923095b39b4321b3340dbd9",
+  "assets/npu_sr_qnn/libs.txt": "c5a3ab80f79464fa54cc22e077eecafdc1a3c8f8eb94514f918585626db82389",
+  "lib/arm64-v8a/libQnnHtp.so": "976c165553748118106773ac3db94f896806c39f49577eb8c95d70c2352bdcb7",
+  "lib/arm64-v8a/libQnnSystem.so": "57ee2bb5c0042a5bb212e79ab185915b3eba07d469ab09725529210b4a11b84b"
+}

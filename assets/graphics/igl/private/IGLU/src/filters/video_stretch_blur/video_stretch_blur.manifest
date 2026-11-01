@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_stretch_blur",
+  "displayName": "Bounce in",
+  "description": "Video effects selection. Video starts blurry and stretched and ends normal and sharp.",
+  "iglu": {
+    "legacyId": 2031,
+    "behavior": {
+      "type": "fixedIntro",
+      "durationMs": 350,
+      "curve": "linear",
+      "reversed": true
+    },
+    "customization": [
+      {
+        "name": "duration",
+        "default": 0.35,
+        "min": 0.1,
+        "max": 2.0,
+        "displayName": "Duration",
+        "displayNameDescription": "[IG Edits] Slider label controlling how long a video effect's animation lasts; exact units and range vary per effect (seconds or normalized).",
+        "displayMethod": "time"
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "397aad27",
+      "handle": "AQADkiEGAle4",
+      "md5": "e803ac0e288a264e51d24f412a69fdbc"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQADLU-l7F5Y"
+    }
+  }
+}

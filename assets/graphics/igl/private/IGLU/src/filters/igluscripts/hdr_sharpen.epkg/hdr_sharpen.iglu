@@ -1,0 +1,197 @@
+[Filter HdrSharpen]
+# "HDR Sharpen" — pure post-processing lighting filter. No LUT, no
+# external assets. Single fragment pass with three logical stages:
+# unsharp-mask sharpening, soft highlight glow, radial vignette.
+#
+# Cloned from zoom_pulse.iglu (most recent no-LUT pure post-processing
+# IGLUScript) per Clone-then-Deviate, with the time uniform dropped
+# (this effect is static, no animation) and the zoom shader replaced
+# by the three lighting stages below.
+#
+# Pipeline (single fragment pass, no separate render targets):
+#
+#   Stage 1 — Unsharp-mask sharpening:
+#     5-tap cross blur at ~1.5px radius, then
+#     sharpened = src + sharpen_strength * (src - blurred).
+#     Plus a subtle midtone S-curve on luminance to sell the HDR feel
+#     (smoothstep makes shadows slightly deeper and highlights slightly
+#     brighter without crushing either end).
+#
+#   Stage 2 — Highlight glow:
+#     8-tap wide ring at ~10px radius (multi-tap approximation of a
+#     real Gaussian). Extract above-threshold luminance from the wide
+#     blur and add it back at low opacity. Barely perceptible by
+#     default; reads as a halation on bright skin / earrings / eyes.
+#
+#   Stage 3 — Radial vignette:
+#     length(uv - 0.5) → smoothstep falloff. Aspect-corrected so the
+#     vignette is roughly circular on portrait camera. Multiply darken
+#     toward the corners.
+#
+# All three stages live in one main() and reuse the same source camera
+# samples where possible to keep the per-fragment tap count reasonable
+# (~14 texture samples total).
+#
+# **WIP — DO NOT LAND** while the spec marker is in this header. No
+# asset entries needed in the manifest (zero ARD dependency).
+
+[Init]
+fun init(Filter filter)
+{
+    filter.parameters = {
+        {sharpen_strength = 2.0, min = 0.0, max = 2.0, description = "Sharpening (V7 multiplicative-luma; ratio-scales src by lumSharp/lumSource; chromaticity preserved exactly)"},
+        {glow_strength = 0.065, min = 0.0, max = 0.3, description = "Highlight glow additive strength (subtle halation on bright regions)"},
+        {vignette_strength = 0.5, min = 0.0, max = 1.0, description = "Radial vignette darkening at the corners (0 = none, 1 = pitch black)"},
+        {midtone_contrast = 0.25, min = 0.0, max = 1.0, description = "Midtone S-curve contrast boost on luminance (sells the HDR feel)"},
+    };
+
+    filter.passes = {{
+      name = 'pass0,
+      inputs = {'default},
+      uniforms = {
+        sharpen_strength = 2.0,
+        glow_strength = 0.065,
+        vignette_strength = 0.5,
+        midtone_contrast = 0.25,
+      },
+      glslShader = glslHdrSharpen,
+    }};
+}
+
+[PreRender]
+fun preRender(Filter filter){
+    # All four uniforms wired unconditionally per CRA convention.
+
+    f32 ss = getParameterFloat('sharpen_strength);
+    setShaderUniform('pass0, 'sharpen_strength, ss);
+
+    f32 gs = getParameterFloat('glow_strength);
+    setShaderUniform('pass0, 'glow_strength, gs);
+
+    f32 vs = getParameterFloat('vignette_strength);
+    setShaderUniform('pass0, 'vignette_strength, vs);
+
+    f32 mc = getParameterFloat('midtone_contrast);
+    setShaderUniform('pass0, 'midtone_contrast, mc);
+}
+
+#### GLSL shader ####
+
+string glslHdrSharpen = "
+    varying vec2 sourceTextureCoordinate;
+    BaseUniformsOpenGL;
+
+    uniform sampler2D auxSampler0;  // 'default (camera)
+    uniform sampler2D auxSampler1;
+    uniform sampler2D auxSampler2;
+
+    uniform float sharpen_strength;
+    uniform float glow_strength;
+    uniform float vignette_strength;
+    uniform float midtone_contrast;
+
+    // Rec. 709 luma coefficients (modern video standard).
+    float luma(vec3 c) {
+      return dot(c, vec3(0.2126, 0.7152, 0.0722));
+    }
+
+    void main() {
+      vec2 uv = sourceTextureCoordinate;
+
+      // ============================================================
+      // Stage 1: Multiplicative-luma sharpening + midtone S-curve.
+      // ============================================================
+      // Per V7: scale src.rgb by the luma ratio (lumSharp / lumSource)
+      // rather than adding a luma delta. Multiplication keeps every
+      // pixel's chromaticity (R/G/B ratios) IDENTICAL — only its
+      // brightness changes — so it cannot produce cyan/blue/magenta
+      // halos under any circumstances. Additive delta approaches
+      // (V4/V5/V6) shift R/G/B ratios slightly because the same scalar
+      // is added to all three channels of differently-weighted
+      // chromaticities; the multiplicative form sidesteps that
+      // entirely.
+      //
+      // Edge attenuation kept on the *delta* used for lumSharp so
+      // huge silhouette edges don't produce extreme scale factors
+      // (scale > 2 → blown-out highlights).
+      float dSharp = 0.002;
+      vec3 src = sampleInput(uv).rgb;
+      vec3 blurred = src * 0.2;
+      blurred += sampleInput(uv + vec2( dSharp, 0.0)).rgb * 0.2;
+      blurred += sampleInput(uv + vec2(-dSharp, 0.0)).rgb * 0.2;
+      blurred += sampleInput(uv + vec2(0.0,  dSharp)).rgb * 0.2;
+      blurred += sampleInput(uv + vec2(0.0, -dSharp)).rgb * 0.2;
+
+      float lumSource = luma(src);
+      float lumBlurred = luma(blurred);
+      float lumDeltaRaw = lumSource - lumBlurred;
+      // Suppress the contribution at very large delta magnitudes
+      // (silhouette edges) to preserve the no-halo guarantee. Fine
+      // detail (small delta) still gets full sharpening.
+      float edgeAttenuate = 1.0 - smoothstep(0.05, 0.20, abs(lumDeltaRaw));
+      float lumDelta = lumDeltaRaw * edgeAttenuate;
+      float lumSharp = lumSource + sharpen_strength * lumDelta;
+      // Multiplicative ratio scaling. Guard against div-by-zero in
+      // very dark pixels (where lumSource < 0.001 the ratio is
+      // undefined and the sharpen contribution is meaningless anyway).
+      float scale = (lumSource > 0.001) ? (lumSharp / lumSource) : 1.0;
+      vec3 sharpened = clamp(src * scale, 0.0, 1.0);
+
+      // Subtle midtone S-curve via smoothstep on luminance.
+      // smoothstep deepens shadows below 0.5 and brightens highlights
+      // above 0.5 \u2014 a classic gentle contrast boost.
+      float L = luma(sharpened);
+      float boostedL = smoothstep(0.0, 1.0, L);
+      // Scale rgb so its luminance moves from L to mix(L, boostedL, midtone_contrast).
+      float targetL = mix(L, boostedL, midtone_contrast);
+      sharpened *= targetL / max(L, 0.001);
+
+      // ============================================================
+      // Stage 2: Highlight glow — wide blur + threshold add + dark
+      // protect. The dark-protect mask gates glow contribution by the
+      // SOURCE pixel luminance, not just the wide-blurred luminance,
+      // so dark pixels (hair, deep shadows) don't receive glow bled
+      // from bright neighbors. Without this, the wide blur of bright
+      // background tints adjacent dark pixels with the background
+      // color, producing visible halos around silhouettes.
+      // ============================================================
+      // 8-tap ring at ~10px radius (uv 0.01 @ 1024w).
+      float dGlow = 0.010;
+      vec3 wideBlurred = sampleInput(uv + vec2( dGlow, 0.0)).rgb
+                       + sampleInput(uv + vec2(-dGlow, 0.0)).rgb
+                       + sampleInput(uv + vec2(0.0,  dGlow)).rgb
+                       + sampleInput(uv + vec2(0.0, -dGlow)).rgb
+                       + sampleInput(uv + vec2( dGlow,  dGlow)).rgb
+                       + sampleInput(uv + vec2( dGlow, -dGlow)).rgb
+                       + sampleInput(uv + vec2(-dGlow,  dGlow)).rgb
+                       + sampleInput(uv + vec2(-dGlow, -dGlow)).rgb;
+      wideBlurred *= 0.125;  // average of 8
+
+      // Highlight mask on the wide blur (where in the frame is bright).
+      float blurMask = smoothstep(0.45, 0.95, luma(wideBlurred));
+      // Dark-protect mask on the SRC pixel (don't add glow to deep shadows
+      // even if their neighbors are bright). Below 0.25 luma → no glow.
+      float darkProtect = smoothstep(0.25, 0.55, luma(src));
+      vec3 glow = wideBlurred * blurMask * darkProtect * glow_strength;
+
+      vec3 result = sharpened + glow;
+
+      // ============================================================
+      // Stage 3: Radial vignette.
+      // ============================================================
+      // Aspect-corrected radial distance from center. Portrait camera
+      // is narrower in x; scale x to match y so the vignette is
+      // roughly circular rather than oval.
+      vec2 d = uv - 0.5;
+      d.x *= 0.56;
+      float dist = length(d) * 2.0;  // 0 at center, ~1 at corners
+      // smoothstep falloff from inner to outer radius. Beyond outer = full vignette darkening.
+      float v = 1.0 - smoothstep(0.45, 1.0, dist) * vignette_strength;
+      result *= v;
+
+      // Clamp to LDR display range.
+      result = clamp(result, 0.0, 1.0);
+
+      gl_FragColor = toOutputFormat(vec4(result, 1.0));
+    }
+    ";

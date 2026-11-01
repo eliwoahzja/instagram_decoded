@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_cutout_outer_glow",
+  "displayName": "Outer Glow",
+  "description": "[Instagram Edits] Effect browser - Label for an effect that adds a soft, glowing light around the edges of subjects within the video. Character count for labels is 14 characters max.",
+  "iglu": {
+    "legacyId": 5054,
+    "customization": [
+      {
+        "name": "color",
+        "defaultSelection": "#FFFFFF",
+        "available": [
+          "#FFFFFF",
+          "#000000",
+          "#FFD600",
+          "#FF7A00",
+          "#FE1D37",
+          "#FF0169",
+          "#D300C5",
+          "#7638FA",
+          "#37038B",
+          "#1CD164",
+          "#0095F6",
+          "#AD88FC",
+          "#FDD5FD",
+          "#FFABE1",
+          "#FFC584",
+          "#FFF8C2",
+          "#09FF00",
+          "#FFFF00",
+          "#5AFAC7",
+          "#0000FF"
+        ],
+        "displayName": "Color",
+        "displayNameDescription": "[IG Edits] Color picker label. The user selects a color used by the video effect (e.g., glow tint, outline color, sparkle color); available palette varies per effect."
+      },
+      {
+        "name": "opacity",
+        "default": 0.75,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Opacity",
+        "displayNameDescription": "[IG Edits] Slider label controlling the opacity (transparency) of an element added by a video effect (low = invisible, high = fully opaque); exact range varies per effect."
+      },
+      {
+        "name": "size",
+        "default": 0.8,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Size",
+        "displayNameDescription": "[IG Edits] Slider label controlling the size or scale of an element produced by a video effect; exact units and range vary per effect."
+      }
+    ],
+    "subject": {
+      "overlay": true
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "3c4a2f20",
+      "handle": "AQAESKCJ3D1l",
+      "md5": "bd8f0829921c01bda422668bb122cb34"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "isImageFormat": true,
+      "handle": "AQAFTQBPeqRv"
+    }
+  }
+}

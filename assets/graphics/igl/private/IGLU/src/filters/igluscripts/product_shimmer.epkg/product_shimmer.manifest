@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "identifier": "5a8ba3d7-9b86-4f5e-924f-9df34bc65d27",
+  "displayName": "Product Shimmer",
+  "description": "[IG Visual Discovery] Product highlight effect name. With \"Product Shimmer\", a caustic shimmer of light plays over the product a viewer selected in a paused reel.",
+  "iglu": {
+    "customization": [
+      {
+        "name": "intensity",
+        "default": 1,
+        "min": 0,
+        "max": 3
+      },
+      {
+        "name": "speed",
+        "default": 0.5,
+        "min": 0,
+        "max": 4
+      },
+      {
+        "name": "patternScale",
+        "default": 1,
+        "min": 0.1,
+        "max": 4
+      },
+      {
+        "name": "lower",
+        "default": 0,
+        "min": 0,
+        "max": 1
+      },
+      {
+        "name": "upper",
+        "default": 1,
+        "min": 0,
+        "max": 1
+      }
+    ]
+  }
+}

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="?igds_color_reels_afi_button_white_background" />
+            <size android:height="@dimen/action_bar_centered_headers_homecoming_opt_in_icon_size_with_padding" android:width="@dimen/action_bar_centered_headers_homecoming_opt_in_icon_size_with_padding" />
+        </shape>
+    </item>
+    <item android:gravity="center" android:height="@dimen/action_bar_centered_headers_reels_icon_size" android:width="@dimen/action_bar_centered_headers_reels_icon_size" android:drawable="@drawable/reel_selfie_reply_button_drawable_larger__app_bitmap_0" />
+</layer-list>

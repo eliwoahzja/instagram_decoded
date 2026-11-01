@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_zoom_bounce",
+  "displayName": "Zoom bounce",
+  "description": "Video effect name. A video effect is a creative visual element that can be applied to a video. With \"Zoom bounce\", the creator can add a zooming effect that bounces in and out.",
+  "iglu": {
+    "legacyId": 2060,
+    "behavior": {
+      "type": "fixedIntro",
+      "durationMs": 750,
+      "curve": "linear"
+    },
+    "customization": [
+      {
+        "name": "duration",
+        "default": 0.75,
+        "min": 0.2,
+        "max": 3.0,
+        "displayName": "Duration",
+        "displayNameDescription": "[IG Edits] Slider label controlling how long a video effect's animation lasts; exact units and range vary per effect (seconds or normalized).",
+        "displayMethod": "time"
+      },
+      {
+        "name": "amount",
+        "default": 0.5,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Amount",
+        "displayNameDescription": "[IG Edits] Slider label controlling the magnitude or quantity of a video effect. Generic across many effects; exact range varies per effect."
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "e83c06ee",
+      "handle": "AQADnaPo-bRp",
+      "md5": "67cd343e10beb5a39b862e6f76e1a64f"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQADnNqIjKxa"
+    }
+  }
+}

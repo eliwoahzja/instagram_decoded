@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "color_convert",
+  "displayName": "Color Convert",
+  "description": "[IG Edits] Video effect name. With \"Color Convert\", the creator can convert HDR Rec.2020 HLG (RGB or YUV biplanar) source into Rec.709 sRGB via OETF/OOTF and primary transforms.",
+  "iglu": {}
+}

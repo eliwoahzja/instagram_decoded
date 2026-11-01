@@ -1,0 +1,159 @@
+[Filter LumaTexFilter]
+# Luma key filter that fills keyed areas with a secondary video texture.
+# Uses luminance-based keying to composite a fill texture into dark or bright regions.
+# Applies aspect correction to the fill texture to maintain proper proportions.
+
+[Init]
+fun init(Filter filter) {
+  # Load a default fill texture from resources
+  # This can be overridden at runtime by setting a named input 'fill'
+  loadTexture('fill, 'texture://MultiColorGradientV2Assets/Stars);
+
+  filter.passes = {{
+    name = 'lumakey,
+    inputs = {'default, 'fill},
+    uniforms = {
+      strength = 1.0,
+      threshold = 0.5,
+      tolerance = 0.1,
+      invertKey = 0.0,
+      outputSize = {1080.0, 1920.0},
+      fillSize = {1080.0, 1920.0},
+    },
+    glslShader = glsl,
+    metalShader = metal,
+  }};
+
+  filter.parameters = {
+    {strength = 1.0, min = 0.0, max = 1.0, description = "Effect strength"},
+    {threshold = 0.5, min = 0.0, max = 1.0, description = "Luma threshold for keying"},
+    {tolerance = 0.1, min = 0.0, max = 0.5, description = "Softness of key edge"},
+    {invertKey = 0.0, min = 0.0, max = 1.0, description = "Invert key (0=fill dark, 1=fill bright)"},
+  };
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  f32 threshold = getParameterFloat('threshold);
+  f32 tolerance = getParameterFloat('tolerance);
+  f32 invertKey = getParameterFloat('invertKey);
+  f32 strength = getParameterFloat('strength);
+
+  vec2 outputSize = getTextureSize('default);
+  vec2 fillSize = getTextureSize('fill);
+
+  setShaderUniform('lumakey, 'threshold, threshold);
+  setShaderUniform('lumakey, 'tolerance, tolerance);
+  setShaderUniform('lumakey, 'invertKey, invertKey);
+  setShaderUniform('lumakey, 'strength, strength);
+  setShaderUniform('lumakey, 'outputSize, outputSize);
+  setShaderUniform('lumakey, 'fillSize, fillSize);
+}
+
+string glsl = "
+  precision highp float;
+  varying vec2 sourceTextureCoordinate;
+  BaseUniformsOpenGL;
+
+  uniform float threshold;
+  uniform float tolerance;
+  uniform float invertKey;
+  uniform vec2 outputSize;
+  uniform vec2 fillSize;
+  uniform sampler2D auxSampler0;
+
+  float luma(vec3 color) {
+    return dot(color, vec3(0.299, 0.587, 0.114));
+  }
+
+  vec2 fit2Size(vec2 srcSize, vec2 dstSize) {
+    float srcAspect = srcSize.x / srcSize.y;
+    float dstAspect = dstSize.x / dstSize.y;
+    vec2 aspectCorrection = vec2(dstAspect / srcAspect, 1.0);
+    if (dstAspect > srcAspect) {
+      aspectCorrection = vec2(1.0, srcAspect / dstAspect);
+    }
+    return aspectCorrection;
+  }
+
+  void main() {
+    vec2 uv = sourceTextureCoordinate;
+    vec4 base = sampleInput(uv);
+
+    vec2 aspectCorrection = fit2Size(fillSize, outputSize);
+    vec2 fillUV = (uv - 0.5) * aspectCorrection + 0.5;
+    vec4 fill = texture2D(auxSampler0, fillUV);
+
+    float luminance = luma(base.rgb);
+    float keyMask = smoothstep(threshold - tolerance, threshold + tolerance, luminance);
+
+    keyMask = mix(keyMask, 1.0 - keyMask, invertKey);
+
+    vec4 result = mix(fill, base, keyMask);
+    result.a = base.a;
+
+    result = mix(base, result, strength);
+
+    gl_FragColor = toOutputFormat(result);
+  }
+";
+
+
+string metal = "
+  using namespace metal;
+
+  struct fragmentOut { float4 _gl_FragColor [[color(0)]]; };
+  struct fragmentIn { float2 sourceTextureCoordinate [[user(locn1)]]; };
+
+  typedef struct {
+    BaseUniformsMetal;
+    float threshold;
+    float tolerance;
+    float invertKey;
+    float2 outputSize;
+    float2 fillSize;
+  } Uniforms;
+
+  float luma(float3 color) {
+    return dot(color, float3(0.299, 0.587, 0.114));
+  }
+
+  float2 fit2Size(float2 srcSize, float2 dstSize) {
+    float srcAspect = srcSize.x / srcSize.y;
+    float dstAspect = dstSize.x / dstSize.y;
+    float2 aspectCorrection = float2(dstAspect / srcAspect, 1.0);
+    if (dstAspect > srcAspect) {
+      aspectCorrection = float2(1.0, srcAspect / dstAspect);
+    }
+    return aspectCorrection;
+  }
+
+  fragment fragmentOut fragmentShader(fragmentIn in [[stage_in]],
+                                      constant Uniforms & uniforms [[buffer(1)]],
+                                      DefaultInputs defaultInputs,
+                                      texture2d<float> tex1,
+                                      sampler tex1Smplr) {
+    float2 uv = in.sourceTextureCoordinate;
+    float4 base = sampleInput(defaultInputs, uv);
+
+    float2 aspectCorrection = fit2Size(uniforms.fillSize, uniforms.outputSize);
+    float2 fillUV = (uv - 0.5) * aspectCorrection + 0.5;
+    float4 fill = tex1.sample(tex1Smplr, fillUV);
+
+    float luminance = luma(base.rgb);
+    float keyMask = smoothstep(uniforms.threshold - uniforms.tolerance,
+                               uniforms.threshold + uniforms.tolerance,
+                               luminance);
+
+    keyMask = mix(keyMask, 1.0 - keyMask, uniforms.invertKey);
+
+    float4 result = mix(fill, base, keyMask);
+    result.a = base.a;
+
+    result = mix(base, result, uniforms.strength);
+
+    fragmentOut out = {};
+    out._gl_FragColor = toOutputFormat(result);
+    return out;
+  }
+";

@@ -1,0 +1,59 @@
+[Filter VideoCenterWipeHorizontal]
+[MaskBehavior alpha]
+
+[Init]
+fun init(Filter filter) {
+    filter.parameters = {
+        {amount = 0.03, min = 0.0, max = 0.5, description = "Edge smoothness"},
+        {outro = 0.0, min = 0.0, max = 1.0, description = "0 = In, 1 = Out"},
+    };
+
+    filter.passes = {
+        {
+            name = 'pass0,
+            inputs = {'default},
+            uniforms = {
+                progress = 0.0,
+                amount = 0.05,
+                outro = 0.0,
+            },
+            glslShader = glsl,
+        },
+    };
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+    f32 progress = getParameterFloat('progress);
+    f32 amount = getParameterFloat('amount);
+    f32 outro = getParameterFloat('outro);
+
+    # keep amount off 0 so the smoothstep edge doesn't collapse
+    amount = max(0.001, amount);
+
+    setShaderUniform('pass0, 'progress, progress);
+    setShaderUniform('pass0, 'amount, amount);
+    setShaderUniform('pass0, 'outro, outro);
+}
+
+string glsl = "
+    precision highp float;
+    varying vec2 sourceTextureCoordinate;
+    uniform float progress;
+    uniform float amount;
+    uniform float outro;
+
+    void main() {
+        vec2 uv = sourceTextureCoordinate;
+        vec4 color = sampleInput(uv);
+
+        float p = mix(progress, 1.0 - progress, outro);
+        float dist = abs(uv.y - 0.5);
+        float edge = mix(-amount, 0.5 + amount, p);
+        float mask = smoothstep(edge + amount, edge - amount, dist);
+
+        color.a = color.a * mask;
+        color.rgb *= color.a;
+        gl_FragColor = toOutputFormat(color);
+    }
+";

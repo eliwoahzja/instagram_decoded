@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "identifier": "85F83D1C-C390-42E3-92B3-FD5AC9144153",
+  "displayName": "Drift in",
+  "description": "[IG Edits] Effect name shown in the video effects picker. This is the user-facing label for a video effect.",
+  "iglu": {
+    "legacyId": 3994,
+    "behavior": {
+      "type": "fixedIntro",
+      "durationMs": 2100,
+      "curve": "linear"
+    },
+    "customization": [
+      {
+        "name": "amount",
+        "default": 0.5,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Amount"
+      },
+      {
+        "name": "duration",
+        "default": 2.1,
+        "min": 0.1,
+        "max": 5.0,
+        "displayName": "Duration",
+        "displayMethod": "time"
+      }
+    ]
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAE1Z42tCmu"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "a53b5d4",
+      "handle": "AQAF6l5sRkDQ",
+      "md5": "52f4a05e2971e899dee2b7d66c798b18"
+    }
+  }
+}

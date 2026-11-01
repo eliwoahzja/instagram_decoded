@@ -1,0 +1,208 @@
+[Filter TransitionMorphFlowStatic]
+
+# Portable flowmap morph transition. Inlines a single coarse Lucas-Kanade
+# optical-flow solve in pure IGLUScript (no native optflow dep). Pipeline:
+#   lum        0.5    Rec.601 luma of both clips -> R=lumaA, G=lumaB
+#   lumL0..L3         box-downsampled luma pyramid down to LK res
+#   lk         .031   single LK solve -> affine-encoded flow (RG)
+#   warp       full   decode flow, advect A/-flow & B/+flow, cross-dissolve
+# Flow is signed sub-pixel displacement encoded enc=flow*(0.5/FLOW_RANGE)+0.5
+# so it survives 8-bit uint FBOs and bilinear interpolation.
+
+# Timing Range compresses the whole animation into a sub-range at the START of
+# the transition window: 1.0 uses the full window, 0.5 runs it at 2x then holds
+# on B for the remainder. The ease must be applied AFTER the compression,
+# otherwise its tail is truncated and the morph stops mid-motion.
+fun cubicInOut(f32 t) f32 {
+  if (t < 0.5) {
+    return 4.0 * t * t * t;
+  }
+  f32 u = -2.0 * t + 2.0;
+  return 1.0 - u * u * u * 0.5;
+}
+
+[Init]
+fun init(Filter filter) {
+  makeTexture('transition);
+  filter.passes = {
+    {
+      name = 'lum,
+      inputs = {'default, 'transition},
+      scale = {0.5, 0.5},
+      glslShader = lumGlsl,
+    },
+    {name = 'lum_smooth, igid = 'temporal_blend, inputs = {'lum}, uniforms = {decay = 0.05}},
+    {name = 'lumL0, inputs = {'lum_smooth}, scale = {0.25, 0.25},       glslShader = downGlsl},
+    {name = 'lumL1, inputs = {'lumL0},      scale = {0.125, 0.125},     glslShader = downGlsl},
+    {name = 'lumL2, inputs = {'lumL1},      scale = {0.0625, 0.0625},   glslShader = downGlsl},
+    {name = 'lumL3, inputs = {'lumL2},      scale = {0.03125, 0.03125}, glslShader = downGlsl},
+    {
+      name = 'lk,
+      inputs = {'lumL3},
+      scale = {0.03125, 0.03125},
+      uniforms = {maxStep = 2.0, gradEps = 0.03},
+      glslShader = lkGlsl,
+    },
+    {
+      name = 'warp,
+      inputs = {'default, 'transition, 'lk},
+      uniforms = {
+        easedProgress = 0.0,
+        flowStrength = 4.0,
+      },
+      glslShader = warpGlsl,
+    }
+  };
+
+  filter.parameters = {
+    {progressRange = 0.333, min = 0.1, max = 1.0, description = "Timing Range"},
+    {flowStrength = 0.4, min = 0.0, max = 5.0, description = "Flow Strength"},
+    {lumDecay = 0.05, min = 0.0, max = 1.0, description = "Luma Temporal Smoothing"},
+  };
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  vec2 size = getTextureSize('default);
+
+  # Per-level output resolutions (full res * per-level scale) for gradients/taps.
+  vec2 s0 = {size.x * 0.25, size.y * 0.25};
+  vec2 s1 = {size.x * 0.125, size.y * 0.125};
+  vec2 s2 = {size.x * 0.0625, size.y * 0.0625};
+  vec2 s3 = {size.x * 0.03125, size.y * 0.03125};
+  setShaderUniform('lumL0, 'levelSize, s0);
+  setShaderUniform('lumL1, 'levelSize, s1);
+  setShaderUniform('lumL2, 'levelSize, s2);
+  setShaderUniform('lumL3, 'levelSize, s3);
+  setShaderUniform('lk, 'levelSize, s3);
+
+  setShaderUniform('warp, 'flowStrength, getParameterFloat('flowStrength));
+
+  # Resolve host progress, compress it into the leading sub-range, then ease.
+  f32 progress = max(getParameterFloat('progress), getParameterFloat('transition_progress));
+  f32 range = max(getParameterFloat('progressRange), 0.001);
+  setShaderUniform('warp, 'easedProgress, cubicInOut(clamp(progress / range, 0.0, 1.0)));
+
+  # Temporal denoise strength for the packed-luma feedback (igid child param).
+  setShaderUniform('lum_smooth, 'decay, getParameterFloat('lumDecay));
+}
+
+# Pass 1: pack Rec.601 luma of both inputs into R (clip A) and G (clip B).
+string lumGlsl = "
+varying vec2 sourceTextureCoordinate;
+BaseUniformsOpenGL;
+uniform sampler2D auxSampler0;
+uniform sampler2D auxSampler1;
+void main() {
+  vec2 uv = sourceTextureCoordinate;
+  vec4 a = sampleInput(uv);
+  vec4 b = texture2D(auxSampler1, uv);
+  vec3 w = vec3(0.299, 0.587, 0.114);
+  gl_FragColor = toOutputFormat(vec4(dot(a.rgb, w), dot(b.rgb, w), 0.0, 1.0));
+}
+";
+
+# Downsample: 4-tap box average (low-pass pre-filter for the next pyramid level).
+string downGlsl = "
+varying vec2 sourceTextureCoordinate;
+BaseUniformsOpenGL;
+uniform vec2 levelSize; // this pass's output resolution
+void main() {
+  vec2 uv = sourceTextureCoordinate;
+  vec2 hp = 0.5 / levelSize;
+  vec4 sum = sampleInput(uv + vec2( hp.x,  hp.y));
+  sum += sampleInput(uv + vec2(-hp.x,  hp.y));
+  sum += sampleInput(uv + vec2( hp.x, -hp.y));
+  sum += sampleInput(uv + vec2(-hp.x, -hp.y));
+  gl_FragColor = toOutputFormat(sum * 0.25);
+}
+";
+
+# Single-level Lucas-Kanade solve over a 3x3 window -> encoded flow (RG, UV units).
+# Brightness-constancy residual, gradEps-regularised 2x2 solve, per-solve clamp.
+string lkGlsl = "
+varying vec2 sourceTextureCoordinate;
+BaseUniformsOpenGL;
+uniform vec2 levelSize; // resolution of the LK level
+uniform float maxStep;  // per-solve increment clamp, in texels
+uniform float gradEps;  // Tikhonov regularisation (damps flat regions)
+
+const float FLOW_RANGE = 0.0625;
+vec2 encodeFlow(vec2 f) { return f * (0.5 / FLOW_RANGE) + 0.5; }
+
+void main() {
+  vec2 uv = sourceTextureCoordinate;
+  vec2 texel = 1.0 / levelSize;
+
+  float Sxx = 0.0;
+  float Syy = 0.0;
+  float Sxy = 0.0;
+  float Sxt = 0.0;
+  float Syt = 0.0;
+
+  for (int j = -1; j <= 1; j++) {
+    for (int i = -1; i <= 1; i++) {
+      vec2 suv = uv + vec2(float(i), float(j)) * texel;
+      float A  = sampleInput(suv).r;
+      float Bw = sampleInput(suv).g;
+      float It = Bw - A;
+      float Ix = (sampleInput(suv + vec2(texel.x, 0.0)).r
+                - sampleInput(suv - vec2(texel.x, 0.0)).r) * 0.5;
+      float Iy = (sampleInput(suv + vec2(0.0, texel.y)).r
+                - sampleInput(suv - vec2(0.0, texel.y)).r) * 0.5;
+      Sxx += Ix * Ix;
+      Syy += Iy * Iy;
+      Sxy += Ix * Iy;
+      Sxt += Ix * It;
+      Syt += Iy * It;
+    }
+  }
+
+  // Regularised 2x2 solve: [u;v] = M^-1 * (-b), texel units. gradEps on the
+  // diagonal makes flat windows yield ~0 flow instead of amplifying noise.
+  float a = Sxx + gradEps;
+  float d = Syy + gradEps;
+  float det = a * d - Sxy * Sxy;
+
+  vec2 inc = vec2(0.0);
+  if (det > 1.0e-12) {
+    inc = vec2(-(d * Sxt - Sxy * Syt) / det, -(a * Syt - Sxy * Sxt) / det);
+  }
+
+  float len = length(inc);
+  if (len > maxStep) { inc *= maxStep / len; }
+
+  gl_FragColor = toOutputFormat(vec4(encodeFlow(inc * texel), 0.0, 1.0));
+}
+";
+
+# Warp: decode the flow, advect A forward and B backward along it, cross-dissolve.
+string warpGlsl = "
+varying vec2 sourceTextureCoordinate;
+BaseUniformsOpenGL;
+uniform sampler2D auxSampler0;
+uniform sampler2D auxSampler1;   // transition (clip B), full res
+uniform sampler2D auxSampler2;   // encoded flow field, coarse res
+uniform float easedProgress;
+uniform float flowStrength;
+
+const float FLOW_RANGE = 0.0625;
+vec2 decodeFlow(vec2 e) { return (e - 0.5) * (2.0 * FLOW_RANGE); }
+
+vec2 mirrorUV(vec2 uv) {
+  uv = fract(uv * 0.5) * 2.0;
+  return 1.0 - abs(1.0 - uv);
+}
+
+void main() {
+  vec2 uv = sourceTextureCoordinate;
+
+  // Decoded A->B flow (UV units), scaled by Flow Strength.
+  vec2 dUV = decodeFlow(texture2D(auxSampler2, uv).xy) * flowStrength;
+
+  // Advect A toward B (-dUV) and B back toward A (+dUV) so matching features meet.
+  vec4 warpedA = sampleInput(mirrorUV(uv - dUV * easedProgress));
+  vec4 warpedB = texture2D(auxSampler1, mirrorUV(uv + dUV * (1.0 - easedProgress)));
+  gl_FragColor = toOutputFormat(mix(warpedA, warpedB, easedProgress));
+}
+";

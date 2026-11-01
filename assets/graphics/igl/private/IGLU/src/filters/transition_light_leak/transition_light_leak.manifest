@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "transition_light_leak",
+  "displayName": "Light Leak",
+  "description": "[IG Edits] Transition name. With \"Light Leak\", the creator can transition between clips through a rotating simplex-noise color light leak with an exposure flash at the midpoint.",
+  "iglu": {}
+}

@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_roulette",
+  "displayName": "Roulette",
+  "description": "[IG Edits] Video effect name. With \"Roulette\", the creator can intro the clip with a horizontal scrolling loop that wraps the image N times with motion-blur peaking mid-spin like a slot reel.",
+  "iglu": {
+    "legacyId": 3008,
+    "behavior": {
+      "type": "fixedIntro",
+      "durationMs": 1500,
+      "curve": "quarticOut"
+    },
+    "customization": [
+      {
+        "name": "duration",
+        "default": 1.5,
+        "min": 0.3,
+        "max": 5.0,
+        "displayName": "Duration",
+        "displayNameDescription": "[IG Edits] Slider label controlling how long a video effect's animation lasts; exact units and range vary per effect (seconds or normalized).",
+        "displayMethod": "time"
+      },
+      {
+        "name": "amount",
+        "default": 6.0,
+        "min": 1.0,
+        "max": 18.0,
+        "displayName": "Amount",
+        "displayNameDescription": "[IG Edits] Slider label controlling the magnitude or quantity of a video effect. Generic across many effects; exact range varies per effect.",
+        "displayMethod": "number"
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "87c2f550",
+      "handle": "AQAIFikP5b5_",
+      "md5": "8c0c48dbe8dc5dbb04381e5bb89fabb5"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAFJw64NwJG"
+    }
+  }
+}

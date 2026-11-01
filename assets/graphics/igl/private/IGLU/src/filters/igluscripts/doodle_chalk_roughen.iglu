@@ -1,0 +1,147 @@
+[Filter DoodleChalkRoughen]
+[MaskBehavior alpha]
+
+# Post-processing filter for the Chalk brush preset.
+# Simple separable erosion to eat into stroke edges — no grain, no displacement.
+# 4-pass pipeline: threshold → erodeH → erodeV → compose
+
+[Init]
+fun init(Filter filter) {
+  filter.parameters = {
+    {erosionRadius = 0.655, min = 0.0, max = 8.0, description = "Erosion Radius"},
+    {threshold = 0.051, min = 0.0, max = 1.0, description = "Threshold"},
+    {feather = 0.045, min = 0.0, max = 0.5, description = "Feather"},
+  };
+
+  filter.passes = {
+  {
+    name = 'threshold,
+    inputs = {'default},
+    uniforms = {
+      threshold = 0.051,
+      feather = 0.045,
+    },
+    glslShader = thresholdGlsl,
+  },
+  {
+    name = 'erodeH,
+    inputs = {'threshold},
+    uniforms = {
+      outputSize = {1080.0, 1920.0},
+      axis = {1.0, 0.0},
+      radius = 0.655,
+    },
+    glslShader = erodeGlsl,
+  },
+  {
+    name = 'erodeV,
+    inputs = {'erodeH},
+    uniforms = {
+      outputSize = {1080.0, 1920.0},
+      axis = {0.0, 1.0},
+      radius = 0.655,
+    },
+    glslShader = erodeGlsl,
+  },
+  {
+    name = 'compose,
+    inputs = {'default, 'erodeV},
+    uniforms = {},
+    glslShader = composeGlsl,
+  }
+  };
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  vec2 size = getTextureSize('default);
+
+  f32 erosionRadius = getParameterFloat('erosionRadius);
+  f32 thresholdVal = getParameterFloat('threshold);
+  f32 featherVal = getParameterFloat('feather);
+
+  setShaderUniform('threshold, 'threshold, thresholdVal);
+  setShaderUniform('threshold, 'feather, featherVal);
+
+  setShaderUniform('erodeH, 'outputSize, size);
+  setShaderUniform('erodeH, 'radius, erosionRadius);
+
+  setShaderUniform('erodeV, 'outputSize, size);
+  setShaderUniform('erodeV, 'radius, erosionRadius);
+}
+
+# ==========================================================================
+# Pass 1: Alpha threshold — binarize the mask for clean erosion input
+# ==========================================================================
+string thresholdGlsl = "
+precision highp float;
+
+varying vec2 sourceTextureCoordinate;
+BaseUniformsOpenGL;
+
+uniform float threshold;
+uniform float feather;
+
+void main() {
+  vec2 uv = sourceTextureCoordinate;
+  vec4 color = sampleInput(uv);
+  float a = smoothstep(threshold - feather, threshold + feather, color.a);
+  gl_FragColor = toOutputFormat(vec4(a, a, a, a));
+}
+";
+
+# ==========================================================================
+# Pass 2-3: Separable 1D erosion — min-value kernel
+# ==========================================================================
+string erodeGlsl = "
+precision highp float;
+
+varying vec2 sourceTextureCoordinate;
+BaseUniformsOpenGL;
+
+uniform vec2 outputSize;
+uniform vec2 axis;
+uniform float radius;
+
+#define MAX_RADIUS 8
+
+vec4 erode(vec2 uv, vec2 pixel) {
+  vec4 c = vec4(1.0);
+  for (int i = -MAX_RADIUS; i <= MAX_RADIUS; ++i) {
+    vec4 v = sampleInput(uv + pixel * float(i));
+    c = min(c, v);
+  }
+  return c;
+}
+
+void main() {
+  vec2 uv = sourceTextureCoordinate;
+  vec2 duv = axis / outputSize;
+  vec4 color = erode(uv, radius * duv / float(MAX_RADIUS));
+  gl_FragColor = toOutputFormat(color);
+}
+";
+
+# ==========================================================================
+# Pass 4: Compose — clip original stroke by eroded mask
+# tex0 = original stroke (default), auxSampler1 = eroded mask
+# ==========================================================================
+string composeGlsl = "
+precision highp float;
+
+varying vec2 sourceTextureCoordinate;
+BaseUniformsOpenGL;
+
+uniform sampler2D auxSampler1;
+
+void main() {
+  vec2 uv = sourceTextureCoordinate;
+  vec4 color = sampleInput(uv);
+  float erodedMask = texture2D(auxSampler1, uv).r;
+
+  color.a *= erodedMask;
+  color.rgb *= erodedMask;
+
+  gl_FragColor = toOutputFormat(color);
+}
+";

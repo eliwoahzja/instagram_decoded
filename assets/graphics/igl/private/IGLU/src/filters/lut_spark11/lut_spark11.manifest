@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "identifier": "honey",
+  "displayName": "Honey",
+  "description": "[IG Edits] Color filter name. With \"Honey\", the creator can apply a warm golden honey-amber cast by remapping each pixel's RGB through a 3D color lookup table.",
+  "iglu": {
+    "legacyId": 828
+  },
+  "assets": [
+    {
+      "name": "honey.png",
+      "assetHash": "c845d9345f416a949d8e6a8a2fd55b41e24b56c9fc9f22d2ea8707401f29f479",
+      "hubAssetId": "2190169698424927"
+    },
+    {
+      "name": "honey_compressed.png",
+      "assetHash": "3ce654826cbf9f83bbe0ff601d1befbf07a34524ef073726a16e2733a1c95933",
+      "hubAssetId": "1493637008832841"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "identifier": "kodak_kodachrome",
+  "displayName": "Kodak Kodachrome",
+  "description": "[IG Edits] Color filter name. With \"Kodak Kodachrome\", the creator can apply a Kodak Kodachrome film emulation via the clut_kodachrome 3D LUT, producing warm saturated reds and vintage tones.",
+  "assets": [
+    {
+      "name": "clut_kodachrome.png",
+      "assetHash": "ee0e9ceb33117605765455f2af31a17421c650afc9b8267f6bed5988546e19d3",
+      "hubAssetId": "787974297140944"
+    }
+  ],
+  "iglu": {}
+}

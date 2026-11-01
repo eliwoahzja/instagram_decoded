@@ -1,0 +1,71 @@
+[Filter IgluscriptVideoJumpCutInFilter]
+[MaskBehavior alpha]
+
+fun mix(f32 a, f32 b, f32 t) f32 {
+  return a * (1.0 - t) + b * t;
+}
+
+f32 swingAmplitude = 0.4;
+f32 rotAmplitude = -1.5;
+f32 liftAmount = 0.18;
+f32 decay = 5.0;
+f32 freq = 3.1415*1.5;
+
+f32 startScale = 0.5;
+
+[Init]
+fun init(Filter filter) {
+  filter.parameters = {
+    {center = {0.5, 0.5}, min = {0.0, 0.0}, max = {1.0, 1.0}},
+    {outro = 0.0, min = 0.0, max = 1.0, description = "0 = In, 1 = Out"},
+  };
+
+  filter.passes = {{
+      name = 'scaleFx,
+      igid = 'video_scale_opacity,
+      inputs = {'default},
+      uniforms = {
+        progress = 0.0,
+        scale = 1.0,
+        opacity = 0.0,
+        rotation = 0.0,
+        center = {0.5, 0.5},
+        position = {0.0, 0.0},
+      }
+    }};
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  f32 p = getParameterFloat('progress);
+  f32 outro = getParameterFloat('outro);
+  if (outro > 0.5) { p = 1.0 - p; }
+  f32 steps = 8.0;
+  p = p* steps;
+  p = floor(p)/steps;
+  p = clamp(p, 0.0, 1.0);
+
+  # Damped sinusoidal — starts at max displacement (cos-like via phase offset)
+  f32 swing = (1.0-p) * sin(freq * p + 1.5708);
+  f32 rot = (1.0-p) * sin(freq*3.1 * p) * rotAmplitude;
+
+  f32 posX = swing * swingAmplitude;
+  f32 posY = -liftAmount * (1.0 - p);
+  f32 rotation = rot;
+  f32 opacity = clamp(p * 8.0, 0.0, 1.0);
+
+  f32 scale = mix(startScale, 0.8, p);
+  f32 snap = 0.0;
+  if (p >= 1.0-1.0/steps) { snap = 1.0; }
+  scale = mix(scale, 1.0, snap);
+
+  setShaderUniform('scaleFx, 'progress, p);
+  setShaderUniform('scaleFx, 'scale, scale);
+  setShaderUniform('scaleFx, 'opacity, opacity);
+  setShaderUniform('scaleFx, 'rotation, rotation);
+  vec2 pos = {0.0, 0.0};
+  pos.x = posX;
+  pos.y = posY;
+  setShaderUniform('scaleFx, 'position, pos);
+  setShaderUniform('scaleFx, 'center, getParameterVec2('center));
+}

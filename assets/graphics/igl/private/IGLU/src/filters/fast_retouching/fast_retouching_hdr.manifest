@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "fast_retouching_hdr",
+  "displayName": "Fast Retouching HDR",
+  "description": "[IG Edits] Video effect name. With \"Fast Retouching HDR\", the creator can apply the same guided-filter skin smoothing but with passes rendered in RGBA_F16 for HLG/PQ HDR inputs.",
+  "iglu": {}
+}

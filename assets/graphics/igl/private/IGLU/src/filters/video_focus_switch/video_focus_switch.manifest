@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_focus_switch",
+  "displayName": "Focus switch",
+  "description": "Video effect name. A video effect is a creative visual element that can be applied to a video. With \"Focus switch\", the creator can switch focus between foreground and background elements.",
+  "iglu": {
+    "legacyId": 2055,
+    "customization": [
+      {
+        "name": "intensity",
+        "default": 0.75,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Intensity",
+        "displayNameDescription": "[IG Edits] Slider label controlling the strength of a video effect. Generic across many effects (glow, blur, color, distortion, etc.); exact range varies per effect."
+      },
+      {
+        "name": "speed",
+        "default": 0.275,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Speed",
+        "displayNameDescription": "[IG Edits] Slider label controlling the playback or animation speed of a video effect (noun, not a verb); exact range varies per effect."
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "f3c6cac1",
+      "handle": "AQAMoDoJeot1",
+      "md5": "8d8a98c9e6ed3fa9380a3aed6c666022"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQBlBe1j6RuV"
+    }
+  }
+}

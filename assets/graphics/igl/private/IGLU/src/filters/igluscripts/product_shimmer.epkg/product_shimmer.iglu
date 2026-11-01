@@ -1,0 +1,99 @@
+[Filter ProductShimmer]
+[MaskBehavior composite]
+
+[Init]
+fun init(Filter filter) {
+  # Declares the named mask input that the host binds to the object silhouette.
+  makeTexture('mask);
+
+  filter.parameters = {
+    {intensity = 1.0, min = 0.0, max = 3.0, description = "Shimmer Intensity"},
+    {speed = 0.5, min = 0.0, max = 4.0, description = "Shimmer Speed"},
+    {patternScale = 1.0, min = 0.1, max = 4.0, description = "Pattern Scale"},
+    {lower = 0.0, min = 0.0, max = 1.0, description = "Threshold Low"},
+    {upper = 1.0, min = 0.0, max = 1.0, description = "Threshold High"},
+    {shimmerColor = {1.0, 1.0, 1.0, 1.0}, description = "Shimmer Color"},
+  };
+
+  filter.passes = {
+    {
+      name = 'shimmer,
+      inputs = {'default, 'mask},
+      uniforms = {
+        uTime = 0.0,
+        intensity = 1.0,
+        speed = 1.0,
+        patternScale = 1.0,
+        lower = 0.0,
+        upper = 1.0,
+        inputSize = {1080.0, 1920.0},
+        shimmerColor = {1.0, 1.0, 1.0, 1.0},
+      },
+      glslShader = glsl,
+    }
+  };
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  vec2 inputSize = getTextureSize('default);
+
+  setShaderUniform('shimmer, 'inputSize, inputSize);
+  setShaderUniform('shimmer, 'uTime, getParameterFloat('time_sec));
+  setShaderUniform('shimmer, 'intensity, getParameterFloat('intensity));
+  setShaderUniform('shimmer, 'speed, getParameterFloat('speed));
+  setShaderUniform('shimmer, 'patternScale, getParameterFloat('patternScale));
+  setShaderUniform('shimmer, 'lower, getParameterFloat('lower));
+  setShaderUniform('shimmer, 'upper, getParameterFloat('upper));
+  setShaderUniform('shimmer, 'shimmerColor, getParameterVec4('shimmerColor));
+}
+
+string glsl = "
+  precision highp float;
+  varying vec2 sourceTextureCoordinate;
+
+  BaseUniformsOpenGL;
+
+  uniform float uTime;
+  uniform float intensity;
+  uniform float speed;
+  uniform float patternScale;
+  uniform float lower;
+  uniform float upper;
+  uniform vec2 inputSize;
+  uniform vec4 shimmerColor;
+
+  uniform sampler2D auxSampler1;
+
+  float maskCoverage(vec4 c) {
+    return max(c.r, max(c.g, c.b));
+  }
+
+  float F(inout vec4 k, float v) {
+    return length(.5 - fract(k.xyw *= mat3(-2, -1, 2, 3, -2, 1, 1, 2, 2) * v));
+  }
+
+  float caustics(vec2 uv, float scale, float time, float speed) {
+    vec2 uvs = .5 + (uv - .5) * 100. * scale;
+    float t = time * speed;
+    vec4 k = vec4(0., 0., 0., t);
+    k.xy = uvs * (2.) / 2e2;
+    return pow(min(min(F(k, .5), F(k, .4)), F(k, .3)), 7.) * 25.;
+  }
+
+  void main() {
+    vec2 uv = sourceTextureCoordinate;
+    vec4 base = sampleInput(uv);
+
+    uv.y *= inputSize.y / inputSize.x;
+
+    float shimmer = caustics(uv, patternScale, uTime, speed);
+    shimmer = smoothstep(lower, max(upper, lower + 0.001), shimmer);
+
+    shimmer *= maskCoverage(texture2D(auxSampler1, sourceTextureCoordinate));
+
+    vec3 light = shimmerColor.rgb * shimmerColor.a * shimmer * intensity;
+    vec4 color = vec4(base.rgb + light, base.a);
+    gl_FragColor = toOutputFormat(color);
+  }
+";

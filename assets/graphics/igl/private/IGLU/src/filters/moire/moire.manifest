@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "identifier": "moire",
+  "displayName": "Moire",
+  "description": "[IG Edits] Video effect. With \"Moire\", the creator can simulate a CRT/VHS look with chromatic aberration, Gaussian blur, scanlines, wavy interference, grain, dust, and screen tear.",
+  "iglu": {
+    "legacyId": 1107
+  }
+}

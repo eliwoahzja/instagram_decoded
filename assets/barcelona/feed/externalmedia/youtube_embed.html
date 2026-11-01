@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <style>
+      html, body, #player {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: #000;
+      }
+
+      iframe {
+        border: 0;
+      }
+    </style>
+    <script src="https://www.youtube.com/iframe_api"></script>
+  </head>
+  <body>
+    <div id="player"></div>
+    <script>
+      window.ThreadsYoutubeConfig = {
+        bridgeName: "__YOUTUBE_BRIDGE_NAME__",
+        autoplay: __AUTOPLAY__,
+        controls: __CONTROLS__,
+        ccLoadPolicy: __CC_LOAD_POLICY__,
+        shouldHandleHiddenChromeTap: __HANDLE_HIDDEN_CHROME_TAP__,
+        startSeconds: __START_SECONDS__,
+        muted: __MUTED__,
+        origin: "https://www.threads.com",
+        videoId: "__VIDEO_ID__"
+      };
+    </script>
+    <script>
+__YOUTUBE_EMBED_SCRIPT__
+    </script>
+  </body>
+</html>

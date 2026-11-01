@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "filter_group",
+  "displayName": "Filter Group",
+  "description": "[IG Edits] Video effect name. With \"Filter Group\", the creator can run several child filters on the same input and output in parallel without creating intermediate surfaces.",
+  "iglu": {}
+}

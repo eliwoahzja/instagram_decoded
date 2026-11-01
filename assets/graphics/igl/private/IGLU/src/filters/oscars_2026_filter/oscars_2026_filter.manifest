@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "identifier": "oscars_2026_filter",
+  "displayName": "Cinematic",
+  "description": "[IG Edits] Video effect name. With \"Cinematic\", the creator can apply a cinematic film-style color grade to the video.",
+  "iglu": {
+    "legacyId": 2305
+  },
+  "attribution": "@ethanbarber.co"
+}

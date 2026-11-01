@@ -1,0 +1,179 @@
+[Filter Moments]
+# "Moments" — 4-quadrant split canvas with corner anchoring.
+#
+# Each quadrant is a corner-anchored, uniform-scale copy of the source.
+# Uniform scale preserves the source aspect ratio (no stretching). Per
+# author spec:
+#
+#   Q1: B&W,   scale = bw_scale,  anchor = top-right,    z = 1
+#   Q2: B&W,   scale = bw_scale,  anchor = bottom-left,  z = 2
+#   Q3: Color, scale = lut_scale, anchor = top-left,     z = 3
+#   Q4: Color, scale = lut_scale, anchor = bottom-right, z = 4
+#
+# Defaults: bw_scale = 0.5, lut_scale = 0.55. The 0.55 scale on the
+# color quadrants creates the overlap into the B&W quadrants seen in
+# the reference frame. Z-order is fixed (Q4 wins ties).
+#
+# LUT delivered via ARD (effectId / assetHash filled in once provided —
+# TODO placeholders in the manifest until then).
+
+[Init]
+fun init(Filter filter)
+{
+    makeTexture('lut);
+
+    filter.parameters = {
+        {strength = 1.0, min = 0.0, max = 1.0, description = "Overall effect mix vs source"},
+        {bw_scale = 0.5, min = 0.05, max = 1.0, description = "Scale of B&W quadrants (Q1 top-right, Q2 bottom-left)"},
+        {lut_scale = 0.55, min = 0.05, max = 1.0, description = "Scale of color quadrants (Q3 top-left, Q4 bottom-right)"},
+        {bw_strength = 1.0, min = 0.0, max = 1.0, description = "Desaturation strength in B&W quadrants"},
+        {lut_strength = 1.0, min = 0.0, max = 1.0, description = "LUT mix strength in color quadrants"},
+    };
+
+    filter.passes = {{
+      name = 'pass0,
+      inputs = {'default, 'lut},
+      uniforms = {
+        strength = 1.0,
+        bw_scale = 0.5,
+        lut_scale = 0.55,
+        bw_strength = 1.0,
+        lut_strength = 1.0,
+      },
+      glslShader = glslMoments,
+    }};
+}
+
+string lut_path = "lut_path";
+string lut_filename = "";
+
+[PreRender]
+fun preRender(Filter filter){
+    string lut_filename_parameter = getParameterString(lut_path);
+    if (lut_filename_parameter != "") {
+        string new_lut_filename = stringAppend("textureFilePath://", lut_filename_parameter);
+        if (new_lut_filename != lut_filename) {
+            lut_filename = new_lut_filename;
+            loadTexture('lut, lut_filename);
+        }
+    }
+
+    f32 s = getParameterFloat('strength);
+    setShaderUniform('pass0, 'strength, s);
+
+    f32 bws = getParameterFloat('bw_scale);
+    setShaderUniform('pass0, 'bw_scale, bws);
+
+    f32 lus = getParameterFloat('lut_scale);
+    setShaderUniform('pass0, 'lut_scale, lus);
+
+    f32 bw_str = getParameterFloat('bw_strength);
+    setShaderUniform('pass0, 'bw_strength, bw_str);
+
+    f32 lut_str = getParameterFloat('lut_strength);
+    setShaderUniform('pass0, 'lut_strength, lut_str);
+}
+
+#### GLSL shader ####
+
+string glslMoments = "
+    varying vec2 sourceTextureCoordinate;
+    BaseUniformsOpenGL;
+
+    uniform sampler2D auxSampler0;
+    uniform sampler2D auxSampler1;
+    uniform sampler2D auxSampler2;
+
+    uniform float bw_scale;
+    uniform float lut_scale;
+    uniform float bw_strength;
+    uniform float lut_strength;
+
+    vec3 applyLut(vec3 inRgb) {
+      vec3 c = clamp(inRgb, 0.00781, 0.98438);
+      float x = c.r / 8.0;
+      float y = c.g / 8.0;
+      float z = c.b;
+      float blueY = floor(z * 8.0) / 8.0;
+      float blueX = floor((z - blueY) * 64.0) / 8.0;
+      x += blueX;
+      y += blueY;
+      return texture2D(auxSampler1, vec2(x, y)).xyz;
+    }
+
+    vec3 desaturate(vec3 inRgb) {
+      float l = dot(inRgb, vec3(0.2989, 0.5870, 0.1140));
+      return vec3(l);
+    }
+
+    void main() {
+      vec2 uv = sourceTextureCoordinate;
+
+      // Clamp scales to avoid divide-by-zero edge cases.
+      float bws = max(bw_scale, 0.001);
+      float lus = max(lut_scale, 0.001);
+
+      // Quadrant rect bounds (anchored to a corner of the output frame).
+      // Z-order: Q4 > Q3 > Q2 > Q1. First hit wins.
+      vec3 quadOut = vec3(0.0);
+      bool covered = false;
+
+      // Q4: Color, anchor bottom-right, scale lut_scale
+      // Rect: [1 - lus, 1] x [1 - lus, 1]
+      if (!covered && uv.x >= 1.0 - lus && uv.y >= 1.0 - lus) {
+        vec2 local = vec2(
+          (uv.x - (1.0 - lus)) / lus,
+          (uv.y - (1.0 - lus)) / lus
+        );
+        vec3 src = sampleInput(local).rgb;
+        quadOut = mix(src, applyLut(src), lut_strength);
+        covered = true;
+      }
+
+      // Q3: Color, anchor top-left, scale lut_scale
+      // Rect: [0, lus] x [0, lus]
+      if (!covered && uv.x <= lus && uv.y <= lus) {
+        vec2 local = vec2(uv.x / lus, uv.y / lus);
+        vec3 src = sampleInput(local).rgb;
+        quadOut = mix(src, applyLut(src), lut_strength);
+        covered = true;
+      }
+
+      // Q2: B&W, anchor bottom-left, scale bw_scale
+      // Rect: [0, bws] x [1 - bws, 1]
+      if (!covered && uv.x <= bws && uv.y >= 1.0 - bws) {
+        vec2 local = vec2(
+          uv.x / bws,
+          (uv.y - (1.0 - bws)) / bws
+        );
+        vec3 src = sampleInput(local).rgb;
+        quadOut = mix(src, desaturate(src), bw_strength);
+        covered = true;
+      }
+
+      // Q1: B&W, anchor top-right, scale bw_scale
+      // Rect: [1 - bws, 1] x [0, bws]
+      if (!covered && uv.x >= 1.0 - bws && uv.y <= bws) {
+        vec2 local = vec2(
+          (uv.x - (1.0 - bws)) / bws,
+          uv.y / bws
+        );
+        vec3 src = sampleInput(local).rgb;
+        quadOut = mix(src, desaturate(src), bw_strength);
+        covered = true;
+      }
+
+      // strength gates the entire effect against the source. At
+      // strength=0 the original source passes through; at strength=1
+      // the quadrant treatment is shown. Uncovered pixels (when scales
+      // are dragged below their defaults so gaps open up) pass through
+      // source rather than rendering black, so the transition feels
+      // intentional regardless of slider state.
+      vec4 origSrc = sampleInput(uv);
+      vec3 outRgb = covered
+          ? mix(origSrc.rgb, quadOut, strength)
+          : origSrc.rgb;
+
+      gl_FragColor = toOutputFormat(vec4(outRgb, origSrc.a));
+    }
+    ";

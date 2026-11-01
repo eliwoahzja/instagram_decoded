@@ -1,0 +1,312 @@
+[Filter OldFilm]
+# "Old Film" — multi-layer animated vintage film effect. Three logical
+# layers composed in a single fragment pass:
+#
+#   Layer 1 — Base LUT color grade (full canvas)
+#     Standard 8x8 grid LUT lookup on the camera, sampled through the
+#     content-shift offset (Layer 3a) so the whole graded image drifts
+#     under the frame.
+#
+#   Layer 2 — Animated film scratches (full canvas, procedural)
+#     12 discrete frames at 12 fps. Each frame seeds 0-5 thin vertical
+#     stripes biased toward the left/right edges of the canvas.
+#     Composed via SUBTRACT (`base -= scratch * scratch_strength`) at
+#     20% opacity so the scratches read as light grey/white streaks
+#     where the LUT happens to have midtone or darker values.
+#
+#   Layer 3 — Film frame border + content shift + tick marks
+#
+#     3a) Content shift: the LUT + scratches composite is sampled at
+#         `uv - shift(t)` where shift(t) is a slow organic 2D drift
+#         driven by two-octave sin-of-time on each axis. Magnitude is
+#         capped at `shift_magnitude` (default ~0.008 UV) — small enough
+#         that the drift never reveals anything outside the rounded
+#         frame opening.
+#
+#     3b) Black frame border: SDF-based rounded inset rectangle locked
+#         to the SCREEN (does not participate in the content shift).
+#         Outside the rounded rect is solid black; inside passes the
+#         shifted content through. Old-film-gate aesthetic.
+#
+#     3c) Periodic orange-red tick marks: small bars on the inner edge
+#         of the top and bottom borders. Per `tick_interval` (default
+#         2.2s), a fresh per-cycle seed re-rolls position + size; the
+#         tick is visible for `tick_hold` seconds (default 0.5s) at the
+#         start of each cycle, otherwise hidden. Color baked at
+#         vec3(0.85, 0.25, 0.05) — deep orange-red.
+#
+# Composite order (bottom -> top):
+#   shifted(LUT(camera) - scratches) -> frame border -> tick marks
+#
+# Time source: getLocalTime() (monotonic wall-clock since shader start)
+# per the Time Source skill-doc rule for continuous animations. The
+# host's `time_sec` wraps with the sample-app's video loop and would
+# break the scratch / drift / tick continuity.
+
+[Init]
+fun init(Filter filter)
+{
+    makeTexture('lut);
+
+    filter.parameters = {
+        # Layer 1 LUT.
+        {lut_strength = 1.0, min = 0.0, max = 1.0, description = "LUT mix strength (1.0 = full LUT, 0.0 = camera passthrough)"},
+
+        # Layer 2 scratches.
+        {scratch_strength = 0.018, min = 0.0, max = 1.0, description = "Animated scratch subtract opacity (0 = none)"},
+
+        # Layer 3a content shift.
+        {shift_magnitude = 0.003, min = 0.0, max = 0.080, description = "Content drift max magnitude in UV per jitter event"},
+        {jitter_rate = 6.5, min = 1.0, max = 60.0, description = "Average jitter events per second (intervals are irregular around this)"},
+
+        # Layer 3b frame border.
+        {frame_border_width = 0.035, min = 0.0, max = 0.15, description = "Black frame border thickness as fraction of canvas dim (per side)"},
+        {frame_corner_radius = 0.015, min = 0.0, max = 0.20, description = "Rounded-corner radius on the inner frame opening (UV units)"},
+
+        # Layer 3c tick marks.
+        {tick_interval = 1.276, min = 0.5, max = 8.0, description = "Seconds between orange-red tick flashes"},
+        {tick_strength = 0.3, min = 0.0, max = 1.0, description = "Tick mark opacity at peak"},
+    };
+
+    filter.passes = {{
+      name = 'pass0,
+      inputs = {'default, 'lut},
+      uniforms = {
+        lut_strength = 1.0,
+        scratch_strength = 0.018,
+        shift_magnitude = 0.003,
+        jitter_rate = 6.5,
+        frame_border_width = 0.035,
+        frame_corner_radius = 0.015,
+        tick_interval = 1.276,
+        tick_strength = 0.3,
+        time = 0.0,
+      },
+      glslShader = glslOldFilm,
+    }};
+}
+
+# Custom Parameter strings for sample-app local-loading.
+string lut_path = "lut_path";
+string lut_filename = "";
+
+[PreRender]
+fun preRender(Filter filter){
+    string lut_filename_parameter = getParameterString(lut_path);
+    if (lut_filename_parameter != "") {
+        string new_lut_filename = stringAppend("textureFilePath://", lut_filename_parameter);
+        if (new_lut_filename != lut_filename) {
+            lut_filename = new_lut_filename;
+            loadTexture('lut, lut_filename);
+        }
+    }
+
+    f32 ls = getParameterFloat('lut_strength);
+    setShaderUniform('pass0, 'lut_strength, ls);
+
+    f32 ss = getParameterFloat('scratch_strength);
+    setShaderUniform('pass0, 'scratch_strength, ss);
+
+    f32 sm = getParameterFloat('shift_magnitude);
+    setShaderUniform('pass0, 'shift_magnitude, sm);
+
+    f32 jr = getParameterFloat('jitter_rate);
+    setShaderUniform('pass0, 'jitter_rate, jr);
+
+    f32 fbw = getParameterFloat('frame_border_width);
+    setShaderUniform('pass0, 'frame_border_width, fbw);
+
+    f32 fcr = getParameterFloat('frame_corner_radius);
+    setShaderUniform('pass0, 'frame_corner_radius, fcr);
+
+    f32 ti = getParameterFloat('tick_interval);
+    setShaderUniform('pass0, 'tick_interval, ti);
+
+    f32 ts = getParameterFloat('tick_strength);
+    setShaderUniform('pass0, 'tick_strength, ts);
+
+    # Use getLocalTime() for monotonic continuous animation.
+    f32 time = getLocalTime();
+    setShaderUniform('pass0, 'time, time);
+}
+
+#### GLSL shader ####
+
+string glslOldFilm = "
+    varying vec2 sourceTextureCoordinate;
+    BaseUniformsOpenGL;
+
+    uniform sampler2D auxSampler0;  // 'default (camera)
+    uniform sampler2D auxSampler1;  // 'lut
+
+    uniform float lut_strength;
+    uniform float scratch_strength;
+    uniform float shift_magnitude;
+    uniform float jitter_rate;
+    uniform float frame_border_width;
+    uniform float frame_corner_radius;
+    uniform float tick_interval;
+    uniform float tick_strength;
+    uniform float time;
+
+    // 1D pseudo-random hash.
+    float hash11(float x) {
+      return fract(sin(x * 12.9898) * 43758.5453);
+    }
+
+    // 8x8 grid LUT lookup on auxSampler1.
+    vec3 lutLookup(vec3 inRgb) {
+      vec3 c = clamp(inRgb, 0.00781, 0.98438);
+      float x = c.r / 8.0;
+      float y = c.g / 8.0;
+      float z = c.b;
+      float blueY = floor(z * 8.0) / 8.0;
+      float blueX = floor((z - blueY) * 64.0) / 8.0;
+      x += blueX;
+      y += blueY;
+      return texture2D(auxSampler1, vec2(x, y)).xyz;
+    }
+
+    // Signed distance to a rounded-rect centered at (0.5, 0.5) with
+    // half-extents `b` (UV) and corner radius `r`. Negative inside,
+    // positive outside.
+    float sdRoundedRect(vec2 uv, vec2 b, float r) {
+      vec2 q = abs(uv - 0.5) - b + vec2(r);
+      return length(max(q, vec2(0.0))) + min(max(q.x, q.y), 0.0) - r;
+    }
+
+    void main() {
+      vec2 uv = sourceTextureCoordinate;
+
+      // ============================================================
+      // Layer 3a: Projector-jitter content shift. Each jitter event
+      // picks a fresh random (drift_x, drift_y) in [-1, 1] scaled by
+      // shift_magnitude. Boundary times are PERTURBED by a sin term so
+      // intervals vary irregularly around the 1/jitter_rate mean —
+      // matches the herky-jerky timing of real old projectors with
+      // imperfect frame registration.
+      // ============================================================
+      float perturb = sin(time * jitter_rate * 0.37 + 1.7) * 0.45;
+      float jitter_t = floor(time * jitter_rate + perturb);
+      float drift_x =
+          hash11(jitter_t * 13.31 + 1.7) * 2.0 - 1.0;
+      float drift_y =
+          hash11(jitter_t * 17.71 + 3.1) * 2.0 - 1.0;
+      vec2 shift = vec2(drift_x, drift_y) * shift_magnitude;
+      vec2 content_uv = uv - shift;
+
+      // ============================================================
+      // Layer 1: LUT-graded camera, sampled through the content shift.
+      // Graceful fallback for WIP / not-yet-uploaded LUT: if the LUT
+      // texture is empty (sampling vec3(1) returns ~black), skip the
+      // grade and pass camera through. Lets the rest of the filter
+      // (scratches + frame + ticks) be visible during dial-in before
+      // the LUT asset lands in ARD.
+      // ============================================================
+      vec4 cam_raw = sampleInput(content_uv);
+      vec3 lut_rgb = lutLookup(cam_raw.rgb);
+      // Probe the LUT texture directly at the center pixel — a loaded
+      // 8x8 LUT will return a non-black mid-grey/blue value here. An
+      // unloaded sampler returns vec3(0) and we skip the grade.
+      vec3 lut_probe = texture2D(auxSampler1, vec2(0.5, 0.5)).rgb;
+      float lut_loaded = step(0.05,
+          max(max(lut_probe.r, lut_probe.g), lut_probe.b));
+      vec3 base = mix(cam_raw.rgb, lut_rgb, lut_strength * lut_loaded);
+
+      // ============================================================
+      // Layer 2: Film scratches. 12 fps, 12-frame loop. Fresh seed per
+      // frame drives 0-5 thin vertical stripes biased toward the left
+      // or right edge. Subtract blend so scratches read as bright
+      // streaks where the LUT has midtone/dark values.
+      // ============================================================
+      float frame_idx = floor(mod(time * 12.0, 12.0));
+      float fseed = frame_idx * 7.31 + 0.137;
+      float scratch_alpha = 0.0;
+      for (int i = 0; i < 5; i++) {
+        float fi = float(i);
+        // ~80% per-line existence -> avg ~4 lines/frame, range 3-5.
+        float exists = step(0.20,
+            hash11(fseed * 11.7 + fi * 3.13));
+        // X biased toward edges: 50/50 left or right side, narrow band.
+        float r    = hash11(fseed * 13.31 + fi * 19.71);
+        float side = step(0.5, hash11(fseed * 17.13 + fi * 23.77));
+        // Left band [0.00, 0.20] OR right band [0.80, 1.00].
+        float x_edge = mix(r * 0.20, 0.80 + r * 0.20, side);
+        // Stripe thickness 0.002-0.004 UV (full height).
+        float w = 0.002 + 0.002 * hash11(fseed * 19.7 + fi * 13.13);
+        float dx = abs(content_uv.x - x_edge);
+        scratch_alpha += exists * step(dx, w);
+      }
+      scratch_alpha = clamp(scratch_alpha, 0.0, 1.0);
+      // Subtract blend at scratch_strength.
+      base = clamp(base - vec3(scratch_alpha * scratch_strength), 0.0, 1.0);
+
+      // ============================================================
+      // Layer 3b: Black frame border (locked to screen, NOT shifted).
+      // SDF rounded-rect inside the canvas; outside = black, inside =
+      // shifted content.
+      // ============================================================
+      vec2 half_extent =
+          vec2(0.5) - vec2(frame_border_width);
+      float sdf =
+          sdRoundedRect(uv, half_extent, frame_corner_radius);
+      // sdf < 0 inside, > 0 outside. Wider smoothstep so the inner
+      // edge has a soft fall-off instead of a hard 1px AA line —
+      // reads as a slightly worn / printed border, not a vector mask.
+      float in_frame = 1.0 - smoothstep(-0.008, 0.008, sdf);
+      vec3 result = mix(vec3(0.0), base, in_frame);
+
+      // ============================================================
+      // Layer 3c: Orange-red glitch bars on the LEFT and RIGHT inner
+      // edges of the frame border. Per-cycle re-roll position + height
+      // for a few independent vertical stripes per side. mod() gates a
+      // 0.5s flash at the start of each `tick_interval` cycle. Painted
+      // INSIDE the black border zone so they read as film-gate edge
+      // glitches, not content.
+      // ============================================================
+      float tick_hold  = 0.5;
+      float tick_phase = mod(time, tick_interval);
+      float visible    = step(tick_phase, tick_hold);
+      float cycle_idx  = floor(time / tick_interval);
+      float cseed      = cycle_idx * 13.31 + 7.71;
+      vec3  tick_color = vec3(0.85, 0.25, 0.05);
+      float tick_alpha = 0.0;
+
+      // Up to 3 stripes per side per flash, each with independent
+      // existence (~70%), Y-position, height, and small X-jitter
+      // inside the border band.
+      for (int i = 0; i < 3; i++) {
+        float fi = float(i);
+
+        // ---- LEFT side stripe.
+        float lseed   = cseed * 11.7 + fi * 7.31;
+        float lexists = step(0.30, hash11(lseed * 13.31));
+        float ly      = 0.15 + 0.70 * hash11(lseed * 17.13);   // [0.15, 0.85]
+        float lh      = 0.02 + 0.08 * hash11(lseed * 19.71);   // [0.02, 0.10]
+        // Stripe centered inside the left border band.
+        float lx      = frame_border_width *
+                        (0.25 + 0.50 * hash11(lseed * 23.31));
+        float lw      = frame_border_width * 0.30;
+        vec2  ld      = uv - vec2(lx, ly);
+        float lbox    = step(abs(ld.x), lw) * step(abs(ld.y), lh);
+        tick_alpha   += lexists * lbox;
+
+        // ---- RIGHT side stripe.
+        float rseed   = cseed * 19.71 + fi * 11.31;
+        float rexists = step(0.30, hash11(rseed * 13.31));
+        float ry      = 0.15 + 0.70 * hash11(rseed * 17.13);
+        float rh      = 0.02 + 0.08 * hash11(rseed * 19.71);
+        float rx      = 1.0 - frame_border_width *
+                        (0.25 + 0.50 * hash11(rseed * 23.31));
+        float rw      = frame_border_width * 0.30;
+        vec2  rd      = uv - vec2(rx, ry);
+        float rbox    = step(abs(rd.x), rw) * step(abs(rd.y), rh);
+        tick_alpha   += rexists * rbox;
+      }
+
+      tick_alpha = clamp(tick_alpha, 0.0, 1.0) * visible * tick_strength;
+      result = mix(result, tick_color, tick_alpha);
+
+      gl_FragColor = toOutputFormat(vec4(result, cam_raw.a));
+    }
+    ";

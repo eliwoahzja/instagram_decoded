@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "assets": [
+    {
+      "name": "cinematic_vignette_lut.png",
+      "assetHash": "714491ed034d8755e0f7a327d92eaf9ad96f84875197c54ac65f1f363bda2d85",
+      "hubAssetId": "1590716689519695"
+    }
+  ],
+  "description": "[IG Edits] Color filter name. With \"Cinematic Vignette\", the creator gets a filmic 8x8 LUT color grade with a soft darkened vignette around the edges.",
+  "displayName": "Cinematic Vignette",
+  "identifier": "5fa70887-b857-44dc-8976-6e4d7cc009f7",
+  "android": {
+    "previewAsset": {
+      "key": "337342e3",
+      "handle": "AQAGRxPZ0bJ_",
+      "md5": "0e7c34a81f68ea14f1e0c07a044a0d98"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAGMtEJvZph"
+    }
+  },
+  "iglu": {
+    "legacyId": 3221
+  }
+}

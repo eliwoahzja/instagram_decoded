@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.facebook.fbui.drawable.custom.AppThemedDrawable fbui:variant_dark="@drawable/instagram_icons_exceptions_illo_firework_star_large_refresh_outline_288__dark" fbui:variant_light="@drawable/instagram_icons_exceptions_illo_firework_star_large_refresh_outline_288__light"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:fbui="http://schemas.android.com/apk/res-auto" />

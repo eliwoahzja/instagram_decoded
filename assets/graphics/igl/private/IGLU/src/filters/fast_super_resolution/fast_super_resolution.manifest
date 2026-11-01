@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "fast_super_resolution",
+  "displayName": "Fast Super Resolution",
+  "description": "[IG Edits] Video effect name. With \"Fast Super Resolution\", the creator can upscale the frame using a 5-tap fast Lanczos-2 kernel with linearized gamma and premultiplied-alpha handling.",
+  "iglu": {}
+}

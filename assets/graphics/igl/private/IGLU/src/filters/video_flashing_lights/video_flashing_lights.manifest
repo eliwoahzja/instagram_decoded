@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_flashing_lights",
+  "displayName": "Flashing lights",
+  "description": "Video effect name. With \"Flashing lights\", the creator can add the effect of various colorful lights pulsing in their video clip.",
+  "iglu": {
+    "legacyId": 2046,
+    "customization": [
+      {
+        "name": "intensity",
+        "default": 1.0,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Intensity",
+        "displayNameDescription": "[IG Edits] Slider label controlling the strength of a video effect. Generic across many effects (glow, blur, color, distortion, etc.); exact range varies per effect."
+      },
+      {
+        "name": "speed",
+        "default": 0.29473684,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Speed",
+        "displayNameDescription": "[IG Edits] Slider label controlling the playback or animation speed of a video effect (noun, not a verb); exact range varies per effect."
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "6060b837",
+      "handle": "AQBi0QHJL6h3",
+      "md5": "9f8d0df9775fbafa6ca28a73a9f3311f"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAH-m7NxX5g"
+    }
+  }
+}

@@ -1,0 +1,128 @@
+[Filter BasADroite]
+# "Bas à droite" composite filter (no LUT).
+#
+# Two effects layered over the source:
+#   1. Grain texture overlay — a Hub-delivered grain image (loaded via the same
+#      remote-asset path as our LUT-based filters) composited over the base
+#      source using the standard "associative alpha" / over operator at a flat
+#      60% opacity. Spark refers to this blend as "Associative" in its
+#      texture-blend mode picker — it is the standard premultiplied-style
+#      "over" composite where the top layer's effective alpha multiplies its
+#      contribution and attenuates the base.
+#
+#      Math (per pixel):
+#          a       = grain.a * grain_strength            // effective top alpha
+#          out.rgb = base.rgb * (1 - a) + grain.rgb * a
+#      For an opaque grain image (JPG → a = 1.0) this collapses to
+#          out.rgb = mix(base.rgb, grain.rgb, grain_strength)
+#      i.e. a flat 60% opacity overlay, matching Spark's behavior when the
+#      grain layer is opaque RGB. We keep grain.a in the math anyway so the
+#      filter still does the right thing if a future grain asset has alpha.
+#
+#   2. Picture-in-picture overlay — the original, unmodified source is
+#      composited into a small region anchored to the bottom-right corner of
+#      the output. Scale is 0.5x by default (PiP region = bottom-right
+#      quadrant). The PiP samples the original input via sampleInput() at
+#      remapped UVs, so the grain overlay is hidden inside the PiP region.
+#
+# Texture loading mirrors aesthetic_blur / black_and_white: production uses
+# ARD (effectId / assetHash filled in once Neetika provides them — TODO
+# placeholders in the manifest for now). Locally, the sample app loads the
+# named input port 'grain via the Named Inputs panel
+# (file: bas_a_droite_grain.jpg), or via the grain_path Custom Parameter
+# string for the local-loading scaffold (parallel to the lut_path parameter
+# used by LUT-based filters in the catalog).
+
+[Init]
+fun init(Filter filter)
+{
+    makeTexture('grain);
+
+    # Host-tunable parameters. Both have valid 0.0 minimums; we wire them
+    # unconditionally in [PreRender] so a host-set 0.0 takes effect (per CRA
+    # findings on black_and_white — guarded sets blocked legitimate zeros).
+    filter.parameters = {
+        {grain_strength = 0.6, min = 0.0, max = 1.0, description = "Grain overlay opacity"},
+        {pip_scale = 0.5, min = 0.0, max = 1.0, description = "Picture-in-picture scale (0.0 hides PiP)"},
+    };
+
+    filter.passes = {{
+      name = 'pass0,
+      inputs = {'default, 'grain},
+      uniforms = {
+        grain_strength = 0.6,
+        pip_scale = 0.5,
+      },
+      glslShader = glslComposite,
+    }};
+}
+
+# Local-development asset path. In production the grain texture comes through
+# ARD; locally we accept either Named Inputs (port 'grain) or a string custom
+# parameter at grain_path (parallel to the lut_path convention used by
+# LUT-based filters elsewhere in the catalog).
+string grain_path = "grain_path";
+string grain_filename = "";
+
+[PreRender]
+fun preRender(Filter filter){
+    string grain_filename_parameter = getParameterString(grain_path);
+    if (grain_filename_parameter != "") {
+        string new_grain_filename = stringAppend("textureFilePath://", grain_filename_parameter);
+        if (new_grain_filename != grain_filename) {
+            grain_filename = new_grain_filename;
+            loadTexture('grain, grain_filename);
+        }
+    }
+
+    # Wire both parameters unconditionally — filter.parameters declares
+    # min = 0.0 so a 0.0 input is legitimate (zero opacity / hidden PiP).
+    f32 gs = getParameterFloat('grain_strength);
+    setShaderUniform('pass0, 'grain_strength, gs);
+
+    f32 ps = getParameterFloat('pip_scale);
+    setShaderUniform('pass0, 'pip_scale, ps);
+}
+
+#### GLSL shader ####
+
+string glslComposite = "
+    varying vec2 sourceTextureCoordinate;
+    BaseUniformsOpenGL;
+
+    uniform sampler2D auxSampler0;
+    uniform sampler2D auxSampler1;
+    uniform sampler2D auxSampler2;
+
+    uniform float grain_strength;
+    uniform float pip_scale;
+
+    void main() {
+      vec2 uv = sourceTextureCoordinate;
+
+      // --- Layer 1: grained base ---
+      vec4 base = sampleInput(uv);
+      vec4 grain = texture2D(auxSampler1, uv);
+
+      // Associative alpha blend / standard 'over' operator.
+      // a = grain.a * grain_strength gives a flat 60% opacity for opaque grain
+      // and respects per-pixel alpha for grain assets that include it.
+      float a = grain.a * grain_strength;
+      vec3 grainedRgb = base.rgb * (1.0 - a) + grain.rgb * a;
+      vec4 grained = vec4(grainedRgb, base.a);
+
+      // --- Layer 2: bottom-right picture-in-picture of the original source ---
+      // Region: uv.x in [1 - pip_scale, 1.0], uv.y in [1 - pip_scale, 1.0].
+      // Inside the region, remap UV to [0,1] across the full source so the
+      // PiP shows the entire frame at 1:pip_scale scale. The PiP samples the
+      // unmodified 'default texture (sampleInput) — no grain inside the PiP.
+      float threshold = 1.0 - pip_scale;
+      vec4 result = grained;
+      if (pip_scale > 0.0 && uv.x >= threshold && uv.y >= threshold) {
+        vec2 pipUv = (uv - threshold) / pip_scale;
+        result = sampleInput(pipUv);
+      }
+
+      gl_FragColor = toOutputFormat(result);
+    }
+    ";

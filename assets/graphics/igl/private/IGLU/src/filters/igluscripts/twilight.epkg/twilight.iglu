@@ -1,0 +1,180 @@
+[Filter Twilight]
+# "Twilight" -- Spark AR port.
+#
+# The full Spark color pipeline (BRCOSA + nv-LUT alpha-blend + bluee-LUT
+# additive + Linear color encoding) is baked into a single Hald CLUT
+# (twilight_lut.png) extracted from Spark input/output frame pairs via
+# tools/extract_lut_from_pairs.py. The shader applies a horizontal motion
+# blur (matching Spark BlurDirectional) then the combined LUT, then offers
+# three post-LUT correction knobs (blue_boost / red_dampen / saturation)
+# for fine-tuning since the extracted LUT can be slightly off depending on
+# sample-frame coverage.
+#
+# Pipeline:
+#   1. 'blurred -- 15-tap directional blur of the camera (Spark BlurDirectional:
+#                  Strength=3, Direction=(1,0), Size=1024).
+#   2. 'output  -- combined LUT applied to blurred camera + post-LUT color
+#                  correction + global strength mix with raw camera.
+
+[Init]
+fun init(Filter filter)
+{
+    makeTexture('twilight_lut);
+
+    filter.parameters = {
+        {strength       = 0.736,  min = 0.0, max = 1.0,  description = "Overall effect strength (camera <-> twilight)"},
+        {lut_strength   = 1.0,    min = 0.0, max = 1.0,  description = "LUT mix strength applied to blurred camera"},
+        {blur_strength  = 2.362,  min = 0.0, max = 20.0, description = "Directional blur strength (Spark value)"},
+        {blur_dir_x     = 1.0,    min = -10.0, max = 10.0, description = "Blur direction X (Spark value)"},
+        {blur_dir_y     = 0.0,    min = -10.0, max = 10.0, description = "Blur direction Y (Spark value)"},
+        {blue_boost     = 0.174,  min = 0.0, max = 0.5,  description = "Post-LUT blue channel lift (0 = none)"},
+        {red_dampen     = 0.074,  min = 0.0, max = 0.5,  description = "Post-LUT red channel reduction (0 = none)"},
+        {saturation     = 0.841,  min = 0.0, max = 2.0,  description = "Post-LUT saturation multiplier (1 = no change)"},
+    };
+
+    filter.passes = {
+        {
+            name = 'blurred,
+            inputs = {'default},
+            uniforms = {
+                blur_dir_x    = 1.0,
+                blur_dir_y    = 0.0,
+                blur_strength = 2.362,
+                source_size_x = 1024.0,
+            },
+            glslShader = blurShader,
+        },
+        {
+            name = 'output,
+            inputs = {'default, 'blurred, 'twilight_lut},
+            uniforms = {
+                strength     = 0.736,
+                lut_strength = 1.0,
+                blue_boost   = 0.174,
+                red_dampen   = 0.074,
+                saturation   = 0.841,
+            },
+            glslShader = lutShader,
+        },
+    };
+}
+
+# Combined LUT delivered via ARD; local sample-app testing loads from
+# assets/twilight/twilight_lut.png via the twilight_lut_path string param.
+string twilight_lut_path = "twilight_lut_path";
+string twilight_lut_filename = "";
+
+[PreRender]
+fun preRender(Filter filter){
+    string filename_parameter = getParameterString(twilight_lut_path);
+    if (filename_parameter != "") {
+        string new_filename = stringAppend("textureFilePath://", filename_parameter);
+        if (new_filename != twilight_lut_filename) {
+            twilight_lut_filename = new_filename;
+            loadTexture('twilight_lut, twilight_lut_filename);
+        }
+    }
+
+    # 'blurred pass uniforms
+    vec2 srcSize = getTextureSize('default);
+    if (srcSize.x > 0.0) {
+        setShaderUniform('blurred, 'source_size_x, srcSize.x);
+    }
+    f32 bs = getParameterFloat('blur_strength);
+    setShaderUniform('blurred, 'blur_strength, bs);
+    f32 bdx = getParameterFloat('blur_dir_x);
+    setShaderUniform('blurred, 'blur_dir_x, bdx);
+    f32 bdy = getParameterFloat('blur_dir_y);
+    setShaderUniform('blurred, 'blur_dir_y, bdy);
+
+    # 'output pass uniforms
+    f32 s = getParameterFloat('strength);
+    setShaderUniform('output, 'strength, s);
+    f32 ls = getParameterFloat('lut_strength);
+    setShaderUniform('output, 'lut_strength, ls);
+    f32 bb = getParameterFloat('blue_boost);
+    setShaderUniform('output, 'blue_boost, bb);
+    f32 rd = getParameterFloat('red_dampen);
+    setShaderUniform('output, 'red_dampen, rd);
+    f32 sat = getParameterFloat('saturation);
+    setShaderUniform('output, 'saturation, sat);
+}
+
+#### GLSL shaders ####
+
+string blurShader = "
+    varying vec2 sourceTextureCoordinate;
+    BaseUniformsOpenGL;
+
+    uniform sampler2D auxSampler0;
+    uniform sampler2D auxSampler1;
+    uniform sampler2D auxSampler2;
+
+    uniform float blur_dir_x;
+    uniform float blur_dir_y;
+    uniform float blur_strength;
+    uniform float source_size_x;
+
+    void main() {
+      vec2 uv = sourceTextureCoordinate;
+      vec2 stepUV = vec2(blur_dir_x, blur_dir_y) * (blur_strength / max(source_size_x, 1.0));
+
+      vec4 center = sampleInput(uv);
+      vec3 c = center.rgb * 0.30459;
+      c += (sampleInput(uv + stepUV).rgb       + sampleInput(uv - stepUV).rgb)       * 0.17861;
+      c += (sampleInput(uv + stepUV * 2.0).rgb + sampleInput(uv - stepUV * 2.0).rgb) * 0.09640;
+      c += (sampleInput(uv + stepUV * 3.0).rgb + sampleInput(uv - stepUV * 3.0).rgb) * 0.04649;
+      c += (sampleInput(uv + stepUV * 4.0).rgb + sampleInput(uv - stepUV * 4.0).rgb) * 0.01904;
+      c += (sampleInput(uv + stepUV * 5.0).rgb + sampleInput(uv - stepUV * 5.0).rgb) * 0.00603;
+      c += (sampleInput(uv + stepUV * 6.0).rgb + sampleInput(uv - stepUV * 6.0).rgb) * 0.00119;
+      c += (sampleInput(uv + stepUV * 7.0).rgb + sampleInput(uv - stepUV * 7.0).rgb) * 0.00007;
+
+      gl_FragColor = toOutputFormat(vec4(c, center.a));
+    }
+    ";
+
+string lutShader = "
+    varying vec2 sourceTextureCoordinate;
+    BaseUniformsOpenGL;
+
+    uniform sampler2D auxSampler0;  // 'default (raw camera)
+    uniform sampler2D auxSampler1;  // 'blurred
+    uniform sampler2D auxSampler2;  // 'twilight_lut (combined LUT)
+
+    uniform float lut_strength;
+    uniform float blue_boost;
+    uniform float red_dampen;
+    uniform float saturation;
+
+    void main() {
+      vec2 uv = sourceTextureCoordinate;
+
+      // 8x8 grid LUT lookup on the blurred camera color.
+      vec3 blurred = texture2D(auxSampler1, uv).rgb;
+      vec3 c = clamp(blurred, 0.00781, 0.98438);
+      float x = c.r / 8.0;
+      float y = c.g / 8.0;
+      float z = c.b;
+      float blueY = floor(z * 8.0) / 8.0;
+      float blueX = floor((z - blueY) * 64.0) / 8.0;
+      x += blueX;
+      y += blueY;
+      vec3 lutColor = texture2D(auxSampler2, vec2(x, y)).xyz;
+
+      // Mix blurred camera with its LUT-graded version (lut_strength).
+      vec3 graded = mix(blurred, lutColor, lut_strength);
+
+      // Post-LUT dial-in: per-channel correction + saturation.
+      graded.r = max(graded.r - red_dampen, 0.0);
+      graded.b = min(graded.b + blue_boost, 1.0);
+      float luma709 = dot(graded, vec3(0.2125, 0.7154, 0.0721));
+      graded = mix(vec3(luma709), graded, saturation);
+      graded = clamp(graded, 0.0, 1.0);
+
+      // Global strength: mix raw camera with the graded result.
+      vec4 raw = sampleInput(uv);
+      vec3 result = mix(raw.rgb, graded, strength);
+
+      gl_FragColor = toOutputFormat(vec4(result, raw.a));
+    }
+    ";

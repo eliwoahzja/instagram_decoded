@@ -1,0 +1,168 @@
+[Filter BlackMood]
+
+[Init]
+fun init(Filter filter)
+{
+    makeTexture('lut);
+
+    filter.parameters = {
+        {lut_strength = 0.967, min = 0.0, max = 1.0, description = "LUT mix strength"},
+        {blur = 0.656, min = 0.0, max = 1.0, description = "Soft-focus blur amount"},
+        {blur_radius = 13.064, min = 0.0, max = 30.0, description = "Blur radius (pixels)"},
+        {glow = 0.029, min = 0.0, max = 1.0, description = "Soft glow (bloom)"},
+        {contrast = 0.046, min = -0.5, max = 0.5, description = "Contrast"},
+    };
+
+    filter.passes = {
+        {
+            name = 'graded,
+            inputs = {'default, 'lut},
+            uniforms = {
+                lut_strength = 0.967,
+            },
+            glslShader = lutShader,
+        },
+        {
+            name = 'output,
+            inputs = {'graded},
+            uniforms = {
+                blur = 0.656,
+                blur_radius = 13.064,
+                glow = 0.029,
+                contrast = 0.046,
+                src_x = 1024.0,
+                src_y = 1024.0,
+            },
+            glslShader = blurShader,
+        },
+    };
+}
+
+string lut_path = "lut_path";
+string lut_filename = "";
+
+[PreRender]
+fun preRender(Filter filter){
+    string lut_filename_parameter = getParameterString(lut_path);
+    if (lut_filename_parameter != "") {
+        string new_lut_filename = stringAppend("textureFilePath://", lut_filename_parameter);
+        if (new_lut_filename != lut_filename) {
+            lut_filename = new_lut_filename;
+            loadTexture('lut, lut_filename);
+        }
+    }
+
+    f32 s = getParameterFloat('lut_strength);
+    setShaderUniform('graded, 'lut_strength, s);
+
+    vec2 srcSize = getTextureSize('default);
+    if (srcSize.x > 0.0) {
+        setShaderUniform('output, 'src_x, srcSize.x);
+        setShaderUniform('output, 'src_y, srcSize.y);
+    }
+
+    f32 b = getParameterFloat('blur);
+    setShaderUniform('output, 'blur, b);
+    f32 br = getParameterFloat('blur_radius);
+    setShaderUniform('output, 'blur_radius, br);
+    f32 g = getParameterFloat('glow);
+    setShaderUniform('output, 'glow, g);
+    f32 ct = getParameterFloat('contrast);
+    setShaderUniform('output, 'contrast, ct);
+}
+
+#### GLSL shaders ####
+
+# Pass 1: 8x8 LUT color grade.
+string lutShader = "
+    varying vec2 sourceTextureCoordinate;
+    BaseUniformsOpenGL;
+
+    uniform sampler2D auxSampler0;
+    uniform sampler2D auxSampler1;
+    uniform sampler2D auxSampler2;
+
+    uniform float lut_strength;
+
+    void main() {
+      vec4 texel = sampleInput(sourceTextureCoordinate);
+
+      texel.rgb = clamp(texel.rgb, 0.00781, 0.98438);
+
+      float x = texel.r / 8.0;
+      float y = texel.g / 8.0;
+      float z = texel.b;
+
+      float blueY = floor(z * 8.0) / 8.0;
+      float blueX = floor((z - blueY) * 64.0) / 8.0;
+
+      x += blueX;
+      y += blueY;
+
+      vec3 color = texture2D(auxSampler1, vec2(x, y)).xyz;
+
+      texel = mix(texel, vec4(color, texel.a), strength * lut_strength);
+
+      gl_FragColor = toOutputFormat(texel);
+    }
+    ";
+
+# Pass 2: isotropic soft-focus blur (13-tap, two rings) + optional glow + contrast.
+# stepUV = blur_radius(px) / source size. Center + inner ring (0.5r) + outer ring (r).
+string blurShader = "
+    varying vec2 sourceTextureCoordinate;
+    BaseUniformsOpenGL;
+
+    uniform sampler2D auxSampler0;
+    uniform sampler2D auxSampler1;
+    uniform sampler2D auxSampler2;
+
+    uniform float blur;
+    uniform float blur_radius;
+    uniform float glow;
+    uniform float contrast;
+    uniform float src_x;
+    uniform float src_y;
+
+    void main() {
+      vec2 uv = sourceTextureCoordinate;
+      vec2 r = vec2(blur_radius / max(src_x, 1.0), blur_radius / max(src_y, 1.0));
+
+      vec3 center = sampleInput(uv).rgb;
+
+      // 6 hex directions
+      vec2 d0 = vec2(1.0, 0.0);
+      vec2 d1 = vec2(0.5, 0.866);
+      vec2 d2 = vec2(-0.5, 0.866);
+      vec2 d3 = vec2(-1.0, 0.0);
+      vec2 d4 = vec2(-0.5, -0.866);
+      vec2 d5 = vec2(0.5, -0.866);
+
+      vec3 inner = sampleInput(uv + d0 * r * 0.5).rgb
+                 + sampleInput(uv + d1 * r * 0.5).rgb
+                 + sampleInput(uv + d2 * r * 0.5).rgb
+                 + sampleInput(uv + d3 * r * 0.5).rgb
+                 + sampleInput(uv + d4 * r * 0.5).rgb
+                 + sampleInput(uv + d5 * r * 0.5).rgb;
+
+      vec3 outer = sampleInput(uv + d0 * r).rgb
+                 + sampleInput(uv + d1 * r).rgb
+                 + sampleInput(uv + d2 * r).rgb
+                 + sampleInput(uv + d3 * r).rgb
+                 + sampleInput(uv + d4 * r).rgb
+                 + sampleInput(uv + d5 * r).rgb;
+
+      vec3 blurred = center * 0.28 + inner * (0.48 / 6.0) + outer * (0.24 / 6.0);
+
+      vec3 soft = mix(center, blurred, blur);
+
+      // Soft glow: screen the blurred image back over the result.
+      vec3 g = vec3(1.0) - (vec3(1.0) - soft) * (vec3(1.0) - blurred * glow);
+
+      // Contrast around mid-grey.
+      vec3 outc = (g - 0.5) * (1.0 + contrast) + 0.5;
+      outc = clamp(outc, 0.0, 1.0);
+
+      gl_FragColor = toOutputFormat(vec4(outc, 1.0));
+    }
+    ";

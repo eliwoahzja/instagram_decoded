@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "box_blur",
+  "displayName": "Box Blur",
+  "description": "[IG Edits] Video effect name. With \"Box Blur\", the creator can apply a two-pass (vertical then horizontal) box-kernel blur of configurable kernel_size to soften the frame.",
+  "iglu": {}
+}

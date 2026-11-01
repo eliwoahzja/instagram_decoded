@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "identifier": "4B8C7EAD-EB45-41AF-B65B-A4D576E85FC0",
+  "displayName": "Tiffy",
+  "description": "[IG Edits] Color filter name. With \"Tiffy\", the creator gets a B&W background with a centered LUT-graded color photo inside a worn film frame, plus film grain and dust specks.",
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAD7K0NpGWo"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "2ebd0a8e",
+      "handle": "AQAFbpURqKxI",
+      "md5": "14a21cb18546e43df0f556ce3a428ba5"
+    }
+  },
+  "iglu": {
+    "legacyId": 3099
+  },
+  "assets": [
+    {
+      "name": "tiffy_lut.png",
+      "assetHash": "e625c1a3dbc0cfc4cc808665c40754592020b269ce3f578729e9648bf61d4503",
+      "hubAssetId": "1425822813024432"
+    },
+    {
+      "name": "tiffy_frame.png",
+      "assetHash": "2b78529b7de68efabf7f89fce3a9ffa37591b996b6c38bb10df4c9c60be35259",
+      "hubAssetId": "996672529952733"
+    }
+  ]
+}

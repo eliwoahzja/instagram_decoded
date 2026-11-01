@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "displayName": "Glitch in",
+  "description": "[IG Edits] Video effect name. With \"Glitch in\", the creator can overlay a 2-second linear intro of chromatic-glitch distortion that resolves into the unaltered clip.",
+  "iglu": {
+    "legacyId": 5081,
+    "behavior": {
+      "type": "fixedIntro",
+      "durationMs": 2000,
+      "curve": "linear"
+    },
+    "customization": [],
+    "subject": {
+      "overlay": true
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAFgRGe5mIx"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "cd75783d",
+      "handle": "AQAMsrcyRgMs",
+      "md5": "e8690dc2e14c279a2ba7718f55bfcadc"
+    }
+  }
+}

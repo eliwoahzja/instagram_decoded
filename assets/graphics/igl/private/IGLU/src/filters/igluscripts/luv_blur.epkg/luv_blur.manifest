@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "assets": [
+    {
+      "name": "luv_blur_lut.png",
+      "assetHash": "45a37168b99519e2caf5dff625269e0fcdfbc4b3b779fb0d8392d06fe7141c05",
+      "hubAssetId": "1732735117876022"
+    }
+  ],
+  "description": "[IG Edits] Color filter name. With \"Luv Blur\", the creator gets an 8x8 LUT color grade with brightness, contrast and saturation tuning plus a horizontal directional blur.",
+  "displayName": "Luv Blur",
+  "identifier": "883b30c0-bd10-49e6-8cba-325dc21ed594",
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAD46aH1Vb_"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "42c43b16",
+      "handle": "AQAFszyFz4Q4",
+      "md5": "8b025a4a070facedb48e7f18d746bef0"
+    }
+  },
+  "iglu": {
+    "legacyId": 3222
+  }
+}

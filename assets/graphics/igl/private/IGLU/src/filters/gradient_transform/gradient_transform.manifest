@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "gradient_transform",
+  "displayName": "Gradient Transform",
+  "description": "[IG Edits] Video effect name. With \"Gradient Transform\", the creator can overlay a vertical top-to-bottom color gradient onto the frame within a crop rect, with optional rounded-corner mask.",
+  "iglu": {}
+}

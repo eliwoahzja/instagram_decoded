@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_scale_up",
+  "displayName": "Scale in",
+  "description": "[IG Edits] Video effect name. With \"Scale Up\", the creator can animate the layer scaling up from a starting size to full with a snappy sigmoid ease.",
+  "iglu": {
+    "legacyId": 3057,
+    "behavior": {
+      "type": "fixedIntro",
+      "durationMs": 300,
+      "curve": "linear"
+    },
+    "customization": [
+      {
+        "name": "duration",
+        "default": 0.3,
+        "min": 0.1,
+        "max": 5.0,
+        "displayName": "Duration",
+        "displayMethod": "time"
+      },
+      {
+        "name": "size",
+        "default": 0.85,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Size"
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "b2e1c422",
+      "handle": "AQAHNaf3QWvQ",
+      "md5": "899af58c8c76fa93ce20bd4eaad43607"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAGJQYF04h7"
+    }
+  },
+  "dependencies": [
+    "video_scale_opacity"
+  ]
+}

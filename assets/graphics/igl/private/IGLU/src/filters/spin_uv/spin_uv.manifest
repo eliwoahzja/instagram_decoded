@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "spin_uv",
+  "displayName": "Spin UV",
+  "description": "[IG Edits] Transition name. With \"Spin UV\", the creator can twist the frame around its center by up to 1.5pi with a radial ripple and tiled UV wrap.",
+  "iglu": {}
+}

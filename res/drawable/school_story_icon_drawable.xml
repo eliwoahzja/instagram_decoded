@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@id/school_story_icon_background" android:drawable="@drawable/filled_circle_school_story" />
+    <item android:id="@id/school_story_icon" android:drawable="@drawable/school_story_icon_drawable__app_bitmap_0" android:left="@dimen/account_discovery_bottom_gap" android:top="@dimen/account_discovery_bottom_gap" android:right="@dimen/account_discovery_bottom_gap" android:bottom="@dimen/account_discovery_bottom_gap" />
+</layer-list>

@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "identifier": "text_silver_chrome",
+  "displayName": "Text Silver Chrome",
+  "description": "[IG Edits] Text effect name. With \"Text Silver Chrome\", the creator can render text as polished silver chrome using a silver matcap diffuse and metal specular matcap with animated noise.",
+  "assets": [
+    {
+      "name": "metal_matcap.png",
+      "assetHash": "1830bfd8dc60652e6ad1c056f0666390e89c9bf5cb4817d54733102903c0f9ec",
+      "hubAssetId": "1597794694755957"
+    },
+    {
+      "name": "silver_chrome_matcap.png",
+      "assetHash": "7a9989a14985bf7c919b9aea2a192fe0ca6f5b9255052983fefe9120bf9defc6",
+      "hubAssetId": "1222369569602391"
+    }
+  ],
+  "iglu": {}
+}

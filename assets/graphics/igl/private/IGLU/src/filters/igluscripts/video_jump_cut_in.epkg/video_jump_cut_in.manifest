@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "identifier": "595648a4-f0bc-4ada-8ca3-e4cb6be273bc",
+  "displayName": "Jump cut in",
+  "description": "[IG Edits] Effect name shown in the video effects picker. This is the user-facing label for a video effect.",
+  "iglu": {
+    "legacyId": 3131,
+    "behavior": {
+      "type": "fixedIntro",
+      "durationMs": 1500,
+      "curve": "linear"
+    },
+    "customization": [
+      {
+        "name": "duration",
+        "default": 1.5,
+        "min": 0.1,
+        "max": 5.0,
+        "displayName": "Duration",
+        "displayMethod": "time"
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "7c7548b0",
+      "handle": "AQADsyg5tF7v",
+      "md5": "d74fe0eff1278f28e658580d020cc1f2"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAHU434SLPQ"
+    }
+  },
+  "dependencies": [
+    "video_scale_opacity"
+  ]
+}

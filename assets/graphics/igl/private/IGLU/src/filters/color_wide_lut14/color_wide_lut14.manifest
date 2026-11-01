@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "identifier": "greyscale",
+  "displayName": "Greyscale",
+  "description": "[IG Edits] Color filter name. With \"Greyscale\", the creator can remap pixel RGB through the Greyscale 3D LUT to collapse chroma into a monochrome luminance grade.",
+  "iglu": {
+    "legacyId": 5037
+  },
+  "assets": [
+    {
+      "name": "greyscale.lutpk",
+      "assetHash": "776a8cb334a44a24e6e668a5e577f91ae7d14cf705e70af0ee97a67b23290df1",
+      "hubAssetId": "2027307161497849"
+    }
+  ]
+}

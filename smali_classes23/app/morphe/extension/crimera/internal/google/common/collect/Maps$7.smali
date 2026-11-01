@@ -1,0 +1,90 @@
+.class Lapp/morphe/extension/crimera/internal/google/common/collect/Maps$7;
+.super Lapp/morphe/extension/crimera/internal/google/common/collect/AbstractMapEntry;
+.source "Maps.java"
+
+
+# annotations
+.annotation system Ldalvik/annotation/EnclosingMethod;
+    value = Lapp/morphe/extension/crimera/internal/google/common/collect/Maps;->unmodifiableEntry(Ljava/util/Map$Entry;)Ljava/util/Map$Entry;
+.end annotation
+
+.annotation system Ldalvik/annotation/InnerClass;
+    accessFlags = 0x1
+    name = null
+.end annotation
+
+.annotation system Ldalvik/annotation/Signature;
+    value = {
+        "Lapp/morphe/extension/crimera/internal/google/common/collect/AbstractMapEntry<",
+        "TK;TV;>;"
+    }
+.end annotation
+
+
+# instance fields
+.field final synthetic val$entry:Ljava/util/Map$Entry;
+
+
+# direct methods
+.method public constructor <init>(Ljava/util/Map$Entry;)V
+    .locals 0
+    .annotation system Ldalvik/annotation/MethodParameters;
+        accessFlags = {
+            0x1010
+        }
+        names = {
+            "val$entry"
+        }
+    .end annotation
+
+    .line 1480
+    iput-object p1, p0, Lapp/morphe/extension/crimera/internal/google/common/collect/Maps$7;->val$entry:Ljava/util/Map$Entry;
+
+    invoke-direct {p0}, Lapp/morphe/extension/crimera/internal/google/common/collect/AbstractMapEntry;-><init>()V
+
+    return-void
+.end method
+
+
+# virtual methods
+.method public getKey()Ljava/lang/Object;
+    .locals 0
+    .annotation runtime Lapp/morphe/extension/crimera/internal/google/common/collect/ParametricNullness;
+    .end annotation
+
+    .annotation system Ldalvik/annotation/Signature;
+        value = {
+            "()TK;"
+        }
+    .end annotation
+
+    .line 1484
+    iget-object p0, p0, Lapp/morphe/extension/crimera/internal/google/common/collect/Maps$7;->val$entry:Ljava/util/Map$Entry;
+
+    invoke-interface {p0}, Ljava/util/Map$Entry;->getKey()Ljava/lang/Object;
+
+    move-result-object p0
+
+    return-object p0
+.end method
+
+.method public getValue()Ljava/lang/Object;
+    .locals 0
+    .annotation runtime Lapp/morphe/extension/crimera/internal/google/common/collect/ParametricNullness;
+    .end annotation
+
+    .annotation system Ldalvik/annotation/Signature;
+        value = {
+            "()TV;"
+        }
+    .end annotation
+
+    .line 1490
+    iget-object p0, p0, Lapp/morphe/extension/crimera/internal/google/common/collect/Maps$7;->val$entry:Ljava/util/Map$Entry;
+
+    invoke-interface {p0}, Ljava/util/Map$Entry;->getValue()Ljava/lang/Object;
+
+    move-result-object p0
+
+    return-object p0
+.end method

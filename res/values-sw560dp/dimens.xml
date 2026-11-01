@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="igvr_modal_height">710.0dp</dimen>
+    <dimen name="igvr_modal_padding">80.0dp</dimen>
+    <dimen name="igvr_modal_shadow_blur">40.0dp</dimen>
+    <dimen name="igvr_modal_width">560.0dp</dimen>
+</resources>

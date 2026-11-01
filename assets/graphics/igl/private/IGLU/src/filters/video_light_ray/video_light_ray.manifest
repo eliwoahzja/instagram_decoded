@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_light_ray",
+  "displayName": "Light ray",
+  "description": "Video effects selection. Adds light ray on video.",
+  "iglu": {
+    "legacyId": 2042,
+    "customization": [
+      {
+        "name": "intensity",
+        "default": 0.56,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Intensity",
+        "displayNameDescription": "[IG Edits] Slider label controlling the strength of a video effect. Generic across many effects (glow, blur, color, distortion, etc.); exact range varies per effect.",
+        "displayMethod": "percent"
+      },
+      {
+        "name": "offsetX",
+        "default": 0.5,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Position X",
+        "displayNameDescription": "[IG Edits] Slider label controlling the horizontal (X axis) position of a video effect; exact units and range vary per effect.",
+        "displayMethod": "percent"
+      },
+      {
+        "name": "offsetY",
+        "default": 0.5,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Position Y",
+        "displayNameDescription": "[IG Edits] Slider label controlling the vertical (Y axis) position of a video effect; exact units and range vary per effect.",
+        "displayMethod": "percent"
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "1c3f6bc0",
+      "handle": "AQAE2n0mFoq0",
+      "md5": "9dfeafbf787a8a79947d216bf32d04ff"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAEwXvFFRLP",
+      "isImageFormat": true
+    }
+  }
+}

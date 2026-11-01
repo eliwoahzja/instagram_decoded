@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "identifier": "midnight",
+  "displayName": "Midnight",
+  "description": "Filter name evoking a dark, late-night look",
+  "iglu": {
+    "legacyId": 1013
+  },
+  "assets": [
+    {
+      "name": "lut_midnight.png",
+      "assetHash": "794632d27e8cb9723aabc290507d36e1391943f46dcce80571b422ea64300726",
+      "hubAssetId": "2108449993282485"
+    }
+  ]
+}

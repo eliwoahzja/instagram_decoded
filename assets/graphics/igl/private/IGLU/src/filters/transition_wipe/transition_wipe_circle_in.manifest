@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "transition_wipe_circle_in",
+  "displayName": "Wipe Circle In",
+  "description": "[IG Edits] Transition name. With \"Wipe Circle In\", the creator can transition into the next clip with a closing circular iris wipe that contracts from the screen edge to the center.",
+  "iglu": {}
+}

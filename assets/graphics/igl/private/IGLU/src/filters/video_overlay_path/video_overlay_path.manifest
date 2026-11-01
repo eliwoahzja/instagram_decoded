@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_path",
+  "displayName": "Path",
+  "description": "Video effects selection. Looping path animation effect.",
+  "iglu": {
+    "legacyId": 5075,
+    "subject": {
+      "overlay": true
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAFPlE8Oh98"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "520285df",
+      "handle": "AQADVQvnmCuO",
+      "md5": "ea1656c526545aa0621230c8a1b04f89"
+    }
+  }
+}

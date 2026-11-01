@@ -1,0 +1,180 @@
+[Filter AestheticBlur]
+# "Aesthetic Blur" LUT + directional blur effect.
+# Mirrors the Spark AR patch:
+#   cameraTexture0 -> FastColorLUT_f -> BlurDirectional15 -> material
+#
+# Two passes:
+#   1. 'graded — apply LUT with brightness multiplier (Spark scene-light emulation).
+#   2. 'output — 15-tap directional blur of the LUT-graded output.
+#
+# Blur math (matches Spark BlurDirectional with Direction=(10,2)):
+#   stepUV = (blur_dir_x, blur_dir_y) * (blur_strength / source_size_x)
+#   15 symmetric taps, quartic weight curve (Power=4): w(d) = (1 - d/8)^4 / Z
+#   where Z is the normalization sum so taps add to 1.0.
+# Default blur_strength = 0.15 is slightly above Spark's patch value of 0.10 to
+# compensate for the FiltersSampleAppleMac raw-camera surface rendering with
+# lower saturation than Spark's sRGB-encoded pipeline (a sample-app vs.
+# production-camera color-space delta, NOT a filter issue). In production the
+# Edits/IG camera surface goes through normal sRGB encoding and 0.10 will look
+# correct — host can override via getParameterFloat('blur_strength) at any time.
+#
+# LUT delivered via ARD (effectId TBD — placeholders in manifest).
+
+[Init]
+fun init(Filter filter)
+{
+    makeTexture('lut);
+
+    # Declare host-tunable parameters so they appear in the sample app's
+    # Parameters panel and can be set by production callers via setFloat.
+    filter.parameters = {
+        {strength = 1.0, min = 0.0, max = 1.0, description = "LUT mix strength"},
+        {brightness = 1.0, min = 0.0, max = 2.0, description = "Output brightness (Spark scene-light emulation)"},
+        {blur_strength = 0.15, min = 0.0, max = 2.0, description = "Directional blur strength"},
+        {blur_dir_x = 10.0, min = -50.0, max = 50.0, description = "Blur direction X (pixels)"},
+        {blur_dir_y = 2.0, min = -50.0, max = 50.0, description = "Blur direction Y (pixels)"},
+    };
+
+    filter.passes = {
+        {
+            name = 'graded,
+            inputs = {'default, 'lut},
+            uniforms = {
+                strength = 1.0,
+                brightness = 1.0,
+            },
+            glslShader = lutShader,
+        },
+        {
+            name = 'output,
+            inputs = {'graded},
+            uniforms = {
+                blur_dir_x = 10.0,
+                blur_dir_y = 2.0,
+                blur_strength = 0.15,
+                source_size_x = 1024.0,
+            },
+            glslShader = blurShader,
+        },
+    };
+}
+
+string lut_path = "lut_path";
+string lut_filename = "";
+
+[PreRender]
+fun preRender(Filter filter){
+    # --- LUT texture loading (production: ARD; local dev: lut_path string param) ---
+    string lut_filename_parameter = getParameterString(lut_path);
+    if (lut_filename_parameter != "") {
+        string new_lut_filename = stringAppend("textureFilePath://", lut_filename_parameter);
+        if (new_lut_filename != lut_filename) {
+            lut_filename = new_lut_filename;
+            loadTexture('lut, lut_filename);
+        }
+    }
+
+    # --- Pass 1 (graded): LUT mix strength + brightness ---
+    # filter.parameters declares both with valid 0.0 minimums; set unconditionally
+    # so host overrides (including 0.0) are respected.
+    f32 s = getParameterFloat('strength);
+    setShaderUniform('graded, 'strength, s);
+
+    # Spark scene-light emulation: 0.2 ambient + 0.8 directional white = 1.0 on flat plane.
+    f32 b = getParameterFloat('brightness);
+    setShaderUniform('graded, 'brightness, b);
+
+    # --- Pass 2 (output): blur uniforms ---
+    # Source resolution for normalizing the blur step in UV space.
+    # Guarded because getTextureSize() can return (0, 0) before the texture binds.
+    vec2 srcSize = getTextureSize('default);
+    if (srcSize.x > 0.0) {
+        setShaderUniform('output, 'source_size_x, srcSize.x);
+    }
+
+    f32 bs = getParameterFloat('blur_strength);
+    setShaderUniform('output, 'blur_strength, bs);
+
+    # Blur direction components (scalars — vec2 params have proven flaky in [PreRender]).
+    f32 bdx = getParameterFloat('blur_dir_x);
+    setShaderUniform('output, 'blur_dir_x, bdx);
+    f32 bdy = getParameterFloat('blur_dir_y);
+    setShaderUniform('output, 'blur_dir_y, bdy);
+}
+
+#### GLSL shaders ####
+
+# Pass 1: LUT color grading + brightness multiplier (same as black_and_white).
+string lutShader = "
+    varying vec2 sourceTextureCoordinate;
+    BaseUniformsOpenGL;
+
+    uniform sampler2D auxSampler0;
+    uniform sampler2D auxSampler1;
+    uniform sampler2D auxSampler2;
+
+    uniform float brightness;
+
+    void main() {
+      vec4 texel = sampleInput(sourceTextureCoordinate);
+
+      texel.rgb = clamp(texel.rgb, 0.00781, 0.98438);
+
+      float x = texel.r / 8.0;
+      float y = texel.g / 8.0;
+      float z = texel.b;
+
+      float blueY = floor(z * 8.0) / 8.0;
+      float blueX = floor((z - blueY) * 64.0) / 8.0;
+
+      x += blueX;
+      y += blueY;
+
+      vec3 color = texture2D(auxSampler1, vec2(x, y)).xyz;
+
+      texel = mix(texel, vec4(color, texel.a), strength);
+
+      texel.rgb *= brightness;
+
+      gl_FragColor = toOutputFormat(texel);
+    }
+    ";
+
+# Pass 2: 15-tap directional blur on the LUT-graded output.
+# Weights (Power=4 quartic falloff, normalized so 15 taps sum to 1.0):
+#   d=0: 0.30459, d=1: 0.17861, d=2: 0.09640, d=3: 0.04649,
+#   d=4: 0.01904, d=5: 0.00603, d=6: 0.00119, d=7: 0.00007.
+string blurShader = "
+    varying vec2 sourceTextureCoordinate;
+    BaseUniformsOpenGL;
+
+    uniform sampler2D auxSampler0;
+    uniform sampler2D auxSampler1;
+    uniform sampler2D auxSampler2;
+
+    uniform float blur_dir_x;
+    uniform float blur_dir_y;
+    uniform float blur_strength;
+    uniform float source_size_x;
+
+    void main() {
+      vec2 uv = sourceTextureCoordinate;
+
+      // Per-tap UV step = direction (in pixels) * strength / source width.
+      // Matches Spark BlurDirectional normalization.
+      vec2 stepUV = vec2(blur_dir_x, blur_dir_y) * (blur_strength / max(source_size_x, 1.0));
+
+      // 15-tap symmetric directional blur (7 each side + center).
+      vec4 center = sampleInput(uv);
+      vec3 c = center.rgb * 0.30459;
+      c += (sampleInput(uv + stepUV).rgb       + sampleInput(uv - stepUV).rgb)       * 0.17861;
+      c += (sampleInput(uv + stepUV * 2.0).rgb + sampleInput(uv - stepUV * 2.0).rgb) * 0.09640;
+      c += (sampleInput(uv + stepUV * 3.0).rgb + sampleInput(uv - stepUV * 3.0).rgb) * 0.04649;
+      c += (sampleInput(uv + stepUV * 4.0).rgb + sampleInput(uv - stepUV * 4.0).rgb) * 0.01904;
+      c += (sampleInput(uv + stepUV * 5.0).rgb + sampleInput(uv - stepUV * 5.0).rgb) * 0.00603;
+      c += (sampleInput(uv + stepUV * 6.0).rgb + sampleInput(uv - stepUV * 6.0).rgb) * 0.00119;
+      c += (sampleInput(uv + stepUV * 7.0).rgb + sampleInput(uv - stepUV * 7.0).rgb) * 0.00007;
+
+      gl_FragColor = toOutputFormat(vec4(c, center.a));
+    }
+    ";

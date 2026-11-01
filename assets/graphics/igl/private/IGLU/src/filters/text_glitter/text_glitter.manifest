@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "identifier": "text_glitter",
+  "displayName": "Text Glitter",
+  "description": "[IG Edits] Text effect name. With \"Text Glitter\", the creator can fill text with animated voronoi-noise glitter grains and bright cross-shaped sparkle highlights that twinkle over time.",
+  "assets": [
+    {
+      "name": "voronoi_noise_glitter_min.png",
+      "assetHash": "5fcaa9799ff5f5b181440583f7b83b5132a47c85a880343143a1c2beecb50829",
+      "hubAssetId": "4272768039637983"
+    }
+  ],
+  "iglu": {}
+}

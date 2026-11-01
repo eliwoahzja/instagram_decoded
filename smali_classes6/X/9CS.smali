@@ -1,0 +1,35 @@
+.class public final LX/9CS;
+.super LX/4Kc;
+.source ""
+
+
+# instance fields
+.field public final A00:Lcom/instagram/common/session/UserSession;
+
+.field public final A01:LX/9CQ;
+
+.field public final A02:LX/9C2;
+
+
+# direct methods
+.method public constructor <init>(Lcom/instagram/common/session/UserSession;LX/9CQ;LX/9C2;LX/mkc;)V
+    .locals 1
+
+    const/4 v0, 0x1
+
+    invoke-static {p2, v0}, LX/5B5;->A0U(Ljava/lang/Object;I)V
+
+    const/4 v0, 0x2
+
+    invoke-static {p3, v0}, LX/5B5;->A0U(Ljava/lang/Object;I)V
+
+    invoke-direct {p0, p4}, LX/4Kc;-><init>(LX/mkc;)V
+
+    iput-object p1, p0, LX/9CS;->A00:Lcom/instagram/common/session/UserSession;
+
+    iput-object p2, p0, LX/9CS;->A01:LX/9CQ;
+
+    iput-object p3, p0, LX/9CS;->A02:LX/9C2;
+
+    return-void
+.end method

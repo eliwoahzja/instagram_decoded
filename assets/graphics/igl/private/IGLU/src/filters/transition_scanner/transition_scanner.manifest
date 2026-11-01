@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "transition_scanner",
+  "displayName": "Scanner",
+  "description": "[IG Edits] Transition name. With \"Scanner\", the creator can transition between clips with a sliding bright scanner bar that paints a color-gradient glow as it wipes across.",
+  "iglu": {}
+}

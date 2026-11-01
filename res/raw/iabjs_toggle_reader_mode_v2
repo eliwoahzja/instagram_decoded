@@ -1,0 +1,1 @@
+(function(activate){if(activate){if(window._META&&window._META.ActivateReaderModeV2)return window._META.ActivateReaderModeV2()}else if(window._META&&window._META.DeactivateReaderModeV2)return window._META.DeactivateReaderModeV2()})

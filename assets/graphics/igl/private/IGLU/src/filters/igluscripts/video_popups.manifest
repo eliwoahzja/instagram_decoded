@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_popups",
+  "displayName": "Popups",
+  "description": "[IG Edits] Video effect name. With \"Popups\", the creator can intro the clip by sequentially popping up to 8 framed, scaled square thumbnail copies of the content at scripted positions and times.",
+  "iglu": {
+    "legacyId": 3019,
+    "behavior": {
+      "type": "fixedIntro",
+      "durationMs": 3000,
+      "curve": "linear"
+    },
+    "customization": [
+      {
+        "name": "duration",
+        "default": 3.0,
+        "min": 0.5,
+        "max": 6.0,
+        "displayName": "Duration",
+        "displayNameDescription": "[IG Edits] Slider label controlling how long a video effect's animation lasts; exact units and range vary per effect (seconds or normalized).",
+        "displayMethod": "time"
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "7e5b7403",
+      "handle": "AQADWwyQF4Or",
+      "md5": "7c8d004f8311ddbc9582711402643bc8"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAHCvpr7NkN"
+    }
+  }
+}

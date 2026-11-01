@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "bbox",
+  "displayName": "BBox",
+  "description": "[Instagram Edits] Internal filter for calculating bounding boxes of masked regions.",
+  "iglu": {}
+}

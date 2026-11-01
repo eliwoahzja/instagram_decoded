@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "identifier": "grainy",
+  "displayName": "Grainy",
+  "description": "Filter name for a film-grain texture effect",
+  "iglu": {
+    "legacyId": 1100
+  }
+}

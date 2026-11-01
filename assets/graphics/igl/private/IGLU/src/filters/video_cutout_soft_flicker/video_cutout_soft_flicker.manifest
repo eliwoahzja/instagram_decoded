@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_cutout_soft_flicker",
+  "displayName": "Soft flicker",
+  "description": "Video effect name. A video effect is a creative visual element that can be applied to a video. With \"Soft flicker\", the creator can add a subtle flickering effect to the video.",
+  "iglu": {
+    "subject": {
+      "enabled": true,
+      "fullFrameEnabled": false
+    }
+  }
+}

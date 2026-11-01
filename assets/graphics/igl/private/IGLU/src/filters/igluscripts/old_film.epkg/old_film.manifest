@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "identifier": "16C025CB-FA3B-4BE6-8890-842F456B64C4",
+  "displayName": "Old Film",
+  "description": "[IG Edits] Color filter name. Vintage film effect with LUT grading, animated scratches, drifting frame, and orange edge tick marks.",
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAIthcFbg6I"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "d6707446",
+      "handle": "AQAD9o3rqkIh",
+      "md5": "417a93775647ca419e493a7a4733a7d1"
+    }
+  },
+  "iglu": {
+    "legacyId": 3100
+  },
+  "assets": [
+    {
+      "name": "old_film_lut.png",
+      "assetHash": "8efcc7568256cc79f96969a59fdac2048fa245c7ef0f35f8561598d0e7cf216d",
+      "hubAssetId": "2548842485548619"
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Base.Theme" parent="@style/Theme.AppCompat.DayNight.NoActionBar">
+        <item name="android:navigationBarColor">@color/bds_black</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+    <style name="Base.Theme.Launcher" parent="@style/Theme.Instagram">
+        <item name="android:windowBackground">@drawable/instagram_splash_screen</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@color/ig_splash_screen_background</item>
+        <item name="android:navigationBarColor">@color/ig_splash_screen_background</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
+    </style>
+    <style name="BrowserFullscreen" parent="@style/Theme.Instagram">
+        <item name="android:windowAnimationStyle">@android:style/Animation</item>
+        <item name="android:statusBarColor">?elevatedBackgroundColor</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+    <style name="CallHandlerTheme" parent="@style/IgTranslucentWindow">
+        <item name="android:backgroundDimAmount">0.5</item>
+        <item name="android:backgroundDimEnabled">true</item>
+    </style>
+    <style name="CallTheme" parent="@style/Theme.Instagram">
+        <item name="android:colorBackground">@color/bds_black</item>
+        <item name="android:windowBackground">@color/bds_black</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+    <style name="IgSmartCaptureTheme" parent="@style/SmartCapture.Id.BaseIgIdVerification">
+        <item name="dividerColor">@color/bds_grey_9</item>
+        <item name="glyphColorPrimary">?igds_color_primary_text</item>
+        <item name="modalBackgroundDrawable">@drawable/modal_bg_night</item>
+        <item name="sc_card_background_flat">?igds_color_primary_background</item>
+        <item name="sc_divider">@color/bds_grey_9</item>
+    </style>
+    <style name="IgdsElevatedBackgroundFix" parent="@style/IgdsElevatedBackgroundFixDark" />
+    <style name="IgdsPrismBGBlurFallbackFix" parent="@style/IgdsPrismBGBlurFallbackFixDark" />
+    <style name="IgdsPrismGrayOverrides" parent="@style/IgdsPrismGrayOverridesDark" />
+    <style name="IgdsPrismIndigoOverrides" parent="@style/IgdsPrismIndigoOverridesDark" />
+    <style name="IgdsPrismMiscColorOverrides" parent="@style/IgdsPrismMiscColorOverridesDark" />
+    <style name="IgdsPrismRedOverrides" parent="@style/IgdsPrismRedOverridesDark" />
+    <style name="IgdsPrismSemanticColorsExperiment" parent="@style/IgdsPrismSemanticColorsExperimentDark" />
+    <style name="IgdsSemanticColors" parent="@style/IgdsSemanticColorsDark" />
+    <style name="Theme.AppCompat.DayNight" parent="@style/Theme.AppCompat" />
+    <style name="Theme.AppCompat.DayNight.NoActionBar" parent="@style/Theme.AppCompat.NoActionBar" />
+    <style name="Theme.Instagram" parent="@style/BaseNightTheme" />
+    <style name="ig_afi_footer_bottom_sheet_menu_item">
+        <item name="backgroundElevatedDrawableBottom">@drawable/bg_elevated_simple_row_bottom</item>
+        <item name="backgroundElevatedDrawableSingle">@drawable/bg_elevated_simple_row_single</item>
+        <item name="backgroundElevatedDrawableTop">@drawable/bg_elevated_simple_row_top</item>
+        <item name="elevatedBackgroundDrawable">@drawable/bg_elevated_simple_row</item>
+        <item name="igds_color_elevated_background">@color/bds_grey_8</item>
+        <item name="igds_color_elevated_separator">@color/bds_grey_9</item>
+    </style>
+</resources>

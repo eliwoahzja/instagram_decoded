@@ -1,0 +1,31 @@
+[Filter VideoJumpCutOut]
+[MaskBehavior alpha]
+
+# Composable wrapper — delegates to VideoJumpCutIn with outro=1.0
+
+[Init]
+fun init(Filter filter) {
+  filter.passes = {
+    {
+      name = 'jumpCutOut,
+      igid = 'video_jump_cut_in,
+      inputs = {'default},
+      uniforms = {
+        outro = 1.0,
+      },
+    }
+  };
+
+  filter.parameters = {
+    {progress = 0.0, min = 0.0, max = 1.0, description = "Animation Progress"},
+    {center = {0.5, 0.5}, min = {0.0, 0.0}, max = {1.0, 1.0}},
+  };
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  f32 p = getParameterFloat('progress);
+  setShaderUniform('jumpCutOut, 'progress, p);
+  setShaderUniform('jumpCutOut, 'outro, 1.0);
+  setShaderUniform('jumpCutOut, 'center, getParameterVec2('center));
+}

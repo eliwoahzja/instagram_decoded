@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_ooe_arcade_2000s",
+  "displayName": "OoE Arcade 2000s",
+  "description": "[IG Edits] Video effect name. A retro-gaming style effect that simulates a 2000s arcade game look with pixelation, ordered dithering, CRT scanlines, and a choppy frame rate.",
+  "iglu": {
+    "legacyId": 2307,
+    "customization": [
+      {
+        "name": "size",
+        "displayName": "Pixel Size",
+        "displayNameDescription": "[IG Edits] Slider label controlling the size of the pixelation grid in the retro arcade effect",
+        "default": 0.14285714,
+        "min": 0.0,
+        "max": 1.0
+      },
+      {
+        "name": "amount",
+        "displayName": "Saturation",
+        "displayNameDescription": "[IG Edits] Slider label controlling the color saturation intensity of the retro arcade effect",
+        "default": 0.36666667,
+        "min": 0.0,
+        "max": 1.0
+      }
+    ]
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAGF76f3FEN",
+      "isImageFormat": true
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "a2b603b",
+      "handle": "AQADQNdf7Ex7",
+      "md5": "a7aca122c7831e559c34e3a21c36054c"
+    }
+  }
+}

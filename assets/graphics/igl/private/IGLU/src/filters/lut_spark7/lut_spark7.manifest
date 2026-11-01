@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "identifier": "vintage",
+  "displayName": "Vintage",
+  "description": "[IG Edits] Color filter name. With \"Vintage\", the creator can apply a faded retro film-stock look by remapping each pixel's RGB through a 3D color lookup table.",
+  "iglu": {
+    "legacyId": 824
+  },
+  "assets": [
+    {
+      "name": "vintage.png",
+      "assetHash": "f14f1053418306097c98a8dada8f16d1813b5058c7ecca00b7e875aa037639e0",
+      "hubAssetId": "2166303900790927"
+    },
+    {
+      "name": "vintage_compressed.png",
+      "assetHash": "e84cee15bfbbd1c5f7d9ea04d08ff3fbe9a8658999aa989a578fd070da9b0997",
+      "hubAssetId": "1629441711687969"
+    }
+  ]
+}

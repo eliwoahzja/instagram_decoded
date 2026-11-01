@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "text_extrusion_transparent",
+  "displayName": "Extrusion Transparent",
+  "description": "[IG Edits] Text effect name. With \"Extrusion Transparent\", the creator can render hollow text whose RGB edges and many-layer extrusion show through the transparent glyph fill.",
+  "iglu": {}
+}

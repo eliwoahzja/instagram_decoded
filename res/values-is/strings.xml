@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="string_0x7f130002">Fylki</string>
+    <string name="string_0x7f130003">Borg</string>
+    <string name="string_0x7f130004">Heimilisfang</string>
+    <string name="string_0x7f130006">Íbúð/herbergi (valfrjálst)</string>
+    <string name="string_0x7f13002c">Loka vafra</string>
+    <string name="string_0x7f13002f">%1$s vill nota myndavél tækis þíns.</string>
+    <string name="string_0x7f130030">%1$s vill notar staðsetningu tækis þíns.</string>
+    <string name="string_0x7f130033">Leyfa</string>
+    <string name="string_0x7f130034">Loka á</string>
+    <string name="string_0x7f130038">Vandamál kom upp með öryggisvottorð þessarar síðu</string>
+    <string name="string_0x7f130039">Fara til baka</string>
+    <string name="string_0x7f13003a">Öryggisvilla</string>
+    <string name="string_0x7f13008d">Eitthvað fór úrskeiðis</string>
+    <string name="string_0x7f13008f">Netfang</string>
+    <string name="string_0x7f130096">Endurhlaða</string>
+    <string name="string_0x7f130098">Eftirnafn</string>
+    <string name="string_0x7f130099">Ekki er hægt að hlaða síðu</string>
+    <string name="string_0x7f13009a">Opna með...</string>
+    <string name="string_0x7f13009b">Opna í %1$s</string>
+    <string name="string_0x7f13009c">Fleiri valkostir</string>
+    <string name="string_0x7f1300aa">Fornafn</string>
+    <string name="string_0x7f1300cb">Við erum í erfiðleikum með að setja upp %2$s á %1$s. Þú getur reynt aftur eða notað %2$s á ensku (US) þessa stundina.</string>
+    <string name="string_0x7f1300cc">Augnablik á meðan við setjum upp %1$s...</string>
+    <string name="string_0x7f1300cd">Reyndu aftur</string>
+    <string name="string_0x7f1300ce">HALDA ÁFRAM Á ENSKU (US)</string>
+    <string name="string_0x7f13010b">Póstnúmer</string>
+    <string name="string_0x7f1301d3">Sími</string>
+    <string name="string_0x7f1301d7">Stilla tíma</string>
+</resources>

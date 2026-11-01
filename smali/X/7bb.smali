@@ -1,0 +1,37 @@
+.class public final synthetic LX/7bb;
+.super Ljava/lang/Object;
+.source ""
+
+# interfaces
+.implements LX/qnp;
+
+
+# instance fields
+.field public final A00:Ljava/lang/Object;
+
+
+# direct methods
+.method public constructor <init>(Ljava/lang/Object;)V
+    .locals 0
+
+    .line 0
+    invoke-direct {p0}, Ljava/lang/Object;-><init>()V
+
+    .line 3
+    iput-object p1, p0, LX/7bb;->A00:Ljava/lang/Object;
+
+    .line 5
+    return-void
+.end method
+
+
+# virtual methods
+.method public final B04(LX/4Ec;)Ljava/lang/Object;
+    .locals 1
+
+    .line 0
+    iget-object v0, p0, LX/7bb;->A00:Ljava/lang/Object;
+
+    .line 2
+    return-object v0
+.end method

@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "identifier": "clarendon",
+  "displayName": "Clarendon",
+  "description": "[IG Edits] Color filter name. With \"Clarendon\", the creator can apply the Clarendon look: lift shadows via tone-curve LUT, deepen darks, re-tint via a second LUT for cool intensified contrast.",
+  "iglu": {
+    "legacyId": 112
+  },
+  "assets": [
+    {
+      "name": "map1.png",
+      "assetHash": "287b352673f4c2c3d5f7123a8c95be3ccb99f535185ce2d5cc1cff3d97c57b3f",
+      "hubAssetId": "2782924232055050"
+    },
+    {
+      "name": "map2.png",
+      "assetHash": "13795f1b2e4a3209362c591295fc73ada20c5e49aebd6e4df659a26ad98a00f0",
+      "hubAssetId": "1238508937751224"
+    }
+  ]
+}

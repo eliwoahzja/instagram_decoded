@@ -1,0 +1,244 @@
+.class final Lapp/morphe/extension/crimera/internal/google/common/collect/NaturalOrdering;
+.super Lapp/morphe/extension/crimera/internal/google/common/collect/Ordering;
+.source "NaturalOrdering.java"
+
+# interfaces
+.implements Ljava/io/Serializable;
+
+
+# annotations
+.annotation build Lapp/morphe/extension/crimera/internal/google/common/annotations/GwtCompatible;
+    serializable = true
+.end annotation
+
+.annotation runtime Lapp/morphe/extension/crimera/internal/google/common/collect/ElementTypesAreNonnullByDefault;
+.end annotation
+
+.annotation system Ldalvik/annotation/Signature;
+    value = {
+        "Lapp/morphe/extension/crimera/internal/google/common/collect/Ordering<",
+        "Ljava/lang/Comparable<",
+        "*>;>;",
+        "Ljava/io/Serializable;"
+    }
+.end annotation
+
+
+# static fields
+.field static final INSTANCE:Lapp/morphe/extension/crimera/internal/google/common/collect/NaturalOrdering;
+
+.field private static final serialVersionUID:J
+
+
+# instance fields
+.field private transient nullsFirst:Lapp/morphe/extension/crimera/internal/google/common/collect/Ordering;
+    .annotation runtime Lapp/morphe/extension/crimera/internal/google/errorprone/annotations/concurrent/LazyInit;
+    .end annotation
+
+    .annotation system Ldalvik/annotation/Signature;
+        value = {
+            "Lapp/morphe/extension/crimera/internal/google/common/collect/Ordering<",
+            "Ljava/lang/Comparable<",
+            "*>;>;"
+        }
+    .end annotation
+
+    .annotation runtime Ljavax/annotation/CheckForNull;
+    .end annotation
+.end field
+
+.field private transient nullsLast:Lapp/morphe/extension/crimera/internal/google/common/collect/Ordering;
+    .annotation runtime Lapp/morphe/extension/crimera/internal/google/errorprone/annotations/concurrent/LazyInit;
+    .end annotation
+
+    .annotation system Ldalvik/annotation/Signature;
+        value = {
+            "Lapp/morphe/extension/crimera/internal/google/common/collect/Ordering<",
+            "Ljava/lang/Comparable<",
+            "*>;>;"
+        }
+    .end annotation
+
+    .annotation runtime Ljavax/annotation/CheckForNull;
+    .end annotation
+.end field
+
+
+# direct methods
+.method static constructor <clinit>()V
+    .locals 1
+
+    .line 32
+    new-instance v0, Lapp/morphe/extension/crimera/internal/google/common/collect/NaturalOrdering;
+
+    invoke-direct {v0}, Lapp/morphe/extension/crimera/internal/google/common/collect/NaturalOrdering;-><init>()V
+
+    sput-object v0, Lapp/morphe/extension/crimera/internal/google/common/collect/NaturalOrdering;->INSTANCE:Lapp/morphe/extension/crimera/internal/google/common/collect/NaturalOrdering;
+
+    return-void
+.end method
+
+.method private constructor <init>()V
+    .locals 0
+
+    .line 78
+    invoke-direct {p0}, Lapp/morphe/extension/crimera/internal/google/common/collect/Ordering;-><init>()V
+
+    return-void
+.end method
+
+.method private readResolve()Ljava/lang/Object;
+    .locals 0
+
+    .line 70
+    sget-object p0, Lapp/morphe/extension/crimera/internal/google/common/collect/NaturalOrdering;->INSTANCE:Lapp/morphe/extension/crimera/internal/google/common/collect/NaturalOrdering;
+
+    return-object p0
+.end method
+
+
+# virtual methods
+.method public compare(Ljava/lang/Comparable;Ljava/lang/Comparable;)I
+    .locals 0
+    .annotation system Ldalvik/annotation/MethodParameters;
+        accessFlags = {
+            0x0,
+            0x0
+        }
+        names = {
+            "left",
+            "right"
+        }
+    .end annotation
+
+    .annotation system Ldalvik/annotation/Signature;
+        value = {
+            "(",
+            "Ljava/lang/Comparable<",
+            "*>;",
+            "Ljava/lang/Comparable<",
+            "*>;)I"
+        }
+    .end annotation
+
+    .line 40
+    invoke-static {p1}, Lapp/morphe/extension/crimera/internal/google/common/base/Preconditions;->checkNotNull(Ljava/lang/Object;)Ljava/lang/Object;
+
+    .line 41
+    invoke-static {p2}, Lapp/morphe/extension/crimera/internal/google/common/base/Preconditions;->checkNotNull(Ljava/lang/Object;)Ljava/lang/Object;
+
+    .line 42
+    invoke-interface {p1, p2}, Ljava/lang/Comparable;->compareTo(Ljava/lang/Object;)I
+
+    move-result p0
+
+    return p0
+.end method
+
+.method public bridge synthetic compare(Ljava/lang/Object;Ljava/lang/Object;)I
+    .locals 0
+    .annotation system Ldalvik/annotation/MethodParameters;
+        accessFlags = {
+            0x1000,
+            0x1000
+        }
+        names = {
+            "left",
+            "right"
+        }
+    .end annotation
+
+    .line 28
+    check-cast p1, Ljava/lang/Comparable;
+
+    check-cast p2, Ljava/lang/Comparable;
+
+    invoke-virtual {p0, p1, p2}, Lapp/morphe/extension/crimera/internal/google/common/collect/NaturalOrdering;->compare(Ljava/lang/Comparable;Ljava/lang/Comparable;)I
+
+    move-result p0
+
+    return p0
+.end method
+
+.method public nullsFirst()Lapp/morphe/extension/crimera/internal/google/common/collect/Ordering;
+    .locals 1
+    .annotation system Ldalvik/annotation/Signature;
+        value = {
+            "<S::",
+            "Ljava/lang/Comparable<",
+            "*>;>()",
+            "Lapp/morphe/extension/crimera/internal/google/common/collect/Ordering<",
+            "TS;>;"
+        }
+    .end annotation
+
+    .line 47
+    iget-object v0, p0, Lapp/morphe/extension/crimera/internal/google/common/collect/NaturalOrdering;->nullsFirst:Lapp/morphe/extension/crimera/internal/google/common/collect/Ordering;
+
+    if-nez v0, :cond_0
+
+    .line 49
+    invoke-super {p0}, Lapp/morphe/extension/crimera/internal/google/common/collect/Ordering;->nullsFirst()Lapp/morphe/extension/crimera/internal/google/common/collect/Ordering;
+
+    move-result-object v0
+
+    iput-object v0, p0, Lapp/morphe/extension/crimera/internal/google/common/collect/NaturalOrdering;->nullsFirst:Lapp/morphe/extension/crimera/internal/google/common/collect/Ordering;
+
+    :cond_0
+    return-object v0
+.end method
+
+.method public nullsLast()Lapp/morphe/extension/crimera/internal/google/common/collect/Ordering;
+    .locals 1
+    .annotation system Ldalvik/annotation/Signature;
+        value = {
+            "<S::",
+            "Ljava/lang/Comparable<",
+            "*>;>()",
+            "Lapp/morphe/extension/crimera/internal/google/common/collect/Ordering<",
+            "TS;>;"
+        }
+    .end annotation
+
+    .line 56
+    iget-object v0, p0, Lapp/morphe/extension/crimera/internal/google/common/collect/NaturalOrdering;->nullsLast:Lapp/morphe/extension/crimera/internal/google/common/collect/Ordering;
+
+    if-nez v0, :cond_0
+
+    .line 58
+    invoke-super {p0}, Lapp/morphe/extension/crimera/internal/google/common/collect/Ordering;->nullsLast()Lapp/morphe/extension/crimera/internal/google/common/collect/Ordering;
+
+    move-result-object v0
+
+    iput-object v0, p0, Lapp/morphe/extension/crimera/internal/google/common/collect/NaturalOrdering;->nullsLast:Lapp/morphe/extension/crimera/internal/google/common/collect/Ordering;
+
+    :cond_0
+    return-object v0
+.end method
+
+.method public reverse()Lapp/morphe/extension/crimera/internal/google/common/collect/Ordering;
+    .locals 0
+    .annotation system Ldalvik/annotation/Signature;
+        value = {
+            "<S::",
+            "Ljava/lang/Comparable<",
+            "*>;>()",
+            "Lapp/morphe/extension/crimera/internal/google/common/collect/Ordering<",
+            "TS;>;"
+        }
+    .end annotation
+
+    .line 65
+    sget-object p0, Lapp/morphe/extension/crimera/internal/google/common/collect/ReverseNaturalOrdering;->INSTANCE:Lapp/morphe/extension/crimera/internal/google/common/collect/ReverseNaturalOrdering;
+
+    return-object p0
+.end method
+
+.method public toString()Ljava/lang/String;
+    .locals 0
+
+    .line 75
+    const-string p0, "Ordering.natural()"
+
+    return-object p0
+.end method

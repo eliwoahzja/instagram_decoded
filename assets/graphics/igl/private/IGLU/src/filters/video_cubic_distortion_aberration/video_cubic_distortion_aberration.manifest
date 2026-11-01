@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_cubic_distortion_aberration",
+  "displayName": "Cubic Distortion",
+  "description": "[IG Edits] Video effect name. With \"Cubic Distortion\", the creator can warp the frame with a cubic lens barrel distortion and RGB chromatic aberration that grow toward the edges.",
+  "iglu": {}
+}

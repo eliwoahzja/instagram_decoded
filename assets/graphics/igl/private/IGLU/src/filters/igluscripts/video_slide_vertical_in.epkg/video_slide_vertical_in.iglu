@@ -1,0 +1,101 @@
+[Filter IgluscriptSlideVerticalInFilter]
+[MaskBehavior alpha]
+
+# AE source: POSITION_SLIDE_DOWN_IN / POSITION_SLIDE_DOWN_OUT
+# Position: Y Position, 2 keyframes, 360ms, bezier eased
+# Opacity: linear 0→1 over 280ms (first 77.8% of duration)
+# Offset: 116px on 1280px canvas = 0.090625 UV
+
+string slideGlsl = "varying vec2 sourceTextureCoordinate;
+
+BaseUniformsOpenGL;
+
+uniform vec2 position;
+uniform float opacity;
+
+void main() {
+  vec2 uv = sourceTextureCoordinate;
+  uv.x -= position.x;
+  uv.y -= DOWN * position.y;
+
+  float inside = step(0.0, uv.x) * step(uv.x, 1.0) * step(0.0, uv.y) * step(uv.y, 1.0);
+  vec4 color = sampleInput(uv) * inside * opacity;
+  gl_FragColor = toOutputFormat(color);
+}
+";
+
+fun mix(f32 a, f32 b, f32 t) f32 {
+  return a * (1.0 - t) + b * t;
+}
+
+fun cssBezier(f32 time, f32 x1, f32 y1, f32 x2, f32 y2) f32 {
+  f32 t = time;
+  f32 i = 0.0;
+  while (i < 8.0) {
+    f32 u = 1.0 - t;
+    f32 xt = 3.0 * u * u * t * x1 + 3.0 * u * t * t * x2 + t * t * t;
+    f32 dxdt = 3.0 * u * u * x1 + 6.0 * u * t * (x2 - x1) + 3.0 * t * t * (1.0 - x2);
+    t = t - (xt - time) / max(dxdt, 0.0001);
+    t = clamp(t, 0.0, 1.0);
+    i = i + 1.0;
+  }
+  f32 u = 1.0 - t;
+  return 3.0 * u * u * t * y1 + 3.0 * u * t * t * y2 + t * t * t;
+}
+
+[Init]
+fun init(Filter filter) {
+  filter.parameters = {
+    {direction = 0.0, min = 0.0, max = 1.0, description = "0 = Up-to-center, 1 = Down-to-center"},
+    {positionScale = 1.0, min = 0.0, max = 4.0, description = "Scale position offset"},
+    {outro = 0.0, min = 0.0, max = 1.0, description = "0 = In, 1 = Out"},
+  };
+
+  filter.passes = {{
+      name = 'slideFx,
+      inputs = {'default},
+      uniforms = {
+        position = {0.0, 0.0},
+        opacity = 1.0,
+      },
+      glslShader = slideGlsl,
+    }};
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  f32 p = getParameterFloat('progress);
+  f32 outro = getParameterFloat('outro);
+  f32 posScale = getParameterFloat('positionScale);
+  f32 dir = getParameterFloat('direction);
+
+  f32 isOutro = 0.0;
+  if (outro >= 0.5) { isOutro = 1.0; }
+
+  f32 usesOutroTravel = 0.0;
+  if (outro > 0.5) { usesOutroTravel = 1.0; }
+
+  # Direction code (Component.kt): up = 2, down = 3
+  f32 directionSign = 0.0 - 1.0;
+  if (dir > 2.5) { directionSign = 1.0; }
+
+  # Position easing: exact AE CSS bezier
+  f32 x2 = mix(0.073353, 0.972222, isOutro);
+  f32 y2 = mix(1.0, 0.497999, isOutro);
+  f32 t = cssBezier(p, 0.623156, 0.0, x2, y2);
+
+  # IN entry is spatially opposite of OUT exit for the same direction.
+  f32 sign = directionSign * mix(0.0 - 1.0, 1.0, isOutro);
+  f32 travel = mix(1.0 - t, t, usesOutroTravel);
+  f32 offset = sign * 0.090625 * posScale * travel;
+
+  # Opacity: linear fade over 280ms out of 360ms (77.8% of duration)
+  f32 opacityDuration = 0.6;
+  f32 introOpacity = clamp(p / opacityDuration, 0.0, 1.0);
+  f32 outroOpacity = clamp((1.0 - p) / opacityDuration, 0.0, 1.0);
+  f32 opacity = mix(introOpacity, outroOpacity, isOutro);
+
+  vec2 pos = {0.0, offset};
+  setShaderUniform('slideFx, 'position, pos);
+  setShaderUniform('slideFx, 'opacity, opacity);
+}

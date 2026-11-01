@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_frame_tilt",
+  "displayName": "Frame tilt",
+  "description": "[IG Edits] Video effect name. With \"Frame tilt\", the creator can ease the frame in from a tilted scaled-down position into place over a fixed intro.",
+  "iglu": {
+    "legacyId": 3007,
+    "behavior": {
+      "type": "fixedIntro",
+      "durationMs": 2000,
+      "curve": "quinticOut"
+    },
+    "customization": [
+      {
+        "name": "duration",
+        "default": 2.0,
+        "min": 0.2,
+        "max": 3.0,
+        "displayName": "Duration",
+        "displayNameDescription": "[IG Edits] Slider label controlling how long a video effect's animation lasts; exact units and range vary per effect (seconds or normalized).",
+        "displayMethod": "time"
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "4424edc3",
+      "handle": "AQAHwBv-bq_L",
+      "md5": "0a88250801eaa61b2da353d6539cdaff"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAFbGXQHJZ-"
+    }
+  }
+}

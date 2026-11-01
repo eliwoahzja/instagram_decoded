@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="?igds_color_highlight_background" />
+            <size android:height="@dimen/abc_dropdownitem_icon_width" android:width="@dimen/abc_dropdownitem_icon_width" />
+        </shape>
+    </item>
+    <item android:gravity="center" android:id="@id/reply_bar_voice_message_icon" android:layout_width="@dimen/abc_floating_window_z" android:layout_height="@dimen/abc_floating_window_z" android:drawable="@drawable/direct_reply_bar_voice_message_indicator" />
+</layer-list>

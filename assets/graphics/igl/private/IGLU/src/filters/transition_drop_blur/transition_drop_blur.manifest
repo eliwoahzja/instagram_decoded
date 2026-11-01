@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "identifier": "transition_drop_blur",
+  "displayName": "Ishift",
+  "description": "Video transition selection. Chooses to apply drop blur transition.",
+  "attribution": "@ishanimitraa",
+  "iglu": {}
+}

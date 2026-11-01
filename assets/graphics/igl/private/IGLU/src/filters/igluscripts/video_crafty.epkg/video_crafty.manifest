@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_crafty",
+  "displayName": "Crafty",
+  "description": "[IG Edits] Video effect name. With \"Crafty\", the creator gets a handmade, wobbly distortion animation on the video with adjustable speed and intensity sliders.",
+  "iglu": {
+    "legacyId": 3030,
+    "customization": [
+      {
+        "name": "speed",
+        "default": 1.0,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Speed",
+        "displayNameDescription": "[IG Edits] Slider label controlling the playback or animation speed of a video effect (noun, not a verb); exact range varies per effect."
+      },
+      {
+        "name": "intensity",
+        "default": 0.0,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Intensity",
+        "displayNameDescription": "[IG Edits] Slider label controlling the strength of a video effect. Generic across many effects (glow, blur, color, distortion, etc.); exact range varies per effect."
+      }
+    ]
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQADx6JJJzb_"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "8744bb1e",
+      "handle": "AQAJ-CtVJLI3",
+      "md5": "362716809aa833d469e792f2936c0ef7"
+    }
+  }
+}

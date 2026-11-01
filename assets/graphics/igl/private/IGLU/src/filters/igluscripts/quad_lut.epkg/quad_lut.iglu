@@ -1,0 +1,99 @@
+[Filter QuadLut]
+# "Quad LUT" — 2x2 grid of camera+LUT copies tiling the full canvas.
+# Renamed from "luts" (too generic, would have collided/been ambiguous).
+#
+# Pipeline (single fragment pass, glamy-derived base):
+#   Stage 1 — UV remap: fract(uv * 2.0) maps each output quadrant back
+#             to the full camera [0,1] UV space, giving 4 tiled copies.
+#   Stage 2 — 8x8 grid LUT (same trilinear sampling as glamy / soft_white
+#             / aesthetic_blur). Same [0.00781, 0.98438] clamp range.
+#
+# Spark reference note: the original Spark patch had 4 separate camera
+# instances, possibly intended for different LUTs per quadrant. The
+# author shipped the same LUT for all 4. This implementation replicates
+# the shipping behavior (single LUT × 4). If a future variant wants
+# per-quadrant LUTs, the cleanest extension is 4 named texture inputs
+# ('lut_tl, 'lut_tr, 'lut_bl, 'lut_br) and quadrant-aware sampling in
+# the shader — defer until that requirement is real.
+#
+# Single-asset filter on legacy generic-symbol pattern (`'lut` ↔
+# `quad_lut_lut.png`); same convention as soft_white, prism, moon_glow,
+# and the 15 already-landed LUT filters. Added to skill-doc exception list.
+#
+# Asset effectId / assetHash baked into manifest (received from
+# Neetika upload). Ready for review.
+
+[Init]
+fun init(Filter filter)
+{
+    makeTexture('lut);
+
+    filter.parameters = {
+        {strength = 1.0, min = 0.0, max = 1.0, description = "LUT mix strength"},
+    };
+
+    filter.passes = {{
+      name = 'pass0,
+      inputs = {'default, 'lut},
+      uniforms = {
+        strength = 1.0,
+      },
+      glslShader = glslLut,
+    }};
+}
+
+string lut_path = "lut_path";
+string lut_filename = "";
+
+[PreRender]
+fun preRender(Filter filter){
+    string lut_filename_parameter = getParameterString(lut_path);
+    if (lut_filename_parameter != "") {
+        string new_lut_filename = stringAppend("textureFilePath://", lut_filename_parameter);
+        if (new_lut_filename != lut_filename) {
+            lut_filename = new_lut_filename;
+            loadTexture('lut, lut_filename);
+        }
+    }
+
+    # LUT mix strength — wire from filter.parameters so host overrides apply.
+    f32 s = getParameterFloat('strength);
+    setShaderUniform('pass0, 'strength, s);
+}
+
+#### GLSL shader ####
+
+string glslLut = "
+    varying vec2 sourceTextureCoordinate;
+    BaseUniformsOpenGL;
+
+    uniform sampler2D auxSampler0;
+    uniform sampler2D auxSampler1;
+    uniform sampler2D auxSampler2;
+
+    void main() {
+      // 2x2 grid: fract(uv * 2.0) maps each output quadrant back to
+      // [0,1] camera UV, producing 4 tiled copies of the camera image.
+      // LUT applied identically to all 4 copies (single fragment pass).
+      vec2 quadUv = fract(sourceTextureCoordinate * 2.0);
+      vec4 texel = sampleInput(quadUv);
+
+      texel.rgb = clamp(texel.rgb, 0.00781, 0.98438);
+
+      float x = texel.r / 8.0;
+      float y = texel.g / 8.0;
+      float z = texel.b;
+
+      float blueY = floor(z * 8.0) / 8.0;
+      float blueX = floor((z - blueY) * 64.0) / 8.0;
+
+      x += blueX;
+      y += blueY;
+
+      vec3 color = texture2D(auxSampler1, vec2(x, y)).xyz;
+
+      texel = mix(texel, vec4(color, texel.a), strength);
+
+      gl_FragColor = toOutputFormat(texel);
+    }
+    ";

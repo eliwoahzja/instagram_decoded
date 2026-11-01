@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "identifier": "a8422aef-9ac9-4584-8492-eb5e1bcfeac5",
+  "displayName": "Blinds Vertical",
+  "description": "[IG Edits] Effect name shown in the video effects picker. This is the user-facing label for a video effect.",
+  "iglu": {
+    "legacyId": 3123,
+    "behavior": {
+      "type": "fixedIntro",
+      "durationMs": 1600,
+      "curve": "linear"
+    },
+    "customization": [
+      {
+        "name": "duration",
+        "default": 1.6,
+        "min": 1.0,
+        "max": 5.0,
+        "displayName": "Duration",
+        "displayMethod": "time"
+      },
+      {
+        "name": "amount",
+        "displayName": "Amount",
+        "default": 0.0,
+        "min": 0.0,
+        "max": 1.0
+      }
+    ]
+  }
+}

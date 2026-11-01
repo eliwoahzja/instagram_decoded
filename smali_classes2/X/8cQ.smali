@@ -1,0 +1,59 @@
+.class public final LX/8cQ;
+.super LX/3h2;
+.source ""
+
+
+# direct methods
+.method public constructor <init>(LX/a0P;)V
+    .locals 4
+    .annotation build Ldalvik/annotation/optimization/NeverInline;
+    .end annotation
+
+    const/4 v0, 0x0
+
+    invoke-static {p1, v0}, LX/5B5;->A0U(Ljava/lang/Object;I)V
+
+    const-string/jumbo v3, "itas-android"
+
+    const v2, 0x55d88143
+
+    sget-object v1, LX/56z;->A00:LX/56z;
+
+    new-instance v0, LX/1zr;
+
+    invoke-direct {v0, v1, v2, v3}, LX/1zr;-><init>(Ljava/util/List;ILjava/lang/String;)V
+
+    invoke-direct {p0, v0, p1}, LX/3h2;-><init>(LX/1zr;LX/a0P;)V
+
+    return-void
+.end method
+
+
+# virtual methods
+.method public final A05()Z
+    .locals 3
+    .annotation build Ldalvik/annotation/optimization/NeverInline;
+    .end annotation
+
+    iget-object v2, p0, LX/3h2;->A01:LX/a0P;
+
+    const/16 v0, 0x2e
+
+    new-instance v1, LX/Clx;
+
+    invoke-direct {v1, p0, v0}, LX/Clx;-><init>(Ljava/lang/Object;I)V
+
+    const v0, 0x7947d26
+
+    invoke-interface {v2, v0, v1}, LX/a0P;->HbO(ILkotlin/jvm/functions/Function0;)Ljava/lang/Object;
+
+    move-result-object v0
+
+    check-cast v0, Ljava/lang/Boolean;
+
+    invoke-virtual {v0}, Ljava/lang/Boolean;->booleanValue()Z
+
+    move-result v0
+
+    return v0
+.end method

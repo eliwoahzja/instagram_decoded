@@ -1,0 +1,190 @@
+[Filter Polaroid]
+# "polaroid" — 2-LUT inset composite + static procedural grain.
+# Bottom layer: full-frame camera + B&W LUT. Inset layer: scale 0.67
+# centered crop of camera + color LUT. Grain: static (no time animation),
+# additive over the full frame post-LUT.
+#
+# Cloned from glamy.iglu (LUT pattern) + super_8mm.iglu (grain pattern).
+# Time component removed from the grain so it stays still frame-to-frame
+# (matches the spec's "static grain, no animation" requirement). The
+# inset crop uses `(uv - 0.5) / 0.67 + 0.5` to remap; pixels outside
+# [0,1] in remapped space fall back to the B&W background, producing
+# the polaroid frame look without any hard white border (the surround
+# IS the B&W camera, not a paint border).
+#
+# Pipeline (single fragment pass):
+#   Stage 1 — Background: full-frame camera + B&W LUT (auxSampler1).
+#   Stage 2 — Photo inset: scale 0.67 centered crop, color LUT (auxSampler2).
+#             insetMask = step(0, photoUv) * step(photoUv, 1) for both axes.
+#   Stage 3 — Composite: mix(bwResult, colorResult, insetMask).
+#   Stage 4 — Grain: bipolar additive noise centered on 0 — some pixels
+#             brighten, some darken, average shift = 0. Static (no time
+#             component) so grain stays still frame-to-frame. Replaces
+#             the V1 screen-blended unipolar approach which would only
+#             brighten the canvas as grain_strength increased.
+#
+# LUTs are wired via Named Inputs (no manifest asset entries — picked in
+# sample app locally per the spec). For production, the host can push
+# the LUT textures via setNamedInput("lut_bw", tex) / setNamedInput("lut_color", tex)
+# OR wire Custom Parameter strings (`lut_bw_path`, `lut_color_path`) that
+# the [PreRender] block below resolves to textureFilePath:// URIs.
+#
+# **WIP — DO NOT LAND** while the manifest carries no asset entries (LUT
+# delivery still pending Neetika upload + manifest entries with hashes
+# and effectIds — to be added when assets are uploaded).
+
+[Init]
+fun init(Filter filter)
+{
+    makeTexture('lut_bw);
+    makeTexture('lut_color);
+
+    filter.parameters = {
+        {strength = 1.0, min = 0.0, max = 1.0, description = "LUT mix strength (applies to both B&W background and color inset)"},
+        {grain_strength = 0.05, min = 0.0, max = 0.2, description = "Static film grain magnitude (bipolar additive; positive AND negative swing for authentic film-grain character without canvas brightening)"},
+    };
+
+    filter.passes = {{
+      name = 'pass0,
+      inputs = {'default, 'lut_bw, 'lut_color},
+      uniforms = {
+        strength = 1.0,
+        grain_strength = 0.05,
+      },
+      glslShader = glslPolaroid,
+    }};
+}
+
+# Custom Parameter strings let the host push LUT URIs at runtime.
+# Sample-app testing alternative: drop PNGs in the Named Inputs panel
+# with input names "lut_bw" and "lut_color" — bypasses these parameters.
+string lut_bw_path = "lut_bw_path";
+string lut_bw_filename = "";
+string lut_color_path = "lut_color_path";
+string lut_color_filename = "";
+
+[PreRender]
+fun preRender(Filter filter){
+    string bw_filename_parameter = getParameterString(lut_bw_path);
+    if (bw_filename_parameter != "") {
+        string new_bw_filename = stringAppend("textureFilePath://", bw_filename_parameter);
+        if (new_bw_filename != lut_bw_filename) {
+            lut_bw_filename = new_bw_filename;
+            loadTexture('lut_bw, lut_bw_filename);
+        }
+    }
+
+    string color_filename_parameter = getParameterString(lut_color_path);
+    if (color_filename_parameter != "") {
+        string new_color_filename = stringAppend("textureFilePath://", color_filename_parameter);
+        if (new_color_filename != lut_color_filename) {
+            lut_color_filename = new_color_filename;
+            loadTexture('lut_color, lut_color_filename);
+        }
+    }
+
+    f32 s = getParameterFloat('strength);
+    setShaderUniform('pass0, 'strength, s);
+
+    f32 gs = getParameterFloat('grain_strength);
+    setShaderUniform('pass0, 'grain_strength, gs);
+}
+
+#### GLSL shader ####
+
+string glslPolaroid = "
+    varying vec2 sourceTextureCoordinate;
+    BaseUniformsOpenGL;
+
+    uniform sampler2D auxSampler0;  // 'default (camera)
+    uniform sampler2D auxSampler1;  // 'lut_bw
+    uniform sampler2D auxSampler2;  // 'lut_color
+
+    uniform float grain_strength;
+
+    // 2D hash for static grain. Returns [0, 1).
+    float hash21(vec2 p) {
+      return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453);
+    }
+
+    // Screen blend: 1 - (1-base)*(1-overlay). Brightening blend.
+    vec3 screenBlend(vec3 base, vec3 overlay) {
+      return 1.0 - (1.0 - base) * (1.0 - overlay);
+    }
+
+    // 8x8 grid LUT lookup using the named LUT sampler. inRgb is camera color.
+    vec3 lutLookupBW(vec3 inRgb) {
+      vec3 c = clamp(inRgb, 0.00781, 0.98438);
+      float x = c.r / 8.0;
+      float y = c.g / 8.0;
+      float z = c.b;
+      float blueY = floor(z * 8.0) / 8.0;
+      float blueX = floor((z - blueY) * 64.0) / 8.0;
+      x += blueX;
+      y += blueY;
+      return texture2D(auxSampler1, vec2(x, y)).xyz;
+    }
+
+    vec3 lutLookupColor(vec3 inRgb) {
+      vec3 c = clamp(inRgb, 0.00781, 0.98438);
+      float x = c.r / 8.0;
+      float y = c.g / 8.0;
+      float z = c.b;
+      float blueY = floor(z * 8.0) / 8.0;
+      float blueX = floor((z - blueY) * 64.0) / 8.0;
+      x += blueX;
+      y += blueY;
+      return texture2D(auxSampler2, vec2(x, y)).xyz;
+    }
+
+    void main() {
+      vec2 uv = sourceTextureCoordinate;
+
+      // ============================================================
+      // Stage 1: Background \u2014 full-frame camera + B&W LUT.
+      // ============================================================
+      vec4 fullCam = sampleInput(uv);
+      vec3 bwGraded = lutLookupBW(fullCam.rgb);
+      vec3 bwResult = mix(fullCam.rgb, bwGraded, strength);
+
+      // ============================================================
+      // Stage 2: Photo inset \u2014 scale 0.67 centered crop + color LUT.
+      // photoUv = (uv - 0.5) / 0.67 + 0.5 maps the inset window back
+      // to the full [0,1] camera UV. Pixels outside [0,1] fall back to
+      // the B&W bg via insetMask.
+      // ============================================================
+      float insetScale = 0.67;
+      vec2 photoUv = (uv - 0.5) / insetScale + 0.5;
+      // step-based mask: 1 inside [0,1] in both axes, 0 outside.
+      float insetMask = step(0.0, photoUv.x) * step(photoUv.x, 1.0)
+                      * step(0.0, photoUv.y) * step(photoUv.y, 1.0);
+      vec4 insetCam = sampleInput(photoUv);
+      vec3 colorGraded = lutLookupColor(insetCam.rgb);
+      vec3 colorResult = mix(insetCam.rgb, colorGraded, strength);
+
+      // ============================================================
+      // Stage 3: Composite \u2014 inset replaces bg where insetMask = 1.
+      // ============================================================
+      vec3 result = mix(bwResult, colorResult, insetMask);
+
+      // ============================================================
+      // Stage 4: Static grain — bipolar additive noise centered on 0
+      // (some pixels brighten, some darken, average shift is zero so
+      // grain doesn't push the canvas lighter as intensity increases).
+      // hash21(uv * 1000) produces near-unique noise per output pixel;
+      // (g - 0.5) * 2.0 maps to [-1, 1] swing; multiply by grain_strength
+      // for the final amplitude. This is the same pattern used in
+      // moon_glow and gives a more authentic film-grain character than
+      // the brightening-only screen blend used in V1.
+      // No time component — grain stays still frame-to-frame.
+      // ============================================================
+      float grainNoise = hash21(uv * 1000.0);
+      float grainSigned = (grainNoise - 0.5) * 2.0;  // [-1, 1]
+      result += vec3(grainSigned * grain_strength);
+
+      // Clamp to LDR display range.
+      result = clamp(result, 0.0, 1.0);
+
+      gl_FragColor = toOutputFormat(vec4(result, 1.0));
+    }
+    ";

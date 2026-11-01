@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "identifier": "enhance",
+  "displayName": "Enhance",
+  "description": "Title and accessibility label for audio enhance tab in the sound tool",
+  "iglu": {
+    "legacyId": 803
+  }
+}

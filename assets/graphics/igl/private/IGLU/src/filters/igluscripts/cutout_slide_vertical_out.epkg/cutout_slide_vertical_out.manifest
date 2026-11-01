@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "identifier": "cutout_slide_vertical_out",
+  "displayName": "Cutout Slide Vertical Out",
+  "description": "[IG Edits] Transition name. With \"Cutout Slide Vertical Out\", the creator can slide the segmented subject vertically out of frame with motion-blur ghosting as a 1-second outro.",
+  "iglu": {
+    "legacyId": 3067,
+    "behavior": {
+      "type": "fixedOutro",
+      "durationMs": 1000,
+      "curve": "linear"
+    }
+  },
+  "dependencies": [
+    "cutout_slide"
+  ]
+}

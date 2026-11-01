@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item type="layout" name="find_friends_fragment_empty_view" format="string">L|1053C|554|9C37</item>
+</resources>

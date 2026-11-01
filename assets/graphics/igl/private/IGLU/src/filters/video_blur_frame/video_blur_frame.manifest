@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_blur_frame",
+  "displayName": "Blur frame",
+  "description": "Video effects selection. Adds a blurry border.",
+  "iglu": {
+    "legacyId": 2007
+  },
+  "android": {
+    "previewAsset": {
+      "key": "c9e0acf9",
+      "handle": "AQACZtvaaLXM",
+      "md5": "686f548f8d6ab9e338e554e42a35a0cf"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAF5IjxsUZf"
+    }
+  }
+}

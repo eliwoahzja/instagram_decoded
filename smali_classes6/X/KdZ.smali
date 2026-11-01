@@ -1,0 +1,41 @@
+.class public abstract LX/KdZ;
+.super Ljava/lang/Object;
+.source ""
+
+
+# direct methods
+.method public static final A00(Landroid/content/Context;Landroid/view/ViewGroup;)Landroid/view/View;
+    .locals 3
+    .annotation build Ldalvik/annotation/optimization/NeverInline;
+    .end annotation
+
+    const/4 v2, 0x0
+
+    invoke-static {p0}, Landroid/view/LayoutInflater;->from(Landroid/content/Context;)Landroid/view/LayoutInflater;
+
+    move-result-object v1
+
+    const v0, 0x7f0e11e8
+
+    invoke-virtual {v1, v0, p1, v2}, Landroid/view/LayoutInflater;->inflate(ILandroid/view/ViewGroup;Z)Landroid/view/View;
+
+    move-result-object v2
+
+    const v0, 0x7f0b3737
+
+    invoke-virtual {v2, v0}, Landroid/view/View;->requireViewById(I)Landroid/view/View;
+
+    move-result-object v1
+
+    check-cast v1, Landroid/widget/ImageView;
+
+    const v0, 0x7f082bee
+
+    invoke-virtual {p0, v0}, Landroid/content/Context;->getDrawable(I)Landroid/graphics/drawable/Drawable;
+
+    move-result-object v0
+
+    invoke-virtual {v1, v0}, Landroid/widget/ImageView;->setImageDrawable(Landroid/graphics/drawable/Drawable;)V
+
+    return-object v2
+.end method

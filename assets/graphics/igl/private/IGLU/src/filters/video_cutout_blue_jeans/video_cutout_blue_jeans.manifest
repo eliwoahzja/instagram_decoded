@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "identifier": "87E856C0-DA23-48A8-B225-CC4DE1C2BE38",
+  "displayName": "Blue Jeans",
+  "description": "[IG Edits] Subject effect name. Applies denim-blue ink hatching to the cut-out subject while leaving the background untouched.",
+  "iglu": {
+    "legacyId": 2115,
+    "subject": {
+      "enabled": true,
+      "fullFrameEnabled": true,
+      "typeSuggestions": [
+        "person",
+        "head",
+        "clothing"
+      ]
+    }
+  }
+}

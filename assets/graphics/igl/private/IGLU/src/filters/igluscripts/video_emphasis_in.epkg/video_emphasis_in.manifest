@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "identifier": "1f47300b-d16c-4ef6-8746-7876dffa5ca2",
+  "displayName": "Emphasis in",
+  "description": "[IG Edits] Effect name shown in the video effects picker. This is the user-facing label for a video effect.",
+  "iglu": {
+    "legacyId": 3130,
+    "behavior": {
+      "type": "fixedIntro",
+      "durationMs": 1000,
+      "curve": "linear"
+    },
+    "customization": [
+      {
+        "name": "speed",
+        "displayName": "Speed",
+        "default": 0.5,
+        "min": 0.0,
+        "max": 1.0
+      },
+      {
+        "name": "amount",
+        "displayName": "Amount",
+        "default": 0.45,
+        "min": 0.0,
+        "max": 1.0
+      },
+      {
+        "name": "size",
+        "displayName": "Size",
+        "default": 0.45,
+        "min": 0.0,
+        "max": 1.0
+      }
+    ]
+  }
+}

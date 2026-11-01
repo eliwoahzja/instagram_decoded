@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_particles_in",
+  "displayName": "Particles in",
+  "description": "Video effects selection. Particle animation intro effect.",
+  "iglu": {
+    "legacyId": 3041,
+    "behavior": {
+      "type": "fixedIntro",
+      "durationMs": 2500,
+      "curve": "quadraticInOut"
+    },
+    "customization": [
+      {
+        "name": "duration",
+        "default": 2.5,
+        "min": 1.0,
+        "max": 5.0,
+        "displayName": "Duration",
+        "displayNameDescription": "[IG Edits] Slider label controlling how long a video effect's animation lasts; exact units and range vary per effect (seconds or normalized).",
+        "displayMethod": "time"
+      }
+    ]
+  },
+  "assets": [
+    {
+      "name": "rgba_noise_256.png",
+      "assetHash": "3415067e1e7cd2965854c813f34bdb028aed7f87695903797ff6ec62f156c506",
+      "hubAssetId": "1274215854629798"
+    }
+  ],
+  "ios": {
+    "previewAsset": {
+      "handle": "AQADKElpfMyy"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "cd46ca0d",
+      "handle": "AQAHCHHtggRL",
+      "md5": "076b49fd6840376e76144f875d01d429"
+    }
+  }
+}

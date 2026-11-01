@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "05a8aa1b-f0d8-4143-a47b-0736765d3961",
+  "displayName": "Doodle Wiggle",
+  "description": "[IG Edits] Drawing brush effect name. With \"Doodle Wiggle\", the creator can give strokes a stop-motion wobble combining sin-wave and Perlin-noise UV displacement quantized to a chosen FPS.",
+  "iglu": {}
+}

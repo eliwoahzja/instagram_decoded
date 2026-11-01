@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "identifier": "xpro2",
+  "displayName": "Xpro2",
+  "description": "[IG Edits] Video effect name. With \"Xpro2\", the creator can remap colors through the X-Pro II curve map for saturated cross-processed tones with a darkened vignette.",
+  "iglu": {
+    "legacyId": 1
+  },
+  "assets": [
+    {
+      "name": "plus_darker.png",
+      "assetHash": "2454f31179de8542c983a2eacdfba807d5cb19c9f0760eae7cb53411880e4d77",
+      "hubAssetId": "5254031321487828"
+    },
+    {
+      "name": "xpro_map.png",
+      "assetHash": "25bb3bbdbe8db366ec05c8dee320f5da3cfd5ff3abf2c1872ef94bda298e96da",
+      "hubAssetId": "2119162288842273"
+    }
+  ]
+}

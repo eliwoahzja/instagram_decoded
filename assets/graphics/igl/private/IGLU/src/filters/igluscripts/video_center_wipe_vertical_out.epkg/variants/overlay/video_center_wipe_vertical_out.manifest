@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "displayName": "Wipe out center vertical",
+  "description": "[IG Edits] Effect name shown in the video effects picker. This is the user-facing label for a video effect.",
+  "iglu": {
+    "legacyId": 5100,
+    "behavior": {
+      "type": "fixedOutro",
+      "durationMs": 1000,
+      "curve": "quadraticInOut"
+    },
+    "customization": [
+      {
+        "name": "duration",
+        "default": 2.0,
+        "min": 0.5,
+        "max": 5.0,
+        "displayName": "Duration",
+        "displayMethod": "time"
+      },
+      {
+        "name": "amount",
+        "displayName": "Amount",
+        "default": 0.1,
+        "min": 0.0,
+        "max": 1.0
+      }
+    ],
+    "subject": {
+      "overlay": true
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAHGR7Sqv5x"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "c7ca762e",
+      "handle": "AQAF2wmACq3R",
+      "md5": "479257aba342f18afeb0c971cf53a0cd"
+    }
+  }
+}

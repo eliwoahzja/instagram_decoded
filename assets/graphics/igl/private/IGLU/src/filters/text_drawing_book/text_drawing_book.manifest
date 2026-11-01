@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "identifier": "text_drawing_book",
+  "displayName": "Text Drawing Book",
+  "description": "[IG Edits] Text effect name. With \"Text Drawing Book\", the creator can render text as a hand-drawn storybook with dilated outline, Prewitt sketch edges and Perlin-noise jitter.",
+  "assets": [
+    {
+      "name": "perlin_noise.png",
+      "assetHash": "42393e620664a372495800bfcf40ca960aa0ab3e2ddfe42fbfe2b86098d33000",
+      "hubAssetId": "1259354255546062"
+    }
+  ],
+  "iglu": {}
+}

@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "identifier": "cairo",
+  "displayName": "Cairo",
+  "description": "City-name color filter",
+  "iglu": {
+    "legacyId": 710
+  },
+  "assets": [
+    {
+      "name": "clut_pastel_sky.png",
+      "assetHash": "f8f3d2ccb90bdc1564d8529c20c33934e96aa44e2516ae695cfef4e9037ab3a1",
+      "hubAssetId": "4346356562349082"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "identifier": "text_paint",
+  "displayName": "Text Paint",
+  "description": "[IG Edits] Text effect name. With \"Text Paint\", the creator can render text as wet brushstrokes with dilated edges, blurred bevel and Perlin-noise displaced choked alpha.",
+  "assets": [
+    {
+      "name": "perlin_noise.png",
+      "assetHash": "42393e620664a372495800bfcf40ca960aa0ab3e2ddfe42fbfe2b86098d33000",
+      "hubAssetId": "1259354255546062"
+    }
+  ],
+  "iglu": {}
+}

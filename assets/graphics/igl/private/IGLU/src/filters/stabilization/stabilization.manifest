@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "stabilization",
+  "displayName": "Stabilization",
+  "description": "[IG Edits] Video effect name. With \"Stabilization\", the creator can correct rolling-shutter shake by warping a per-row mesh with quaternion frame_warp values from gyro data.",
+  "iglu": {}
+}

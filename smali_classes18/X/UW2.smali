@@ -1,0 +1,73 @@
+.class public final LX/UW2;
+.super LX/0dq;
+.source ""
+
+
+# static fields
+.field public static final A08:LX/0dp;
+
+
+# instance fields
+.field public A00:Lcom/instagram/common/session/UserSession;
+
+.field public A01:LX/gJL;
+
+.field public A02:Lcom/instagram/leadads/model/LeadGenAddressAutoCompletionConfig;
+
+.field public A03:Ljava/lang/String;
+
+.field public A04:LX/snm;
+
+.field public A05:LX/snm;
+
+.field public A06:LX/GhC;
+
+.field public A07:Z
+
+
+# direct methods
+.method public static constructor <clinit>()V
+    .locals 3
+
+    new-instance v2, LX/0mp;
+
+    invoke-direct {v2}, LX/0mp;-><init>()V
+
+    const/4 v0, 0x1
+
+    new-instance v1, LX/peq;
+
+    invoke-direct {v1, v0}, LX/peq;-><init>(I)V
+
+    const-class v0, LX/UW2;
+
+    invoke-static {v2, v0, v1}, LX/C1F;->A0F(LX/0mp;Ljava/lang/Class;Lkotlin/jvm/functions/Function1;)LX/0mo;
+
+    move-result-object v0
+
+    sput-object v0, LX/UW2;->A08:LX/0dp;
+
+    return-void
+.end method
+
+
+# virtual methods
+.method public final A16()Z
+    .locals 4
+    .annotation build Ldalvik/annotation/optimization/NeverInline;
+    .end annotation
+
+    sget-object v3, LX/mCG;->A00:LX/mCG;
+
+    iget-boolean v2, p0, LX/UW2;->A07:Z
+
+    iget-object v1, p0, LX/UW2;->A02:Lcom/instagram/leadads/model/LeadGenAddressAutoCompletionConfig;
+
+    iget-object v0, p0, LX/UW2;->A00:Lcom/instagram/common/session/UserSession;
+
+    invoke-virtual {v3, v0, v1, v2}, LX/mCG;->A0B(Lcom/instagram/common/session/UserSession;Lcom/instagram/leadads/model/LeadGenAddressAutoCompletionConfig;Z)Z
+
+    move-result v0
+
+    return v0
+.end method

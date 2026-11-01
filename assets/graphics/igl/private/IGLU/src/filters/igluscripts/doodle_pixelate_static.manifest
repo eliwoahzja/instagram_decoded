@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "834dfa1d-a171-46e9-b7c0-51f91b581dbd",
+  "displayName": "Doodle Pixelate Static",
+  "description": "[IG Edits] Drawing brush effect name. With \"Doodle Pixelate Static\", the creator can fill the stroke with flickering black-and-white TV-static blocks driven by a per-cell, per-frame PCG hash.",
+  "iglu": {}
+}

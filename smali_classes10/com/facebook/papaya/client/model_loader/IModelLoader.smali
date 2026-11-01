@@ -1,0 +1,29 @@
+.class public abstract Lcom/facebook/papaya/client/model_loader/IModelLoader;
+.super Ljava/lang/Object;
+.source ""
+
+
+# instance fields
+.field public final mHybridData:Lcom/facebook/jni/HybridData;
+
+
+# direct methods
+.method public static constructor <clinit>()V
+    .locals 1
+
+    const-string v0, "papaya-model_loader"
+
+    invoke-static {v0}, LX/3xZ;->loadLibrary(Ljava/lang/String;)Z
+
+    return-void
+.end method
+
+.method public constructor <init>(Lcom/facebook/jni/HybridData;)V
+    .locals 1
+
+    invoke-static {}, LX/002;->createAndThrow()LX/002;
+
+    move-result-object v0
+
+    throw v0
+.end method

@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "identifier": "subtle_warm",
+  "displayName": "Subtle Warm",
+  "description": "Filter name for a subtle, warm-toned color adjustment",
+  "iglu": {
+    "legacyId": 1004
+  },
+  "assets": [
+    {
+      "name": "lut_subtle_warm.png",
+      "assetHash": "7ced57278b477d7dce0eca990e9b128f694e84476303f383b8eadba5e8aef8f3",
+      "hubAssetId": "914552587963455"
+    }
+  ]
+}

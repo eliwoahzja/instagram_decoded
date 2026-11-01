@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "identifier": "flare_transition",
+  "displayName": "Flare Transition",
+  "description": "[IG Edits] Transition name. With \"Flare Transition\", the creator can blend a lens-flare texture onto the frame using a screen-blend pulsed by transition_progress for a bright sweeping burst.",
+  "assets": [
+    {
+      "name": "blackboard.png",
+      "assetHash": "6ee32275f0b08fb4bee58193a4d8a16d3d24f2db94f58192df6bdc11d5ad7081",
+      "hubAssetId": "894545610234702"
+    }
+  ],
+  "iglu": {}
+}

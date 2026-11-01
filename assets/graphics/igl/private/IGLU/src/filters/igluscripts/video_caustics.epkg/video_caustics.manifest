@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_caustics",
+  "displayName": "Caustics",
+  "description": "[IG Edits] Video effect name. With \"Caustics\", the creator can add additive shimmering water-caustics light patterns with chromatic aberration over the frame.",
+  "iglu": {
+    "legacyId": 3044
+  }
+}

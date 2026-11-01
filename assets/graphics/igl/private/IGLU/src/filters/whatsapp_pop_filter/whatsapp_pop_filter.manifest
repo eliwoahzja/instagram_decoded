@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "identifier": "whatsapp_pop_filter",
+  "displayName": "Whatsapp Pop Filter",
+  "description": "[IG Edits] Video effect name. With \"Whatsapp Pop Filter\", the creator can apply the WhatsApp Pop LUT to boost saturation and punch up colors.",
+  "assets": [
+    {
+      "name": "lut_pop.png",
+      "assetHash": "1e7f196cd249f997fa2b35f12f8b5c29fae2f55527a0807fa38d79490da8c734",
+      "hubAssetId": "1350104100483441"
+    }
+  ],
+  "iglu": {}
+}

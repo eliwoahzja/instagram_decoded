@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "text_offset_black",
+  "displayName": "Offset Black",
+  "description": "[IG Edits] Text effect name. With \"Offset Black\", the creator can render text with a single hard black drop-shadow copy offset diagonally behind each glyph.",
+  "iglu": {}
+}

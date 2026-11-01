@@ -1,0 +1,26 @@
+[Filter CenterWipeVerticalIn]
+[MaskBehavior alpha]
+
+[Init]
+fun init(Filter filter) {
+    filter.parameters = {
+        {amount = 0.1, min = 0.0, max = 0.5, description = "Edge smoothness"},
+    };
+
+    filter.passes = {{
+        name = 'base,
+        igid = 'video_center_wipe_vertical,
+        inputs = {'default},
+        uniforms = {
+            outro = 0.0,
+        }
+    }};
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+    f32 amount = getParameterFloat('amount);
+    # keep amount off 0 so the smoothstep edge doesn't collapse
+    amount = max(0.001, amount);
+    setShaderUniform('base, 'amount, amount);
+}

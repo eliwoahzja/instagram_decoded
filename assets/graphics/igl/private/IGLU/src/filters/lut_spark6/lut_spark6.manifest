@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "identifier": "latte",
+  "displayName": "Latte",
+  "description": "[IG Edits] Color filter name. With \"Latte\", the creator can apply a creamy beige milk-coffee tint by remapping each pixel's RGB through a 3D color lookup table.",
+  "iglu": {
+    "legacyId": 823
+  },
+  "assets": [
+    {
+      "name": "latte.png",
+      "assetHash": "d8d1c6d11c1b90ae82a72623be5bf4bebea0d41e51ae130e02ef75606474c4b0",
+      "hubAssetId": "919734937709287"
+    },
+    {
+      "name": "latte_compressed.png",
+      "assetHash": "2429a69439df66794fabca068acc5cf38be36a5c7d0c325c54afe81d8d63fece",
+      "hubAssetId": "3248307732004508"
+    }
+  ]
+}

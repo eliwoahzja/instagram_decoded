@@ -1,0 +1,489 @@
+[Filter GameboyFilter]
+[MaskBehavior alpha]
+[InEditsApp]
+
+[Init]
+fun init(Filter filter) {
+
+  filter.parameters = {
+    {amount = 4.0, min = 2.0, max = 6.0, description = "Pixel Size"},
+    {intensity = 1.0, min = 0.4, max = 2.0, description = "Base media exposure"},
+    {size = 2.0, min = 0.0, max = 4.0, description = "Outline Thickness"},
+  };
+
+  # Load a default mask texture - can be overridden at runtime via setNamedInput("mask", ...)
+  loadTexture('mask, 'texture://MultiColorGradientV2Assets/GradientOrange);
+
+  filter.passes = {
+  {
+    name = 'threshold,
+    inputs = {'default},
+    uniforms = {
+      threshold = 0.35,
+      feather = 0.3,
+      exposure = 1.0,
+    },
+    glslShader = thresholdGlsl,
+  },
+  {
+    name = 'thresholdComposite,
+    inputs = {'threshold},
+    uniforms = {
+      threshold = 0.35,
+      feather = 0.3,
+    },
+    glslShader = thresholdCompositeGlsl,
+  },
+  {
+    name = 'pixelatedBaseMedia,
+    inputs = {'threshold},
+    uniforms = {
+      outputSize = {1080.0, 1920.0},
+      pixelSize = 16.0,
+    },
+    glslShader = pixelatedBaseMediaGlsl,
+  },
+  {
+    name = 'pixelAction,
+    inputs = {'thresholdComposite},
+    uniforms = {
+      outputSize = {1080.0, 1920.0},
+      pixelSize = 16.0,
+    },
+    glslShader = pixelActionGlsl,
+  },
+  {
+    name = 'ballAction,
+    inputs = {'pixelatedBaseMedia},
+    uniforms = {
+      outputSize = {1080.0, 1920.0},
+      pixelSize = 16.0,
+    },
+    glslShader = ballActionGlsl,
+  },
+  {
+    name = 'subjectMask,
+    inputs = {'mask},
+    uniforms = {
+      outputSize = {1080.0, 1920.0},
+      pixelSize = 16.0,
+    },
+    glslShader = subjectMaskGlsl,
+  },
+  {
+    name = 'subjectMaskDilated,
+    inputs = {'subjectMask},
+    uniforms = {
+      outputSize = {1080.0, 1920.0},
+      pixelSize = 16.0,
+      haloRadius = 2.0,
+    },
+    glslShader = subjectMaskDilatedGlsl,
+  },
+  {
+    name = 'compose,
+    inputs = {'default, 'ballAction, 'pixelatedBaseMedia, 'subjectMask, 'subjectMaskDilated},
+    uniforms = {
+      opacity = 1.0,
+    },
+    glslShader = composeGlsl,
+  }
+  };
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  f32 exposure = getParameterFloat('intensity);
+  setShaderUniform('threshold, 'exposure, exposure);
+
+  # Ball action uniforms
+  vec2 size = getTextureSize('default);
+  f32 pixelSize = getParameterFloat('amount);
+
+  setShaderUniform('ballAction, 'outputSize, size);
+  setShaderUniform('ballAction, 'pixelSize, pixelSize);
+
+  # Pixel action uniforms
+  setShaderUniform('pixelAction, 'outputSize, size);
+  setShaderUniform('pixelAction, 'pixelSize, pixelSize);
+
+  # Subject mask uniforms (pixelation + dilation operate in grid space)
+  setShaderUniform('subjectMask, 'outputSize, size);
+  setShaderUniform('subjectMask, 'pixelSize, pixelSize);
+  setShaderUniform('subjectMaskDilated, 'outputSize, size);
+  setShaderUniform('subjectMaskDilated, 'pixelSize, pixelSize);
+
+  setShaderUniform('pixelatedBaseMedia, 'pixelSize, pixelSize);
+
+  f32 outlineThickness = getParameterFloat('size);
+  setShaderUniform('subjectMaskDilated, 'haloRadius, outlineThickness);
+}
+
+# ==========================================================================
+# Ball action shader — fixed-size dots on a rotated grid, one per channel
+# ==========================================================================
+string ballActionGlsl = "
+varying vec2 sourceTextureCoordinate;
+BaseUniformsOpenGL;
+
+uniform vec2 outputSize;
+uniform float pixelSize;
+
+const float cosA = 0.8386705679;
+const float sinA = -0.5446390350;
+
+vec4 blendAlphaPremult(vec4 base, vec4 blend) {
+  return blend + base * (1.0 - blend.a);
+}
+
+vec4 over(vec4 bg, vec4 fg) {
+  return vec4(mix(bg.rgb, fg.rgb, fg.a), bg.a + fg.a * (1.0 - bg.a));
+}
+
+void main() {
+  vec2 fragCoord = sourceTextureCoordinate * outputSize;
+
+  vec4 white = vec4(1.0);
+
+  float gridSize = pixelSize;
+  vec2 gridSizeVec = vec2(gridSize);
+
+  vec2 center = outputSize * 0.5;
+  vec2 fragOffset = fragCoord - center;
+  vec2 rotFrag = vec2(
+    cosA * fragOffset.x - sinA * fragOffset.y,
+    sinA * fragOffset.x + cosA * fragOffset.y
+  ) + center;
+
+  vec2 gridUv = floor(rotFrag / gridSizeVec);
+  vec2 cellCenter = (gridUv + 0.5) * gridSizeVec;
+
+  // Inverse-rotate cell center to get sample point in original space
+  vec2 cellOffset = cellCenter - center;
+  vec2 origCellCenter = vec2(
+    cosA * cellOffset.x + sinA * cellOffset.y,
+   -sinA * cellOffset.x + cosA * cellOffset.y
+  ) + center;
+
+  vec2 samplePoint = origCellCenter / outputSize;
+
+  vec4 sampled = sampleInput(samplePoint);
+
+  float radius = 1.0 * gridSize * 0.5;
+  float dist = length(rotFrag - cellCenter);
+  float intensity = 1.0 - smoothstep(radius - 1.0, radius, dist);
+
+  vec4 result = vec4(0.0);
+
+  vec4 lightGreyCircle = sampled.r == 0.0 ? vec4(0.0) : vec4(vec3(0.504), 1.0);
+  vec4 blackCircle = sampled.g < 0.1 ? vec4(0.0) : vec4(vec3(0.0), 1.0);
+  lightGreyCircle *= intensity;
+  blackCircle *= intensity;
+
+  result = over(vec4(0.0), over(blackCircle, lightGreyCircle));
+
+  gl_FragColor = toOutputFormat(result);
+}
+";
+
+# ==========================================================================
+# Pixel action shader — pixelation on a rotated grid, one per channel
+# Same grid logic as ballAction but fills the entire cell instead of a circle
+# ==========================================================================
+string pixelActionGlsl = "
+varying vec2 sourceTextureCoordinate;
+BaseUniformsOpenGL;
+
+uniform vec2 outputSize;
+uniform float pixelSize;
+
+const float cosA = 0.8386705679;
+const float sinA = -0.5446390350;
+
+vec4 blendAlphaPremult(vec4 base, vec4 blend) {
+  return blend + base * (1.0 - blend.a);
+}
+
+vec4 over(vec4 bg, vec4 fg) {
+  return vec4(mix(bg.rgb, fg.rgb, fg.a), bg.a + fg.a * (1.0 - bg.a));
+}
+
+void main() {
+  vec2 fragCoord = sourceTextureCoordinate * outputSize;
+
+  float gridSize = pixelSize;
+  vec2 gridSizeVec = vec2(gridSize);
+
+  vec2 center = outputSize * 0.5;
+  vec2 fragOffset = fragCoord - center;
+  vec2 rotFrag = vec2(
+    cosA * fragOffset.x - sinA * fragOffset.y,
+    sinA * fragOffset.x + cosA * fragOffset.y
+  ) + center;
+
+  vec2 gridUv = floor(rotFrag / gridSizeVec);
+  vec2 cellCenter = (gridUv + 0.5) * gridSizeVec;
+
+  // Inverse-rotate cell center to get sample point in original space
+  vec2 cellOffset = cellCenter - center;
+  vec2 origCellCenter = vec2(
+    cosA * cellOffset.x + sinA * cellOffset.y,
+   -sinA * cellOffset.x + cosA * cellOffset.y
+  ) + center;
+  vec2 samplePoint = origCellCenter / outputSize;
+
+  vec4 result = sampleInput(samplePoint);
+
+  gl_FragColor = toOutputFormat(result);
+}
+";
+
+# ==========================================================================
+# Threshold shader — luma-based brightness mask
+# ==========================================================================
+string thresholdGlsl = "
+precision highp float;
+
+varying vec2 sourceTextureCoordinate;
+BaseUniformsOpenGL;
+
+uniform float exposure;
+uniform float threshold;
+uniform float feather;
+
+float luma(vec3 color) {
+  return dot(color, vec3(0.3, 0.6, 0.1));
+}
+
+float calcChannel(float l, vec2 layer){
+  float outCol = l * step(layer.x, l) * step(l, layer.y);
+  return outCol;
+}
+
+void main() {
+  vec2 uv = sourceTextureCoordinate;
+  vec4 color = sampleInput(uv);
+  color.rgb *= exposure;
+
+  float l = luma(color.xyz);
+
+  vec2 lightGreyCircle = vec2(99.0 / 255.0, 191.0 / 255.0);
+  vec2 blackCircle = vec2(0.0, 84.0 / 255.0);
+  vec2 darkGreySquare = vec2(67.0 / 255.0, 132.0 / 255.0);
+  vec2 blackSquare = vec2(0.0, 72.0 / 255.0);
+
+  color.r = calcChannel(l, lightGreyCircle);
+  color.g = calcChannel(l, blackCircle);
+  color.b = calcChannel(l, darkGreySquare);
+  color.a = calcChannel(l, blackSquare);
+
+  gl_FragColor = toOutputFormat(color);
+}
+";
+
+
+# ==========================================================================
+# Threshold Composite shader
+# ==========================================================================
+string thresholdCompositeGlsl = "
+precision highp float;
+
+varying vec2 sourceTextureCoordinate;
+BaseUniformsOpenGL;
+
+uniform float threshold;
+uniform float feather;
+
+float luma(vec3 color) {
+  return dot(color, vec3(0.3, 0.6, 0.1));
+}
+
+float calcChannel(float l, vec2 layer){
+  float outCol = l * step(layer.x, l) * step(l, layer.y);
+  return outCol;
+}
+
+vec4 over(vec4 bg, vec4 fg) {
+  return vec4(mix(bg.rgb, fg.rgb, fg.a), bg.a + fg.a * (1.0 - bg.a));
+}
+
+void main() {
+  vec2 uv = sourceTextureCoordinate;
+  vec4 color = sampleInput(uv);
+  vec4 white = vec4(1.0);
+  float l = luma(color.rgb);
+  vec4 result = color;
+
+  vec4 lightGreyCircle = color.r == 0.0 ? vec4(0.0) : vec4(vec3(0.504), 1.0);
+  vec4 blackCircle = color.g == 0.0 ? vec4(0.0) : vec4(vec3(0.0), 1.0);
+  vec4 lightGreySquare = color.b == 0.0 ? vec4(0.0) : vec4(vec3(0.349), 1.0);
+  vec4 blackSquare = color.a == 0.0 ? vec4(0.0) : vec4(vec3(0.0), 1.0);
+
+  result = over(white, blackSquare);
+  result = over(result, lightGreySquare);
+  result = over(result, blackCircle);
+  result = over(result, lightGreyCircle);
+
+  gl_FragColor = result;
+}
+";
+
+string composeGlsl = "
+precision highp float;
+
+varying vec2 sourceTextureCoordinate;
+BaseUniformsOpenGL;
+
+uniform sampler2D auxSampler1;
+uniform sampler2D auxSampler2;
+uniform sampler2D auxSampler3;
+uniform sampler2D auxSampler4;
+
+uniform float opacity;
+uniform float chromaticSpread;
+uniform float splitBalance;
+uniform float streakAmount;
+uniform float warmth;
+uniform float maskSoftness;
+uniform float highlightProtect;
+
+vec4 blendAlphaPremult(vec4 base, vec4 blend) {
+  return blend + base * (1.0 - blend.a);
+}
+
+vec4 over(vec4 bg, vec4 fg) {
+  return vec4(mix(bg.rgb, fg.rgb, fg.a), bg.a + fg.a * (1.0 - bg.a));
+}
+
+
+void main() {
+  vec2 uv = sourceTextureCoordinate;
+  vec4 source = sampleInput(uv);
+
+  vec4 ballLayer = texture2D(auxSampler1, uv);
+  vec4 rawPixelLayer = texture2D(auxSampler2, uv);
+  vec4 subjectMaskLayer = texture2D(auxSampler3, uv);
+  vec4 subjectMaskDilatedLayer = texture2D(auxSampler4, uv);
+
+  vec4 result = vec4(0.0);
+
+  vec4 lightGreySquare = rawPixelLayer.b == 0.0 ? vec4(0.0) : vec4(vec3(0.349), 1.0);
+  vec4 blackSquare = rawPixelLayer.a == 0.0 ? vec4(0.0) : vec4(vec3(0.0), 1.0);
+
+  vec4 squaresPixelLayer = over(blackSquare, lightGreySquare);
+
+  vec4 bgColor = vec4(1.0);
+
+  result = bgColor;
+  result = blendAlphaPremult(result, squaresPixelLayer);
+  result = blendAlphaPremult(result, ballLayer);
+
+  // Halo: ring of cells between the dilated subject mask and the original subject mask.
+  // Only meaningful when a real mask is bound to the `mask` input; under `subject:` the
+  // wrappers consume that input themselves, so the mask stays at its default and haloMask == 0.
+  float haloMask = clamp(subjectMaskDilatedLayer.r - subjectMaskLayer.r, 0.0, 1.0);
+  result.rgb = mix(result.rgb, vec3(1.0), haloMask);
+
+  // Crop to the subject. `source` is the default input, which SubjectEffectWrapper has already
+  // pre-masked, so its alpha is the subject coverage (1.0 for a full-frame input). The threshold
+  // pass overwrites the incoming alpha with a luma band, so that coverage cannot be carried down
+  // the chain and has to be re-read here -- otherwise every pixel leaves this shader opaque
+  // white and the cropped region draws white instead of transparent.
+  // Scale the premultiplied color, not just alpha.
+  result *= source.a;
+
+  gl_FragColor = toOutputFormat(result);
+}
+";
+
+# ==========================================================================
+# Subject mask pixelation — snaps the subject mask to the same grid as
+# `pixelatedBaseMedia` so the halo aligns with the gameboy cells. Outputs
+# coverage in r/g/b; alpha is unused downstream.
+# ==========================================================================
+string subjectMaskGlsl = "
+precision highp float;
+
+varying vec2 sourceTextureCoordinate;
+BaseUniformsOpenGL;
+
+uniform vec2 outputSize;
+uniform float pixelSize;
+
+void main() {
+  vec2 uv = sourceTextureCoordinate;
+  vec2 fragCoord = uv * outputSize;
+
+  vec2 cellIndex = floor(fragCoord / pixelSize);
+  vec2 cellCenter = (cellIndex + 0.5) * pixelSize;
+  vec2 sampleUV = cellCenter / outputSize;
+
+  vec4 maskColor = sampleInput(sampleUV);
+  float coverage = max(maskColor.r, max(maskColor.g, maskColor.b));
+  gl_FragColor = toOutputFormat(vec4(coverage, coverage, coverage, 1.0));
+}
+";
+
+# ==========================================================================
+# Subject mask dilation — max-filter in grid-cell units with dynamic radius.
+# `haloRadius` is clamped to 0..4 cells; a fixed 9x9 loop is gated by an
+# integer radius test so the kernel size stays a GLSL ES 1.00 constant.
+# ==========================================================================
+string subjectMaskDilatedGlsl = "
+precision highp float;
+
+varying vec2 sourceTextureCoordinate;
+BaseUniformsOpenGL;
+
+uniform vec2 outputSize;
+uniform float pixelSize;
+uniform float haloRadius;
+
+void main() {
+  vec2 uv = sourceTextureCoordinate;
+  vec2 cellStep = vec2(pixelSize) / outputSize;
+
+  int r = int(clamp(haloRadius, 0.0, 4.0) + 0.5);
+
+  float maxVal = sampleInput(uv).r;
+  for (int dy = -4; dy <= 4; dy++) {
+    for (int dx = -4; dx <= 4; dx++) {
+      int adx = dx < 0 ? -dx : dx;
+      int ady = dy < 0 ? -dy : dy;
+      if (adx <= r && ady <= r) {
+        vec2 offset = vec2(float(dx), float(dy)) * cellStep;
+        float v = sampleInput(uv + offset).r;
+        maxVal = max(maxVal, v);
+      }
+    }
+  }
+
+  gl_FragColor = toOutputFormat(vec4(maxVal, maxVal, maxVal, 1.0));
+}
+";
+
+
+
+string pixelatedBaseMediaGlsl = "
+precision highp float;
+
+varying vec2 sourceTextureCoordinate;
+BaseUniformsOpenGL;
+
+uniform vec2 outputSize;
+uniform float pixelSize;
+
+void main() {
+  vec2 uv = sourceTextureCoordinate;
+  vec2 fragCoord = uv * outputSize;
+
+  // Compute grid cell and sample from center of that cell
+  vec2 cellIndex = floor(fragCoord / pixelSize);
+  vec2 cellCenter = (cellIndex + 0.5) * pixelSize;
+  vec2 sampleUV = cellCenter / outputSize;
+
+  vec4 color = sampleInput(sampleUV);
+
+  gl_FragColor = toOutputFormat(color);
+}
+";

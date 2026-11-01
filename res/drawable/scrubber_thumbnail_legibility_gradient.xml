@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape android:shape="rectangle"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <gradient android:startColor="?igds_color_transparent" android:endColor="?igds_color_legibility_gradient" android:angle="-90.0" />
+    <corners android:bottomLeftRadius="@dimen/scrubber_thumbnail_radius" android:bottomRightRadius="@dimen/scrubber_thumbnail_radius" />
+</shape>

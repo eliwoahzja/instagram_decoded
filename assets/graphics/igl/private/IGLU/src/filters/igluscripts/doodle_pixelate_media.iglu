@@ -1,0 +1,154 @@
+[Filter DoodlePixelateMedia]
+[MaskBehavior alpha]
+
+# Declares the named media input that C++ binds to the upstream texture.
+[Init]
+fun init(Filter filter) {
+  makeTexture('media);
+  filter.passes = {{
+    name = 'pass0, inputs = {'default, 'media},
+    uniforms = {
+      pixelSize = 20.0,
+      pixelSizeScale = 1.0,
+      inputSize = {1080.0, 1920.0},
+      contentScale = {1.0, 1.0},
+      time = 0.0,
+      jitterAmount = 0.08,
+      mediaTransform = identity4(),
+    },
+    glslShader = glsl, metalShader = metal
+  }};
+
+  filter.parameters = {
+    {pixelSize = 20.0, min = 5.0, max = 80.0, description = "Pixel Size"},
+    {pixelSizeScale = 1.0},
+    {jitterAmount = 0.08, min = 0.0, max = 0.2, description = "Brightness Jitter"},
+    {mediaTransform = identity4()},
+  };
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  f32 time = getParameterFloat('time_sec);
+  vec2 inputSize = getTextureSize('default);
+  # Per-axis scale of the host content transform. Identity in chain mode (the sticker layout lives
+  # in mediaTransform instead), non-identity for a doodle sticker composited anisotropically.
+  vec2 contentScale = getParameterVec2('contentScale);
+  if (contentScale.x < 0.001 or contentScale.y < 0.001) { contentScale = {1.0, 1.0}; }
+  setShaderUniform('pass0, 'inputSize, inputSize);
+  setShaderUniform('pass0, 'contentScale, contentScale);
+  setShaderUniform('pass0, 'time, time);
+  setShaderUniform('pass0, 'pixelSize, getParameterFloat('pixelSize));
+  setShaderUniform('pass0, 'pixelSizeScale, getParameterFloat('pixelSizeScale));
+  setShaderUniform('pass0, 'jitterAmount, getParameterFloat('jitterAmount));
+  setShaderUniform('pass0, 'mediaTransform, getParameterMat4('mediaTransform));
+}
+
+string glsl = "
+  varying vec2 sourceTextureCoordinate;
+  BaseUniformsOpenGL;
+
+  uniform sampler2D auxSampler1;
+  uniform float pixelSize;
+  uniform float pixelSizeScale;
+  uniform vec2 inputSize;
+  uniform vec2 contentScale;
+  uniform float time;
+  uniform float jitterAmount;
+  uniform mat4 mediaTransform;
+
+  // Float-only hash (Dave Hoskins). uint/uvec2 only compile under GLSL ES 3.0;
+  // IGLUScriptImageFilter doesn't force GLSL ES 3 so we stay in float arithmetic.
+  float cellFrameHash(vec3 p) {
+    p = fract(p * vec3(0.1031, 0.11369, 0.13787));
+    p += dot(p, p.yzx + 33.33);
+    return fract((p.x + p.y) * p.z);
+  }
+
+  void main() {
+    vec2 uv = sourceTextureCoordinate;
+    vec2 st = uv * inputSize;
+
+    // Keep pixelate block density stable across preview/export resolutions, and keep blocks square
+    // after the sticker's (possibly anisotropic) content transform - the same per-axis correction
+    // tessellateStroke folds into its aspectRatio to keep stamps circular.
+    vec2 blockSize = vec2(pixelSize * pixelSizeScale) / contentScale;
+    vec2 cell = floor(st / blockSize);
+    vec2 pixelatedST = cell * blockSize + blockSize * 0.5;
+    vec2 pixelatedUV = pixelatedST / inputSize;
+
+    vec4 strokeColor = sampleInput(pixelatedUV);
+
+    if (strokeColor.a < 0.01) {
+      gl_FragColor = toOutputFormat(vec4(0.0));
+    } else {
+      // Map stroke-local UV to media UV through the sticker transform.
+      vec2 mediaNdc = (mediaTransform * vec4(pixelatedUV * 2.0 - 1.0, 0.0, 1.0)).xy;
+      vec2 mediaUV = mediaNdc * 0.5 + 0.5;
+      vec4 mediaColor = texture2D(auxSampler1, vec2(mediaUV.x, 1.0 - mediaUV.y));
+
+      float frame = floor(time * 8.0);
+      float jitter = (cellFrameHash(vec3(cell, frame)) - 0.5) * 2.0 * jitterAmount;
+
+      vec3 jitteredColor = mediaColor.rgb + jitter;
+      jitteredColor = clamp(jitteredColor, 0.0, 1.0);
+
+      gl_FragColor = toOutputFormat(vec4(jitteredColor * strokeColor.a, strokeColor.a));
+    }
+  }
+";
+
+string metal = "
+  typedef struct { float2 sourceTextureCoordinate [[user(locn1)]]; } RasterizerData;
+
+  typedef struct {
+    BaseUniformsMetal;
+    float pixelSize;
+    float pixelSizeScale;
+    float2 inputSize;
+    float2 contentScale;
+    float time;
+    float jitterAmount;
+    float4x4 mediaTransform;
+  } Uniforms;
+
+  // Same float-only hash as the GLSL path so the jitter pattern is identical across backends.
+  float cellFrameHash(float3 p) {
+    p = fract(p * float3(0.1031, 0.11369, 0.13787));
+    p += dot(p, p.yzx + 33.33);
+    return fract((p.x + p.y) * p.z);
+  }
+
+  fragment float4 fragmentShader(RasterizerData fragmentIn [[stage_in]],
+                                  constant Uniforms & uniforms [[buffer(1)]],
+                                  DefaultInputs defaultInputs,
+                                  texture2d<float> auxTexture0 [[texture(2)]],
+                                  sampler auxSampler0 [[sampler(2)]]) {
+    float2 uv = fragmentIn.sourceTextureCoordinate;
+    float2 st = uv * uniforms.inputSize;
+
+    float2 blockSize = float2(uniforms.pixelSize * uniforms.pixelSizeScale) / uniforms.contentScale;
+    float2 cell = floor(st / blockSize);
+    float2 pixelatedST = cell * blockSize + blockSize * 0.5;
+    float2 pixelatedUV = pixelatedST / uniforms.inputSize;
+
+    float4 strokeColor = sampleInput(defaultInputs, pixelatedUV);
+
+    if (strokeColor.a < 0.01) {
+      return toOutputFormat(float4(0.0));
+    }
+
+    // Map stroke-local UV to media UV through the sticker transform.
+    float2 mediaNdc = (uniforms.mediaTransform * float4(pixelatedUV * 2.0 - 1.0, 0.0, 1.0)).xy;
+    float2 mediaUV = mediaNdc * 0.5 + 0.5;
+    float4 mediaColor = auxTexture0.sample(auxSampler0, float2(mediaUV.x, 1.0 - mediaUV.y));
+
+    float frame = floor(uniforms.time * 8.0);
+    float jitter = (cellFrameHash(float3(cell, frame)) - 0.5) * 2.0 * uniforms.jitterAmount;
+
+    float3 jitteredColor = mediaColor.rgb + jitter;
+    jitteredColor = clamp(jitteredColor, 0.0, 1.0);
+
+    return toOutputFormat(float4(jitteredColor * strokeColor.a, strokeColor.a));
+  }
+";

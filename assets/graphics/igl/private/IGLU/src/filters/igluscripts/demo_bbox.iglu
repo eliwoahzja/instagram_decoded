@@ -1,0 +1,75 @@
+# Minimal bbox diagnostic: mask in → bbox texture → visualize
+# Tests BBoxFilter outputBox=true in isolation (no composite, no blur)
+[Filter DemoBbox]
+
+[Init]
+fun init(Filter filter) {
+    makeTexture('mask);
+    filter.passes = {
+      # Pass 11: use c++ BBoxFilter to outputs 1x16 RGBA texture of bbox coordinates
+      {
+        name = 'bbox_data,
+        igid = 'bbox,
+        inputs = {'default, 'mask},
+        uniforms = { use_red_channel = true, smoothing = 0.0, outputBox = true }
+      },
+      {
+        name = 'bbox_viz,
+        inputs = {'default, 'bbox_data},
+        glslShader  = glslBboxViz,
+      }
+    };
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+    # Force bbox parameters every frame (graph runtime swaps uniforms)
+    setShaderUniform('bbox_data, 'use_red_channel, true);
+    setShaderUniform('bbox_data, 'smoothing, 0.0);
+    setShaderUniform('bbox_data, 'outputBox, true);
+}
+
+#### Bbox visualization shaders ####
+# Single-input pass: sample bbox texture rows and render as color bands
+
+string glslBboxViz = "
+  varying vec2 sourceTextureCoordinate;
+  BaseUniformsOpenGL;
+  uniform sampler2D auxSampler1;
+
+  void main() {
+    vec2 uv = sourceTextureCoordinate;
+    int numMaxInstances = 16;
+    float lw = 0.003;
+
+    vec4 color = sampleInput(uv) * strength;
+
+    for (int i = 0; i < numMaxInstances; i++) {
+      vec2 bboxUv = vec2(0.5, (float(i) + 0.5) / float(numMaxInstances));
+      vec4 b = texture2D(auxSampler1, bboxUv);
+
+      if (b.z <= b.x || b.w <= b.y) { continue; }
+
+      vec2 bmin = b.xy;
+      vec2 bmax = b.zw;
+      vec2 center = 0.5 * (bmin + bmax);
+
+      bool inX = uv.x >= bmin.x - lw && uv.x <= bmax.x + lw;
+      bool inY = uv.y >= bmin.y - lw && uv.y <= bmax.y + lw;
+
+      // draw bbox edges
+      bool onEdge = (inY && (abs(uv.x - bmin.x) < lw || abs(uv.x - bmax.x) < lw))
+                  || (inX && (abs(uv.y - bmin.y) < lw || abs(uv.y - bmax.y) < lw));
+      if (onEdge) { color = vec4(0.0, 1.0, 0.0, 1.0); }
+
+      // draw center crosshair
+      float clw = lw * 0.5;
+      float clen = 0.01;
+      bool onCH = abs(uv.y - center.y) < clw && abs(uv.x - center.x) < clen;
+      bool onCV = abs(uv.x - center.x) < clw && abs(uv.y - center.y) < clen;
+      if (onCH || onCV) { color = vec4(1.0, 0.0, 0.0, 1.0); }
+    }
+
+    gl_FragColor = color * strength;
+  }
+";

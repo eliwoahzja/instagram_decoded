@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_cutout_hue_shift",
+  "displayName": "Hue shift",
+  "description": "[IG Edits] Video effect name shared across full-frame and subject-cutout surfaces. With \"Hue shift\", colors rotate around the color wheel, shifting their hue over time.",
+  "iglu": {
+    "subject": {
+      "enabled": true,
+      "fullFrameEnabled": false
+    }
+  }
+}

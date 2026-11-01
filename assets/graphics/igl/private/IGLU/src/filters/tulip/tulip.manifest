@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "identifier": "7414F73D-7FEF-4401-A5A7-C59539B7393E",
+  "displayName": "Tulip",
+  "description": "[IG Edits] Video effect name. With \"Tulip\", the creator gets a face-tracked LUT color grade, makeup texture, and a tulip flower decal centered near the eye.",
+  "ios": {
+    "previewAsset": {
+      "handle": "AQANuWQj4tA5"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "24ce8602",
+      "handle": "AQAPGnZa82LX",
+      "md5": "1e73fcac37ca9d3a41486f908bd41c47"
+    }
+  },
+  "iglu": {
+    "legacyId": 3198
+  },
+  "assets": [
+    {
+      "name": "tulip_face_texture.png",
+      "assetHash": "df8bb0761354b7ed00f4987542682db328b601c637dbeff6f0299b4e281bff33",
+      "hubAssetId": "2552589925242863"
+    },
+    {
+      "name": "tulip_decal.png",
+      "assetHash": "3cda86db57ca0d775871e2a7129d6e5fbf23a816f7470683b800f8f47ffebc7a",
+      "hubAssetId": "1371418531632432"
+    },
+    {
+      "name": "tulip_lut.png",
+      "assetHash": "03f4001310746865c92a3731cfb7cc4eba05b61492b6c5ebb32755e84b8a6519",
+      "hubAssetId": "1324337503072386"
+    }
+  ]
+}

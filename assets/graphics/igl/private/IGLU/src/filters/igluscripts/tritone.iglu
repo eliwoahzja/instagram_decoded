@@ -1,0 +1,194 @@
+[Filter Tritone]
+[MaskBehavior alpha]
+# Tritone color grading effect - maps luminance to three colors (shadow, midtone, highlight)
+
+[Init]
+fun init(Filter filter) {
+
+  print("Initializing Tritone filter...");
+
+  filter.passes = {{
+    name = 'tritone,
+    inputs = {'default},
+    uniforms = {
+      # ============================================
+      # COLOR PALETTE OPTIONS (uncomment to use)
+      # ============================================
+
+      # --- DEFAULT: Cinematic Warm ---
+      # Deep teal shadows, warm terracotta mids, golden highlights
+      # Classic film color grade with high visual interest
+      shadowColor = {0.02, 0.18, 0.28},
+      midtoneColor = {0.5, 0.38, 0.32},
+      highlightColor = {1.0, 0.88, 0.65},
+
+      # --- 1. HIGH CONTRAST B&W ---
+      # Pure black to white with neutral gray mids
+      # Classic dramatic monochrome look
+      # shadowColor = {0.0, 0.0, 0.0},
+      # midtoneColor = {0.3, 0.3, 0.3},
+      # highlightColor = {1.0, 1.0, 1.0},
+
+      # --- 2. PASTEL DREAM ---
+      # Soft lavender, blush pink, cream - gentle and airy
+      # Low saturation, high brightness, feminine aesthetic
+      # shadowColor = {0.55, 0.48, 0.62},
+      # midtoneColor = {0.85, 0.70, 0.75},
+      # highlightColor = {0.98, 0.95, 0.90},
+
+      # --- 3. NEON CYBERPUNK ---
+      # Deep purple shadows, hot magenta mids, electric cyan highlights
+      # Complementary split scheme, high saturation, futuristic
+      # shadowColor = {0.12, 0.02, 0.20},
+      # midtoneColor = {0.90, 0.10, 0.50},
+      # highlightColor = {0.20, 1.0, 0.95},
+
+      # --- 4. SUNSET ANALOGOUS ---
+      # Deep crimson to orange to golden yellow
+      # Warm analogous colors, natural gradient
+      # shadowColor = {0.35, 0.05, 0.10},
+      # midtoneColor = {0.90, 0.35, 0.12},
+      # highlightColor = {1.0, 0.85, 0.30},
+
+      # --- 5. FOREST EARTH ---
+      # Deep forest green, olive, warm cream
+      # Earthy triadic with natural organic feel
+      # shadowColor = {0.05, 0.15, 0.08},
+      # midtoneColor = {0.35, 0.42, 0.22},
+      # highlightColor = {0.95, 0.90, 0.75},
+
+      # --- 6. COOL STEEL ---
+      # Navy blue, slate gray, cool white
+      # Monochromatic blue with industrial edge
+      # shadowColor = {0.08, 0.12, 0.22},
+      # midtoneColor = {0.40, 0.45, 0.52},
+      # highlightColor = {0.88, 0.92, 0.98},
+
+      # --- 7. VINTAGE SEPIA ---
+      # Dark brown, warm tan, aged paper cream
+      # Classic aged photograph aesthetic
+      # shadowColor = {0.15, 0.10, 0.05},
+      # midtoneColor = {0.55, 0.40, 0.28},
+      # highlightColor = {0.95, 0.88, 0.75},
+
+      # --- 8. ELECTRIC COMPLEMENTARY ---
+      # Deep blue shadows, violet transition, bright yellow highlights
+      # Blue-yellow complementary with maximum color tension
+      # shadowColor = {0.05, 0.05, 0.35},
+      # midtoneColor = {0.45, 0.25, 0.55},
+      # highlightColor = {1.0, 0.95, 0.30},
+
+      # --- 9. CANDY POP ---
+      # Saturated coral, hot pink, bright turquoise
+      # Triadic vivid scheme, playful and energetic
+      # shadowColor = {0.95, 0.35, 0.40},
+      # midtoneColor = {1.0, 0.30, 0.65},
+      # highlightColor = {0.30, 0.95, 0.85},
+
+      # --- 10. MIDNIGHT AURORA ---
+      # Deep midnight blue, emerald green, soft pink
+      # Inspired by aurora borealis, ethereal and magical
+      # shadowColor = {0.05, 0.08, 0.18},
+      # midtoneColor = {0.15, 0.55, 0.45},
+      # highlightColor = {0.95, 0.75, 0.80},
+
+      # strength = 1.0,
+      strength = 0.65,
+
+      # ============================================
+      # BLEND MODE OPTIONS
+      # ============================================
+      # 0 = Normal (default) - standard mix blend
+      # 1 = Multiply - darkens, good for shadows
+      # 2 = Screen - lightens, good for highlights
+      # 3 = Overlay - contrast boost, preserves blacks/whites
+      # 4 = Add - brightens by adding values
+      blendMode = 0.0,
+    },
+    glslShader = tritoneShader,
+  }};
+  filter.parameters = {
+    {shadowColor = {0.02, 0.18, 0.28}, description = "Shadow Color"},
+    {midtoneColor = {0.5, 0.38, 0.32}, description = "Midtone Color"},
+    {highlightColor = {1.0, 0.88, 0.65}, description = "Highlight Color"},
+    {strength = 1.0, min = 0.0, max = 1.0, description = "Strength"},
+  };
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+}
+
+string tritoneShader = "
+  varying vec2 sourceTextureCoordinate;
+
+  uniform vec3 shadowColor;
+  uniform vec3 midtoneColor;
+  uniform vec3 highlightColor;
+  uniform float strength;
+  uniform float blendMode;
+
+  // Blend mode functions
+  vec3 blendMultiply(vec3 base, vec3 blend) {
+    return base * blend;
+  }
+
+  vec3 blendScreen(vec3 base, vec3 blend) {
+    return 1.0 - (1.0 - base) * (1.0 - blend);
+  }
+
+  vec3 blendOverlay(vec3 base, vec3 blend) {
+    return vec3(
+      base.r < 0.5 ? (2.0 * base.r * blend.r) : (1.0 - 2.0 * (1.0 - base.r) * (1.0 - blend.r)),
+      base.g < 0.5 ? (2.0 * base.g * blend.g) : (1.0 - 2.0 * (1.0 - base.g) * (1.0 - blend.g)),
+      base.b < 0.5 ? (2.0 * base.b * blend.b) : (1.0 - 2.0 * (1.0 - base.b) * (1.0 - blend.b))
+    );
+  }
+
+  vec3 blendAdd(vec3 base, vec3 blend) {
+    return min(base + blend, vec3(1.0));
+  }
+
+  void main() {
+    vec2 uv = sourceTextureCoordinate;
+    vec4 color = sampleInput(uv);
+
+    // Convert to grayscale using luminance
+    float luma = dot(color.rgb, vec3(0.299, 0.333, 0.368));
+
+    // Map luminance to colors using smooth transitions
+    // Shadow to midtone transition (0.0 - 0.5)
+    // Midtone to highlight transition (0.5 - 1.0)
+    vec3 colorized;
+
+    if (luma < 0.5) {
+        // Interpolate between shadow and midtone
+        float t = luma * 2.0;
+        colorized = mix(shadowColor, midtoneColor, t);
+    } else {
+        // Interpolate between midtone and highlight
+        float t = (luma - 0.5) * 2.0;
+        colorized = mix(midtoneColor, highlightColor, t);
+    }
+
+    // Apply blend mode
+    vec3 blended;
+    if (blendMode == 1.0) {
+      blended = blendMultiply(color.rgb, colorized);
+    } else if (blendMode == 2.0) {
+      blended = blendScreen(color.rgb, colorized);
+    } else if (blendMode == 3.0) {
+      blended = blendOverlay(color.rgb, colorized);
+    } else if (blendMode == 4.0) {
+      blended = blendAdd(color.rgb, colorized);
+    } else {
+      // Default: Normal blend (just use colorized)
+      blended = colorized;
+    }
+
+    // Blend with original based on strength
+    vec3 result = mix(color.rgb, blended, strength);
+
+    gl_FragColor = toOutputFormat(vec4(result, color.a));
+  }
+";

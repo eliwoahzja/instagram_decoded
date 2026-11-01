@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "whatsapp_film",
+  "displayName": "Film",
+  "description": "[IG Edits] Video effect name. A video effect is a creative visual element that can be applied to a video. With \"Film\", the creator can apply a vintage grainy film camera effect to their video.",
+  "iglu": {}
+}

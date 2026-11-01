@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "identifier": "sierra",
+  "displayName": "Sierra",
+  "description": "[IG Edits] Color filter name. With \"Sierra\", the creator can apply a vintage Sierra grade by layering a vignette overlay, a smoky soft-light pass and a Sierra color map LUT.",
+  "iglu": {
+    "legacyId": 27
+  },
+  "assets": [
+    {
+      "name": "map_sierra.png",
+      "assetHash": "0e22297aa7640f2bedf64c689d2e1e5d6d3709e304057f9128cfb5d0b11d9749",
+      "hubAssetId": "1621933505495523"
+    },
+    {
+      "name": "overlay.png",
+      "assetHash": "84b56063e8efd2fa742bd5a62235c378606dc3406613606f99f3c4044b20e31a",
+      "hubAssetId": "1236494364700999"
+    },
+    {
+      "name": "smoke.png",
+      "assetHash": "103ed57ed09c1b164b5bb4fdde6a5d809223e86ae987095ec57dc424d5963a32",
+      "hubAssetId": "1983279849258290"
+    },
+    {
+      "name": "soft_light100.png",
+      "assetHash": "cd94f1f09b79889b9b92b3e05c7dd72947da9a15e73423984005c2cf1b3c5430",
+      "hubAssetId": "953556680666601"
+    },
+    {
+      "name": "vignette.png",
+      "assetHash": "e30fac30ea874049e85433282184ea6e59bdf23a80e43094039d907b964d8fe4",
+      "hubAssetId": "1988284192108233"
+    }
+  ]
+}

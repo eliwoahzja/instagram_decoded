@@ -1,0 +1,290 @@
+[Filter Urban]
+# "Urban" — LUT + procedural film animation overlay (grain + scratches +
+# occasional warm/cool color flashes). Replaces what would have been a
+# 55-frame, 24fps JPG sequence with a procedural shader.
+#
+# Cloned from glamy.iglu (LUT pass), with time-locked frame cadence
+# inspired by flicker_flashing_vid.iglu and grain hashing inspired by
+# super_8mm.iglu. Per Clone-then-Deviate, the LUT half of the shader is
+# byte-for-byte glamy; the animation overlay is the new logic merged in.
+#
+# Pipeline (single fragment pass):
+#   Stage 1 — LUT color grade: 8x8 grid lookup, [0.00781, 0.98438] clamp,
+#             mix(camera, LUT_color, lut_strength) — same as glamy.
+#   Stage 2 — 24fps frame lock: `frame = floor(time * 24.0)` produces
+#             discrete cuts. All animation randomness derives from the
+#             integer `frame` value, so grain, dust, and flashes change
+#             in lockstep at exactly 24fps (matching real film).
+#   Stage 3 — Grain: per-frame screen-blended hash noise. Brightens
+#             (additive-style) at low intensity. Reference: super_8mm.
+#   Stage 4 — Dust specks: 0-7 small bright point-flashes per frame at
+#             random uv positions. Each speck independently seeded for
+#             position, radius, and brightness. Frame count is itself
+#             randomized per frame so some frames have 0 specks (sparse
+#             feel matching the reference 55-frame sequence, where most
+#             frames are nearly empty).
+#   Stage 5 — Color flashes: every 8 frames a flash CYCLE rolls;
+#             ~45% of cycles trigger a multi-frame warm or cool burn.
+#             Burn is a directional radial gradient (light-leak shape)
+#             at a random uv position, NOT a flat tint. Held for ~3
+#             frames with a fade envelope so it reads as a sustained
+#             light-leak burst rather than a single-frame flash.
+#             Warm = amber/red (film burn). Cool = blue-cyan (light leak).
+#
+# Visual character calibration (per reference 55-frame sequence):
+#   * Most frames are very dark with sparse specks; full "dust storms"
+#     are rare. The randomized speck count handles this.
+#   * Color burns are GRADIENTS centered off-center, not full-frame tints.
+#     They look like a film burn or light leak hitting the corner.
+#   * NO scratches in the original — explicitly removed (this was a
+#     deviation in V1 of this filter).
+#
+# Layer composition: all overlay layers use screen blend
+#     screenBlend(base, overlay) = 1 - (1 - base) * (1 - overlay)
+# so each contributes a brightening pop without crushing the grade.
+#
+# Time source: uses `getLocalTime()` (monotonic wall-clock) per the
+# Time Source skill-doc rule for continuous animations — `time_sec`
+# wraps with the sample-app's video loop and would cause discontinuities
+# at fixed video positions. See `.llms/skills/igluscript-patterns.md`
+# section "Time Source for Continuous Animations".
+#
+# Single-asset filter on the legacy generic-symbol pattern (`'lut` ↔
+# `urban_lut.png`); same convention as glamy / bliss / ayushhh / etc.
+# Added to skill-doc exception list.
+#
+# Asset effectId / assetHash baked into manifest (received from
+# Neetika upload, effectId 1337618581600849). Note: the spec-provided
+# effect ID (1500947247092200) was the original Spark filter ID; the
+# actual ARD asset upload assigned a different effectId, which is what
+# the manifest must use for ARD resolution. Ready for review.
+
+[Init]
+fun init(Filter filter)
+{
+    makeTexture('lut);
+
+    filter.parameters = {
+        {lut_strength = 1.0, min = 0.0, max = 1.0, description = "LUT mix strength"},
+        {grain_strength = 0.045, min = 0.0, max = 1.0, description = "Per-frame grain magnitude (screen-blended)"},
+        {dust_strength = 0.7, min = 0.0, max = 1.0, description = "Bright-speck (dust/burn-in) density factor; 0-7 specks per frame"},
+        {flash_strength = 0.577, min = 0.0, max = 1.0, description = "Color burn intensity (gel-filter mix toward warm/cool tint at the burn center; ~1 burn every 8 frames at 45% trigger)"},
+    };
+
+    filter.passes = {{
+      name = 'pass0,
+      inputs = {'default, 'lut},
+      uniforms = {
+        lut_strength = 1.0,
+        grain_strength = 0.045,
+        dust_strength = 0.7,
+        flash_strength = 0.577,
+        time = 0.0,
+      },
+      glslShader = glslUrban,
+    }};
+}
+
+string lut_path = "lut_path";
+string lut_filename = "";
+
+[PreRender]
+fun preRender(Filter filter){
+    string lut_filename_parameter = getParameterString(lut_path);
+    if (lut_filename_parameter != "") {
+        string new_lut_filename = stringAppend("textureFilePath://", lut_filename_parameter);
+        if (new_lut_filename != lut_filename) {
+            lut_filename = new_lut_filename;
+            loadTexture('lut, lut_filename);
+        }
+    }
+
+    f32 ls = getParameterFloat('lut_strength);
+    setShaderUniform('pass0, 'lut_strength, ls);
+
+    f32 gs = getParameterFloat('grain_strength);
+    setShaderUniform('pass0, 'grain_strength, gs);
+
+    f32 ds = getParameterFloat('dust_strength);
+    setShaderUniform('pass0, 'dust_strength, ds);
+
+    f32 fs = getParameterFloat('flash_strength);
+    setShaderUniform('pass0, 'flash_strength, fs);
+
+    # Use getLocalTime() (monotonic wall-clock) for the 24fps frame cadence.
+    # See Time Source pattern in .llms/skills/igluscript-patterns.md.
+    f32 time = getLocalTime();
+    setShaderUniform('pass0, 'time, time);
+}
+
+#### GLSL shader ####
+
+string glslUrban = "
+    varying vec2 sourceTextureCoordinate;
+    BaseUniformsOpenGL;
+
+    uniform sampler2D auxSampler0;
+    uniform sampler2D auxSampler1;
+    uniform sampler2D auxSampler2;
+
+    uniform float lut_strength;
+    uniform float grain_strength;
+    uniform float dust_strength;
+    uniform float flash_strength;
+    uniform float time;
+
+    // 1D pseudo-random hash. Returns value in roughly [0, 1).
+    float hash11(float x) {
+      return fract(sin(x * 12.9898) * 43758.5453);
+    }
+
+    // 2D hash for per-pixel grain. Returns value in roughly [0, 1).
+    float hash21(vec2 p) {
+      return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453);
+    }
+
+    // Screen blend: 1 - (1-base)*(1-overlay). Brightening blend; identity at overlay=0.
+    vec3 screenBlend(vec3 base, vec3 overlay) {
+      return 1.0 - (1.0 - base) * (1.0 - overlay);
+    }
+
+    void main() {
+      vec2 uv = sourceTextureCoordinate;
+
+      // ============================================================
+      // Stage 1: LUT color grade (glamy pattern, 8x8 grid).
+      // ============================================================
+      vec4 texel = sampleInput(uv);
+      vec3 cClamp = clamp(texel.rgb, 0.00781, 0.98438);
+      float lx = cClamp.r / 8.0;
+      float ly = cClamp.g / 8.0;
+      float lz = cClamp.b;
+      float lutBlueY = floor(lz * 8.0) / 8.0;
+      float lutBlueX = floor((lz - lutBlueY) * 64.0) / 8.0;
+      lx += lutBlueX;
+      ly += lutBlueY;
+      vec3 lutColor = texture2D(auxSampler1, vec2(lx, ly)).xyz;
+      vec3 graded = mix(texel.rgb, lutColor, lut_strength);
+
+      vec3 result = graded;
+
+      // ============================================================
+      // Stage 2: 24fps frame lock. All randomness derives from `frame`.
+      // ============================================================
+      float frame = floor(time * 24.0);
+      float frameSeed = fract(sin(frame * 127.1) * 43758.5453);
+
+      // ============================================================
+      // Stage 3: Grain — per-frame screen-blended hash noise.
+      // Slight density variation across frames via a secondary mod
+      // factor so the grain doesn't feel mechanically uniform.
+      // ============================================================
+      float grainDensity = 0.85 + hash11(frame * 19.0) * 0.3;  // 0.85..1.15
+      float grainNoise = hash21(uv * 1000.0 + vec2(frame, frame * 0.7));
+      vec3 grainColor = vec3(grainNoise * grain_strength * grainDensity);
+      result = screenBlend(result, grainColor);
+
+      // ============================================================
+      // Stage 4: Dust specks — 0-7 bright point flashes per frame at
+      // random uv positions. Each speck has independent seed for
+      // position, radius, and brightness. Frame count is itself
+      // randomized so many frames have 0-2 specks (matching the
+      // reference, where most frames are nearly empty with rare
+      // dust-storm frames showing 4-7 specks).
+      // Aspect ratio for portrait input is corrected so specks read
+      // as roughly circular regardless of canvas aspect.
+      // ============================================================
+      // Speck count distribution: skewed toward small numbers.
+      // frameSeed^2 keeps most frames at 0-2 specks; rare ones spike higher.
+      float speckCountF = floor(frameSeed * frameSeed * 8.0);  // 0..7
+      float dustAlpha = 0.0;
+      // Hardcoded max 8 iterations — GLSL friendly.
+      for (int i = 0; i < 8; i++) {
+        if (float(i) >= speckCountF) break;
+
+        float seed = frame * 71.0 + float(i) * 31.0;
+        vec2 speckPos = vec2(hash11(seed), hash11(seed + 7.0));
+        float speckRadius = 0.002 + hash11(seed + 11.0) * 0.0035;
+        float speckBright = 0.55 + hash11(seed + 17.0) * 0.45;
+
+        // Aspect-corrected distance (portrait camera — narrow x).
+        vec2 d = uv - speckPos;
+        d.x *= 0.56;  // correction approximates 9:16 portrait aspect
+        float dist = length(d);
+        // Soft falloff: full bright inside half-radius, smooth taper to outer radius.
+        float spec = smoothstep(speckRadius, speckRadius * 0.4, dist) * speckBright;
+        dustAlpha += spec;
+      }
+      dustAlpha = clamp(dustAlpha, 0.0, 1.0);
+      vec3 dustColor = vec3(dustAlpha * dust_strength);
+      result = screenBlend(result, dustColor);
+
+      // ============================================================
+      // Stage 5: Color burn flashes — every 8 frames a burn cycle
+      // rolls; ~45% of cycles trigger a multi-frame burst with a
+      // directional radial light-leak gradient (NOT a flat tint).
+      // Held for ~3 frames with a fade envelope so each burn reads
+      // as a sustained light leak rather than a single hard flash.
+      //
+      // Compositing: mix-toward-tint (gel filter) rather than screen
+      // blend. Screen blend can only brighten and washes the burn
+      // color toward white when overlaid on already-bright pixels;
+      // a saturated film-burn look needs the burn area to actually
+      // PUSH the camera toward the tint color (replacing chromaticity,
+      // not just brightening). Reference shows deep saturated
+      // orange-red dominating the burn region, which a mix achieves
+      // and screen blend cannot.
+      // ============================================================
+      float flashCycle = floor(frame / 8.0);
+      float flashCycleSeed = hash11(flashCycle * 71.0);
+      float flashActive = step(0.55, flashCycleSeed);                // 0 or 1
+      float warmCoolPick = hash11(flashCycle * 79.0);
+      // Bias toward warm: 80% of burns are warm, 20% are cool. Reference
+      // sequence is dominated by warm film burns; cool flashes are rare
+      // and visually subtler, more like a brief shadow/cast than a leak.
+      float isCool = step(0.80, warmCoolPick);
+      // Saturated chromatic tints. Cool tint kept muted (more grey-blue)
+      // so it reads as a subtle cool cast rather than a neon flash.
+      vec3 warmTint = vec3(1.00, 0.45, 0.05);
+      vec3 coolTint = vec3(0.30, 0.45, 0.65);
+      vec3 burnTint = mix(warmTint, coolTint, isCool);
+      // Slight luminosity boost so the burn feels like a light source, not flat paint.
+      vec3 burnTargetColor = burnTint * 1.15;
+      // Cool burns are dampened to 40% intensity vs warm so they feel
+      // like a soft shadow cast rather than a competing dominant flash.
+      float coolDamper = mix(1.0, 0.4, isCool);
+
+      // Random burn center per cycle (off-center bias toward bottom
+      // half where most reference burns originate).
+      vec2 burnCenter = vec2(
+          0.20 + hash11(flashCycle * 83.0) * 0.60,
+          0.35 + hash11(flashCycle * 89.0) * 0.45
+      );
+      // Burn radius widened for more frame coverage at peak.
+      float burnRadius = 0.45 + hash11(flashCycle * 97.0) * 0.30;
+
+      // Fade envelope across the burn duration. Frame 0 = 1.0,
+      // Frame 1 = 0.85, Frame 2 = 0.5, Frame 3+ = 0. Soft sustained-then-fade.
+      float frameInCycle = mod(frame, 8.0);
+      float burnEnvelope = max(0.0, 1.0 - frameInCycle / 3.0);
+      // Step ensures only the first 3 frames of a cycle are active (extra safety).
+      burnEnvelope *= step(frameInCycle, 2.5);
+
+      // Aspect-corrected radial gradient (same correction as dust specks).
+      vec2 bd = uv - burnCenter;
+      bd.x *= 0.56;
+      float burnDist = length(bd);
+      float burnIntensity = smoothstep(burnRadius, 0.0, burnDist);
+
+      // Mix-toward-tint composite. burnFactor in [0,1] determines how
+      // much the camera is pushed toward the tint at this pixel.
+      // Cool burns get the coolDamper applied so they read as subtler.
+      float burnFactor = burnIntensity * burnEnvelope * flashActive * flash_strength * coolDamper;
+      result = mix(result, burnTargetColor, burnFactor);
+
+      // Clamp to LDR display range.
+      result = clamp(result, 0.0, 1.0);
+
+      gl_FragColor = toOutputFormat(vec4(result, texel.a));
+    }
+    ";

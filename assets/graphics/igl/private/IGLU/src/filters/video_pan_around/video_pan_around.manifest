@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_pan_around",
+  "displayName": "Pan around",
+  "description": "Video effect name. A video effect is a creative visual element that can be applied to a video. With \"Pan around\", the creator can add a panning camera movement around the subject.",
+  "iglu": {
+    "legacyId": 2069,
+    "customization": [
+      {
+        "name": "zoom",
+        "default": 1.79,
+        "min": 1.79,
+        "max": 3.0,
+        "displayName": "Zoom",
+        "displayNameDescription": "[IG Edits] Slider label controlling the zoom factor (scale toward/away from the subject) of a video effect; exact range varies per effect.",
+        "displayMethod": "percent"
+      },
+      {
+        "name": "speed",
+        "default": 1.0,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Speed",
+        "displayNameDescription": "[IG Edits] Slider label controlling the playback or animation speed of a video effect (noun, not a verb); exact range varies per effect."
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "fbc02124",
+      "handle": "AQADvVrg2mf1",
+      "md5": "996ef062ee32115077054e67b2c48ed9"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAGG8IJB8rp"
+    }
+  }
+}

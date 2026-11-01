@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "identifier": "9984F50D-CAAB-41C5-A6A4-2C65DFEDC877",
+  "displayName": "Four Split Screen",
+  "description": "[IG Edits] Color filter name. Splits the canvas into a 2x2 grid of half-scale camera copies for a four-up split screen effect.",
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAFQe3AXtAd"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "d2891e3c",
+      "handle": "AQADsz56jRbX",
+      "md5": "8ffc1a554463fb49fdf958478436ae5f"
+    }
+  },
+  "iglu": {
+    "legacyId": 3109
+  },
+  "assets": []
+}

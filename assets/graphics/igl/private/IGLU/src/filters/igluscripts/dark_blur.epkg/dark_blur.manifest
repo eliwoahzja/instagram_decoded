@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "identifier": "A7F4A0F0-2590-4121-BC20-10DD779A51A2",
+  "displayName": "Dark Blur",
+  "description": "[IG Edits] Color filter name. Heavy directional motion-blur with a dark LUT color grade — moody, smeared background look.",
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAD1H7H5F6l"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "5996066",
+      "handle": "AQAE7Cn4cxEc",
+      "md5": "1149fb043984ca33b314b6a9a9490cf7"
+    }
+  },
+  "iglu": {
+    "legacyId": 3107
+  },
+  "assets": [
+    {
+      "name": "dark_blur_lut.png",
+      "assetHash": "24b19c41475b72e303cb96181403cb47b8401c93f1a0947a4171f542a5d117bb",
+      "hubAssetId": "997774979285725"
+    }
+  ]
+}

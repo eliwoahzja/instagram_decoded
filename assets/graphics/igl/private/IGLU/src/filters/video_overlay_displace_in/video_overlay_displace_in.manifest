@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_cutout_displace_in",
+  "displayName": "Displace in",
+  "description": "[Instagram Edits] Effect browser - Label for a displace/zoom distortion intro effect applied to subjects. Character count for labels is 14 characters max.",
+  "iglu": {
+    "legacyId": 5080,
+    "behavior": {
+      "type": "fixedIntro",
+      "durationMs": 1000,
+      "curve": "linear"
+    },
+    "subject": {
+      "overlay": true
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAI34e1mayz"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "7738ac85",
+      "handle": "AQADZ0ceLXig",
+      "md5": "4fd97694551f67d158495e9bd3bec5ad"
+    }
+  },
+  "assets": [
+    {
+      "name": "displace_in.png",
+      "assetHash": "b857707b9642cbf8c0a0a318af39116cff592a1e10c0d64c1a5946145501a2d5",
+      "hubAssetId": "1234560632154926"
+    }
+  ]
+}

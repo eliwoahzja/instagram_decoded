@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "transition_scanner_vertical",
+  "displayName": "Scanner Vertical",
+  "description": "Video transition selection. Chooses to apply scanner vertical transition.",
+  "iglu": {}
+}

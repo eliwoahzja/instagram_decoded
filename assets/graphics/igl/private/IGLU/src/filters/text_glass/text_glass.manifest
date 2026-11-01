@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "identifier": "text_glass",
+  "displayName": "Text Glass",
+  "description": "[IG Edits] Text effect name. With \"Text Glass\", the creator can render text as a translucent glass material using blurred-alpha heightmap with fresnel diffuse and black plastic specular matcaps.",
+  "assets": [
+    {
+      "name": "black_plastic_matcap.png",
+      "assetHash": "15064eadffb50f7e5e7d1502105261bbeb7e066d9b1da61f71a62abc9076c86c",
+      "hubAssetId": "1976298233771543"
+    },
+    {
+      "name": "glass_fresnel_matcap.png",
+      "assetHash": "223c2860895584b4947f36f09f57a59aea87be428d92788a03b48aff0ce53d1c",
+      "hubAssetId": "1245292236995307"
+    }
+  ],
+  "iglu": {}
+}

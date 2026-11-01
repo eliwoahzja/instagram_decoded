@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "perspective_transform",
+  "displayName": "Perspective Transform",
+  "description": "[IG Edits] Video effect name. With \"Perspective Transform\", the creator can tilt the frame in 3D by X/Y/Z rotation through a frustum projection with zoom-to-fit to keep corners inside the viewport.",
+  "iglu": {}
+}

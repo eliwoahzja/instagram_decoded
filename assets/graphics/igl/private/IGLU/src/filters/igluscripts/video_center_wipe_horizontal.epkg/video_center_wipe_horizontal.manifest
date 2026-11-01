@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "identifier": "7d5cb117-4a72-4fca-919d-43f4515400bc",
+  "displayName": "Center Wipe Horizontal",
+  "description": "[IG Edits] Effect name shown in the video effects picker. This is the user-facing label for a video effect.",
+  "iglu": {
+    "legacyId": 3124,
+    "behavior": {
+      "type": "fixedIntro",
+      "durationMs": 2000,
+      "curve": "quarticInOut"
+    },
+    "customization": [
+      {
+        "name": "duration",
+        "default": 2.0,
+        "min": 0.5,
+        "max": 5.0,
+        "displayName": "Duration",
+        "displayMethod": "time"
+      },
+      {
+        "name": "amount",
+        "displayName": "Amount",
+        "default": 0.03,
+        "min": 0.0,
+        "max": 1.0
+      }
+    ]
+  }
+}

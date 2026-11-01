@@ -1,0 +1,122 @@
+.class public final Lapp/morphe/extension/crimera/internal/google/common/util/concurrent/JdkFutureAdapters;
+.super Ljava/lang/Object;
+.source "JdkFutureAdapters.java"
+
+
+# annotations
+.annotation build Lapp/morphe/extension/crimera/internal/google/common/annotations/GwtIncompatible;
+.end annotation
+
+.annotation build Lapp/morphe/extension/crimera/internal/google/common/annotations/J2ktIncompatible;
+.end annotation
+
+.annotation runtime Lapp/morphe/extension/crimera/internal/google/common/util/concurrent/ElementTypesAreNonnullByDefault;
+.end annotation
+
+.annotation system Ldalvik/annotation/MemberClasses;
+    value = {
+        Lapp/morphe/extension/crimera/internal/google/common/util/concurrent/JdkFutureAdapters$ListenableFutureAdapter;
+    }
+.end annotation
+
+
+# direct methods
+.method private constructor <init>()V
+    .locals 0
+
+    .line 176
+    invoke-direct {p0}, Ljava/lang/Object;-><init>()V
+
+    return-void
+.end method
+
+.method public static listenInPoolThread(Ljava/util/concurrent/Future;)Lapp/morphe/extension/crimera/internal/google/common/util/concurrent/ListenableFuture;
+    .locals 1
+    .annotation system Ldalvik/annotation/MethodParameters;
+        accessFlags = {
+            0x0
+        }
+        names = {
+            "future"
+        }
+    .end annotation
+
+    .annotation system Ldalvik/annotation/Signature;
+        value = {
+            "<V:",
+            "Ljava/lang/Object;",
+            ">(",
+            "Ljava/util/concurrent/Future<",
+            "TV;>;)",
+            "Lapp/morphe/extension/crimera/internal/google/common/util/concurrent/ListenableFuture<",
+            "TV;>;"
+        }
+    .end annotation
+
+    .line 59
+    instance-of v0, p0, Lapp/morphe/extension/crimera/internal/google/common/util/concurrent/ListenableFuture;
+
+    if-eqz v0, :cond_0
+
+    .line 60
+    check-cast p0, Lapp/morphe/extension/crimera/internal/google/common/util/concurrent/ListenableFuture;
+
+    return-object p0
+
+    .line 62
+    :cond_0
+    new-instance v0, Lapp/morphe/extension/crimera/internal/google/common/util/concurrent/JdkFutureAdapters$ListenableFutureAdapter;
+
+    invoke-direct {v0, p0}, Lapp/morphe/extension/crimera/internal/google/common/util/concurrent/JdkFutureAdapters$ListenableFutureAdapter;-><init>(Ljava/util/concurrent/Future;)V
+
+    return-object v0
+.end method
+
+.method public static listenInPoolThread(Ljava/util/concurrent/Future;Ljava/util/concurrent/Executor;)Lapp/morphe/extension/crimera/internal/google/common/util/concurrent/ListenableFuture;
+    .locals 1
+    .annotation system Ldalvik/annotation/MethodParameters;
+        accessFlags = {
+            0x0,
+            0x0
+        }
+        names = {
+            "future",
+            "executor"
+        }
+    .end annotation
+
+    .annotation system Ldalvik/annotation/Signature;
+        value = {
+            "<V:",
+            "Ljava/lang/Object;",
+            ">(",
+            "Ljava/util/concurrent/Future<",
+            "TV;>;",
+            "Ljava/util/concurrent/Executor;",
+            ")",
+            "Lapp/morphe/extension/crimera/internal/google/common/util/concurrent/ListenableFuture<",
+            "TV;>;"
+        }
+    .end annotation
+
+    .line 87
+    invoke-static {p1}, Lapp/morphe/extension/crimera/internal/google/common/base/Preconditions;->checkNotNull(Ljava/lang/Object;)Ljava/lang/Object;
+
+    .line 88
+    instance-of v0, p0, Lapp/morphe/extension/crimera/internal/google/common/util/concurrent/ListenableFuture;
+
+    if-eqz v0, :cond_0
+
+    .line 89
+    check-cast p0, Lapp/morphe/extension/crimera/internal/google/common/util/concurrent/ListenableFuture;
+
+    return-object p0
+
+    .line 91
+    :cond_0
+    new-instance v0, Lapp/morphe/extension/crimera/internal/google/common/util/concurrent/JdkFutureAdapters$ListenableFutureAdapter;
+
+    invoke-direct {v0, p0, p1}, Lapp/morphe/extension/crimera/internal/google/common/util/concurrent/JdkFutureAdapters$ListenableFutureAdapter;-><init>(Ljava/util/concurrent/Future;Ljava/util/concurrent/Executor;)V
+
+    return-object v0
+.end method

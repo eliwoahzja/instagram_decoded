@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "identifier": "07FD849D-0B20-43EA-BC84-36179356E351",
+  "displayName": "Low Exposure 4K",
+  "description": "[IG Edits] Color filter name. Sharpens the camera with a 3x3 Laplacian kernel before applying a moody low-exposure LUT color grade.",
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAHq1XD7b8B"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "be186d4a",
+      "handle": "AQAIPJJ3jTOP",
+      "md5": "5ac46f9b0d5612f7ef6a699fd012ea61"
+    }
+  },
+  "iglu": {
+    "legacyId": 3113
+  },
+  "assets": [
+    {
+      "name": "low_exposure_4k_lut.png",
+      "assetHash": "d7887570348abfd450ee744ccecb46de85864ad8229bd45f1d38eb0dfe13d41e",
+      "hubAssetId": "968440059298390"
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "5c6f52d9-2f18-4aa4-b262-4672e8618f5e",
+  "displayName": "Lift Shadow",
+  "description": "[IG Edits] Text effect name. Adds a soft, offset drop shadow behind the text to lift it off the background.",
+  "iglu": {}
+}

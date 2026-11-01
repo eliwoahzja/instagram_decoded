@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_cutout_blur",
+  "displayName": "Blur",
+  "description": "[IG Edits] Effect or transition name shared across text, video, cutout, overlay and transition surfaces. With \"Blur\", a Gaussian blur is applied to soften the image.",
+  "iglu": {
+    "legacyId": 2088,
+    "customization": [
+      {
+        "name": "color",
+        "defaultSelection": "#000000",
+        "available": [
+          "#000000",
+          "#FFFFFF",
+          "#FFD600",
+          "#FF7A00",
+          "#FE1D37",
+          "#FF0169",
+          "#D300C5",
+          "#7638FA",
+          "#37038B",
+          "#1CD164",
+          "#0095F6",
+          "#AD88FC",
+          "#FDD5FD",
+          "#FFABE1",
+          "#FFC584",
+          "#FFF8C2",
+          "#09FF00",
+          "#FFFF00",
+          "#5AFAC7",
+          "#0000FF"
+        ],
+        "displayName": "Color",
+        "displayNameDescription": "[IG Edits] Color picker label. The user selects a color used by the video effect (e.g., glow tint, outline color, sparkle color); available palette varies per effect."
+      },
+      {
+        "name": "amount",
+        "default": 0.7,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Amount",
+        "displayNameDescription": "[IG Edits] Slider label controlling the magnitude or quantity of a video effect. Generic across many effects; exact range varies per effect."
+      }
+    ],
+    "subject": {
+      "enabled": true,
+      "fullFrameEnabled": true,
+      "typeSuggestions": [
+        "person",
+        "head",
+        "clothing"
+      ]
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "a4818008",
+      "handle": "AQAFo0oWB_l3",
+      "md5": "022fbdce0357b47ad606cbdcca62b9fc"
+    }
+  },
+  "assets": [
+    {
+      "name": "gradient_orange.png",
+      "assetHash": "32edfea62f355125f02c7bdb00eca706f06850c52d7f9fdfe38f8dbed4b1622b",
+      "hubAssetId": "919213973916839"
+    }
+  ],
+  "ios": {
+    "previewAsset": {
+      "isImageFormat": true,
+      "handle": "AQAHEmC73-YM"
+    }
+  }
+}

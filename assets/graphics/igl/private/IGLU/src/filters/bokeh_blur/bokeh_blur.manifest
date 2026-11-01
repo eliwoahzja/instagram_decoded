@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "bokeh_blur",
+  "displayName": "Bokeh Blur",
+  "description": "[IG Edits] Video effect name. With \"Bokeh Blur\", the creator can apply an exponential-domain spiral-tap blur that produces bright circular highlight discs simulating wide-aperture lens bokeh.",
+  "iglu": {}
+}

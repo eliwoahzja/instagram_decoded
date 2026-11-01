@@ -1,0 +1,201 @@
+[Filter ProductOutline]
+[MaskBehavior composite]
+
+[Init]
+fun init(Filter filter) {
+  # Declares the named mask input that the host binds to the object silhouette.
+  makeTexture('mask);
+
+  filter.parameters = {
+    {thickness = 10.0, min = 0.0, max = 25.0, description = "Outline Thickness"},
+    {softness = 0.15, min = 0.0, max = 1.0, description = "Edge Softness"},
+    {speed = 0.5, min = 0.0, max = 3.0, description = "Rotation Speed"},
+    {sharpness = 2.0, min = 0.5, max = 16.0, description = "Gradient Sharpness"},
+    {radialMod = 2.0, min = 1.0, max = 4.0, description = "Radial Mod (Sections)"},
+    {baseOpacity = 0.25, min = 0.0, max = 1.0, description = "Outline Base Opacity"},
+    {opacity = 1.0, min = 0.0, max = 1.0, description = "Outline Opacity"},
+    {highlightColor = {1.0, 1.0, 1.0, 1.0}, description = "Gradient Highlight Color"},
+    {baseColor = {1.0, 1.0, 1.0, 1.0}, description = "Gradient Base Color"},
+  };
+
+  filter.passes = {
+    {
+      name = 'center,
+      inputs = {'mask},
+      scale = {0.01, 0.01},
+      glslShader = centerGlsl,
+    },
+    {
+      name = 'dilate,
+      inputs = {'mask},
+      uniforms = {
+        outputSize = {1080.0, 1920.0},
+        radius = 6.0,
+        edgeFade = 0.15,
+      },
+      glslShader = dilateGlsl,
+    },
+    {
+      name = 'compose,
+      inputs = {'default, 'dilate, 'mask, 'center},
+      uniforms = {
+        outputSize = {1080.0, 1920.0},
+        phase = 0.0,
+        sharpness = 2.0,
+        radialMod = 2.0,
+        baseOpacity = 0.25,
+        opacity = 1.0,
+        highlightColor = {1.0, 1.0, 1.0, 1.0},
+        baseColor = {1.0, 1.0, 1.0, 1.0},
+      },
+      glslShader = composeGlsl,
+    }
+  };
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  vec2 size = getTextureSize('default);
+  f32 sizeScale = min(size.x, size.y) / 1080.0;
+
+  setShaderUniform('dilate, 'outputSize, size);
+  setShaderUniform('dilate, 'radius, getParameterFloat('thickness) * sizeScale);
+  setShaderUniform('dilate, 'edgeFade, getParameterFloat('softness));
+
+  f32 phase = getParameterFloat('time_sec) * getParameterFloat('speed) * 6.2831853;
+
+  setShaderUniform('compose, 'outputSize, size);
+  setShaderUniform('compose, 'phase, phase);
+  setShaderUniform('compose, 'sharpness, getParameterFloat('sharpness));
+  setShaderUniform('compose, 'radialMod, round(getParameterFloat('radialMod)));
+  setShaderUniform('compose, 'baseOpacity, getParameterFloat('baseOpacity));
+  setShaderUniform('compose, 'opacity, getParameterFloat('opacity));
+  setShaderUniform('compose, 'highlightColor, getParameterVec4('highlightColor));
+  setShaderUniform('compose, 'baseColor, getParameterVec4('baseColor));
+}
+
+string centerGlsl = "
+precision highp float;
+
+varying vec2 sourceTextureCoordinate;
+BaseUniformsOpenGL;
+
+#define GRID_SIZE 32
+
+float maskCoverage(vec4 c) {
+  return max(c.r, max(c.g, c.b));
+}
+
+void main() {
+  float gridStep = 1.0 / float(GRID_SIZE);
+
+  vec2 weighted = vec2(0.0);
+  float total = 0.0;
+
+  for (int y = 0; y < GRID_SIZE; y++) {
+    for (int x = 0; x < GRID_SIZE; x++) {
+      vec2 sampleUV = (vec2(float(x), float(y)) + 0.5) * gridStep;
+      float coverage = maskCoverage(sampleInput(sampleUV));
+      weighted += sampleUV * coverage;
+      total += coverage;
+    }
+  }
+
+  vec2 maskCenter = total > 0.0001 ? weighted / total : vec2(0.5);
+
+  gl_FragColor = toOutputFormat(vec4(maskCenter, 0.0, 1.0));
+}
+";
+
+string dilateGlsl = "
+precision highp float;
+
+varying vec2 sourceTextureCoordinate;
+BaseUniformsOpenGL;
+
+uniform vec2 outputSize;
+uniform float radius;
+uniform float edgeFade;
+
+#define MAX_RADIUS 25
+
+float maskCoverage(vec4 c) {
+  return max(c.r, max(c.g, c.b));
+}
+
+float ramp(float edge0, float edge1, float x) {
+  return clamp((x - edge0) / (edge1 - edge0), 0.0, 1.0);
+}
+
+void main() {
+  vec2 uv = sourceTextureCoordinate;
+  vec2 duv = 1.0 / outputSize;
+
+  int rad = int(radius);
+  float circleRadius = max(1.0, min(float(MAX_RADIUS), radius));
+  float fade = max(edgeFade, 0.001);
+
+  float coverage = 0.0;
+  for (int x = -MAX_RADIUS; x <= MAX_RADIUS; ++x) {
+    if (x < -rad || x > rad) continue;
+
+    for (int y = -MAX_RADIUS; y <= MAX_RADIUS; ++y) {
+      if (y < -rad || y > rad) continue;
+
+      vec2 offset = vec2(float(x), float(y));
+      float circle = ramp(1.0, 1.0 - fade, length(offset) / circleRadius);
+      coverage = max(coverage, maskCoverage(sampleInput(uv + duv * offset)) * circle);
+    }
+  }
+
+  gl_FragColor = toOutputFormat(vec4(vec3(coverage), coverage));
+}
+";
+
+string composeGlsl = "
+precision highp float;
+
+varying vec2 sourceTextureCoordinate;
+BaseUniformsOpenGL;
+
+uniform sampler2D auxSampler1;
+uniform sampler2D auxSampler2;
+uniform sampler2D auxSampler3;
+
+uniform vec2 outputSize;
+uniform float phase;
+uniform float sharpness;
+uniform float radialMod;
+uniform float baseOpacity;
+uniform float opacity;
+uniform vec4 highlightColor;
+uniform vec4 baseColor;
+
+float maskCoverage(vec4 c) {
+  return max(c.r, max(c.g, c.b));
+}
+
+void main() {
+  vec2 uv = sourceTextureCoordinate;
+
+  vec4 base = sampleInput(uv);
+  float dilated = maskCoverage(texture2D(auxSampler1, uv));
+  float subject = maskCoverage(texture2D(auxSampler2, uv));
+
+  float outline = clamp(dilated - subject, 0.0, 1.0);
+
+  vec2 center = texture2D(auxSampler3, vec2(0.5)).xy;
+  vec2 delta = uv - center;
+  delta.x *= outputSize.x / outputSize.y;
+
+  float angle = atan(delta.y, delta.x);
+  float sweep = max(0.5 + 0.5 * cos((angle - phase) * radialMod), 0.0);
+  float gradient = pow(sweep, sharpness);
+
+  vec4 gradientColor = mix(baseColor, highlightColor, gradient);
+  float alpha = outline * opacity * gradientColor.a * mix(baseOpacity, 1.0, gradient);
+
+  vec3 color = base.rgb + gradientColor.rgb * alpha;
+  gl_FragColor = toOutputFormat(vec4(color, base.a));
+}
+";

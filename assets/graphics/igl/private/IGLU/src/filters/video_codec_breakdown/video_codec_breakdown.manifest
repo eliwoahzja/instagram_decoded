@@ -1,0 +1,122 @@
+{
+  "schemaVersion": 1,
+  "identifier": "B43F1414-D645-4439-B886-5028B10A4271",
+  "displayName": "Codec Breakdown",
+  "description": "[IG Edits] Video effect name. Makes a clip look like a badly compressed video file, with smeared blocks and digital glitches.",
+  "iglu": {
+    "customization": [
+      {
+        "name": "amount",
+        "default": 0.217,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Amount",
+        "displayNameDescription": "[IG Edits] Slider label controlling overall how badly the video appears to be compressed (0 = clean, 1 = heavy block smearing and glitching)."
+      },
+      {
+        "name": "gop",
+        "default": 0.12,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Recovery",
+        "displayNameDescription": "[IG Edits] Slider label controlling how quickly damaged parts of the picture repair themselves (0 = damage lingers, 1 = repairs quickly)."
+      },
+      {
+        "name": "mosh",
+        "default": 0.304,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Smearing",
+        "displayNameDescription": "[IG Edits] Slider label controlling how much of the picture freezes and smears instead of updating (0 = none, 1 = most of the frame)."
+      },
+      {
+        "name": "corruption",
+        "default": 0.37,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Corruption",
+        "displayNameDescription": "[IG Edits] Slider label controlling how often blocks of the picture break into colored digital glitches (0 = never, 1 = constantly)."
+      },
+      {
+        "name": "slice_drop",
+        "default": 1.0,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Dropped Rows",
+        "displayNameDescription": "[IG Edits] Slider label controlling how often whole horizontal rows of the picture fail to update (0 = never, 1 = constantly)."
+      },
+      {
+        "name": "drift",
+        "default": 0.822,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Drift",
+        "displayNameDescription": "[IG Edits] Slider label controlling how far frozen blocks slide away from their original position (0 = stay in place, 1 = slide far)."
+      },
+      {
+        "name": "chroma_shift",
+        "default": 0.613,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Color Bleed",
+        "displayNameDescription": "[IG Edits] Slider label controlling how far color separates from the underlying image in glitched blocks (0 = aligned, 1 = far apart)."
+      },
+      {
+        "name": "decay",
+        "default": 0.059,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Healing",
+        "displayNameDescription": "[IG Edits] Slider label controlling how fast frozen blocks fade back toward the live picture (0 = stay frozen, 1 = fade back quickly)."
+      },
+      {
+        "name": "garbage_rows",
+        "default": 0.072,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Tearing",
+        "displayNameDescription": "[IG Edits] Slider label controlling how much torn, scrambled data appears inside glitched blocks (0 = none, 1 = heavy)."
+      },
+      {
+        "name": "bitrate",
+        "default": 1.0,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Bitrate",
+        "displayNameDescription": "[IG Edits] Slider label controlling the simulated video quality budget (0 = starved and blocky, 1 = plenty of detail preserved)."
+      },
+      {
+        "name": "activity_gate",
+        "default": 1.0,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Motion Only",
+        "displayNameDescription": "[IG Edits] Slider label controlling how much motion an area needs before it can glitch (0 = still areas glitch too, 1 = only fast motion glitches)."
+      },
+      {
+        "name": "block_size",
+        "default": 7.166,
+        "min": 2.0,
+        "max": 64.0,
+        "displayName": "Block Size",
+        "displayNameDescription": "[IG Edits] Slider label controlling the size of the square blocks the picture breaks into (small = fine blocks, large = chunky blocks)."
+      },
+      {
+        "name": "flow",
+        "default": 0.178,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Motion Drag",
+        "displayNameDescription": "[IG Edits] Slider label controlling how strongly frozen parts of the picture get dragged along the direction things are moving (0 = stay put, 1 = strong drag)."
+      },
+      {
+        "name": "resolution",
+        "default": 0.968,
+        "min": 0.2,
+        "max": 1.0,
+        "displayName": "Resolution",
+        "displayNameDescription": "[IG Edits] Slider label controlling the simulated video resolution (low = soft and pixelated, high = sharp)."
+      }
+    ]
+  }
+}

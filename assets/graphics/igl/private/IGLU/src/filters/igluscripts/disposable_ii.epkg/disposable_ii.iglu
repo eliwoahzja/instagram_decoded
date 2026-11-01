@@ -1,0 +1,202 @@
+[Filter DisposableII]
+# "disposable ii" — 3-LUT stacked color composite. Three independent LUT
+# lookups of the camera blended via Normal -> Multiply -> Alpha to
+# produce a layered film-grade look.
+#
+# Renamed from "disposable" because there is an existing C++ filter at
+# `xplat/.../IGLU/src/filters/color_wide_lut/disposable/` (legacyId 5033,
+# single 3D LUT lookup using disposable.lutpk). IGLUScript would have
+# silently replaced it on Android per the collision-test rules; the two
+# filters are functionally different (this one is a 3-LUT stacked
+# composite, the existing one is a single 3D LUT lookup), so a distinct
+# name is the safer call. Same precedent as `moon` -> `moon_glow`.
+#
+# Cloned from polaroid.iglu (2-LUT named-input pattern) which itself is
+# derived from glamy.iglu + super_8mm.iglu per Clone-then-Deviate. The
+# unique twist here is the 3-stage blend pipeline.
+#
+# Composite logic (single fragment pass):
+#   lut1Sample = applyLut(camera, lut1)
+#   lut2Sample = applyLut(camera, lut2)            # independent of lut1Sample
+#   lut3Sample = applyLut(camera, lut3)            # independent of lut1Sample
+#
+#   Stage 1 (Base):     base = lut1Sample                          # 100% Normal
+#   Stage 2 (Multiply): mid  = mix(base, base * lut2Sample, lut2_opacity)
+#                                                                   # 50% Multiply blend
+#   Stage 3 (Alpha):    out  = mix(mid, lut3Sample, lut3_opacity)  # 50% Alpha blend
+#
+# All three LUT lookups sample the same source camera RGB. The blends
+# chain (mid uses base; out uses mid). lut2_opacity and lut3_opacity
+# default to 0.5 per the spec; both are tunable in the sample app for
+# dial-in.
+#
+# LUTs are wired via Named Inputs (no manifest asset entries per the
+# spec). For sample-app testing drop three PNGs in the Named Inputs
+# panel with input names "lut1", "lut2", "lut3". For production, the
+# host can push the LUT textures via setNamedInput or wire Custom
+# Parameter strings (`lut1_path`, `lut2_path`, `lut3_path`) that the
+# [PreRender] block below resolves to textureFilePath:// URIs.
+#
+# **WIP — DO NOT LAND** while the manifest carries no asset entries.
+# Three LUT PNGs need to be uploaded to ARD and have their effectIds
+# and assetHashes added to a future revision of the manifest under an
+# `assets` array.
+
+[Init]
+fun init(Filter filter)
+{
+    makeTexture('lut1);
+    makeTexture('lut2);
+    makeTexture('lut3);
+
+    filter.parameters = {
+        {strength = 1.0, min = 0.0, max = 1.0, description = "Overall LUT mix strength (applies to all three LUT lookups uniformly)"},
+        {lut2_opacity = 0.5, min = 0.0, max = 1.0, description = "Multiply-blend opacity for lut2 (Stage 2; default 0.5)"},
+        {lut3_opacity = 0.5, min = 0.0, max = 1.0, description = "Alpha-blend opacity for lut3 (Stage 3; default 0.5)"},
+    };
+
+    filter.passes = {{
+      name = 'pass0,
+      inputs = {'default, 'lut1, 'lut2, 'lut3},
+      uniforms = {
+        strength = 1.0,
+        lut2_opacity = 0.5,
+        lut3_opacity = 0.5,
+      },
+      glslShader = glslDisposableII,
+    }};
+}
+
+# Custom Parameter strings let the host push LUT URIs at runtime.
+# Sample-app testing alternative: drop PNGs in the Named Inputs panel
+# with input names "lut1", "lut2", "lut3" — bypasses these parameters.
+string lut1_path = "lut1_path";
+string lut1_filename = "";
+string lut2_path = "lut2_path";
+string lut2_filename = "";
+string lut3_path = "lut3_path";
+string lut3_filename = "";
+
+[PreRender]
+fun preRender(Filter filter){
+    string lut1_filename_parameter = getParameterString(lut1_path);
+    if (lut1_filename_parameter != "") {
+        string new_lut1_filename = stringAppend("textureFilePath://", lut1_filename_parameter);
+        if (new_lut1_filename != lut1_filename) {
+            lut1_filename = new_lut1_filename;
+            loadTexture('lut1, lut1_filename);
+        }
+    }
+
+    string lut2_filename_parameter = getParameterString(lut2_path);
+    if (lut2_filename_parameter != "") {
+        string new_lut2_filename = stringAppend("textureFilePath://", lut2_filename_parameter);
+        if (new_lut2_filename != lut2_filename) {
+            lut2_filename = new_lut2_filename;
+            loadTexture('lut2, lut2_filename);
+        }
+    }
+
+    string lut3_filename_parameter = getParameterString(lut3_path);
+    if (lut3_filename_parameter != "") {
+        string new_lut3_filename = stringAppend("textureFilePath://", lut3_filename_parameter);
+        if (new_lut3_filename != lut3_filename) {
+            lut3_filename = new_lut3_filename;
+            loadTexture('lut3, lut3_filename);
+        }
+    }
+
+    f32 s = getParameterFloat('strength);
+    setShaderUniform('pass0, 'strength, s);
+
+    f32 l2 = getParameterFloat('lut2_opacity);
+    setShaderUniform('pass0, 'lut2_opacity, l2);
+
+    f32 l3 = getParameterFloat('lut3_opacity);
+    setShaderUniform('pass0, 'lut3_opacity, l3);
+}
+
+#### GLSL shader ####
+
+string glslDisposableII = "
+    varying vec2 sourceTextureCoordinate;
+    BaseUniformsOpenGL;
+
+    uniform sampler2D auxSampler0;  // 'default (camera)
+    uniform sampler2D auxSampler1;  // 'lut1 (base)
+    uniform sampler2D auxSampler2;  // 'lut2 (multiply 50%)
+    uniform sampler2D auxSampler3;  // 'lut3 (alpha 50%)
+
+    uniform float lut2_opacity;
+    uniform float lut3_opacity;
+
+    // 8x8 grid LUT lookups. Three near-identical functions, each
+    // sampling its own LUT texture. Inlined per the canonical
+    // pure-LUT pattern; sampler2D as a function parameter is not
+    // portable across all IGLU GLSL targets.
+    vec3 lutLookup1(vec3 inRgb) {
+      vec3 c = clamp(inRgb, 0.00781, 0.98438);
+      float x = c.r / 8.0;
+      float y = c.g / 8.0;
+      float z = c.b;
+      float blueY = floor(z * 8.0) / 8.0;
+      float blueX = floor((z - blueY) * 64.0) / 8.0;
+      x += blueX;
+      y += blueY;
+      return texture2D(auxSampler1, vec2(x, y)).xyz;
+    }
+
+    vec3 lutLookup2(vec3 inRgb) {
+      vec3 c = clamp(inRgb, 0.00781, 0.98438);
+      float x = c.r / 8.0;
+      float y = c.g / 8.0;
+      float z = c.b;
+      float blueY = floor(z * 8.0) / 8.0;
+      float blueX = floor((z - blueY) * 64.0) / 8.0;
+      x += blueX;
+      y += blueY;
+      return texture2D(auxSampler2, vec2(x, y)).xyz;
+    }
+
+    vec3 lutLookup3(vec3 inRgb) {
+      vec3 c = clamp(inRgb, 0.00781, 0.98438);
+      float x = c.r / 8.0;
+      float y = c.g / 8.0;
+      float z = c.b;
+      float blueY = floor(z * 8.0) / 8.0;
+      float blueX = floor((z - blueY) * 64.0) / 8.0;
+      x += blueX;
+      y += blueY;
+      return texture2D(auxSampler3, vec2(x, y)).xyz;
+    }
+
+    void main() {
+      vec4 cam = sampleInput(sourceTextureCoordinate);
+      vec3 src = cam.rgb;
+
+      // Three independent LUT lookups of the same source camera RGB.
+      vec3 lut1Sample = lutLookup1(src);
+      vec3 lut2Sample = lutLookup2(src);
+      vec3 lut3Sample = lutLookup3(src);
+
+      // Stage 1: Base = lut1 graded camera at 100%, mixed against raw
+      // camera by the global strength uniform (auto-injected by
+      // BaseUniformsOpenGL). At strength=1.0 base = lut1Sample.
+      vec3 base = mix(src, lut1Sample, strength);
+
+      // Stage 2: Multiply blend lut2 over base at lut2_opacity.
+      // result = base * (1 - opacity) + (base * lut2) * opacity
+      //        = base * (1 - opacity + opacity * lut2)
+      // At opacity=0.5: result = base * (0.5 + 0.5 * lut2)
+      vec3 multiplyResult = base * lut2Sample;
+      vec3 mid = mix(base, multiplyResult, lut2_opacity);
+
+      // Stage 3: Alpha blend lut3 over mid at lut3_opacity.
+      vec3 result = mix(mid, lut3Sample, lut3_opacity);
+
+      // Clamp to LDR display range.
+      result = clamp(result, 0.0, 1.0);
+
+      gl_FragColor = toOutputFormat(vec4(result, cam.a));
+    }
+    ";

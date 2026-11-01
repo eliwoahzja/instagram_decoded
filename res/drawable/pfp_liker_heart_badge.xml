@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="?igds_color_primary_background" />
+            <size android:height="20.0dp" android:width="20.0dp" />
+        </shape>
+    </item>
+    <item android:gravity="center" android:height="16.399994dp" android:width="16.399994dp">
+        <shape android:shape="oval">
+            <solid android:color="?igds_color_icon_badge" />
+        </shape>
+    </item>
+    <item android:gravity="center" android:height="10.899994dp" android:width="10.899994dp" android:drawable="@drawable/pfp_liker_heart_filled_white" />
+</layer-list>

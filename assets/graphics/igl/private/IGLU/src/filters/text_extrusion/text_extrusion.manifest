@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "text_extrusion",
+  "displayName": "Extrusion",
+  "description": "[IG Edits] Text effect name. With \"Extrusion\", the creator can render text with a solid color block extrusion built from many depth layers offset behind the glyphs.",
+  "iglu": {}
+}

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector android:height="9.0dp" android:width="21.0dp" android:viewportWidth="21.0" android:viewportHeight="9.0"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <path android:fillColor="?igds_color_elevated_highlight_background" android:pathData="M0,8L21,8" android:strokeColor="?igds_color_elevated_highlight_background" android:strokeWidth="1.0" />
+    <path android:fillColor="?igds_color_elevated_highlight_background" android:pathData="M21,8C17,8 13,1 10.5,1C8,1 4,8 0,8" android:strokeColor="?igds_color_form_field_background_default_color" android:strokeWidth="1.0" android:fillType="evenOdd" />
+</vector>

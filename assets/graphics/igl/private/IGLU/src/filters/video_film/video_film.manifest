@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_film",
+  "displayName": "Film",
+  "description": "[IG Edits] Video effect name. A video effect is a creative visual element that can be applied to a video. With \"Film\", the creator can apply a vintage grainy film camera effect to their video.",
+  "iglu": {
+    "legacyId": 2074,
+    "customization": [
+      {
+        "name": "intensity",
+        "default": 0.635,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Intensity",
+        "displayNameDescription": "[IG Edits] Slider label controlling the strength of a video effect. Generic across many effects (glow, blur, color, distortion, etc.); exact range varies per effect."
+      },
+      {
+        "name": "speed",
+        "default": 0.333333,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Speed",
+        "displayNameDescription": "[IG Edits] Slider label controlling the playback or animation speed of a video effect (noun, not a verb); exact range varies per effect."
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "c0b2e49a",
+      "handle": "AQAD7LZc-MyE",
+      "md5": "0c6627e00e825e3f8f1d139fe4fcaf32"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAEc2UX38Ay"
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "identifier": "lark",
+  "displayName": "Lark",
+  "description": "[IG Edits] Color filter name. With \"Lark\", the creator can apply the Lark 3D LUT to lift blues and greens and desaturate reds, mixed with the source by strength.",
+  "assets": [
+    {
+      "name": "lark_map.png",
+      "assetHash": "474a77613cc8e7560bb518ffcfe9a14d446a5c5e1288e5cb270d58aa61bdda80",
+      "hubAssetId": "4197259967188525"
+    }
+  ],
+  "iglu": {}
+}

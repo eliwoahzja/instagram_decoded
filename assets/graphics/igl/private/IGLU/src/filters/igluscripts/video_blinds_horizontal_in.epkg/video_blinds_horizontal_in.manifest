@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "identifier": "a0159fd0-9133-4c40-a999-a9987aead1c4",
+  "displayName": "Blinds in horizontal",
+  "description": "[IG Edits] Effect name shown in the video effects picker. This is the user-facing label for a video effect.",
+  "iglu": {
+    "legacyId": 3121,
+    "behavior": {
+      "type": "fixedIntro",
+      "durationMs": 1600,
+      "curve": "quarticInOut"
+    },
+    "customization": [
+      {
+        "name": "direction",
+        "defaultSelection": "left",
+        "available": [
+          "left",
+          "right"
+        ],
+        "displayName": "Direction"
+      },
+      {
+        "name": "duration",
+        "default": 1.6,
+        "min": 1.0,
+        "max": 5.0,
+        "displayName": "Duration",
+        "displayMethod": "time"
+      },
+      {
+        "name": "amount",
+        "displayName": "Amount",
+        "default": 0.0,
+        "min": 0.0,
+        "max": 1.0
+      }
+    ]
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQADlS_eGOxY"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "9536d7af",
+      "handle": "AQBgJ-ExkLMj",
+      "md5": "b076cc2d114a741c5d7a9318c8eec768"
+    }
+  },
+  "dependencies": [
+    "video_blinds_horizontal"
+  ]
+}

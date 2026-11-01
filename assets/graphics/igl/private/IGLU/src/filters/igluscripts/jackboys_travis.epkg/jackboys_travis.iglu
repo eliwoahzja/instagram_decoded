@@ -1,0 +1,136 @@
+[Filter JackboysTravis]
+# "Jackboys Travis" — a stylized color grade + film grain look ported
+# from the Spark AR effect "jackboys travis scott". No face tracking; a
+# single full-screen fragment pass, composited bottom -> top:
+#
+#   Layer 1 — Base LUT color grade (8x8 packed LUT on
+#             jackboys_travis_lut.png). Mixed against the camera by
+#             `lut_strength`.
+#   Layer 2 — Procedural film grain, signed (mean-zero so it neither
+#             brightens nor darkens the overall image), animated over a
+#             bounded 3-frame loop, applied at `grain_opacity`.
+#
+# The Spark source used a grain TEXTURE overlay; recreated here
+# procedurally so the effect ships with a single LUT asset.
+#
+# Time source: getLocalTime() (monotonic). GLSL only — Metal is generated
+# by the runtime shaderc compiler.
+
+[Init]
+fun init(Filter filter)
+{
+    makeTexture('lut);
+
+    filter.parameters = {
+        # Layer 1 LUT.
+        {lut_strength = 1.0, min = 0.0, max = 1.0, description = "LUT mix strength (1.0 = full LUT, 0.0 = camera passthrough)"},
+
+        # Layer 2 grain.
+        {grain_opacity = 0.156, min = 0.0, max = 1.0, description = "Procedural film grain opacity (signed, mean-zero)"},
+    };
+
+    filter.passes = {{
+      name = 'pass0,
+      inputs = {'default, 'lut},
+      uniforms = {
+        lut_strength = 1.0,
+        grain_opacity = 0.156,
+        canvas_size = {1.0, 1.0},
+        time = 0.0,
+      },
+      glslShader = glslJackboysTravis,
+    }};
+}
+
+# Custom Parameter strings for sample-app local-loading.
+string lut_path = "lut_path";
+string lut_filename = "";
+
+[PreRender]
+fun preRender(Filter filter){
+    string lut_filename_parameter = getParameterString(lut_path);
+    if (lut_filename_parameter != "") {
+        string new_lut_filename = stringAppend("textureFilePath://", lut_filename_parameter);
+        if (new_lut_filename != lut_filename) {
+            lut_filename = new_lut_filename;
+            loadTexture('lut, lut_filename);
+        }
+    }
+
+    f32 ls = getParameterFloat('lut_strength);
+    setShaderUniform('pass0, 'lut_strength, ls);
+
+    f32 gop = getParameterFloat('grain_opacity);
+    setShaderUniform('pass0, 'grain_opacity, gop);
+
+    # Canvas dimensions for pixel-space grain frequency.
+    vec2 canvasSize = getTextureSize('default);
+    setShaderUniform('pass0, 'canvas_size, canvasSize);
+
+    # Use getLocalTime() for monotonic continuous animation.
+    f32 time = getLocalTime();
+    setShaderUniform('pass0, 'time, time);
+}
+
+#### GLSL shader ####
+
+string glslJackboysTravis = "
+    varying vec2 sourceTextureCoordinate;
+    BaseUniformsOpenGL;
+
+    uniform sampler2D auxSampler0;  // 'default (camera)
+    uniform sampler2D auxSampler1;  // 'lut
+
+    uniform float lut_strength;
+    uniform float grain_opacity;
+    uniform vec2  canvas_size;
+    uniform float time;
+
+    // 3-tap IQ hash (safe at large pixel-scale inputs; avoids the
+    // diagonal banding of a raw sin(dot()) * 43758 noise).
+    float hash12(vec2 p) {
+      vec3 p3 = fract(vec3(p.x, p.y, p.x) * 0.1031);
+      p3 = p3 + dot(p3, vec3(p3.y, p3.z, p3.x) + vec3(33.33));
+      return fract((p3.x + p3.y) * p3.z);
+    }
+
+    // 8x8 grid LUT lookup on auxSampler1.
+    vec3 lutLookup(vec3 inRgb) {
+      vec3 c = clamp(inRgb, 0.00781, 0.98438);
+      float x = c.r / 8.0;
+      float y = c.g / 8.0;
+      float z = c.b;
+      float blueY = floor(z * 8.0) / 8.0;
+      float blueX = floor((z - blueY) * 64.0) / 8.0;
+      x += blueX;
+      y += blueY;
+      return texture2D(auxSampler1, vec2(x, y)).xyz;
+    }
+
+    void main() {
+      vec2 uv = sourceTextureCoordinate;
+      vec4 cam = sampleInput(uv);
+
+      // ============================================================
+      // Layer 1: LUT grade, mixed against passthrough by lut_strength.
+      // Graceful fallback for a WIP / not-yet-uploaded LUT (probe
+      // center; skip grade if the texture is empty/black).
+      // ============================================================
+      vec3 lut_rgb = lutLookup(cam.rgb);
+      vec3 lut_probe = texture2D(auxSampler1, vec2(0.5, 0.5)).rgb;
+      float lut_loaded = step(0.05,
+          max(max(lut_probe.r, lut_probe.g), lut_probe.b));
+      vec3 result = mix(cam.rgb, lut_rgb, lut_strength * lut_loaded);
+
+      // ============================================================
+      // Layer 2: procedural signed film grain (mean-zero), 3-frame
+      // loop @ 7fps. Pixel-space frequency so grain size is stable
+      // across resolutions.
+      // ============================================================
+      float gframe = mod(floor(time * 7.0), 3.0);
+      float grain = hash12(uv * canvas_size + vec2(gframe * 74.3)) - 0.5;
+      result = clamp(result + vec3(grain * grain_opacity), 0.0, 1.0);
+
+      gl_FragColor = toOutputFormat(vec4(result, cam.a));
+    }
+    ";

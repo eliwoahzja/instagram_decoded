@@ -1,0 +1,184 @@
+.class Lapp/morphe/extension/crimera/internal/google/common/cache/LocalCache$AccessQueue$1;
+.super Lapp/morphe/extension/crimera/internal/google/common/cache/LocalCache$AbstractReferenceEntry;
+.source "LocalCache.java"
+
+
+# annotations
+.annotation system Ldalvik/annotation/EnclosingClass;
+    value = Lapp/morphe/extension/crimera/internal/google/common/cache/LocalCache$AccessQueue;
+.end annotation
+
+.annotation system Ldalvik/annotation/InnerClass;
+    accessFlags = 0x1
+    name = null
+.end annotation
+
+.annotation system Ldalvik/annotation/Signature;
+    value = {
+        "Lapp/morphe/extension/crimera/internal/google/common/cache/LocalCache$AbstractReferenceEntry<",
+        "TK;TV;>;"
+    }
+.end annotation
+
+
+# instance fields
+.field nextAccess:Lapp/morphe/extension/crimera/internal/google/common/cache/ReferenceEntry;
+    .annotation build Lapp/morphe/extension/crimera/internal/google/j2objc/annotations/Weak;
+    .end annotation
+
+    .annotation system Ldalvik/annotation/Signature;
+        value = {
+            "Lapp/morphe/extension/crimera/internal/google/common/cache/ReferenceEntry<",
+            "TK;TV;>;"
+        }
+    .end annotation
+.end field
+
+.field previousAccess:Lapp/morphe/extension/crimera/internal/google/common/cache/ReferenceEntry;
+    .annotation build Lapp/morphe/extension/crimera/internal/google/j2objc/annotations/Weak;
+    .end annotation
+
+    .annotation system Ldalvik/annotation/Signature;
+        value = {
+            "Lapp/morphe/extension/crimera/internal/google/common/cache/ReferenceEntry<",
+            "TK;TV;>;"
+        }
+    .end annotation
+.end field
+
+.field final synthetic this$0:Lapp/morphe/extension/crimera/internal/google/common/cache/LocalCache$AccessQueue;
+
+
+# direct methods
+.method public constructor <init>(Lapp/morphe/extension/crimera/internal/google/common/cache/LocalCache$AccessQueue;)V
+    .locals 0
+    .annotation system Ldalvik/annotation/MethodParameters;
+        accessFlags = {
+            0x8010
+        }
+        names = {
+            "this$0"
+        }
+    .end annotation
+
+    .line 3702
+    iput-object p1, p0, Lapp/morphe/extension/crimera/internal/google/common/cache/LocalCache$AccessQueue$1;->this$0:Lapp/morphe/extension/crimera/internal/google/common/cache/LocalCache$AccessQueue;
+
+    invoke-direct {p0}, Lapp/morphe/extension/crimera/internal/google/common/cache/LocalCache$AbstractReferenceEntry;-><init>()V
+
+    .line 3712
+    iput-object p0, p0, Lapp/morphe/extension/crimera/internal/google/common/cache/LocalCache$AccessQueue$1;->nextAccess:Lapp/morphe/extension/crimera/internal/google/common/cache/ReferenceEntry;
+
+    .line 3724
+    iput-object p0, p0, Lapp/morphe/extension/crimera/internal/google/common/cache/LocalCache$AccessQueue$1;->previousAccess:Lapp/morphe/extension/crimera/internal/google/common/cache/ReferenceEntry;
+
+    return-void
+.end method
+
+
+# virtual methods
+.method public getAccessTime()J
+    .locals 2
+
+    .line 0
+    const-wide v0, 0x7fffffffffffffffL
+
+    return-wide v0
+.end method
+
+.method public getNextInAccessQueue()Lapp/morphe/extension/crimera/internal/google/common/cache/ReferenceEntry;
+    .locals 0
+    .annotation system Ldalvik/annotation/Signature;
+        value = {
+            "()",
+            "Lapp/morphe/extension/crimera/internal/google/common/cache/ReferenceEntry<",
+            "TK;TV;>;"
+        }
+    .end annotation
+
+    .line 3716
+    iget-object p0, p0, Lapp/morphe/extension/crimera/internal/google/common/cache/LocalCache$AccessQueue$1;->nextAccess:Lapp/morphe/extension/crimera/internal/google/common/cache/ReferenceEntry;
+
+    return-object p0
+.end method
+
+.method public getPreviousInAccessQueue()Lapp/morphe/extension/crimera/internal/google/common/cache/ReferenceEntry;
+    .locals 0
+    .annotation system Ldalvik/annotation/Signature;
+        value = {
+            "()",
+            "Lapp/morphe/extension/crimera/internal/google/common/cache/ReferenceEntry<",
+            "TK;TV;>;"
+        }
+    .end annotation
+
+    .line 3728
+    iget-object p0, p0, Lapp/morphe/extension/crimera/internal/google/common/cache/LocalCache$AccessQueue$1;->previousAccess:Lapp/morphe/extension/crimera/internal/google/common/cache/ReferenceEntry;
+
+    return-object p0
+.end method
+
+.method public setAccessTime(J)V
+    .locals 0
+    .annotation system Ldalvik/annotation/MethodParameters;
+        accessFlags = {
+            0x0
+        }
+        names = {
+            "time"
+        }
+    .end annotation
+
+    .line 0
+    return-void
+.end method
+
+.method public setNextInAccessQueue(Lapp/morphe/extension/crimera/internal/google/common/cache/ReferenceEntry;)V
+    .locals 0
+    .annotation system Ldalvik/annotation/MethodParameters;
+        accessFlags = {
+            0x0
+        }
+        names = {
+            "next"
+        }
+    .end annotation
+
+    .annotation system Ldalvik/annotation/Signature;
+        value = {
+            "(",
+            "Lapp/morphe/extension/crimera/internal/google/common/cache/ReferenceEntry<",
+            "TK;TV;>;)V"
+        }
+    .end annotation
+
+    .line 3721
+    iput-object p1, p0, Lapp/morphe/extension/crimera/internal/google/common/cache/LocalCache$AccessQueue$1;->nextAccess:Lapp/morphe/extension/crimera/internal/google/common/cache/ReferenceEntry;
+
+    return-void
+.end method
+
+.method public setPreviousInAccessQueue(Lapp/morphe/extension/crimera/internal/google/common/cache/ReferenceEntry;)V
+    .locals 0
+    .annotation system Ldalvik/annotation/MethodParameters;
+        accessFlags = {
+            0x0
+        }
+        names = {
+            "previous"
+        }
+    .end annotation
+
+    .annotation system Ldalvik/annotation/Signature;
+        value = {
+            "(",
+            "Lapp/morphe/extension/crimera/internal/google/common/cache/ReferenceEntry<",
+            "TK;TV;>;)V"
+        }
+    .end annotation
+
+    .line 3733
+    iput-object p1, p0, Lapp/morphe/extension/crimera/internal/google/common/cache/LocalCache$AccessQueue$1;->previousAccess:Lapp/morphe/extension/crimera/internal/google/common/cache/ReferenceEntry;
+
+    return-void
+.end method

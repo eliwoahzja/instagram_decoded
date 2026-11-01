@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "filter_chain",
+  "displayName": "Filter Chain",
+  "description": "[IG Edits] Video effect name. With \"Filter Chain\", the creator can run a sequenced pipeline of child filters where each output feeds the next, with optional overlay-blend passes batched.",
+  "iglu": {}
+}

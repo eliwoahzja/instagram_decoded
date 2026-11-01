@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "displayName": "Fall in",
+  "description": "[IG Edits] Effect name shown in the video effects picker. This is the user-facing label for a video effect.",
+  "iglu": {
+    "legacyId": 5149,
+    "behavior": {
+      "type": "fixedIntro",
+      "durationMs": 750,
+      "curve": "linear"
+    },
+    "customization": [
+      {
+        "name": "duration",
+        "default": 0.75,
+        "min": 0.1,
+        "max": 3.0,
+        "displayName": "Duration",
+        "displayMethod": "time"
+      }
+    ],
+    "subject": {
+      "overlay": true
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAEKl7dwi-R"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "30b5f8d6",
+      "handle": "AQAFQKIc69J4",
+      "md5": "1359a9052700d387d5fb73faca41a93b"
+    }
+  }
+}

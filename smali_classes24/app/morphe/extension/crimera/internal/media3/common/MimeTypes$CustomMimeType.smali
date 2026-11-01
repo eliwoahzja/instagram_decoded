@@ -1,0 +1,42 @@
+.class final Lapp/morphe/extension/crimera/internal/media3/common/MimeTypes$CustomMimeType;
+.super Ljava/lang/Object;
+.source "MimeTypes.java"
+
+
+# annotations
+.annotation system Ldalvik/annotation/EnclosingClass;
+    value = Lapp/morphe/extension/crimera/internal/media3/common/MimeTypes;
+.end annotation
+
+.annotation system Ldalvik/annotation/InnerClass;
+    accessFlags = 0x19
+    name = "CustomMimeType"
+.end annotation
+
+
+# instance fields
+.field public final codecPrefix:Ljava/lang/String;
+
+.field public final mimeType:Ljava/lang/String;
+
+.field public final trackType:I
+
+
+# direct methods
+.method public constructor <init>(Ljava/lang/String;Ljava/lang/String;I)V
+    .locals 0
+
+    .line 919
+    invoke-direct {p0}, Ljava/lang/Object;-><init>()V
+
+    .line 920
+    iput-object p1, p0, Lapp/morphe/extension/crimera/internal/media3/common/MimeTypes$CustomMimeType;->mimeType:Ljava/lang/String;
+
+    .line 921
+    iput-object p2, p0, Lapp/morphe/extension/crimera/internal/media3/common/MimeTypes$CustomMimeType;->codecPrefix:Ljava/lang/String;
+
+    .line 922
+    iput p3, p0, Lapp/morphe/extension/crimera/internal/media3/common/MimeTypes$CustomMimeType;->trackType:I
+
+    return-void
+.end method

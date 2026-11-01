@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "identifier": "color_leak",
+  "displayName": "Color Leak",
+  "description": "Filter name evoking a light/color leak effect",
+  "iglu": {
+    "legacyId": 1103
+  }
+}

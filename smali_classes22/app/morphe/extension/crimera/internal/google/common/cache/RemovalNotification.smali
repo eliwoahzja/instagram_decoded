@@ -1,0 +1,148 @@
+.class public final Lapp/morphe/extension/crimera/internal/google/common/cache/RemovalNotification;
+.super Ljava/util/AbstractMap$SimpleImmutableEntry;
+.source "RemovalNotification.java"
+
+
+# annotations
+.annotation build Lapp/morphe/extension/crimera/internal/google/common/annotations/GwtCompatible;
+.end annotation
+
+.annotation runtime Lapp/morphe/extension/crimera/internal/google/common/cache/ElementTypesAreNonnullByDefault;
+.end annotation
+
+.annotation system Ldalvik/annotation/Signature;
+    value = {
+        "<K:",
+        "Ljava/lang/Object;",
+        "V:",
+        "Ljava/lang/Object;",
+        ">",
+        "Ljava/util/AbstractMap$SimpleImmutableEntry<",
+        "TK;TV;>;"
+    }
+.end annotation
+
+
+# static fields
+.field private static final serialVersionUID:J
+
+
+# instance fields
+.field private final cause:Lapp/morphe/extension/crimera/internal/google/common/cache/RemovalCause;
+
+
+# direct methods
+.method private constructor <init>(Ljava/lang/Object;Ljava/lang/Object;Lapp/morphe/extension/crimera/internal/google/common/cache/RemovalCause;)V
+    .locals 0
+    .param p1    # Ljava/lang/Object;
+        .annotation runtime Ljavax/annotation/CheckForNull;
+        .end annotation
+    .end param
+    .param p2    # Ljava/lang/Object;
+        .annotation runtime Ljavax/annotation/CheckForNull;
+        .end annotation
+    .end param
+    .annotation system Ldalvik/annotation/MethodParameters;
+        accessFlags = {
+            0x0,
+            0x0,
+            0x0
+        }
+        names = {
+            "key",
+            "value",
+            "cause"
+        }
+    .end annotation
+
+    .annotation system Ldalvik/annotation/Signature;
+        value = {
+            "(TK;TV;",
+            "Lapp/morphe/extension/crimera/internal/google/common/cache/RemovalCause;",
+            ")V"
+        }
+    .end annotation
+
+    .line 54
+    invoke-direct {p0, p1, p2}, Ljava/util/AbstractMap$SimpleImmutableEntry;-><init>(Ljava/lang/Object;Ljava/lang/Object;)V
+
+    .line 55
+    invoke-static {p3}, Lapp/morphe/extension/crimera/internal/google/common/base/Preconditions;->checkNotNull(Ljava/lang/Object;)Ljava/lang/Object;
+
+    move-result-object p1
+
+    check-cast p1, Lapp/morphe/extension/crimera/internal/google/common/cache/RemovalCause;
+
+    iput-object p1, p0, Lapp/morphe/extension/crimera/internal/google/common/cache/RemovalNotification;->cause:Lapp/morphe/extension/crimera/internal/google/common/cache/RemovalCause;
+
+    return-void
+.end method
+
+.method public static create(Ljava/lang/Object;Ljava/lang/Object;Lapp/morphe/extension/crimera/internal/google/common/cache/RemovalCause;)Lapp/morphe/extension/crimera/internal/google/common/cache/RemovalNotification;
+    .locals 1
+    .param p0    # Ljava/lang/Object;
+        .annotation runtime Ljavax/annotation/CheckForNull;
+        .end annotation
+    .end param
+    .param p1    # Ljava/lang/Object;
+        .annotation runtime Ljavax/annotation/CheckForNull;
+        .end annotation
+    .end param
+    .annotation system Ldalvik/annotation/MethodParameters;
+        accessFlags = {
+            0x0,
+            0x0,
+            0x0
+        }
+        names = {
+            "key",
+            "value",
+            "cause"
+        }
+    .end annotation
+
+    .annotation system Ldalvik/annotation/Signature;
+        value = {
+            "<K:",
+            "Ljava/lang/Object;",
+            "V:",
+            "Ljava/lang/Object;",
+            ">(TK;TV;",
+            "Lapp/morphe/extension/crimera/internal/google/common/cache/RemovalCause;",
+            ")",
+            "Lapp/morphe/extension/crimera/internal/google/common/cache/RemovalNotification<",
+            "TK;TV;>;"
+        }
+    .end annotation
+
+    .line 50
+    new-instance v0, Lapp/morphe/extension/crimera/internal/google/common/cache/RemovalNotification;
+
+    invoke-direct {v0, p0, p1, p2}, Lapp/morphe/extension/crimera/internal/google/common/cache/RemovalNotification;-><init>(Ljava/lang/Object;Ljava/lang/Object;Lapp/morphe/extension/crimera/internal/google/common/cache/RemovalCause;)V
+
+    return-object v0
+.end method
+
+
+# virtual methods
+.method public getCause()Lapp/morphe/extension/crimera/internal/google/common/cache/RemovalCause;
+    .locals 0
+
+    .line 60
+    iget-object p0, p0, Lapp/morphe/extension/crimera/internal/google/common/cache/RemovalNotification;->cause:Lapp/morphe/extension/crimera/internal/google/common/cache/RemovalCause;
+
+    return-object p0
+.end method
+
+.method public wasEvicted()Z
+    .locals 0
+
+    .line 68
+    iget-object p0, p0, Lapp/morphe/extension/crimera/internal/google/common/cache/RemovalNotification;->cause:Lapp/morphe/extension/crimera/internal/google/common/cache/RemovalCause;
+
+    invoke-virtual {p0}, Lapp/morphe/extension/crimera/internal/google/common/cache/RemovalCause;->wasEvicted()Z
+
+    move-result p0
+
+    return p0
+.end method

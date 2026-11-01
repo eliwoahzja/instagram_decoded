@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "identifier": "6891DF85-E79D-461B-8228-358FEC76DF8C",
+  "displayName": "Low Light Plus",
+  "description": "[IG Edits] Color filter name. Lifts shadows and warms midtones for low-light scenes, with a barely-perceptible animated film grain.",
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAFr_l58END"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "392fe5dd",
+      "handle": "AQAHUfIVrR9K",
+      "md5": "1828e42fa7806d3440e53ca5a7e7db5b"
+    }
+  },
+  "iglu": {
+    "legacyId": 3106
+  },
+  "assets": [
+    {
+      "name": "low_light_plus_lut.png",
+      "assetHash": "20f510d69de1474c6f31a21126c55bdb318396d5723f915491c50eca57a10847",
+      "hubAssetId": "1964421777522714"
+    }
+  ]
+}

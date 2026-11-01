@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@color/bds_grey_9" />
+    <stroke android:width="@dimen/account_preview_media_end_card_stroke_width" android:color="@color/bds_white_30_transparent" />
+    <corners android:radius="@dimen/add_to_story_dual_destination_share_sheet_avatar_icon_size" />
+</shape>

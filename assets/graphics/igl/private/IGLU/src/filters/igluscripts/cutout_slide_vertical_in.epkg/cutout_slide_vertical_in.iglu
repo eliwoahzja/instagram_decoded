@@ -1,0 +1,28 @@
+[Filter IgluscriptCutoutSlideVerticalInFilter]
+[MaskBehavior alpha]
+
+# Vertical slide in — composes common cutout_slide with direction=(0,-1)
+
+[Init]
+fun init(Filter filter) {
+  filter.passes = {{
+      name = 'slideV,
+      igid = 'cutout_slide,
+      inputs = {'default},
+      uniforms = {},
+    }};
+
+  filter.parameters = {
+    {iterations = 4.0, min = 1.0, max = 10.0, description = "Number of visible passes before settling"},
+    {outro = 0.0, min = 0.0, max = 1.0, description = "0 = In, 1 = Out"},
+  };
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  setShaderUniform('slideV, 'progress, getParameterFloat('progress));
+  setShaderUniform('slideV, 'directionX, 0.0);
+  setShaderUniform('slideV, 'directionY, -1.0);
+  setShaderUniform('slideV, 'iterations, getParameterFloat('iterations));
+  setShaderUniform('slideV, 'outro, getParameterFloat('outro));
+}

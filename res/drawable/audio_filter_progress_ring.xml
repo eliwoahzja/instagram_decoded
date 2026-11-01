@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:layout_width="wrap_content" android:shape="ring" android:innerRadiusRatio="2.114" android:thicknessRatio="37.0" android:useLevel="false">
+            <solid android:color="@color/bds_white_15_transparent" />
+        </shape>
+    </item>
+    <item>
+        <rotate android:fromDegrees="0.0" android:toDegrees="0.0">
+            <shape android:layout_width="wrap_content" android:shape="ring" android:innerRadiusRatio="2.114" android:thicknessRatio="37.0" android:useLevel="true">
+                <solid android:color="@color/bds_white" />
+            </shape>
+        </rotate>
+    </item>
+</layer-list>

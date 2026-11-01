@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_frame_flip",
+  "displayName": "Frame flip",
+  "description": "[IG Edits] Video effect name. With \"Frame flip\", the creator can flip the frame in 3D like turning a card, using keyframed pitch, yaw, roll, and scale.",
+  "iglu": {
+    "legacyId": 3018,
+    "behavior": {
+      "type": "fixedIntro",
+      "durationMs": 1000,
+      "curve": "linear"
+    },
+    "customization": [
+      {
+        "name": "duration",
+        "default": 1.0,
+        "min": 0.3,
+        "max": 4.0,
+        "displayName": "Duration",
+        "displayNameDescription": "[IG Edits] Slider label controlling how long a video effect's animation lasts; exact units and range vary per effect (seconds or normalized).",
+        "displayMethod": "time"
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "475be4e1",
+      "handle": "AQAForYPMX0Q",
+      "md5": "5f99df64c097875ec29160876565d37e"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAGFNI_1A8Z"
+    }
+  }
+}

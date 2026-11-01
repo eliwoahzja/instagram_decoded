@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "identifier": "paris",
+  "displayName": "Paris",
+  "description": "City-name color filter",
+  "iglu": {
+    "legacyId": 810
+  },
+  "assets": [
+    {
+      "name": "lut.png",
+      "assetHash": "88d1e90c1c6d8b69ec56c302ad1f2fdc3e91d02b92bdb0f4b099dd6682795e55",
+      "hubAssetId": "1365905411868465"
+    }
+  ]
+}

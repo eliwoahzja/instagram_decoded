@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@id/tape_center" android:left="@dimen/abc_action_bar_elevation_material" android:right="@dimen/abc_action_bar_elevation_material">
+        <shape android:shape="rectangle">
+            <solid android:color="#f01941" />
+        </shape>
+    </item>
+    <item android:gravity="start|top" android:id="@id/tape_left" android:width="@dimen/abc_action_bar_elevation_material" android:drawable="@drawable/instagram_bts_notetapeleft" />
+    <item android:gravity="end|top" android:id="@id/tape_right" android:width="@dimen/abc_action_bar_elevation_material" android:drawable="@drawable/instagram_bts_notetaperight" />
+</layer-list>

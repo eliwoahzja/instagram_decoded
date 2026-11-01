@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "identifier": "B39C5B82-1458-46FB-997A-A3289BB84BE7",
+  "displayName": "Tasha",
+  "description": "[IG Edits] Video effect name. A soft framed portrait look — a LUT color grade, a subtle brightening and rosy blush, light grain, and a rounded-rectangle black frame.",
+  "iglu": {
+    "legacyId": 3225
+  },
+  "assets": [
+    {
+      "name": "tasha_lut.png",
+      "assetHash": "8d39890fe3e58a4c62c557afe6371eb4860fa59ceb2b1787f56423b9ca33e983",
+      "hubAssetId": "1358572612575126"
+    }
+  ]
+}

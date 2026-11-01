@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "assets": [
+    {
+      "name": "cinematic_lut.png",
+      "assetHash": "8ec4b22866ea720763aabccaa2125faa3fa0682e425d3145a77eabc53c89d181",
+      "hubAssetId": "1113625487719854"
+    }
+  ],
+  "description": "[IG Edits] Color filter name. With \"Cinematic Film\", the creator gets a filmic 8x8 LUT color grade applied to the camera image.",
+  "displayName": "Cinematic Film",
+  "identifier": "444e7aa5-b3c3-40b4-85e5-cca539fc88b2",
+  "android": {
+    "previewAsset": {
+      "key": "a57d0b80",
+      "handle": "AQAIMJD7gZsC",
+      "md5": "bd7293fd3524bac9e297e5a7ef45ebae"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAGc9HpsjkR"
+    }
+  },
+  "iglu": {
+    "legacyId": 3220
+  }
+}

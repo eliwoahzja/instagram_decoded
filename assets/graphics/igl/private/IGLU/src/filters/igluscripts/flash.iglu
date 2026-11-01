@@ -1,0 +1,383 @@
+[Filter Flash]
+# "Flash" — 90s fashion editorial / disposable-camera flash aesthetic.
+# Approximates Instagram's "Flash" AI restyle preset.
+#
+# v1 known limitation: pure shader approach — no true 3D image relighting.
+# A v2 direction (image relighting survey paper, IET-CVI 2014) is parked
+# for later if shader-only quality is insufficient for shadows.
+#
+# Pipeline (2 passes — see "multi-pass shape" note below):
+#   1. 'graded — sample camera input, S-curve contrast, 8x8 grid LUT
+#                trilinear sampling, plain radial luminance lift centered
+#                on frame (no face detection): center brightens, edges
+#                drop. Output: graded RGB.
+#   2. 'output — input = 'graded only. Inline single-pass bloom (13-tap
+#                threshold-extracted blur of the graded output, warm
+#                amber-tinted), screen-composited over 'graded, then
+#                procedural film grain (frame-deterministic 3-frame @
+#                7fps cycle for video stability).
+#
+# Why 2 passes, not 3:
+# IGLUScript multi-input passes only support `inputs = {'default, 'aux}`
+# (or single-input chains like `inputs = {'prevPass}`). A pass with TWO
+# prior-pass outputs as inputs (e.g. `inputs = {'graded, 'bloom}`) does
+# not bind the primary input correctly and renders black. Every
+# production filter in this folder uses 'default as the primary in
+# multi-input passes, or a single prior-pass output as a chained primary.
+# So bloom is inlined into the composite pass — sampleInput reads the
+# graded output, and we sample it at neighborhood offsets for the bloom
+# blur. Bonus: we get one less render target.
+#
+# Param naming: every tunable uses lut_/radial_/bloom_/contrast_/grain_
+# prefixes — the bare 'strength is reserved by the framework
+# (BaseUniformsOpenGL auto-declares it with a hardcoded default of 1.0).
+#
+# LUT: 8x8 grid PNG, 512x512, sampled in shader via the canonical
+# math from aesthetic_blur.iglu / super_8mm.iglu. Identity LUT shipped
+# as placeholder; user authors custom flash_lut.png in Photoshop
+# (Hald CLUT workflow — see plan doc) and drops it in.
+#
+# LUT delivered via ARD; effectId / assetHash filled in once provided —
+# TODO placeholders in the manifest until then.
+
+[Init]
+fun init(Filter filter)
+{
+    makeTexture('lut);
+
+    # Host-tunable parameters. All wired unconditionally in [PreRender]
+    # per CRA convention from aesthetic_blur / super_8mm.
+    # Defaults locked in from operator's hand-tuned final values (verified
+    # against the AI Flash reference image across multiple test photos —
+    # img_001..img_008 in the eval set). Shipping these as v1 defaults so
+    # consumers get the matched look out of the box and only need to nudge
+    # if they want a creative variant.
+    filter.parameters = {
+        {lut_strength = 1.0, min = 0.0, max = 1.0, description = "LUT mix strength"},
+        {radial_center_lift = 0.683, min = 0.0, max = 2.0, description = "Center brightness lift in stops"},
+        {radial_edge_drop = 0.722, min = 0.0, max = 3.0, description = "Edge darkness drop in stops"},
+        {radial_softness = 0.559, min = 0.05, max = 1.0, description = "Radial mask falloff width"},
+        {radial_center_y = 0.41, min = 0.0, max = 1.0, description = "Vertical center of radial lift (0=top, 0.5=middle, 1=bottom). Default biases above-center for selfie face framing."},
+        {bloom_threshold = 0.342, min = 0.0, max = 1.0, description = "Luminance threshold for bloom extraction"},
+        {bloom_radius = 5.077, min = 0.0, max = 16.0, description = "Bloom blur radius in pixels"},
+        {bloom_strength = 0.290, min = 0.0, max = 2.0, description = "Bloom screen-blend amount"},
+        {bloom_warmth = 0.478, min = 0.0, max = 2.0, description = "Amber tint intensity (highlights + slight overall warmth)"},
+        {contrast_strength = 0.172, min = 0.0, max = 1.0, description = "S-curve contrast amount"},
+        {grain_opacity = 0.140, min = 0.0, max = 1.0, description = "Film grain screen-blend opacity"},
+        {saturation = 1.191, min = 0.0, max = 2.0, description = "Global saturation. <1 desaturates, 1 = neutral, >1 boosts. Default >1 because the full-frame-trained LUT mildly desaturates and we boost back to taste."},
+        {shadow_tint = 0.654, min = 0.0, max = 1.0, description = "Cool teal/cyan tint pulled into shadows. Editorial split-toning pass."},
+        {highlight_tint = 0.278, min = 0.0, max = 1.0, description = "Warm yellow tint pushed into highlights. Editorial split-toning pass."},
+    };
+
+    filter.passes = {
+        {
+            name = 'graded,
+            inputs = {'default, 'lut},
+            uniforms = {
+                lut_strength = 1.0,
+                radial_center_lift = 0.683,
+                radial_edge_drop = 0.722,
+                radial_softness = 0.559,
+                radial_center_y = 0.41,
+                contrast_strength = 0.172,
+                saturation = 1.191,
+                shadow_tint = 0.654,
+                highlight_tint = 0.278,
+            },
+            glslShader = glslGraded,
+        },
+        {
+            name = 'output,
+            inputs = {'graded},
+            uniforms = {
+                bloom_threshold = 0.342,
+                bloom_radius = 5.077,
+                bloom_warmth = 0.478,
+                bloom_strength = 0.290,
+                grain_opacity = 0.140,
+                source_size_x = 1024.0,
+                source_size_y = 1024.0,
+                time = 0.0,
+            },
+            glslShader = glslComposite,
+        },
+    };
+}
+
+string lut_path = "lut_path";
+string lut_filename = "";
+
+[PreRender]
+fun preRender(Filter filter){
+    # --- LUT texture loading (production: ARD; local dev: lut_path string param) ---
+    string lut_filename_parameter = getParameterString(lut_path);
+    if (lut_filename_parameter != "") {
+        string new_lut_filename = stringAppend("textureFilePath://", lut_filename_parameter);
+        if (new_lut_filename != lut_filename) {
+            lut_filename = new_lut_filename;
+            loadTexture('lut, lut_filename);
+        }
+    }
+
+    # --- Pass 1 (graded) uniforms ---
+    f32 ls = getParameterFloat('lut_strength);
+    setShaderUniform('graded, 'lut_strength, ls);
+
+    f32 rcl = getParameterFloat('radial_center_lift);
+    setShaderUniform('graded, 'radial_center_lift, rcl);
+
+    f32 red = getParameterFloat('radial_edge_drop);
+    setShaderUniform('graded, 'radial_edge_drop, red);
+
+    f32 rs = getParameterFloat('radial_softness);
+    setShaderUniform('graded, 'radial_softness, rs);
+
+    f32 rcy = getParameterFloat('radial_center_y);
+    setShaderUniform('graded, 'radial_center_y, rcy);
+
+    f32 cs = getParameterFloat('contrast_strength);
+    setShaderUniform('graded, 'contrast_strength, cs);
+
+    f32 sat = getParameterFloat('saturation);
+    setShaderUniform('graded, 'saturation, sat);
+
+    f32 st = getParameterFloat('shadow_tint);
+    setShaderUniform('graded, 'shadow_tint, st);
+
+    f32 ht = getParameterFloat('highlight_tint);
+    setShaderUniform('graded, 'highlight_tint, ht);
+
+    # --- Pass 2 (output) uniforms ---
+    # Source resolution for normalizing the bloom blur step in UV space.
+    # Guarded — getTextureSize can return (0,0) before the texture binds.
+    vec2 srcSize = getTextureSize('default);
+    if (srcSize.x > 0.0) {
+        setShaderUniform('output, 'source_size_x, srcSize.x);
+    }
+    if (srcSize.y > 0.0) {
+        setShaderUniform('output, 'source_size_y, srcSize.y);
+    }
+
+    f32 bt = getParameterFloat('bloom_threshold);
+    setShaderUniform('output, 'bloom_threshold, bt);
+
+    f32 br = getParameterFloat('bloom_radius);
+    setShaderUniform('output, 'bloom_radius, br);
+
+    f32 bw = getParameterFloat('bloom_warmth);
+    setShaderUniform('output, 'bloom_warmth, bw);
+
+    f32 bs = getParameterFloat('bloom_strength);
+    setShaderUniform('output, 'bloom_strength, bs);
+
+    f32 go = getParameterFloat('grain_opacity);
+    setShaderUniform('output, 'grain_opacity, go);
+
+    # Time drives grain frame index. Production reads host-supplied
+    # 'time_sec; uncomment getLocalTime() for sample-app dev (matches
+    # color_leak / grainy / super_8mm convention).
+    f32 time = getParameterFloat('time_sec);
+    # time = getLocalTime(); # uncomment for sample-app testing
+    setShaderUniform('output, 'time, time);
+}
+
+#### GLSL shaders ####
+
+# Pass 1: S-curve contrast + LUT + radial luminance lift.
+string glslGraded = "
+    varying vec2 sourceTextureCoordinate;
+    BaseUniformsOpenGL;
+
+    uniform sampler2D auxSampler0;
+    uniform sampler2D auxSampler1;
+    uniform sampler2D auxSampler2;
+
+    uniform float lut_strength;
+    uniform float radial_center_lift;
+    uniform float radial_edge_drop;
+    uniform float radial_softness;
+    uniform float radial_center_y;
+    uniform float contrast_strength;
+    uniform float saturation;
+    uniform float shadow_tint;
+    uniform float highlight_tint;
+
+    // S-curve via quintic smoothstep (6t^5 - 15t^4 + 10t^3) — significantly
+    // steeper midpoint slope than cubic (3t^2 - 2t^3), so contrast_strength
+    // has visible impact at moderate values. One extra multiply per channel.
+    vec3 sCurve(vec3 c, float strength) {
+      vec3 t = clamp(c, 0.0, 1.0);
+      vec3 t2 = t * t;
+      vec3 t3 = t2 * t;
+      vec3 sc = t3 * (10.0 + t * (-15.0 + 6.0 * t));  // quintic smoothstep
+      return mix(t, sc, strength);
+    }
+
+    void main() {
+      vec2 uv = sourceTextureCoordinate;
+      vec4 base = sampleInput(uv);
+
+      // Stage 1: S-curve contrast (deeper shadows, gentle highlight roll-off).
+      vec3 contrasted = sCurve(base.rgb, contrast_strength);
+
+      // Stage 2: 8x8 grid LUT trilinear sampling.
+      vec3 c = clamp(contrasted, 0.00781, 0.98438);
+      float x = c.r / 8.0;
+      float y = c.g / 8.0;
+      float z = c.b;
+      float blueY = floor(z * 8.0) / 8.0;
+      float blueX = floor((z - blueY) * 64.0) / 8.0;
+      x += blueX;
+      y += blueY;
+      vec3 lutColor = texture2D(auxSampler1, vec2(x, y)).xyz;
+      vec3 graded = mix(contrasted, lutColor, lut_strength);
+
+      // Stage 3: plain radial luminance lift, vertically biased above-center
+      // by default for selfie face framing (radial_center_y < 0.5 = upper half).
+      // radialMask: 1.0 at center, 0.0 at distance ~radial_softness.
+      float dist = length(uv - vec2(0.5, radial_center_y));
+      float radialMask = 1.0 - clamp(dist / max(radial_softness, 0.001), 0.0, 1.0);
+      // Smooth the falloff with a cubic so the transition is filmic.
+      radialMask = radialMask * radialMask * (3.0 - 2.0 * radialMask);
+
+      // Convert stops to multipliers: 1 stop = 2x. Lift center, drop edges.
+      float centerMul = pow(2.0, radial_center_lift);
+      float edgeMul = pow(2.0, -radial_edge_drop);
+      float lumaMul = mix(edgeMul, centerMul, radialMask);
+      vec3 lifted = graded * lumaMul;
+
+      // Stage 4: global saturation. <1 = desaturate (editorial film look),
+      // 1 = unchanged, >1 = boost. Mix between Rec.709 luminance and color.
+      float lum = dot(lifted, vec3(0.299, 0.587, 0.114));
+      vec3 saturated = mix(vec3(lum), lifted, saturation);
+
+      // Stage 5: editorial split-toning. Cool the shadows, warm the highlights.
+      // This is the missing teal-and-orange dimension that the LUT alone
+      // cannot provide (a LUT is averaged across all input pixels and so
+      // applies the same color shift everywhere).
+      vec3 shadow_color = vec3(0.85, 0.95, 1.05);   // slight teal-cyan
+      vec3 highlight_color = vec3(1.05, 1.00, 0.92); // slight warm yellow
+      // Recompute luminance after saturation pass.
+      float lum2 = dot(saturated, vec3(0.299, 0.587, 0.114));
+      vec3 shadowed = mix(saturated, saturated * shadow_color, (1.0 - lum2) * shadow_tint);
+      vec3 toned = mix(shadowed, shadowed * highlight_color, lum2 * highlight_tint);
+
+      gl_FragColor = toOutputFormat(vec4(toned, base.a));
+    }
+    ";
+
+# Pass 2: bloom (inline 13-tap quasi-Gaussian over the graded output) +
+# warm amber tint + screen-blend composite + frame-deterministic grain.
+# Single combined pass — see header note re: 2-pass shape constraint.
+string glslComposite = "
+    varying vec2 sourceTextureCoordinate;
+    BaseUniformsOpenGL;
+
+    uniform sampler2D auxSampler0;
+    uniform sampler2D auxSampler1;
+    uniform sampler2D auxSampler2;
+
+    uniform float bloom_threshold;
+    uniform float bloom_radius;
+    uniform float bloom_warmth;
+    uniform float bloom_strength;
+    uniform float grain_opacity;
+    uniform float source_size_x;
+    uniform float source_size_y;
+    uniform float time;
+
+    float luma(vec3 c) {
+      return dot(c, vec3(0.299, 0.587, 0.114));
+    }
+
+    // Soft threshold — keeps a smooth gradient instead of a hard step
+    // so bloom doesn't pop at thin highlight edges.
+    vec3 brightPass(vec3 c, float thr) {
+      float l = luma(c);
+      float w = smoothstep(thr, thr + 0.10, l);
+      return c * w;
+    }
+
+    // Pseudo-random hash, seeded by uv + frame index.
+    // Cloned from super_8mm.iglu for video-stable grain.
+    float hash3(vec2 uv, float frame) {
+      return fract(sin(uv.x * 127.1 + uv.y * 311.7 + frame * 74.3) * 43758.5453);
+    }
+
+    void main() {
+      vec2 uv = sourceTextureCoordinate;
+      vec2 pix = vec2(
+        bloom_radius / max(source_size_x, 1.0),
+        bloom_radius / max(source_size_y, 1.0)
+      );
+
+      // Primary sample — the graded output from Pass 1.
+      vec3 graded = sampleInput(uv).rgb;
+
+      // 13-tap quasi-Gaussian bloom from neighborhood of 'graded.
+      // Center + 4 axis (radius 1) + 4 axis (radius 2) + 4 diagonal (radius 1)
+      // taps with cosine-falloff weights summing to ~1.0.
+      vec3 acc = vec3(0.0);
+      float wsum = 0.0;
+
+      vec3 cc = brightPass(graded, bloom_threshold);
+      acc += cc * 0.20;
+      wsum += 0.20;
+
+      vec3 ax_h_p = brightPass(sampleInput(uv + vec2(pix.x, 0.0)).rgb, bloom_threshold);
+      vec3 ax_h_n = brightPass(sampleInput(uv - vec2(pix.x, 0.0)).rgb, bloom_threshold);
+      vec3 ax_v_p = brightPass(sampleInput(uv + vec2(0.0, pix.y)).rgb, bloom_threshold);
+      vec3 ax_v_n = brightPass(sampleInput(uv - vec2(0.0, pix.y)).rgb, bloom_threshold);
+      acc += (ax_h_p + ax_h_n + ax_v_p + ax_v_n) * 0.10;
+      wsum += 0.40;
+
+      vec3 ax2_h_p = brightPass(sampleInput(uv + vec2(2.0 * pix.x, 0.0)).rgb, bloom_threshold);
+      vec3 ax2_h_n = brightPass(sampleInput(uv - vec2(2.0 * pix.x, 0.0)).rgb, bloom_threshold);
+      vec3 ax2_v_p = brightPass(sampleInput(uv + vec2(0.0, 2.0 * pix.y)).rgb, bloom_threshold);
+      vec3 ax2_v_n = brightPass(sampleInput(uv - vec2(0.0, 2.0 * pix.y)).rgb, bloom_threshold);
+      acc += (ax2_h_p + ax2_h_n + ax2_v_p + ax2_v_n) * 0.05;
+      wsum += 0.20;
+
+      vec3 dg_pp = brightPass(sampleInput(uv + vec2(1.0 * pix.x,  1.0 * pix.y)).rgb, bloom_threshold);
+      vec3 dg_pn = brightPass(sampleInput(uv + vec2(1.0 * pix.x, -1.0 * pix.y)).rgb, bloom_threshold);
+      vec3 dg_np = brightPass(sampleInput(uv + vec2(-1.0 * pix.x, 1.0 * pix.y)).rgb, bloom_threshold);
+      vec3 dg_nn = brightPass(sampleInput(uv + vec2(-1.0 * pix.x,-1.0 * pix.y)).rgb, bloom_threshold);
+      acc += (dg_pp + dg_pn + dg_np + dg_nn) * 0.05;
+      wsum += 0.20;
+
+      vec3 blurred = acc / max(wsum, 0.0001);
+
+      // Warm amber tint — disposable-camera flash hue. Amber color tuned
+      // more saturated than v1 (was 1.0,0.78,0.55) for visible slider impact.
+      // Removed the prior * 0.5 cap so bloom_warmth=1.0 = full amber bloom
+      // and bloom_warmth=2.0 = double-strength (over-saturated, exaggerated
+      // warmth — useful as a creative knob).
+      vec3 amber = vec3(1.05, 0.65, 0.40);
+      vec3 tinted = mix(blurred, blurred * amber, clamp(bloom_warmth, 0.0, 2.0));
+
+      // Screen-blend bloom over graded.
+      vec3 bloom = tinted * bloom_strength;
+      vec3 composited = vec3(1.0) - (vec3(1.0) - graded) * (vec3(1.0) - bloom);
+
+      // Subtle overall warmth — bloom_warmth also lightly tints the WHOLE
+      // composited image so the slider has visible impact even when
+      // bloom_threshold is high. Capped at 0.04 (was 0.09) so the new
+      // editorial split-toning pass in Pass 1 isn't fought by stacked
+      // overall warming here.
+      vec3 overall_warm = vec3(1.0, 0.92, 0.82);
+      composited = mix(
+        composited,
+        composited * overall_warm,
+        clamp(bloom_warmth, 0.0, 2.0) * 0.04
+      );
+
+      // Procedural film grain — 3 frames @ 7fps cycle for video stability.
+      float frame_index = mod(floor(time * 7.0), 3.0);
+      float g = hash3(uv, frame_index);
+      vec3 grain_rgb = vec3(g);
+      vec3 screened = vec3(1.0) - (vec3(1.0) - composited) * (vec3(1.0) - grain_rgb);
+      vec3 finalRgb = mix(composited, screened, grain_opacity);
+
+      gl_FragColor = toOutputFormat(vec4(finalRgb, 1.0));
+    }
+    ";

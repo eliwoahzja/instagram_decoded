@@ -1,0 +1,61 @@
+[Filter IgluscriptVideoFrameTiltFilter]
+
+[Init]
+fun init(Filter filter) {
+  filter.passes = {{
+      name = 'rotate_in, inputs = {'default},
+      uniforms = {
+        progress = 0.0,
+        inputSize = {1080.0, 1920.0},
+      },
+        glslShader = glsl
+      }};
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  # Get behavior parameters from parameter map (set by JNI/keyframe system)
+  f32 progressValue = getParameterFloat('progress);
+
+  # Apply to shader uniform
+  setShaderUniform('rotate_in, 'progress, progressValue);
+}
+
+string glsl = "
+varying vec2 sourceTextureCoordinate;
+
+BaseUniformsOpenGL;
+
+uniform vec2 inputSize;
+uniform float progress;
+
+#define PI 3.141592653589793
+
+mat2 rotate2d(float a){
+  float c = cos(a), s = sin(a);
+  return mat2(c, -s, s, c);
+}
+
+void main() {
+
+  vec2 uv = sourceTextureCoordinate;
+  vec2 center = vec2(0.5);
+  vec2 ratio = vec2(inputSize.xy / inputSize.y);
+
+  float angle = mix(15.0 * (PI / 180.0), 0.0, progress) * DOWN;
+  float scale = mix(0.15, 1.0, progress);
+  center.x = 0.5 - (0.2 * progress);
+
+  vec2 p = uv - center;
+  p *= ratio;
+  p = rotate2d(angle) * p;
+  p /= scale;
+  p /= ratio;
+  p += center;
+
+  float m = step(0.0, p.x) * step(p.x, 1.0) * step(0.0, p.y) * step(p.y, 1.0);
+  vec4 base = sampleInput(p);
+  vec4 color = vec4(mix(vec3(0.0), base.rgb, m),1.0);
+  gl_FragColor = toOutputFormat(color);
+}
+";

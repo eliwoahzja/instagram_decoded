@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "rounded_rect",
+  "displayName": "Rounded Rect",
+  "description": "[IG Edits] Video effect name. With \"Rounded Rect\", the creator can crop the frame to a rounded rectangle with independently configurable top-left, top-right, bottom-left, bottom-right corner radii.",
+  "iglu": {}
+}

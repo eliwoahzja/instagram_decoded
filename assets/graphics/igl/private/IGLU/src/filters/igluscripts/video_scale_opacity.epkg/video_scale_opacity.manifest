@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_scale_opacity",
+  "displayName": "Scale Opacity",
+  "description": "[IG Edits] Video effect name. With \"Scale Opacity\", the creator can scale, rotate, translate and fade the frame around a chosen center while clipping outside the frame.",
+  "iglu": {
+    "legacyId": 3056
+  }
+}

@@ -1,0 +1,142 @@
+.class public final LX/NLF;
+.super Ljava/lang/Object;
+.source ""
+
+# interfaces
+.implements LX/0Yu;
+
+
+# instance fields
+.field public final synthetic A00:J
+
+.field public final synthetic A01:Landroid/os/Handler;
+
+.field public final synthetic A02:Landroid/view/View;
+
+.field public final synthetic A03:Landroidx/fragment/app/FragmentActivity;
+
+.field public final synthetic A04:LX/00T;
+
+.field public final synthetic A05:LX/7C1;
+
+.field public final synthetic A06:Ljava/lang/String;
+
+.field public final synthetic A07:Ljava/util/concurrent/atomic/AtomicBoolean;
+
+.field public final synthetic A08:Lkotlin/jvm/functions/Function0;
+
+.field public final synthetic A09:LX/2A5;
+
+.field public final synthetic A0A:LX/2A5;
+
+.field public final synthetic A0B:LX/2A5;
+
+.field public final synthetic A0C:Z
+
+
+# direct methods
+.method public constructor <init>(Landroid/os/Handler;Landroid/view/View;Landroidx/fragment/app/FragmentActivity;LX/00T;LX/7C1;Ljava/lang/String;Ljava/util/concurrent/atomic/AtomicBoolean;Lkotlin/jvm/functions/Function0;LX/2A5;LX/2A5;LX/2A5;JZ)V
+    .locals 0
+
+    iput-object p7, p0, LX/NLF;->A07:Ljava/util/concurrent/atomic/AtomicBoolean;
+
+    iput-object p3, p0, LX/NLF;->A03:Landroidx/fragment/app/FragmentActivity;
+
+    iput-object p5, p0, LX/NLF;->A05:LX/7C1;
+
+    iput-object p6, p0, LX/NLF;->A06:Ljava/lang/String;
+
+    iput-object p9, p0, LX/NLF;->A09:LX/2A5;
+
+    iput-wide p12, p0, LX/NLF;->A00:J
+
+    iput-object p1, p0, LX/NLF;->A01:Landroid/os/Handler;
+
+    iput-object p10, p0, LX/NLF;->A0B:LX/2A5;
+
+    iput-object p11, p0, LX/NLF;->A0A:LX/2A5;
+
+    iput-object p4, p0, LX/NLF;->A04:LX/00T;
+
+    iput-boolean p14, p0, LX/NLF;->A0C:Z
+
+    iput-object p8, p0, LX/NLF;->A08:Lkotlin/jvm/functions/Function0;
+
+    iput-object p2, p0, LX/NLF;->A02:Landroid/view/View;
+
+    invoke-direct {p0}, Ljava/lang/Object;-><init>()V
+
+    return-void
+.end method
+
+
+# virtual methods
+.method public final onCreate(LX/00T;)V
+    .locals 0
+
+    return-void
+.end method
+
+.method public final onDestroy(LX/00T;)V
+    .locals 0
+
+    return-void
+.end method
+
+.method public final onPause(LX/00T;)V
+    .locals 0
+
+    return-void
+.end method
+
+.method public final onResume(LX/00T;)V
+    .locals 0
+
+    return-void
+.end method
+
+.method public final onStart(LX/00T;)V
+    .locals 0
+
+    return-void
+.end method
+
+.method public final onStop(LX/00T;)V
+    .locals 15
+
+    const/4 v14, 0x0
+
+    move-object/from16 v0, p1
+
+    invoke-static {v0, v14}, LX/5B5;->A0U(Ljava/lang/Object;I)V
+
+    iget-object v6, p0, LX/NLF;->A07:Ljava/util/concurrent/atomic/AtomicBoolean;
+
+    iget-object v2, p0, LX/NLF;->A03:Landroidx/fragment/app/FragmentActivity;
+
+    iget-object v4, p0, LX/NLF;->A05:LX/7C1;
+
+    iget-object v5, p0, LX/NLF;->A06:Ljava/lang/String;
+
+    iget-object v8, p0, LX/NLF;->A09:LX/2A5;
+
+    iget-wide v11, p0, LX/NLF;->A00:J
+
+    iget-object v0, p0, LX/NLF;->A01:Landroid/os/Handler;
+
+    iget-object v9, p0, LX/NLF;->A0B:LX/2A5;
+
+    iget-object v10, p0, LX/NLF;->A0A:LX/2A5;
+
+    iget-object v3, p0, LX/NLF;->A04:LX/00T;
+
+    iget-boolean v13, p0, LX/NLF;->A0C:Z
+
+    iget-object v7, p0, LX/NLF;->A08:Lkotlin/jvm/functions/Function0;
+
+    iget-object v1, p0, LX/NLF;->A02:Landroid/view/View;
+
+    invoke-static/range {v0 .. v14}, LX/NCp;->A01(Landroid/os/Handler;Landroid/view/View;Landroidx/fragment/app/FragmentActivity;LX/00T;LX/7C1;Ljava/lang/String;Ljava/util/concurrent/atomic/AtomicBoolean;Lkotlin/jvm/functions/Function0;LX/2A5;LX/2A5;LX/2A5;JZZ)V
+
+    return-void
+.end method

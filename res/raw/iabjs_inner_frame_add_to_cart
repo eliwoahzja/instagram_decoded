@@ -1,0 +1,1 @@
+(function(variantId,requestId){window._META.IABInnerFrame.shopifyAddToCart(parseInt(variantId),requestId)})

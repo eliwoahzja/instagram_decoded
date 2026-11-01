@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "identifier": "0a85e872-b587-43cb-9410-f706181ffb9e",
+  "displayName": "Product Wash",
+  "description": "[IG Visual Discovery] Product highlight effect name. With \"Product Wash\", waves of light sweep outward from the centre of the product a viewer selected in a paused reel.",
+  "iglu": {
+    "customization": [
+      {
+        "name": "speed",
+        "default": 0.5,
+        "min": 0,
+        "max": 4
+      },
+      {
+        "name": "waveCount",
+        "default": 2,
+        "min": 0.5,
+        "max": 8
+      },
+      {
+        "name": "opacity",
+        "default": 0.9,
+        "min": 0,
+        "max": 1
+      },
+      {
+        "name": "type",
+        "default": 0,
+        "min": 0,
+        "max": 1
+      }
+    ]
+  }
+}

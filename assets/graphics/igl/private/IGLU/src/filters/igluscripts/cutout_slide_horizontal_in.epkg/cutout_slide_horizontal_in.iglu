@@ -1,0 +1,28 @@
+[Filter IgluscriptCutoutSlideHorizontalInFilter]
+[MaskBehavior alpha]
+
+# Horizontal slide in — composes common cutout_slide with direction=(-1,0)
+
+[Init]
+fun init(Filter filter) {
+  filter.passes = {{
+      name = 'slideH,
+      igid = 'cutout_slide,
+      inputs = {'default},
+      uniforms = {},
+    }};
+
+  filter.parameters = {
+    {iterations = 4.0, min = 1.0, max = 10.0, description = "Number of visible passes before settling"},
+    {outro = 0.0, min = 0.0, max = 1.0, description = "0 = In, 1 = Out"},
+  };
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  setShaderUniform('slideH, 'progress, getParameterFloat('progress));
+  setShaderUniform('slideH, 'directionX, -1.0);
+  setShaderUniform('slideH, 'directionY, 0.0);
+  setShaderUniform('slideH, 'iterations, getParameterFloat('iterations));
+  setShaderUniform('slideH, 'outro, getParameterFloat('outro));
+}

@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "displayName": "Soft mask out",
+  "description": "[IG Edits] Video effect name. With \"Soft mask out\", the creator can play a 2s outro that wipes the clip off-screen with a soft horizontal smoothstep ramp.",
+  "iglu": {
+    "legacyId": 5082,
+    "behavior": {
+      "type": "fixedOutro",
+      "durationMs": 2000,
+      "curve": "quadraticInOut"
+    },
+    "customization": [],
+    "subject": {
+      "overlay": true
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQADKt6uZC5i"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "d4dd880b",
+      "handle": "AQAPSwPU65rr",
+      "md5": "eec298aaa013299620721dd79f6eda0a"
+    }
+  }
+}

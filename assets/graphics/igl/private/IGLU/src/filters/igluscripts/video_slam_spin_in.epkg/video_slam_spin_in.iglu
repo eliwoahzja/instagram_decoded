@@ -1,0 +1,125 @@
+[Filter IgluscriptVideoSlamSpinFilter]
+[MaskBehavior alpha]
+
+fun mix(f32 a, f32 b, f32 t) f32 {
+  return a * (1.0 - t) + b * t;
+}
+
+f32 startScale = 1.2;
+
+string glsl = "
+  varying vec2 sourceTextureCoordinate;
+  BaseUniformsOpenGL;
+  uniform float progress;
+  uniform float scale;
+  uniform float opacity;
+  uniform float rotation;
+  uniform float blurStrength;
+  uniform float aspect;
+  uniform vec2 center;
+
+  vec2 transformUV(vec2 uv, float s, float rot) {
+    uv -= center;
+    uv.x *= aspect;
+    float cr = cos(-rot);
+    float sr = sin(rot*UP);
+    uv = vec2(cr * uv.x - sr * uv.y, sr * uv.x + cr * uv.y);
+    uv.x /= aspect;
+    uv /= max(s, 0.001);
+    uv += center;
+    return uv;
+  }
+
+  float isInside(vec2 uv) {
+    return step(0.0, uv.x) * step(uv.x, 1.0) * step(0.0, uv.y) * step(uv.y, 1.0);
+  }
+
+  void main() {
+    vec2 uv = sourceTextureCoordinate;
+    vec2 mainUV = transformUV(uv, scale, rotation);
+    vec4 mainColor = sampleInput(mainUV) * isInside(mainUV);
+
+    vec4 color = mainColor;
+    if (blurStrength > 0.001) {
+      color = vec4(0.0);
+      const int SAMPLES = 8;
+      for (int i = 0; i < SAMPLES; i++) {
+        float t = float(i) / float(SAMPLES - 1) - 0.5;
+        float rotOffset = blurStrength * t;
+        vec2 blurUV = transformUV(uv, scale, rotation + rotOffset);
+        color += sampleInput(blurUV) * isInside(blurUV);
+      }
+      color /= float(SAMPLES);
+    }
+
+    color *= opacity;
+    gl_FragColor = toOutputFormat(color);
+  }
+";
+
+[Init]
+fun init(Filter filter) {
+  filter.parameters = {
+    {center = {0.5, 0.5}, min = {0.0, 0.0}, max = {1.0, 1.0}},
+    {outro = 0.0, min = 0.0, max = 1.0, description = "0 = In, 1 = Out"},
+    {amount = 0.20, min = 0.0, max = 1.0, description = "Spin Amount"},
+  };
+
+  filter.passes = {{
+      name = 'slamSpinFx,
+      inputs = {'default},
+      uniforms = {
+        progress = 0.0,
+        scale = 1.2,
+        opacity = 0.0,
+        rotation = 1.5708,
+        blurStrength = 0.0,
+        aspect = 1.0,
+        center = {0.5, 0.5},
+      },
+      glslShader = glsl
+    }};
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  f32 p = getParameterFloat('progress);
+  f32 outro = getParameterFloat('outro);
+  if (outro > 0.5) { p = 1.0 - p; }
+
+  if (outro > 0.5) {
+    p = pow(1.0 - p, 8.0);
+  } else {
+    p = pow(1.0 - p, 16.0);
+  }
+  p = 1.0 - p;
+
+  f32 amount = mix(0.15, 2.0, getParameterFloat('amount));
+  f32 startRot = 3.14159 * amount;
+
+  f32 scale = mix(startScale, 1.0, p);
+  f32 rotation = mix(startRot, 0.0, p);
+
+  f32 rawP = getParameterFloat('progress);
+  f32 fadePct = 0.15;
+  f32 opacity = clamp(rawP/ fadePct, 0.0, 1.0);
+
+  # Fade opacity over the first/last 15% of the animation
+  if (outro > 0.5) {
+    opacity = clamp((1.0 - rawP) / fadePct, 0.0, 1.0);
+  }
+
+  # Motion blur driven by angular velocity — strongest at start of spin
+  f32 blurStrength = (1.0 - p) * 0.8;
+
+  vec2 size = getTextureSize('default);
+  f32 aspect = size.x / size.y;
+
+  setShaderUniform('slamSpinFx, 'progress, p);
+  setShaderUniform('slamSpinFx, 'scale, scale);
+  setShaderUniform('slamSpinFx, 'opacity, opacity);
+  setShaderUniform('slamSpinFx, 'rotation, rotation);
+  setShaderUniform('slamSpinFx, 'blurStrength, blurStrength);
+  setShaderUniform('slamSpinFx, 'aspect, aspect);
+  setShaderUniform('slamSpinFx, 'center, getParameterVec2('center));
+}

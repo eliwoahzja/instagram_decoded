@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "greenscreen_hdr",
+  "displayName": "Green Screen HDR",
+  "description": "[IG Edits] Video effect name. With \"Green Screen HDR\", the creator can composite a segmented foreground over a background using ML mask, motion-vector refine and edge blur in BT.2020 HDR.",
+  "iglu": {}
+}

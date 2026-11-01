@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "lut_spark",
+  "displayName": "Lut Spark",
+  "description": "[IG Edits] Color filter name. With \"Lut Spark\", the creator can color-grade a clip by remapping each pixel's RGB through a configurable 3D color lookup table.",
+  "iglu": {}
+}

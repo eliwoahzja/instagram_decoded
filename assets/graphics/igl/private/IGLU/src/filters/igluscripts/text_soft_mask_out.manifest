@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "text_soft_mask_out",
+  "displayName": "Soft Mask Out",
+  "description": "Label for the Soft Mask Out text effect style. This is a text effect that users can add to their content. It animates with a soft mask transition-out animation.",
+  "iglu": {}
+}

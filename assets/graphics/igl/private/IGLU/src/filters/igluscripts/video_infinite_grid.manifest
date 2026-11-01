@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_infinite_grid",
+  "displayName": "Infinite grid",
+  "description": "[IG Edits] Video effect name. With \"Infinite grid\", the creator can intro the clip by tilting it onto a perspective floor plane that tiles into an infinite receding grid and animates flat over time.",
+  "iglu": {
+    "legacyId": 3015,
+    "behavior": {
+      "type": "fixedIntro",
+      "durationMs": 3000,
+      "curve": "linear"
+    },
+    "customization": [
+      {
+        "name": "amount",
+        "default": 2.5,
+        "min": 0.5,
+        "max": 7.0,
+        "displayName": "Amount",
+        "displayNameDescription": "[IG Edits] Slider label controlling the magnitude or quantity of a video effect. Generic across many effects; exact range varies per effect.",
+        "displayMethod": "number"
+      },
+      {
+        "name": "duration",
+        "default": 3.0,
+        "min": 0.5,
+        "max": 6.0,
+        "displayName": "Duration",
+        "displayNameDescription": "[IG Edits] Slider label controlling how long a video effect's animation lasts; exact units and range vary per effect (seconds or normalized).",
+        "displayMethod": "time"
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "eae73e79",
+      "handle": "AQAHTFVoEG9n",
+      "md5": "af16b0ad4bb6e91b581ce4982a30d67a"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQADuN5b62ao"
+    }
+  }
+}

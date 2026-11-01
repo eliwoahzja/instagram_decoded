@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:height="@dimen/add_to_story_dual_destination_share_sheet_avatar_icon_size" android:width="@dimen/add_to_story_dual_destination_share_sheet_avatar_icon_size">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/bds_transparent" />
+            <corners android:radius="@dimen/community_chat_warning_circle_radius" />
+            <stroke android:width="@dimen/action_sheet_divider_margin_top" android:color="?igds_color_photo_border" />
+        </shape>
+    </item>
+    <item android:gravity="center" android:height="@dimen/abc_dialog_padding_material" android:width="@dimen/abc_dialog_padding_material" android:drawable="@drawable/instagram_warning_outline_24" />
+</layer-list>

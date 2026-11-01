@@ -1,0 +1,106 @@
+{
+  "schemaVersion": 1,
+  "identifier": "56276341-F188-4EAA-B8BC-58C89A927459",
+  "displayName": "Blue Jeans",
+  "description": "[IG Edits] Style filter name. Renders the frame as denim-blue ink hatching lines (thickness driven by darkness) over a paper background.",
+  "iglu": {
+    "legacyId": 3089,
+    "customization": [
+      {
+        "name": "color",
+        "defaultSelection": "#233249",
+        "available": [
+          "#233249",
+          "#22405E",
+          "#4F585E",
+          "#47627F",
+          "#60768A",
+          "#96B7CD",
+          "#FFD600",
+          "#FF7A00",
+          "#FE1D37",
+          "#FF0169",
+          "#D300C5",
+          "#7638FA",
+          "#37038B",
+          "#1CD164",
+          "#0095F6",
+          "#AD88FC",
+          "#FDD5FD",
+          "#FFABE1",
+          "#FFC584",
+          "#FFF8C2",
+          "#09FF00",
+          "#FFFF00",
+          "#5AFAC7",
+          "#0000FF"
+        ],
+        "displayName": "Color",
+        "displayNameDescription": "[IG Edits] Color picker label. The user selects a color used by the video effect (e.g., glow tint, outline color, sparkle color); available palette varies per effect."
+      },
+      {
+        "name": "intensity",
+        "default": 1.0,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Tint Opacity",
+        "displayNameDescription": "[IG Edits] Slider label controlling the opacity of the color tint applied to the effect (0 = no tint, 1 = fully tinted)."
+      },
+      {
+        "name": "amount",
+        "default": 1.0,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Scale",
+        "displayNameDescription": "[IG Edits] Slider label controlling the strength of a video effect. Generic across many effects (glow, blur, color, distortion, etc.); exact range varies per effect."
+      },
+      {
+        "name": "opacity",
+        "default": 0.0,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Color Opacity",
+        "displayNameDescription": "[IG Edits] Slider label controlling how much of the original image's color shows through the stylized background (0 = stylized background only, 1 = full original image color)."
+      },
+      {
+        "name": "speed",
+        "default": 0.2,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Speed",
+        "displayNameDescription": "[IG Edits] Slider label controlling the speed of animated noise wobble on hatching lines (0 = static, 1 = full animation)."
+      },
+      {
+        "name": "direction",
+        "defaultSelection": "diagonal-ascending",
+        "available": [
+          "diagonal-ascending",
+          "diagonal-descending",
+          "vertical",
+          "horizontal"
+        ],
+        "displayName": "Direction",
+        "displayNameDescription": "[IG Edits] Dropdown label selecting the orientation of the hatching lines (diagonal, vertical, or horizontal)."
+      }
+    ]
+  },
+  "assets": [
+    {
+      "name": "perlin_noise_fine_512.png",
+      "assetHash": "c1acfb8b3de3c9136de6f25b080ade5c29521facf6bda3e2080debb79d351242",
+      "hubAssetId": "2449582265529487"
+    }
+  ],
+  "android": {
+    "previewAsset": {
+      "key": "5a905ae8",
+      "handle": "AQAQF7pO-lSZ",
+      "md5": "cfbbde77abd3c93719e2795ea0862846"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAEpJVySMhG"
+    }
+  }
+}

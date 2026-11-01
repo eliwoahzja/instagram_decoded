@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_spin_in",
+  "displayName": "Spin in",
+  "description": "[IG Edits] Video effect name. With \"Spin in\", the creator can apply an effect of a spinning main video frame before recentering.",
+  "iglu": {
+    "legacyId": 2079,
+    "behavior": {
+      "type": "fixedIntro",
+      "durationMs": 1250,
+      "curve": "linear"
+    },
+    "customization": [
+      {
+        "name": "duration",
+        "default": 1.25,
+        "min": 0.25,
+        "max": 3.0,
+        "displayName": "Duration",
+        "displayNameDescription": "[IG Edits] Slider label controlling how long a video effect's animation lasts; exact units and range vary per effect (seconds or normalized).",
+        "displayMethod": "time"
+      },
+      {
+        "name": "amount",
+        "default": 3,
+        "min": 1,
+        "max": 8,
+        "displayName": "Amount",
+        "displayNameDescription": "[IG Edits] Slider label controlling the magnitude or quantity of a video effect. Generic across many effects; exact range varies per effect.",
+        "displayMethod": "number"
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "921de0f4",
+      "handle": "AQAI440_MP2z",
+      "md5": "9fc73a6ea73b462421cc968ec46719a3"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQADlLYH_dam"
+    }
+  }
+}

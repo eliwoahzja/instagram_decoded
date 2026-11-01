@@ -1,0 +1,1 @@
+(function(locatorJSON,optionsJSON,requestId){window._META.IABInnerFrame.scrollToAndroid(JSON.parse(locatorJSON),optionsJSON?JSON.parse(optionsJSON):null,requestId)})

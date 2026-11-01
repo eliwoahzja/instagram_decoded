@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_frame",
+  "displayName": "Tall frame",
+  "description": "[IG Edits] Video effect name. With \"Tall frame\", the creator can add a black border that applies a fuzzy blur to the edges of their video.",
+  "iglu": {
+    "legacyId": 2076,
+    "customization": [
+      {
+        "name": "size",
+        "default": 0.8,
+        "min": 0.4,
+        "max": 1.6,
+        "displayName": "Size",
+        "displayNameDescription": "[IG Edits] Slider label controlling the size or scale of an element produced by a video effect; exact units and range vary per effect.",
+        "displayMethod": "percent"
+      },
+      {
+        "name": "amount",
+        "default": 0.4,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Amount",
+        "displayNameDescription": "[IG Edits] Slider label controlling the magnitude or quantity of a video effect. Generic across many effects; exact range varies per effect."
+      },
+      {
+        "name": "intensity",
+        "default": 0.3675,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Intensity",
+        "displayNameDescription": "[IG Edits] Slider label controlling the strength of a video effect. Generic across many effects (glow, blur, color, distortion, etc.); exact range varies per effect."
+      },
+      {
+        "name": "color",
+        "defaultSelection": "#000000",
+        "available": [
+          "#000000",
+          "#FFFFFF",
+          "#FFD600",
+          "#FF7A00",
+          "#FE1D37",
+          "#FF0169",
+          "#D300C5",
+          "#7638FA",
+          "#1CD164",
+          "#0095F6"
+        ],
+        "displayName": "Color",
+        "displayNameDescription": "[IG Edits] Color picker label. The user selects a color used by the video effect (e.g., glow tint, outline color, sparkle color); available palette varies per effect."
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "f0ba3125",
+      "handle": "AQAGTGphWPlf",
+      "md5": "87288389237b9102aeb7d38f695cf9e3"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAMTIbRdVTG",
+      "isImageFormat": true
+    }
+  }
+}

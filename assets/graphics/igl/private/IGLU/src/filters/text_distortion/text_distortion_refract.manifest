@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "text_distortion_refract",
+  "displayName": "Refract",
+  "description": "[IG Edits] Text effect name. A text effect is a creative style that can be applied to a text layer in a video. With Refract, the creator can add a reeded glass effect to their text.",
+  "iglu": {}
+}

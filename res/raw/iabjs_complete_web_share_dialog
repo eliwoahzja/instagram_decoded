@@ -1,0 +1,1 @@
+(function(messageData){const event=document.createEvent("Event");event.initEvent("message",!0,!0),event.data=messageData,document.dispatchEvent(event)})

@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "identifier": "text_candy_chrome",
+  "displayName": "Text Candy Chrome",
+  "description": "[IG Edits] Text effect name. With \"Text Candy Chrome\", the creator can render text with a glossy candy-coated chrome look from blurred glyphs lit by diffuse and metal matcaps.",
+  "assets": [
+    {
+      "name": "candy_chrome_matcap.png",
+      "assetHash": "6af40058c129e103f891d969bda674d562ae435e8ad54c026a0d96f2f811a370",
+      "hubAssetId": "2079771575930223"
+    },
+    {
+      "name": "metal_matcap.png",
+      "assetHash": "1830bfd8dc60652e6ad1c056f0666390e89c9bf5cb4817d54733102903c0f9ec",
+      "hubAssetId": "1597794694755957"
+    }
+  ],
+  "iglu": {}
+}

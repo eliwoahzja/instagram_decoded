@@ -1,0 +1,195 @@
+.class public final LX/K0u;
+.super LX/1hh;
+.source ""
+
+
+# instance fields
+.field public final A00:I
+
+.field public final A01:I
+
+.field public final A02:LX/Bfu;
+
+.field public final A03:Lcom/instagram/common/typedurl/ImageUrl;
+
+.field public final A04:Lcom/instagram/common/typedurl/ImageUrl;
+
+.field public final A05:Ljava/lang/String;
+
+.field public final A06:Ljava/lang/String;
+
+.field public final A07:Z
+
+
+# direct methods
+.method public constructor <init>(LX/Bfu;Lcom/instagram/common/typedurl/ImageUrl;Lcom/instagram/common/typedurl/ImageUrl;Ljava/lang/String;Ljava/lang/String;IIZ)V
+    .locals 0
+
+    invoke-static {p4}, LX/5B5;->A0Q(Ljava/lang/Object;)V
+
+    invoke-static {p5}, LX/5B5;->A0M(Ljava/lang/Object;)V
+
+    invoke-direct {p0}, Ljava/lang/Object;-><init>()V
+
+    iput-object p4, p0, LX/K0u;->A05:Ljava/lang/String;
+
+    iput p6, p0, LX/K0u;->A01:I
+
+    iput-object p2, p0, LX/K0u;->A04:Lcom/instagram/common/typedurl/ImageUrl;
+
+    iput-object p3, p0, LX/K0u;->A03:Lcom/instagram/common/typedurl/ImageUrl;
+
+    iput-boolean p8, p0, LX/K0u;->A07:Z
+
+    iput-object p1, p0, LX/K0u;->A02:LX/Bfu;
+
+    iput-object p5, p0, LX/K0u;->A06:Ljava/lang/String;
+
+    iput p7, p0, LX/K0u;->A00:I
+
+    return-void
+.end method
+
+
+# virtual methods
+.method public final equals(Ljava/lang/Object;)Z
+    .locals 4
+
+    const/4 v3, 0x1
+
+    if-eq p0, p1, :cond_1
+
+    instance-of v0, p1, LX/K0u;
+
+    const/4 v2, 0x0
+
+    if-eqz v0, :cond_0
+
+    check-cast p1, LX/K0u;
+
+    iget-object v1, p0, LX/K0u;->A05:Ljava/lang/String;
+
+    iget-object v0, p1, LX/K0u;->A05:Ljava/lang/String;
+
+    invoke-static {v1, v0}, LX/5B5;->areEqual(Ljava/lang/Object;Ljava/lang/Object;)Z
+
+    move-result v0
+
+    if-eqz v0, :cond_0
+
+    iget v1, p0, LX/K0u;->A01:I
+
+    iget v0, p1, LX/K0u;->A01:I
+
+    if-ne v1, v0, :cond_0
+
+    iget-object v1, p0, LX/K0u;->A04:Lcom/instagram/common/typedurl/ImageUrl;
+
+    iget-object v0, p1, LX/K0u;->A04:Lcom/instagram/common/typedurl/ImageUrl;
+
+    invoke-static {v1, v0}, LX/5B5;->areEqual(Ljava/lang/Object;Ljava/lang/Object;)Z
+
+    move-result v0
+
+    if-eqz v0, :cond_0
+
+    iget-object v1, p0, LX/K0u;->A03:Lcom/instagram/common/typedurl/ImageUrl;
+
+    iget-object v0, p1, LX/K0u;->A03:Lcom/instagram/common/typedurl/ImageUrl;
+
+    invoke-static {v1, v0}, LX/5B5;->areEqual(Ljava/lang/Object;Ljava/lang/Object;)Z
+
+    move-result v0
+
+    if-eqz v0, :cond_0
+
+    iget-boolean v1, p0, LX/K0u;->A07:Z
+
+    iget-boolean v0, p1, LX/K0u;->A07:Z
+
+    if-ne v1, v0, :cond_0
+
+    iget-object v1, p0, LX/K0u;->A02:LX/Bfu;
+
+    iget-object v0, p1, LX/K0u;->A02:LX/Bfu;
+
+    invoke-static {v1, v0}, LX/5B5;->areEqual(Ljava/lang/Object;Ljava/lang/Object;)Z
+
+    move-result v0
+
+    if-eqz v0, :cond_0
+
+    iget-object v1, p0, LX/K0u;->A06:Ljava/lang/String;
+
+    iget-object v0, p1, LX/K0u;->A06:Ljava/lang/String;
+
+    invoke-static {v1, v0}, LX/5B5;->areEqual(Ljava/lang/Object;Ljava/lang/Object;)Z
+
+    move-result v0
+
+    if-eqz v0, :cond_0
+
+    iget v1, p0, LX/K0u;->A00:I
+
+    iget v0, p1, LX/K0u;->A00:I
+
+    if-eq v1, v0, :cond_1
+
+    :cond_0
+    return v2
+
+    :cond_1
+    return v3
+.end method
+
+.method public final hashCode()I
+    .locals 2
+
+    iget-object v0, p0, LX/K0u;->A05:Ljava/lang/String;
+
+    invoke-static {v0}, LX/024;->A03(Ljava/lang/String;)I
+
+    move-result v1
+
+    iget v0, p0, LX/K0u;->A01:I
+
+    add-int/2addr v1, v0
+
+    mul-int/lit8 v1, v1, 0x1f
+
+    iget-object v0, p0, LX/K0u;->A04:Lcom/instagram/common/typedurl/ImageUrl;
+
+    invoke-static {v0, v1}, LX/024;->A02(Ljava/lang/Object;I)I
+
+    move-result v1
+
+    iget-object v0, p0, LX/K0u;->A03:Lcom/instagram/common/typedurl/ImageUrl;
+
+    invoke-static {v0, v1}, LX/024;->A02(Ljava/lang/Object;I)I
+
+    move-result v1
+
+    iget-boolean v0, p0, LX/K0u;->A07:Z
+
+    invoke-static {v1, v0}, LX/011;->A00(IZ)I
+
+    move-result v1
+
+    iget-object v0, p0, LX/K0u;->A02:LX/Bfu;
+
+    invoke-static {v0, v1}, LX/024;->A02(Ljava/lang/Object;I)I
+
+    move-result v1
+
+    iget-object v0, p0, LX/K0u;->A06:Ljava/lang/String;
+
+    invoke-static {v0, v1}, LX/020;->A01(Ljava/lang/String;I)I
+
+    move-result v1
+
+    iget v0, p0, LX/K0u;->A00:I
+
+    add-int/2addr v1, v0
+
+    return v1
+.end method

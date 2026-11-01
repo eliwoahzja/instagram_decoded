@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector android:variablePadding="false"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_enabled="true" android:state_pressed="true">
+        <shape>
+            <solid android:color="#33ffffff" />
+            <stroke android:width="1.0dp" android:color="@color/abc_decor_view_status_guard_light" />
+            <corners android:radius="@dimen/abc_action_bar_elevation_material" />
+            <padding android:left="@dimen/account_discovery_bottom_gap" android:top="@dimen/abc_edit_text_inset_top_material" android:right="@dimen/account_discovery_bottom_gap" android:bottom="@dimen/abc_edit_text_inset_top_material" />
+        </shape>
+    </item>
+    <item android:state_enabled="true">
+        <shape>
+            <solid android:color="#0dffffff" />
+            <stroke android:width="1.0dp" android:color="@color/abc_decor_view_status_guard_light" />
+            <corners android:radius="@dimen/abc_action_bar_elevation_material" />
+            <padding android:left="@dimen/account_discovery_bottom_gap" android:top="@dimen/abc_edit_text_inset_top_material" android:right="@dimen/account_discovery_bottom_gap" android:bottom="@dimen/abc_edit_text_inset_top_material" />
+        </shape>
+    </item>
+    <item android:state_enabled="false">
+        <shape>
+            <solid android:color="#0dffffff" />
+            <stroke android:width="1.0dp" android:color="@color/fbui_bluegrey_50" />
+            <corners android:radius="@dimen/abc_action_bar_elevation_material" />
+            <padding android:left="@dimen/account_discovery_bottom_gap" android:top="@dimen/abc_edit_text_inset_top_material" android:right="@dimen/account_discovery_bottom_gap" android:bottom="@dimen/abc_edit_text_inset_top_material" />
+        </shape>
+    </item>
+</selector>

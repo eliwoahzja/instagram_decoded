@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "text_blur",
+  "displayName": "Blur",
+  "description": "[IG Edits] Text effect name. With \"Blur\", the creator softens a text layer with a gaussian-style blur that diffuses the letters.",
+  "iglu": {}
+}

@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "bicubic",
+  "displayName": "Bicubic",
+  "description": "[IG Edits] Video effect name. With \"Bicubic\", the creator can resample the frame using a 4-tap cubic B-spline filter, optionally in linear (gamma 2.0) space, for smoother upscaling.",
+  "iglu": {}
+}

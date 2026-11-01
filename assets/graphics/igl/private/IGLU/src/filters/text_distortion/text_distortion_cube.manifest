@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "text_distortion_cube",
+  "displayName": "Cube",
+  "description": "[IG Edits] Text effect name. With \"Cube\", the creator wraps a text layer onto faces of a cube for a 3D block-style distortion.",
+  "iglu": {}
+}

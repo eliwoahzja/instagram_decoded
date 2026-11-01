@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "text_extrusion_3D",
+  "displayName": "Extrusion 3D",
+  "description": "[IG Edits] Text effect name. With \"Extrusion 3D\", the creator can render text with a textured 3D side-extrusion that uses the glyph fill itself and darkens back layers for depth.",
+  "iglu": {}
+}

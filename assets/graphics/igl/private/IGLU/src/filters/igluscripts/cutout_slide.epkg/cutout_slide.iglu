@@ -1,0 +1,163 @@
+[Filter IgluscriptCutoutSlideFilter]
+[MaskBehavior alpha]
+
+# Hermite smoothstep — ease-in-out
+fun smoothstep(f32 t) f32 {
+  return t * t * (3.0 - 2.0 * t);
+}
+
+[Init]
+fun init(Filter filter) {
+  filter.parameters = {
+    {directionX = 0.0, min = -1.0, max = 1.0, description = "Horizontal slide direction (-1=left, 1=right, 0=none)"},
+    {directionY = -1.0, min = -1.0, max = 1.0, description = "Vertical slide direction (-1=up, 1=down, 0=none)"},
+    {iterations = 4.0, min = 1.0, max = 10.0, description = "Number of visible passes before settling"},
+    {outro = 0.0, min = 0.0, max = 1.0, description = "0 = In, 1 = Out"},
+  };
+
+  filter.passes = {
+    {
+      name = 'dirBlur,
+      inputs = {'default},
+      uniforms = {
+        ghostSpread = 0.0,
+        ghostDir = {0.0, 0.0},
+      },
+      glslShader = blurGlsl,
+    },
+    {
+      name = 'slideFx,
+      inputs = {'dirBlur},
+      uniforms = {
+        position = {0.0, 0.0},
+        ghostSpread = 0.0,
+        ghostDir = {0.0, 0.0},
+      },
+      glslShader = glsl,
+    },
+  };
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  f32 p = getParameterFloat('progress);
+  f32 outro = getParameterFloat('outro);
+  if (outro > 0.5) { p = 1.0 - p; }
+
+  f32 eased = smoothstep(p);
+  f32 iters = getParameterFloat('iterations);
+  f32 dirX = getParameterFloat('directionX);
+  f32 dirY = getParameterFloat('directionY);
+  vec2 dir = {dirX, dirY};
+
+  # Divide animation into phases:
+  # Phases 0..N-2: full crossings (position goes -1 to +1)
+  # Phase N-1: final settle (position goes -1 to 0)
+  f32 totalPhases = iters;
+  f32 scaledP = eased * totalPhases;
+
+  # Clamp to prevent overflow at p=1
+  f32 phase = floor(clamp(scaledP, 0.0, totalPhases - 0.001));
+  f32 phaseP = scaledP - phase;
+
+  f32 offset = 0.0;
+  if (phase < totalPhases - 1.0) {
+    # Crossing phase: offset sweeps from -1 to +1 (full pass-through)
+    offset = 0.0 - 1.0 + phaseP * 2.0;
+  } else {
+    # Final settle: offset goes from -1 to 0
+    offset = 0.0 - 1.0 + phaseP;
+  }
+
+  # Apply offset along direction axis
+  f32 posX = dir.x * offset;
+  f32 posY = dir.y * offset;
+  vec2 pos = {posX, posY};
+
+  # Tangent of movement curve drives ghosting
+  # d(smoothstep)/dp = 6p(1-p), scaled by phases and phase multiplier
+  f32 dpdt = 6.0 * p * (1.0 - p);
+  f32 phaseMul = 2.0;
+  if (phase >= totalPhases - 1.0) { phaseMul = 1.0; }
+  f32 tangent = phaseMul * totalPhases * dpdt;
+
+  # Normalize tangent to 0-1 (max tangent = 3 * totalPhases at p=0.5 crossing)
+  f32 maxTangent = 3.0 * totalPhases;
+  f32 tangentNorm = clamp(tangent / maxTangent, 0.0, 1.0);
+
+  # Ghost spread: 0 to 2 texels per step, in UV space
+  vec2 size = getTextureSize('default);
+  f32 texelSize = abs(dir.x) / size.x + abs(dir.y) / size.y;
+  f32 ghostSpread = tangentNorm * 10.0 * texelSize;
+
+  setShaderUniform('dirBlur, 'ghostSpread, ghostSpread);
+  setShaderUniform('dirBlur, 'ghostDir, dir);
+  setShaderUniform('slideFx, 'position, pos);
+  setShaderUniform('slideFx, 'ghostSpread, ghostSpread*0.5);
+  setShaderUniform('slideFx, 'ghostDir, dir);
+}
+
+string blurGlsl = "varying vec2 sourceTextureCoordinate;
+
+BaseUniformsOpenGL;
+
+uniform float ghostSpread;
+uniform vec2 ghostDir;
+
+void main() {
+  vec2 uv = sourceTextureCoordinate;
+  vec4 color = vec4(0.0);
+  float totalWeight = 0.0;
+
+  for (int i = -4; i <= 4; i++) {
+    float fi = float(i);
+    vec2 offset = ghostDir * ghostSpread * fi;
+    float k = 2.0;
+    float weight = 1.0 / (1.0 + k * abs(fi));
+    color += sampleInput(uv + offset) * weight;
+    totalWeight += weight;
+  }
+
+  gl_FragColor = toOutputFormat(color / totalWeight);
+}
+";
+
+string glsl = "varying vec2 sourceTextureCoordinate;
+
+BaseUniformsOpenGL;
+
+uniform vec2 position;
+uniform float ghostSpread;
+uniform vec2 ghostDir;
+
+float clipAlpha(vec2 uv) {
+  return step(0.0, uv.x) * step(uv.x, 1.0) * step(0.0, uv.y) * step(uv.y, 1.0);
+}
+
+void main() {
+  vec2 uv = sourceTextureCoordinate;
+  vec2 shifted = uv - position;
+
+  // Ghost trail — 4 samples behind, main, 4 samples ahead
+  // Each successive ghost falls off by 0.9x
+  vec4 color = vec4(0.0);
+
+  for (int i = -4; i <= 4; i++) {
+    float fi = float(i);
+    vec2 gUV = shifted - ghostDir * ghostSpread * fi;
+    float ga = clipAlpha(gUV);
+    vec4 sample_color = sampleInput(gUV) * ga;
+
+    // Logarithmic alpha taper: fixed curve, only spread scales with speed
+    float k = 2.0;
+    float falloff = 1.0 / (1.0 + k * abs(fi));
+    falloff = pow(falloff, 0.5);
+    sample_color *= falloff;
+
+    // Alpha-over blend: src over dst
+    color = color * (1.0 - sample_color.a) + sample_color;
+  }
+
+  gl_FragColor = toOutputFormat(color);
+}
+";

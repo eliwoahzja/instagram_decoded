@@ -1,0 +1,392 @@
+[Filter FilmBurnII]
+# "Film Burn II" — LUT + animated blue light-leak bokeh + flickering
+# top-edge frame markers. Two logical layers in a single fragment pass.
+#
+# Reference shows BLUE light leaks (not warm orange/red) with small
+# white sprocket-frame-line markers at the top edge that flicker and
+# jitter — overriding the spec's default warm palette accordingly.
+#
+#   Layer 1 — Base LUT (full canvas):
+#     8x8 grid LUT lookup on film_burn_ii_lut.png. Mixed against
+#     camera by `lut_strength`.
+#
+#   Layer 2 — Animated blue light leaks + frame markers:
+#     2a) Light leaks: 3 soft circular blue bokeh dots driven by a
+#         floor(time * leak_speed) frame index over a 20-frame loop.
+#         Each dot has hash-driven position (some off-screen),
+#         radius, and per-frame intensity. Aspect-corrected so the
+#         circles render circular regardless of canvas aspect.
+#         Two-tone blue: deep `vec3(0.30, 0.35, 0.85)` halo blending
+#         to `vec3(0.55, 0.60, 0.95)` brighter core.
+#     2b) Top-edge markers: 2 thin white rectangles near the top of
+#         the canvas, hash-driven X positions per marker frame.
+#         Independent flicker rate via floor(time * marker_speed) so
+#         markers blink rapidly while the leaks evolve more slowly.
+#
+#     Both 2a and 2b are screen-blended over the LUT result so they
+#     read as additive light without blowing out bright skin tones:
+#       result = 1 - (1 - base) * (1 - overlay)
+#
+# Composite order (bottom -> top):
+#   camera -> LUT -> blue leaks (screen blend) -> frame markers (screen blend)
+#
+# Time source: getLocalTime() (monotonic wall-clock since shader
+# start) per the Time Source skill-doc rule for continuous animations.
+
+[Init]
+fun init(Filter filter)
+{
+    makeTexture('lut);
+    makeTexture('labels);
+    makeTexture('leaks);
+
+    filter.parameters = {
+        # Layer 1 LUT.
+        {lut_strength = 1.0, min = 0.0, max = 1.0, description = "LUT mix strength (1.0 = full LUT, 0.0 = camera passthrough)"},
+
+        # Layer 2a blue light leaks (sprite-sheet driven).
+        {leak_strength = 1.0, min = 0.0, max = 1.5, description = "Blue light leak overall opacity (screen blend)"},
+        {leak_speed = 25.0, min = 1.0, max = 60.0, description = "Leak sprite-sheet playback rate in Hz (16-frame loop)"},
+
+        # Layer 2b frame markers (corner brackets + edge dust).
+        {marker_strength = 0.55, min = 0.0, max = 1.0, description = "Top/bottom-edge frame marker opacity (corner brackets + dust)"},
+        {marker_speed = 14.167, min = 1.0, max = 60.0, description = "Marker animation rate in Hz (also gates label-tick + dust re-roll)"},
+
+        # Layer 2c text labels (KODAK / numeric strings, sprite sheet).
+        {label_strength = 0.786, min = 0.0, max = 1.0, description = "Text label opacity (screen blend over markers)"},
+        {label_interval = 0.565, min = 0.1, max = 6.0, description = "Average seconds between one-frame label flashes (each flash lasts a single marker tick)"},
+    };
+
+    filter.passes = {{
+      name = 'pass0,
+      inputs = {'default, 'lut, 'labels, 'leaks},
+      uniforms = {
+        lut_strength = 1.0,
+        leak_strength = 1.0,
+        leak_speed = 25.0,
+        marker_strength = 0.55,
+        marker_speed = 14.167,
+        label_strength = 0.786,
+        label_interval = 0.565,
+        canvas_size = {1.0, 1.0},
+        time = 0.0,
+      },
+      glslShader = glslFilmBurnII,
+    }};
+}
+
+# Custom Parameter strings for sample-app local-loading.
+string lut_path = "lut_path";
+string lut_filename = "";
+string labels_path = "labels_path";
+string labels_filename = "";
+string leaks_path = "leaks_path";
+string leaks_filename = "";
+
+[PreRender]
+fun preRender(Filter filter){
+    string lut_filename_parameter = getParameterString(lut_path);
+    if (lut_filename_parameter != "") {
+        string new_lut_filename = stringAppend("textureFilePath://", lut_filename_parameter);
+        if (new_lut_filename != lut_filename) {
+            lut_filename = new_lut_filename;
+            loadTexture('lut, lut_filename);
+        }
+    }
+
+    string labels_filename_parameter = getParameterString(labels_path);
+    if (labels_filename_parameter != "") {
+        string new_labels_filename = stringAppend("textureFilePath://", labels_filename_parameter);
+        if (new_labels_filename != labels_filename) {
+            labels_filename = new_labels_filename;
+            loadTexture('labels, labels_filename);
+        }
+    }
+
+    string leaks_filename_parameter = getParameterString(leaks_path);
+    if (leaks_filename_parameter != "") {
+        string new_leaks_filename = stringAppend("textureFilePath://", leaks_filename_parameter);
+        if (new_leaks_filename != leaks_filename) {
+            leaks_filename = new_leaks_filename;
+            loadTexture('leaks, leaks_filename);
+        }
+    }
+
+    f32 ls = getParameterFloat('lut_strength);
+    setShaderUniform('pass0, 'lut_strength, ls);
+
+    f32 lstr = getParameterFloat('leak_strength);
+    setShaderUniform('pass0, 'leak_strength, lstr);
+
+    f32 lsp = getParameterFloat('leak_speed);
+    setShaderUniform('pass0, 'leak_speed, lsp);
+
+    f32 ms = getParameterFloat('marker_strength);
+    setShaderUniform('pass0, 'marker_strength, ms);
+
+    f32 msp = getParameterFloat('marker_speed);
+    setShaderUniform('pass0, 'marker_speed, msp);
+
+    f32 lblstr = getParameterFloat('label_strength);
+    setShaderUniform('pass0, 'label_strength, lblstr);
+
+    f32 lblint = getParameterFloat('label_interval);
+    setShaderUniform('pass0, 'label_interval, lblint);
+
+    # Canvas dimensions for aspect math.
+    vec2 canvasSize = getTextureSize('default);
+    setShaderUniform('pass0, 'canvas_size, canvasSize);
+
+    # Use getLocalTime() for monotonic continuous animation.
+    f32 time = getLocalTime();
+    setShaderUniform('pass0, 'time, time);
+}
+
+#### GLSL shader ####
+
+string glslFilmBurnII = "
+    varying vec2 sourceTextureCoordinate;
+    BaseUniformsOpenGL;
+
+    uniform sampler2D auxSampler0;  // 'default (camera)
+    uniform sampler2D auxSampler1;  // 'lut
+    uniform sampler2D auxSampler2;  // 'labels (sprite sheet, 6 cells vertically)
+    uniform sampler2D auxSampler3;  // 'leaks  (sprite sheet, 4x4 grid, 16 cells)
+
+    uniform float lut_strength;
+    uniform float leak_strength;
+    uniform float leak_speed;
+    uniform float marker_strength;
+    uniform float marker_speed;
+    uniform float label_strength;
+    uniform float label_interval;
+    uniform vec2  canvas_size;
+    uniform float time;
+
+    // Blue light leak palette (kept for legacy color tinting; not
+    // used now that leaks are texture-driven).
+    const vec3 kLeakHalo = vec3(0.30, 0.35, 0.85);   // deep blue
+    const vec3 kLeakCore = vec3(0.55, 0.60, 0.95);   // brighter blue
+
+    // 1D pseudo-random hash.
+    float hash11(float x) {
+      return fract(sin(x * 12.9898) * 43758.5453);
+    }
+
+    // Signed distance to an axis-aligned rounded-rect with center `c`,
+    // half-extents `b`, and corner radius `r`. Negative inside,
+    // positive outside. Coordinates passed in pixel space so the
+    // rounded corner is round in pixels regardless of canvas aspect.
+    float sdRoundedRectPx(vec2 p, vec2 c, vec2 b, float r) {
+      vec2 q = abs(p - c) - b + vec2(r);
+      return length(max(q, vec2(0.0)))
+           + min(max(q.x, q.y), 0.0) - r;
+    }
+
+    // 8x8 grid LUT lookup on auxSampler1.
+    vec3 lutLookup(vec3 inRgb) {
+      vec3 c = clamp(inRgb, 0.00781, 0.98438);
+      float x = c.r / 8.0;
+      float y = c.g / 8.0;
+      float z = c.b;
+      float blueY = floor(z * 8.0) / 8.0;
+      float blueX = floor((z - blueY) * 64.0) / 8.0;
+      x += blueX;
+      y += blueY;
+      return texture2D(auxSampler1, vec2(x, y)).xyz;
+    }
+
+    void main() {
+      vec2 uv = sourceTextureCoordinate;
+      vec4 cam = sampleInput(uv);
+
+      // ============================================================
+      // Layer 1: LUT-graded camera, mixed against passthrough by
+      // lut_strength. Includes a graceful fallback for WIP / not-yet-
+      // uploaded LUTs (probe LUT center, skip grade if empty).
+      // ============================================================
+      vec3 lut_rgb = lutLookup(cam.rgb);
+      vec3 lut_probe = texture2D(auxSampler1, vec2(0.5, 0.5)).rgb;
+      float lut_loaded = step(0.05,
+          max(max(lut_probe.r, lut_probe.g), lut_probe.b));
+      vec3 graded = mix(cam.rgb, lut_rgb, lut_strength * lut_loaded);
+
+      // Aspect already computed up top (used by markers + dust).
+      // No-op: keep canvas_aspect_woverh in scope for the markers
+      // section below.
+
+      // Aspect for any aspect-correcting math below.
+      float canvas_aspect_woverh =
+          canvas_size.x / max(canvas_size.y, 1.0);
+
+      // ============================================================
+      // Layer 2a: Blue light leaks (sprite sheet, 4x4 grid, 16 cells
+      // playing at leak_speed Hz). Original Spark asset is 1024x576
+      // organised as 4x4 cells of 256x144 each (16:9 aspect cells).
+      // We map the cell to fill the canvas (cell stretches to canvas
+      // aspect; acceptable for soft-blurred bokeh overlays).
+      //
+      // Frame index = floor(time * leak_speed) mod 16.
+      // Cell coords:  cx = idx mod 4,  cy = floor(idx / 4).
+      // Source UV:    ((cell + uv) / 4) on the 1024x576 texture.
+      // ============================================================
+      float leak_idx = mod(floor(time * leak_speed), 16.0);
+      float cell_x   = mod(leak_idx, 4.0);
+      float cell_y   = floor(leak_idx / 4.0);
+      vec2  cell_uv  = (vec2(cell_x, cell_y) + uv) / 4.0;
+
+      vec4  leak_tex = texture2D(auxSampler3, cell_uv);
+      vec3  leak_overlay = leak_tex.rgb * leak_strength;
+
+      // Screen-blend leaks over LUT-graded camera.
+      vec3 result = 1.0 - (1.0 - graded) * (1.0 - leak_overlay);
+
+      // ============================================================
+      // Layer 2b: Top corner film-edge markers + edge dust.
+      //
+      // Each corner marker is the visible portion of a ROUNDED SQUARE
+      // centered AT the top corner of the canvas. We render only the
+      // OUTLINE STROKE of the square (not its fill), so what shows on
+      // canvas is a thin rounded-corner L: a short vertical down +
+      // rounded curve + short horizontal across. Stroke thickness has
+      // a coarse-grained per-segment hash modulation so the line
+      // reads as a slightly rough sketched mark, not a vector edge.
+      //
+      // Plus dust specks scattered along top + bottom edges, per-
+      // frame re-rolled at marker_speed Hz.
+      //
+      // The 'KODAK / 800T / numeric' text variation seen in some
+      // reference frames is NOT replicated procedurally (would need
+      // a bitmap font). Future upgrade path: add a 48-frame sprite
+      // sheet or MP4 overlay texture as a 2nd named input.
+      // ============================================================
+      float marker_idx = floor(time * marker_speed);
+
+      // Pixel-space coordinates so SDF math gives round-in-pixels.
+      vec2 px = uv * canvas_size;
+
+      // Square dims (relative to canvas width so the marker scales
+      // proportionally regardless of canvas resolution). Center is
+      // offset DOWN from the canvas corner so more of the rounded
+      // arc is visible inside the canvas.
+      float side_px   = 0.165 * canvas_size.x;
+      float radius_px = 0.060 * canvas_size.x;
+      float center_y  = 0.025 * canvas_size.x;
+      vec2  hs        = vec2(side_px * 0.5);
+
+      // SDF to two squares: top-left and top-right corners, each
+      // offset down by `center_y` pixels so the inner curve is
+      // closer to the visible portion of the canvas.
+      float sdL = sdRoundedRectPx(
+          px, vec2(0.0,            center_y), hs, radius_px);
+      float sdR = sdRoundedRectPx(
+          px, vec2(canvas_size.x,  center_y), hs, radius_px);
+      float sd_min = min(sdL, sdR);
+
+      // Per-frame stroke thickness modulation (rough sketched feel).
+      float thick_rough =
+          0.70 + 0.60 * hash11(marker_idx * 41.3);     // [0.7, 1.3]
+      float thickness_px = 1.5 * thick_rough;
+
+      // Stroke band: |sdf| < thickness with a half-pixel AA falloff.
+      float bracket = 1.0 - smoothstep(
+          thickness_px, thickness_px + 1.0, abs(sd_min));
+
+      // Coarse-grained position hash along the stroke so the line
+      // alpha varies in clusters of ~2-3 pixels (sketch-line look,
+      // not per-pixel noise).
+      float seg_idx  = floor((px.x + px.y) * 0.40);
+      float seg_hash =
+          hash11(seg_idx + marker_idx * 0.013);
+      bracket *= 0.55 + 0.45 * seg_hash;
+
+      // Per-frame on/off gate so brackets occasionally blink off
+      // (10% of frames); reads as physical film-strip wear.
+      bracket *= step(0.10, hash11(marker_idx * 31.7));
+
+      // ----- Dust specks along top + bottom edges -----
+      // 6 candidate dots per edge per frame, ~40% per-dot existence.
+      float dust_alpha = 0.0;
+      for (int i = 0; i < 6; i++) {
+        float fi = float(i);
+        // Top edge.
+        float seed_t = marker_idx * 31.7 + fi * 13.71;
+        float exists_t = step(0.60, hash11(seed_t * 11.3));
+        float dx_t = 0.10 + 0.80 * hash11(seed_t * 17.13);
+        float dy_t = 0.005 + 0.025 * hash11(seed_t * 19.7);
+        float dr_t = 0.0010 + 0.0015 * hash11(seed_t * 23.31);
+        vec2 d_t = uv - vec2(dx_t, dy_t);
+        d_t.x *= canvas_aspect_woverh;
+        dust_alpha = max(dust_alpha,
+            exists_t * step(length(d_t), dr_t));
+        // Bottom edge.
+        float seed_b = marker_idx * 53.7 + fi * 19.31;
+        float exists_b = step(0.60, hash11(seed_b * 11.3));
+        float dx_b = 0.10 + 0.80 * hash11(seed_b * 17.13);
+        float dy_b = 0.970 + 0.025 * hash11(seed_b * 19.7);
+        float dr_b = 0.0010 + 0.0015 * hash11(seed_b * 23.31);
+        vec2 d_b = uv - vec2(dx_b, dy_b);
+        d_b.x *= canvas_aspect_woverh;
+        dust_alpha = max(dust_alpha,
+            exists_b * step(length(d_b), dr_b));
+      }
+
+      float overlay_alpha =
+          clamp(bracket + dust_alpha, 0.0, 1.0);
+
+      // Markers are white, screen-blended at marker_strength.
+      vec3 marker_rgb = vec3(overlay_alpha * marker_strength);
+      result = 1.0 - (1.0 - result) * (1.0 - marker_rgb);
+
+      // ============================================================
+      // Layer 2c: Text labels (sprite sheet).
+      // film_burn_ii_labels.png is 1 column x 6 rows, each 576x48 px.
+      // Aspect 12:1. Authored as white text on transparent bg.
+      //
+      // ONE-FRAME flash semantics: every marker tick (marker_speed Hz)
+      // is a candidate frame; probability per tick is sized so the
+      // average gap between flashes equals `label_interval`. Each
+      // flash lasts exactly one marker tick (~1/marker_speed sec)
+      // then disappears. Sprite index hash-picked per tick.
+      // ============================================================
+      float label_tick_idx = floor(time * marker_speed);
+      float ticks_per_label =
+          max(label_interval * marker_speed, 1.0);
+      float prob_per_tick = 1.0 / ticks_per_label;
+      float lbl_visible = step(
+          1.0 - prob_per_tick,
+          hash11(label_tick_idx * 19.7));
+      float lbl_sprite_idx = min(
+          floor(hash11(label_tick_idx * 13.31) * 6.0), 5.0);
+
+      // Render rect for the label. Spans most of the canvas width.
+      // Aspect locked to 12:1 (sprite native) so label never stretches.
+      const float kLabelAspectWoverH = 576.0 / 48.0;  // 12.0
+      float lbl_w_uv = 0.85;
+      float lbl_h_uv = lbl_w_uv * canvas_aspect_woverh
+                                / kLabelAspectWoverH;
+      vec2  lbl_size_uv = vec2(lbl_w_uv, lbl_h_uv);
+      vec2  lbl_center  = vec2(0.5, 0.030);
+      vec2  lbl_local   = (uv - lbl_center) / lbl_size_uv + 0.5;
+      float in_lbl =
+          step(0.0, lbl_local.x) * step(lbl_local.x, 1.0) *
+          step(0.0, lbl_local.y) * step(lbl_local.y, 1.0);
+
+      // Sample the right 1/6 vertical slice of the sprite sheet.
+      // Sprites are stacked vertically: row 0 at top, row 5 at bottom.
+      vec2 lbl_tex_uv = vec2(
+          lbl_local.x,
+          (lbl_local.y + lbl_sprite_idx) / 6.0);
+      vec4 lbl_tex = texture2D(auxSampler2, lbl_tex_uv);
+
+      // Screen-blend, alpha-gated by visibility window + bounds.
+      float lbl_a =
+          lbl_tex.a * in_lbl * lbl_visible * label_strength;
+      vec3  lbl_rgb_eff = lbl_tex.rgb * lbl_a;
+      result = 1.0 - (1.0 - result) * (1.0 - lbl_rgb_eff);
+
+      result = clamp(result, 0.0, 1.0);
+
+      gl_FragColor = toOutputFormat(vec4(result, cam.a));
+    }
+    ";

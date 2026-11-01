@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "identifier": "AB5FBBD2-DEF0-4A53-9C8E-0756599BD4FA",
+  "displayName": "HDR",
+  "description": "[IG Edits] Color filter name. HDR-style tonemap LUT color grade with skin smoothing.",
+  "ios": {
+    "previewAsset": {
+      "handle": "AQADhCh_lifu"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "a8df454d",
+      "handle": "AQAGV3Xxkq7Q",
+      "md5": "289fd9fdf0c06ba1739988910204890e"
+    }
+  },
+  "iglu": {
+    "legacyId": 3187
+  },
+  "assets": [
+    {
+      "name": "hdr_lut.png"
+    }
+  ]
+}

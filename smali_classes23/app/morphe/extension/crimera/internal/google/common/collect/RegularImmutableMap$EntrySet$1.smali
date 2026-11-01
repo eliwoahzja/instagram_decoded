@@ -1,0 +1,181 @@
+.class Lapp/morphe/extension/crimera/internal/google/common/collect/RegularImmutableMap$EntrySet$1;
+.super Lapp/morphe/extension/crimera/internal/google/common/collect/ImmutableList;
+.source "RegularImmutableMap.java"
+
+
+# annotations
+.annotation system Ldalvik/annotation/EnclosingMethod;
+    value = Lapp/morphe/extension/crimera/internal/google/common/collect/RegularImmutableMap$EntrySet;->createAsList()Lapp/morphe/extension/crimera/internal/google/common/collect/ImmutableList;
+.end annotation
+
+.annotation system Ldalvik/annotation/InnerClass;
+    accessFlags = 0x1
+    name = null
+.end annotation
+
+.annotation system Ldalvik/annotation/Signature;
+    value = {
+        "Lapp/morphe/extension/crimera/internal/google/common/collect/ImmutableList<",
+        "Ljava/util/Map$Entry<",
+        "TK;TV;>;>;"
+    }
+.end annotation
+
+
+# instance fields
+.field final synthetic this$0:Lapp/morphe/extension/crimera/internal/google/common/collect/RegularImmutableMap$EntrySet;
+
+
+# direct methods
+.method public constructor <init>(Lapp/morphe/extension/crimera/internal/google/common/collect/RegularImmutableMap$EntrySet;)V
+    .locals 0
+    .annotation system Ldalvik/annotation/MethodParameters;
+        accessFlags = {
+            0x8010
+        }
+        names = {
+            "this$0"
+        }
+    .end annotation
+
+    .line 415
+    iput-object p1, p0, Lapp/morphe/extension/crimera/internal/google/common/collect/RegularImmutableMap$EntrySet$1;->this$0:Lapp/morphe/extension/crimera/internal/google/common/collect/RegularImmutableMap$EntrySet;
+
+    invoke-direct {p0}, Lapp/morphe/extension/crimera/internal/google/common/collect/ImmutableList;-><init>()V
+
+    return-void
+.end method
+
+
+# virtual methods
+.method public bridge synthetic get(I)Ljava/lang/Object;
+    .locals 0
+    .annotation system Ldalvik/annotation/MethodParameters;
+        accessFlags = {
+            0x1000
+        }
+        names = {
+            "index"
+        }
+    .end annotation
+
+    .line 415
+    invoke-virtual {p0, p1}, Lapp/morphe/extension/crimera/internal/google/common/collect/RegularImmutableMap$EntrySet$1;->get(I)Ljava/util/Map$Entry;
+
+    move-result-object p0
+
+    return-object p0
+.end method
+
+.method public get(I)Ljava/util/Map$Entry;
+    .locals 2
+    .annotation system Ldalvik/annotation/MethodParameters;
+        accessFlags = {
+            0x0
+        }
+        names = {
+            "index"
+        }
+    .end annotation
+
+    .annotation system Ldalvik/annotation/Signature;
+        value = {
+            "(I)",
+            "Ljava/util/Map$Entry<",
+            "TK;TV;>;"
+        }
+    .end annotation
+
+    .line 418
+    iget-object v0, p0, Lapp/morphe/extension/crimera/internal/google/common/collect/RegularImmutableMap$EntrySet$1;->this$0:Lapp/morphe/extension/crimera/internal/google/common/collect/RegularImmutableMap$EntrySet;
+
+    invoke-static {v0}, Lapp/morphe/extension/crimera/internal/google/common/collect/RegularImmutableMap$EntrySet;->access$000(Lapp/morphe/extension/crimera/internal/google/common/collect/RegularImmutableMap$EntrySet;)I
+
+    move-result v0
+
+    invoke-static {p1, v0}, Lapp/morphe/extension/crimera/internal/google/common/base/Preconditions;->checkElementIndex(II)I
+
+    .line 424
+    iget-object v0, p0, Lapp/morphe/extension/crimera/internal/google/common/collect/RegularImmutableMap$EntrySet$1;->this$0:Lapp/morphe/extension/crimera/internal/google/common/collect/RegularImmutableMap$EntrySet;
+
+    invoke-static {v0}, Lapp/morphe/extension/crimera/internal/google/common/collect/RegularImmutableMap$EntrySet;->access$100(Lapp/morphe/extension/crimera/internal/google/common/collect/RegularImmutableMap$EntrySet;)[Ljava/lang/Object;
+
+    move-result-object v0
+
+    mul-int/lit8 p1, p1, 0x2
+
+    iget-object v1, p0, Lapp/morphe/extension/crimera/internal/google/common/collect/RegularImmutableMap$EntrySet$1;->this$0:Lapp/morphe/extension/crimera/internal/google/common/collect/RegularImmutableMap$EntrySet;
+
+    invoke-static {v1}, Lapp/morphe/extension/crimera/internal/google/common/collect/RegularImmutableMap$EntrySet;->access$200(Lapp/morphe/extension/crimera/internal/google/common/collect/RegularImmutableMap$EntrySet;)I
+
+    move-result v1
+
+    add-int/2addr v1, p1
+
+    aget-object v0, v0, v1
+
+    invoke-static {v0}, Ljava/util/Objects;->requireNonNull(Ljava/lang/Object;)Ljava/lang/Object;
+
+    .line 426
+    iget-object v1, p0, Lapp/morphe/extension/crimera/internal/google/common/collect/RegularImmutableMap$EntrySet$1;->this$0:Lapp/morphe/extension/crimera/internal/google/common/collect/RegularImmutableMap$EntrySet;
+
+    invoke-static {v1}, Lapp/morphe/extension/crimera/internal/google/common/collect/RegularImmutableMap$EntrySet;->access$100(Lapp/morphe/extension/crimera/internal/google/common/collect/RegularImmutableMap$EntrySet;)[Ljava/lang/Object;
+
+    move-result-object v1
+
+    iget-object p0, p0, Lapp/morphe/extension/crimera/internal/google/common/collect/RegularImmutableMap$EntrySet$1;->this$0:Lapp/morphe/extension/crimera/internal/google/common/collect/RegularImmutableMap$EntrySet;
+
+    invoke-static {p0}, Lapp/morphe/extension/crimera/internal/google/common/collect/RegularImmutableMap$EntrySet;->access$200(Lapp/morphe/extension/crimera/internal/google/common/collect/RegularImmutableMap$EntrySet;)I
+
+    move-result p0
+
+    xor-int/lit8 p0, p0, 0x1
+
+    add-int/2addr p1, p0
+
+    aget-object p0, v1, p1
+
+    invoke-static {p0}, Ljava/util/Objects;->requireNonNull(Ljava/lang/Object;)Ljava/lang/Object;
+
+    .line 427
+    new-instance p1, Ljava/util/AbstractMap$SimpleImmutableEntry;
+
+    invoke-direct {p1, v0, p0}, Ljava/util/AbstractMap$SimpleImmutableEntry;-><init>(Ljava/lang/Object;Ljava/lang/Object;)V
+
+    return-object p1
+.end method
+
+.method public isPartialView()Z
+    .locals 0
+
+    .line 0
+    const/4 p0, 0x1
+
+    return p0
+.end method
+
+.method public size()I
+    .locals 0
+
+    .line 432
+    iget-object p0, p0, Lapp/morphe/extension/crimera/internal/google/common/collect/RegularImmutableMap$EntrySet$1;->this$0:Lapp/morphe/extension/crimera/internal/google/common/collect/RegularImmutableMap$EntrySet;
+
+    invoke-static {p0}, Lapp/morphe/extension/crimera/internal/google/common/collect/RegularImmutableMap$EntrySet;->access$000(Lapp/morphe/extension/crimera/internal/google/common/collect/RegularImmutableMap$EntrySet;)I
+
+    move-result p0
+
+    return p0
+.end method
+
+.method public writeReplace()Ljava/lang/Object;
+    .locals 0
+    .annotation build Lapp/morphe/extension/crimera/internal/google/common/annotations/J2ktIncompatible;
+    .end annotation
+
+    .line 445
+    invoke-super {p0}, Lapp/morphe/extension/crimera/internal/google/common/collect/ImmutableList;->writeReplace()Ljava/lang/Object;
+
+    move-result-object p0
+
+    return-object p0
+.end method

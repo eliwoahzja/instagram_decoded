@@ -1,0 +1,149 @@
+[Filter IgluscriptVideoScaleOpacityFilter]
+
+fun mix(f32 a, f32 b, f32 t) f32 {
+  return a * (1.0 - t) + b * t;
+}
+
+[Init]
+fun init(Filter filter) {
+  filter.parameters = {
+    {scale = 1.0, min = 0.0, max = 3.0},
+    {opacity = 1.0, min = 0.0, max = 1.0},
+    {rotation = 0.0, min = -6.2832, max = 6.2832},
+    {center = {0.5, 0.5}, min = {0.0, 0.0}, max = {1.0, 1.0}},
+    {position = {0.0, 0.0}, min = {-2.0, -2.0}, max = {2.0, 2.0}},
+  };
+
+  filter.passes = {{
+      name = 'scaleOpacity, inputs = {'default},
+      uniforms = {
+        progress = 0.0,
+        scale = 1.0,
+        opacity = 1.0,
+        rotation = 0.0,
+        aspect = 1.0,
+        center = {0.5, 0.5},
+        position = {0.0, 0.0},
+      },
+      glslShader = glsl, metalShader = metal
+    }};
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  f32 p = getParameterFloat('progress);
+  setShaderUniform('scaleOpacity, 'progress, p);
+  setShaderUniform('scaleOpacity, 'scale, getParameterFloat('scale));
+  setShaderUniform('scaleOpacity, 'opacity, getParameterFloat('opacity));
+  setShaderUniform('scaleOpacity, 'rotation, getParameterFloat('rotation));
+  setShaderUniform('scaleOpacity, 'center, getParameterVec2('center));
+  setShaderUniform('scaleOpacity, 'position, getParameterVec2('position));
+
+  vec2 size = getTextureSize('default);
+  f32 aspect = size.x / size.y;
+  setShaderUniform('scaleOpacity, 'aspect, aspect);
+}
+
+string glsl = "varying vec2 sourceTextureCoordinate;
+
+BaseUniformsOpenGL;
+
+uniform float progress;
+uniform float scale;
+uniform float opacity;
+uniform float rotation;
+uniform float aspect;
+uniform vec2 center;
+uniform vec2 position;
+
+void main() {
+  vec2 uv = sourceTextureCoordinate;
+
+  // Inverse translate. OpenGL's bottom-left texture origin mirrors a vertical
+  // offset relative to Metal, so DOWN (-1.0 on GL) re-aligns position.y to match
+  // the iOS/Metal path. The Metal backend uses the hand-written metal shader
+  // below (where position.y is already correct), so this only affects OpenGL.
+  uv.x -= position.x;
+  uv.y -= DOWN * position.y;
+
+  // Transform around center
+  uv -= center;
+
+  // Aspect-correct before rotation so circles stay circular
+  uv.x *= aspect;
+
+  // Inverse rotation
+  float cr = cos(-rotation);
+  float sr = sin(-rotation);
+  uv = vec2(cr * uv.x - sr * uv.y, sr * uv.x + cr * uv.y);
+
+  // Undo aspect correction
+  uv.x /= aspect;
+
+  // Inverse scale
+  uv /= max(scale, 0.001);
+
+  uv += center;
+
+  // Clip to edges — zero outside [0,1]
+  float inside = step(0.0, uv.x) * step(uv.x, 1.0) * step(0.0, uv.y) * step(uv.y, 1.0);
+
+  vec4 color = sampleInput(uv) * inside;
+  color *= opacity;
+  gl_FragColor = toOutputFormat(color);
+}
+";
+
+string metal = "
+using namespace metal;
+struct fragmentIn { float2 textureCoordinate [[user(locn0)]]; float2 sourceTextureCoordinate [[user(locn1)]]; };
+struct fragmentOut { float4 _gl_FragColor [[color(0)]]; };
+typedef struct {
+  BaseUniformsMetal;
+  float progress;
+  float scale;
+  float opacity;
+  float rotation;
+  float aspect;
+  float2 center;
+  float2 position;
+ } Uniforms;
+
+fragment fragmentOut fragmentShader(fragmentIn in [[stage_in]],
+ constant Uniforms & uniforms [[buffer(1)]],
+ DefaultInputs defaultInputs) {
+
+  float2 uv = in.sourceTextureCoordinate;
+  float2 center = uniforms.center;
+  float aspect = uniforms.aspect;
+
+  // Inverse translate
+  uv -= uniforms.position;
+
+  // Transform around center
+  uv -= center;
+
+  // Aspect-correct before rotation so circles stay circular
+  uv.x *= aspect;
+
+  // Inverse rotation
+  float cr = cos(-uniforms.rotation);
+  float sr = sin(-uniforms.rotation);
+  uv = float2(cr * uv.x - sr * uv.y, sr * uv.x + cr * uv.y);
+
+  // Undo aspect correction
+  uv.x /= aspect;
+
+  // Inverse scale
+  uv /= max(uniforms.scale, 0.001);
+
+  uv += center;
+
+  // Clip to edges — zero outside [0,1]
+  float inside = step(0.0, uv.x) * step(uv.x, 1.0) * step(0.0, uv.y) * step(uv.y, 1.0);
+
+  float4 color = sampleInput(defaultInputs, uv) * inside;
+  color *= uniforms.opacity;
+  return {toOutputFormat(color)};
+}
+";

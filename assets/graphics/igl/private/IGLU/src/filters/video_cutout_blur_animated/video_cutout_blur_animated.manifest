@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_cutout_blur_animated",
+  "displayName": "Blur animated",
+  "description": "[Instagram Edits] Effect browser - Label for an animated blur effect that can blur in or blur out the video or subjects.",
+  "iglu": {
+    "subject": {
+      "enabled": true,
+      "fullFrameEnabled": false
+    }
+  }
+}

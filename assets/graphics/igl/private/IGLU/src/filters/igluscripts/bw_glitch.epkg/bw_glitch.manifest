@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "identifier": "3781626B-2337-435F-B3FE-9F889D412F66",
+  "displayName": "B&W Glitch",
+  "description": "[IG Edits] Video effect name. With \"B&W Glitch\", the creator gets a black-and-white LUT grade with intermittent bursts of a horizontal static-band glitch overlay.",
+  "android": {
+    "previewAsset": {
+      "key": "f401b569",
+      "handle": "AQAH90ggLd_c",
+      "md5": "675b59f0f7ad020f63685bf518f32b73"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAQZMx37P-h"
+    }
+  },
+  "iglu": {
+    "legacyId": 3204
+  },
+  "assets": [
+    {
+      "name": "bw_glitch_lut.png",
+      "assetHash": "fd312f1db411ccecee0b97cb896ed7ed40e3e0e79f499ca7517679a55810238d",
+      "hubAssetId": "1589202066329487"
+    }
+  ]
+}

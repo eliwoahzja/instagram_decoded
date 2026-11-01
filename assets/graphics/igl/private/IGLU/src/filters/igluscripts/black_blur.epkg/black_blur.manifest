@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "identifier": "B70DC425-2646-43DB-A8B9-F0666254966A",
+  "displayName": "Black Blur",
+  "description": "[IG Edits] Color filter name. Soft radial gaussian blur, LUT color grade, and a global darkening pass — moody, dim, out-of-focus look.",
+  "android": {
+    "previewAsset": {
+      "key": "ceb4cfec",
+      "handle": "AQAI_5-SV4FN",
+      "md5": "9f3de2c6831d99dd7cad630923162439"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAGPF1s017y"
+    }
+  },
+  "iglu": {
+    "legacyId": 3197
+  },
+  "assets": [
+    {
+      "name": "black_blur_lut.png",
+      "assetHash": "73b8d03f75658bd7f3be5becec740423a0b8509664511b9eb705063003745014",
+      "hubAssetId": "1263697066816869"
+    }
+  ]
+}

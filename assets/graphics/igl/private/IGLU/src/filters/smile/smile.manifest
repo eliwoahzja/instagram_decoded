@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "identifier": "041FE752-76F4-425C-A2BF-5D981628452F",
+  "displayName": "Smile",
+  "description": "[IG Edits] Video effect name. With \"Smile\", the creator gets a face-tracked look — a LUT color grade, face makeup (blush, lips, contour), and a full-screen smile graphic on top.",
+  "iglu": {
+    "legacyId": 3224
+  },
+  "assets": [
+    {
+      "name": "smile_lut.png",
+      "assetHash": "2bdeef9d99018a5517c5a64a556556f70ed3ec23f5bad558c5b8c4b17b74ffd4",
+      "hubAssetId": "3225530004285213"
+    },
+    {
+      "name": "smile_makeup.png",
+      "assetHash": "21c189b32a66c1e4dc7917106922804000411e983d0ebd0507124141c58bc5c5",
+      "hubAssetId": "1583711639972307"
+    },
+    {
+      "name": "smile_overlay.png",
+      "assetHash": "92a4484a34a7dcea974ee72f062bfcfb0091f9a51d1067eae4ee0911ff337a51",
+      "hubAssetId": "1653598003010035"
+    }
+  ]
+}

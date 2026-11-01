@@ -1,0 +1,164 @@
+[Filter LuvBlur]
+
+[Init]
+fun init(Filter filter)
+{
+    makeTexture('lut);
+
+    filter.parameters = {
+        {lut_strength = 0.826, min = 0.0, max = 1.0, description = "LUT mix strength"},
+        {brightness = -0.082, min = -1.0, max = 1.0, description = "Brightness (additive)"},
+        {contrast = 0.521, min = -1.0, max = 1.0, description = "Contrast"},
+        {saturation = -0.351, min = -1.0, max = 1.0, description = "Saturation"},
+        {lightness = 0.129, min = -1.0, max = 1.0, description = "Lightness (additive)"},
+        {blur_strength = 20.682, min = 0.0, max = 50.0, description = "Directional blur strength"},
+        {blur_dir_x = 0.123, min = -1.0, max = 1.0, description = "Blur direction X"},
+        {blur_dir_y = 0.080, min = -1.0, max = 1.0, description = "Blur direction Y"},
+    };
+
+    filter.passes = {
+        {
+            name = 'graded,
+            inputs = {'default, 'lut},
+            uniforms = {
+                lut_strength = 0.826,
+                brightness = -0.082,
+                contrast = 0.521,
+                saturation = -0.351,
+                lightness = 0.129,
+            },
+            glslShader = lutShader,
+        },
+        {
+            name = 'output,
+            inputs = {'graded},
+            uniforms = {
+                blur_dir_x = 0.123,
+                blur_dir_y = 0.080,
+                blur_strength = 20.682,
+                source_size_x = 1024.0,
+            },
+            glslShader = blurShader,
+        },
+    };
+}
+
+string lut_path = "lut_path";
+string lut_filename = "";
+
+[PreRender]
+fun preRender(Filter filter){
+    string lut_filename_parameter = getParameterString(lut_path);
+    if (lut_filename_parameter != "") {
+        string new_lut_filename = stringAppend("textureFilePath://", lut_filename_parameter);
+        if (new_lut_filename != lut_filename) {
+            lut_filename = new_lut_filename;
+            loadTexture('lut, lut_filename);
+        }
+    }
+
+    f32 s = getParameterFloat('lut_strength);
+    setShaderUniform('graded, 'lut_strength, s);
+    f32 br = getParameterFloat('brightness);
+    setShaderUniform('graded, 'brightness, br);
+    f32 ct = getParameterFloat('contrast);
+    setShaderUniform('graded, 'contrast, ct);
+    f32 sa = getParameterFloat('saturation);
+    setShaderUniform('graded, 'saturation, sa);
+    f32 lt = getParameterFloat('lightness);
+    setShaderUniform('graded, 'lightness, lt);
+
+    vec2 srcSize = getTextureSize('default);
+    if (srcSize.x > 0.0) {
+        setShaderUniform('output, 'source_size_x, srcSize.x);
+    }
+    f32 bs = getParameterFloat('blur_strength);
+    setShaderUniform('output, 'blur_strength, bs);
+    f32 bdx = getParameterFloat('blur_dir_x);
+    setShaderUniform('output, 'blur_dir_x, bdx);
+    f32 bdy = getParameterFloat('blur_dir_y);
+    setShaderUniform('output, 'blur_dir_y, bdy);
+}
+
+#### GLSL shaders ####
+
+# Pass 1: 8x8 LUT color grade + Adjust Colors (brightness, contrast,
+# saturation, lightness) matching the Spark AdjustColors node.
+string lutShader = "
+    varying vec2 sourceTextureCoordinate;
+    BaseUniformsOpenGL;
+
+    uniform sampler2D auxSampler0;
+    uniform sampler2D auxSampler1;
+    uniform sampler2D auxSampler2;
+
+    uniform float lut_strength;
+    uniform float brightness;
+    uniform float contrast;
+    uniform float saturation;
+    uniform float lightness;
+
+    void main() {
+      vec4 texel = sampleInput(sourceTextureCoordinate);
+
+      texel.rgb = clamp(texel.rgb, 0.00781, 0.98438);
+
+      float x = texel.r / 8.0;
+      float y = texel.g / 8.0;
+      float z = texel.b;
+
+      float blueY = floor(z * 8.0) / 8.0;
+      float blueX = floor((z - blueY) * 64.0) / 8.0;
+
+      x += blueX;
+      y += blueY;
+
+      vec3 color = texture2D(auxSampler1, vec2(x, y)).xyz;
+
+      texel = mix(texel, vec4(color, texel.a), strength * lut_strength);
+
+      // Adjust Colors: brightness -> contrast -> saturation -> lightness.
+      vec3 c = texel.rgb + brightness;
+      c = (c - 0.5) * (1.0 + contrast) + 0.5;
+      float luma = dot(c, vec3(0.299, 0.587, 0.114));
+      c = mix(vec3(luma), c, 1.0 + saturation);
+      c = c + lightness;
+      texel.rgb = clamp(c, 0.0, 1.0);
+
+      gl_FragColor = toOutputFormat(texel);
+    }
+    ";
+
+# Pass 2: 15-tap directional blur (Spark BlurDirectional model).
+# stepUV = (blur_dir_x, blur_dir_y) * (blur_strength / source_width).
+string blurShader = "
+    varying vec2 sourceTextureCoordinate;
+    BaseUniformsOpenGL;
+
+    uniform sampler2D auxSampler0;
+    uniform sampler2D auxSampler1;
+    uniform sampler2D auxSampler2;
+
+    uniform float blur_dir_x;
+    uniform float blur_dir_y;
+    uniform float blur_strength;
+    uniform float source_size_x;
+
+    void main() {
+      vec2 uv = sourceTextureCoordinate;
+
+      vec2 stepUV = vec2(blur_dir_x, blur_dir_y) * (blur_strength / max(source_size_x, 1.0));
+
+      vec4 center = sampleInput(uv);
+      vec3 c = center.rgb * 0.30459;
+      c += (sampleInput(uv + stepUV).rgb       + sampleInput(uv - stepUV).rgb)       * 0.17861;
+      c += (sampleInput(uv + stepUV * 2.0).rgb + sampleInput(uv - stepUV * 2.0).rgb) * 0.09640;
+      c += (sampleInput(uv + stepUV * 3.0).rgb + sampleInput(uv - stepUV * 3.0).rgb) * 0.04649;
+      c += (sampleInput(uv + stepUV * 4.0).rgb + sampleInput(uv - stepUV * 4.0).rgb) * 0.01904;
+      c += (sampleInput(uv + stepUV * 5.0).rgb + sampleInput(uv - stepUV * 5.0).rgb) * 0.00603;
+      c += (sampleInput(uv + stepUV * 6.0).rgb + sampleInput(uv - stepUV * 6.0).rgb) * 0.00119;
+      c += (sampleInput(uv + stepUV * 7.0).rgb + sampleInput(uv - stepUV * 7.0).rgb) * 0.00007;
+
+      gl_FragColor = toOutputFormat(vec4(c, center.a));
+    }
+    ";

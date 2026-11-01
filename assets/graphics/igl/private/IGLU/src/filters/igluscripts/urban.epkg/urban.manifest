@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "identifier": "5C5D256E-E543-4086-A81D-D8D1AEBEFF3E",
+  "displayName": "Urban",
+  "description": "[IG Edits] Color filter name. With \"Urban\", the creator gets a LUT color grade plus a procedural 24fps film overlay: grain, scratches, and occasional warm or cool color flashes.",
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAD1YcOiCzh"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "b0d4bf4b",
+      "handle": "AQADabFVPk-V",
+      "md5": "38bf50a119b216b8ab1d87326a5a1dbc"
+    }
+  },
+  "iglu": {
+    "legacyId": 3094
+  },
+  "assets": [
+    {
+      "name": "urban_lut.png",
+      "assetHash": "9f196367d8a969dea92d2ee58691bf55ae99f3cc5d9f1a330eb8a884d93d9409",
+      "hubAssetId": "1337618581600849"
+    }
+  ]
+}

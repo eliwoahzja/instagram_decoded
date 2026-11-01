@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_color_echo_extreme",
+  "displayName": "Color echo 2",
+  "description": "[IG Edits] Video effect name. With \"Color echo 2\", the creator can imitate a colorful low-fidelity effect with large side-to-side motion.",
+  "iglu": {
+    "legacyId": 2065,
+    "customization": [
+      {
+        "name": "intensity",
+        "default": 0.5,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Intensity",
+        "displayNameDescription": "[IG Edits] Slider label controlling the strength of a video effect. Generic across many effects (glow, blur, color, distortion, etc.); exact range varies per effect."
+      },
+      {
+        "name": "opacity",
+        "default": 1.0,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Opacity",
+        "displayNameDescription": "[IG Edits] Slider label controlling the opacity (transparency) of an element added by a video effect (low = invisible, high = fully opaque); exact range varies per effect."
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "b88204b0",
+      "handle": "AQAF3CIB7FRT",
+      "md5": "ab0bb8430fc293d9326df46697d01baa"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQADdZmY3WJJ"
+    }
+  }
+}

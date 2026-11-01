@@ -1,0 +1,179 @@
+[Filter LowExposure4K]
+# "Low Exposure 4K" — Laplacian sharpen pre-pass + LUT color grade +
+# post-LUT saturation lift + red-channel warmth nudge. Mirrors the
+# Spark patch:
+#   cameraTexture0 -> Convolve(strength=0.5, kernel=Laplacian)
+#                  -> AdvancedLUT(intensity=0.7) -> material
+#
+# Spark Convolve node settings (3x3 kernel):
+#     r0 = ( 0, -1,  0)
+#     r1 = (-1,  5, -1)
+#     r2 = ( 0, -1,  0)
+# i.e., the standard center-5, cross-(-1), corner-0 Laplacian
+# sharpening kernel (sums to 1.0 so overall brightness is preserved).
+# `convolve_strength = 0.5` mixes the sharpened result back against
+# the original camera at 50% per Spark.
+#
+# Post-LUT, two color-warmth primitives are layered to bring red back
+# to skin (low-exposure LUTs tend to mute warm tones):
+#   - `saturation` (luminance-preserving Rec.709 mix; default 1.15)
+#     boosts overall vibrance without shifting hue. Same primitive as
+#     neutrals_lovers / luxurious / natural_skin.
+#   - `red_lift` (global additive on the red channel; default 0.02)
+#     warms skin tones across the frame. Same primitive as
+#     natural_skin's `red_lift`.
+#
+# The Spark patch also has a `Denoise = 0.01` knob on the AdvancedLUT
+# node. At that value it's a no-op visually (1% tolerance), so it's
+# omitted from this implementation.
+#
+# Single fragment pass (the convolve is a function call inside the
+# shader, not a separate IGLU pass — only 5 non-zero taps are needed
+# since the kernel corners are 0).
+
+[Init]
+fun init(Filter filter)
+{
+    makeTexture('lut);
+
+    filter.parameters = {
+        {convolve_strength = 0.500, min = 0.0, max = 1.0, description = "Laplacian sharpen mix strength (Spark default 0.5)"},
+        {lut_strength = 0.700, min = 0.0, max = 1.0, description = "LUT mix strength (Spark AdvancedLUT default 0.7)"},
+        {saturation = 1.389, min = 0.0, max = 2.0, description = "Global saturation multiplier post-LUT (luminance-preserving; 1.0 = no change)"},
+        {red_lift = 0.020, min = -0.10, max = 0.10, description = "Global red-channel additive lift post-LUT (warms skin; matches natural_skin technique)"},
+    };
+
+    filter.passes = {{
+      name = 'pass0,
+      inputs = {'default, 'lut},
+      uniforms = {
+        convolve_strength = 0.500,
+        lut_strength = 0.700,
+        saturation = 1.389,
+        red_lift = 0.020,
+        source_size_x = 1024.0,
+        source_size_y = 1024.0,
+      },
+      glslShader = glslLowExposure4K,
+    }};
+}
+
+# Custom Parameter strings for sample-app local-loading.
+string lut_path = "lut_path";
+string lut_filename = "";
+
+[PreRender]
+fun preRender(Filter filter){
+    string lut_filename_parameter = getParameterString(lut_path);
+    if (lut_filename_parameter != "") {
+        string new_lut_filename = stringAppend("textureFilePath://", lut_filename_parameter);
+        if (new_lut_filename != lut_filename) {
+            lut_filename = new_lut_filename;
+            loadTexture('lut, lut_filename);
+        }
+    }
+
+    f32 cs = getParameterFloat('convolve_strength);
+    setShaderUniform('pass0, 'convolve_strength, cs);
+
+    f32 ls = getParameterFloat('lut_strength);
+    setShaderUniform('pass0, 'lut_strength, ls);
+
+    f32 sat = getParameterFloat('saturation);
+    setShaderUniform('pass0, 'saturation, sat);
+
+    f32 rl = getParameterFloat('red_lift);
+    setShaderUniform('pass0, 'red_lift, rl);
+
+    # Source resolution for normalizing the 1-texel convolve offsets.
+    # Guarded because getTextureSize() can return (0, 0) before bind.
+    vec2 srcSize = getTextureSize('default);
+    if (srcSize.x > 0.0) {
+        setShaderUniform('pass0, 'source_size_x, srcSize.x);
+        setShaderUniform('pass0, 'source_size_y, srcSize.y);
+    }
+}
+
+#### GLSL shader ####
+
+string glslLowExposure4K = "
+    varying vec2 sourceTextureCoordinate;
+    BaseUniformsOpenGL;
+
+    uniform sampler2D auxSampler0;  // 'default (camera)
+    uniform sampler2D auxSampler1;  // 'lut
+
+    uniform float convolve_strength;
+    uniform float lut_strength;
+    uniform float saturation;
+    uniform float red_lift;
+    uniform float source_size_x;
+    uniform float source_size_y;
+
+    // 8x8 grid LUT lookup on auxSampler1.
+    vec3 lutLookup(vec3 inRgb) {
+      vec3 c = clamp(inRgb, 0.00781, 0.98438);
+      float x = c.r / 8.0;
+      float y = c.g / 8.0;
+      float z = c.b;
+      float blueY = floor(z * 8.0) / 8.0;
+      float blueX = floor((z - blueY) * 64.0) / 8.0;
+      x += blueX;
+      y += blueY;
+      return texture2D(auxSampler1, vec2(x, y)).xyz;
+    }
+
+    // 3x3 Laplacian sharpen with the kernel from the Spark patch:
+    //    0 -1  0
+    //   -1  5 -1
+    //    0 -1  0
+    // Corners are 0 so we skip them — only 5 non-zero taps.
+    vec3 laplacianSharpen(vec2 uv, vec2 texel) {
+      vec3 c = sampleInput(uv).rgb * 5.0;
+      c -= sampleInput(uv + vec2(-texel.x,  0.0)).rgb;
+      c -= sampleInput(uv + vec2( texel.x,  0.0)).rgb;
+      c -= sampleInput(uv + vec2( 0.0,    -texel.y)).rgb;
+      c -= sampleInput(uv + vec2( 0.0,     texel.y)).rgb;
+      return c;
+    }
+
+    void main() {
+      vec2 uv = sourceTextureCoordinate;
+      vec4 cam = sampleInput(uv);
+
+      vec2 texel = vec2(
+          1.0 / max(source_size_x, 1.0),
+          1.0 / max(source_size_y, 1.0));
+
+      // Pass 1 (logical): Laplacian sharpen mixed against original by
+      // convolve_strength.
+      vec3 sharpened = laplacianSharpen(uv, texel);
+      vec3 convolved =
+          mix(cam.rgb, sharpened, convolve_strength);
+
+      // Pass 2 (logical): LUT applied to convolved output. Includes
+      // a graceful fallback for WIP / not-yet-uploaded LUTs (probe
+      // LUT center; pass camera through if empty).
+      vec3 lut_rgb   = lutLookup(convolved);
+      vec3 lut_probe = texture2D(auxSampler1, vec2(0.5, 0.5)).rgb;
+      float lut_loaded = step(0.05,
+          max(max(lut_probe.r, lut_probe.g), lut_probe.b));
+      vec3 graded =
+          mix(convolved, lut_rgb, lut_strength * lut_loaded);
+
+      // Post-LUT saturation boost (luminance-preserving, Rec.709).
+      // Same primitive as neutrals_lovers / luxurious / natural_skin.
+      float lum = dot(graded, vec3(0.2126, 0.7152, 0.0722));
+      vec3 saturated =
+          clamp(mix(vec3(lum), graded, saturation), 0.0, 1.0);
+
+      // Global red-channel additive lift to bring warmth back to
+      // skin tones. Same primitive as natural_skin (default +0.02 =
+      // a subtle nudge; can dial negative for cool).
+      vec3 result = saturated;
+      result.r += red_lift;
+
+      result = clamp(result, 0.0, 1.0);
+      gl_FragColor = toOutputFormat(vec4(result, cam.a));
+    }
+    ";

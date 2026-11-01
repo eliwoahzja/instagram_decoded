@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "transition_pixel",
+  "displayName": "Pixel",
+  "description": "Video effect name. A video effect is a creative visual element that can be applied to a video. With \"Pixel\", the creator can add a pixelated effect to the video.",
+  "iglu": {}
+}

@@ -1,0 +1,1 @@
+(function(locatorJSON){return window._META.IABInnerFrame.getStructuredFieldData(locatorJSON?JSON.parse(locatorJSON):void 0)})

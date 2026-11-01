@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "identifier": "handheld",
+  "displayName": "Handheld",
+  "description": "Video effects selection. Mimics the results of hand held camera.",
+  "iglu": {
+    "legacyId": 1106
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_horizontal_open",
+  "displayName": "Horizontal open",
+  "description": "Video effects selection. Opens the video from the horizontal axis.",
+  "iglu": {
+    "legacyId": 2037,
+    "behavior": {
+      "type": "fixedIntro",
+      "durationMs": 3000,
+      "curve": "linear"
+    },
+    "customization": [
+      {
+        "name": "duration",
+        "default": 3.0,
+        "min": 0.5,
+        "max": 6.0,
+        "displayName": "Duration",
+        "displayNameDescription": "[IG Edits] Slider label controlling how long a video effect's animation lasts; exact units and range vary per effect (seconds or normalized).",
+        "displayMethod": "time"
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "64d3ea62",
+      "handle": "AQBlw-MLGa7D",
+      "md5": "83affd2f410943bd12cdde26f487ae2c"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAF1WB0Nx1k"
+    }
+  }
+}

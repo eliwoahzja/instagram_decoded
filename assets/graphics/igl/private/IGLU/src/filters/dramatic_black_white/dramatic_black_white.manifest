@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "identifier": "tokyo",
+  "displayName": "Tokyo",
+  "description": "City-name color filter",
+  "iglu": {
+    "legacyId": 702
+  },
+  "assets": [
+    {
+      "name": "clut_bw.png",
+      "assetHash": "e2c966ab17d7e651991f3be0f0b01fd12f87c1700981a1384d86e6611671a84b",
+      "hubAssetId": "2561237420940601"
+    }
+  ]
+}

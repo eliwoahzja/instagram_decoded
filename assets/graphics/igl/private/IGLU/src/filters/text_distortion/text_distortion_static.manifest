@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "text_distortion_static",
+  "displayName": "Static",
+  "description": "[IG Edits] Text effect name. With Static, the creator can add a fuzzy effect similar to a TV interference to their text.",
+  "iglu": {}
+}

@@ -1,0 +1,299 @@
+[Filter DoodleWater]
+[MaskBehavior alpha]
+
+[Init]
+fun init(Filter filter) {
+  filter.passes = {
+  {
+    name = 'pass0, inputs = {'default},
+    uniforms = {
+      time = 0.0,
+      contentAR = 0.5625,
+      contentScale = {1.0, 1.0},
+      inputSize = {100.0, 100.0},
+      yAmplitude = 0.01,
+      yScale = 18.5,
+      ySpeed = 1.74,
+      xAmplitude = 0.01,
+      xScale = 22.5,
+      xSpeed = 1.30,
+      causticsEnabled = 0.57,
+      causticsScale = 3.47,
+      causticsSpeed = 0.60,
+      causticsAberration = 0.13,
+      causticsIntensity = 0.78,
+    },
+    glslShader = glsl,
+  },
+  {
+    name = 'bevelBlurH,
+    inputs = {'pass0},
+    uniforms = {
+      uDirection = {1.0, 0.0},
+      uBlurAmount = 8.0,
+      uFalloff = 0.4,
+      uResolution = {1080.0, 1920.0},
+    },
+    glslShader = blurGlsl,
+  },
+  {
+    name = 'bevelBlurV,
+    inputs = {'bevelBlurH},
+    uniforms = {
+      uDirection = {0.0, 1.0},
+      uBlurAmount = 8.0,
+      uFalloff = 0.4,
+      uResolution = {1080.0, 1920.0},
+    },
+    glslShader = blurGlsl,
+  },
+  {
+    name = 'waterCompose,
+    inputs = {'default, 'pass0, 'bevelBlurV},
+    uniforms = {
+      bevelStrength = 0.6,
+      bevelOffset = {3.6, -0.3},
+      inputSize = {1080.0, 1920.0},
+    },
+    glslShader = waterComposeGlsl,
+  }
+  };
+
+  filter.parameters = {
+    {yAmplitude = 0.01, min = 0.0, max = 0.03, description = "Noise Y Amplitude"},
+    {yScale = 18.5, min = 1.0, max = 50.0, description = "Noise Y Scale"},
+    {ySpeed = 1.74, min = 0.0, max = 10.0, description = "Noise Y Speed"},
+    {xAmplitude = 0.01, min = 0.0, max = 0.03, description = "Noise X Amplitude"},
+    {xScale = 22.5, min = 1.0, max = 50.0, description = "Noise X Scale"},
+    {xSpeed = 1.30, min = 0.0, max = 10.0, description = "Noise X Speed"},
+    {causticsEnabled = 0.57, min = 0.0, max = 1.0, description = "Caustics On/Off"},
+    {causticsScale = 3.47, min = 0.5, max = 20.0, description = "Caustics Scale"},
+    {causticsSpeed = 0.60, min = 0.0, max = 5.0, description = "Caustics Speed"},
+    {causticsAberration = 0.13, min = 0.0, max = 1.0, description = "Caustics Aberration"},
+    {causticsIntensity = 0.78, min = 0.0, max = 3.0, description = "Caustics Intensity"},
+    {bevelStrength = 0.6, min = 0.0, max = 5.0, description = "Bevel Strength"},
+    {bevelRadius = 8.0, min = 1.0, max = 16.0, description = "Bevel Radius"},
+    {bevelOffset = {3.6, -0.3}, description = "Bevel Offset"},
+  };
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  f32 time = getParameterFloat('time_sec);
+  vec2 inputSize = getTextureSize('default);
+  f32 contentAR = getParameterFloat('contentAspectRatio);
+  if (contentAR < 0.001) { contentAR = inputSize.x / inputSize.y; }
+  vec2 contentScale = getParameterVec2('contentScale);
+  if (contentScale.x < 0.001) { contentScale = {1.0, 1.0}; }
+  setShaderUniform('pass0, 'contentAR, contentAR);
+  setShaderUniform('pass0, 'contentScale, contentScale);
+  setShaderUniform('pass0, 'time, time);
+
+  setShaderUniform('pass0, 'yAmplitude, getParameterFloat('yAmplitude));
+  setShaderUniform('pass0, 'yScale, getParameterFloat('yScale));
+  setShaderUniform('pass0, 'ySpeed, getParameterFloat('ySpeed));
+  setShaderUniform('pass0, 'xAmplitude, getParameterFloat('xAmplitude));
+  setShaderUniform('pass0, 'xScale, getParameterFloat('xScale));
+  setShaderUniform('pass0, 'xSpeed, getParameterFloat('xSpeed));
+  setShaderUniform('pass0, 'causticsEnabled, getParameterFloat('causticsEnabled));
+  setShaderUniform('pass0, 'causticsScale, getParameterFloat('causticsScale));
+  setShaderUniform('pass0, 'causticsSpeed, getParameterFloat('causticsSpeed));
+  setShaderUniform('pass0, 'causticsAberration, getParameterFloat('causticsAberration));
+  setShaderUniform('pass0, 'causticsIntensity, getParameterFloat('causticsIntensity));
+
+  # Bevel blur passes
+  f32 bevelRadius = getParameterFloat('bevelRadius);
+  setShaderUniform('bevelBlurH, 'uBlurAmount, bevelRadius);
+  setShaderUniform('bevelBlurH, 'uResolution, inputSize);
+  setShaderUniform('bevelBlurV, 'uBlurAmount, bevelRadius);
+  setShaderUniform('bevelBlurV, 'uResolution, inputSize);
+
+  # Water compose pass
+  setShaderUniform('waterCompose, 'bevelStrength, getParameterFloat('bevelStrength));
+  setShaderUniform('waterCompose, 'inputSize, inputSize);
+}
+
+# ==========================================================================
+# Pass 1: Water effect (UV displacement + caustics) — unchanged
+# ==========================================================================
+string glsl = "
+  varying vec2 sourceTextureCoordinate;
+  BaseUniformsOpenGL;
+
+  uniform float time;
+  uniform float contentAR;
+  uniform vec2 contentScale;
+  uniform vec2 inputSize;
+  uniform float yAmplitude;
+  uniform float yScale;
+  uniform float ySpeed;
+  uniform float xAmplitude;
+  uniform float xScale;
+  uniform float xSpeed;
+  uniform float causticsEnabled;
+  uniform float causticsScale;
+  uniform float causticsSpeed;
+  uniform float causticsAberration;
+  uniform float causticsIntensity;
+
+  // Classic Perlin noise (stegu/webgl-noise)
+  vec4 permute(vec4 x) {
+    return mod(((x*34.0)+1.0)*x, 289.0);
+  }
+
+  vec2 fade2(vec2 t) {
+    return t*t*t*(t*(t*6.0-15.0)+10.0);
+  }
+
+  float cnoise(vec2 P) {
+    vec4 Pi = floor(P.xyxy) + vec4(0.0, 0.0, 1.0, 1.0);
+    vec4 Pf = fract(P.xyxy) - vec4(0.0, 0.0, 1.0, 1.0);
+    Pi = mod(Pi, 289.0);
+    vec4 ix = Pi.xzxz;
+    vec4 iy = Pi.yyww;
+    vec4 fx = Pf.xzxz;
+    vec4 fy = Pf.yyww;
+    vec4 i = permute(permute(ix) + iy);
+    vec4 gx = 2.0 * fract(i * 0.0243902439) - 1.0;
+    vec4 gy = abs(gx) - 0.5;
+    vec4 tx = floor(gx + 0.5);
+    gx = gx - tx;
+    vec2 g00 = vec2(gx.x, gy.x);
+    vec2 g10 = vec2(gx.y, gy.y);
+    vec2 g01 = vec2(gx.z, gy.z);
+    vec2 g11 = vec2(gx.w, gy.w);
+    vec4 norm = 1.79284291400159 - 0.85373472095314 *
+        vec4(dot(g00, g00), dot(g01, g01), dot(g10, g10), dot(g11, g11));
+    g00 *= norm.x;
+    g01 *= norm.y;
+    g10 *= norm.z;
+    g11 *= norm.w;
+    float n00 = dot(g00, vec2(fx.x, fy.x));
+    float n10 = dot(g10, vec2(fx.y, fy.y));
+    float n01 = dot(g01, vec2(fx.z, fy.z));
+    float n11 = dot(g11, vec2(fx.w, fy.w));
+    vec2 fade_xy = fade2(Pf.xy);
+    vec2 n_x = mix(vec2(n00, n01), vec2(n10, n11), fade_xy.x);
+    float n_xy = mix(n_x.x, n_x.y, fade_xy.y);
+    return 2.3 * n_xy;
+  }
+
+  // Caustics (from caustics.iglu — compact matrix-based approach)
+  float F(inout vec4 k, float v) {
+    return length(.5 - fract(k.xyw *= mat3(-2, -1, 2, 3, -2, 1, 1, 2, 2) * v));
+  }
+
+  float caustics(vec2 uv, float scale, float t, float speed, float timeOffset) {
+    vec2 uvs = .5 + (uv - .5) * 100.0 * scale;
+    float tt = t * speed + timeOffset;
+    vec4 k = vec4(0.0, 0.0, 0.0, tt);
+    k.xy = uvs * 2.0 / 2e2;
+    return pow(min(min(F(k, .5), F(k, .4)), F(k, .3)), 7.0) * 25.0;
+  }
+
+  void main() {
+    vec2 uv = sourceTextureCoordinate;
+
+    // Aspect ratio correction for uniform noise on non-square canvases
+    float aspect = contentAR;
+    vec2 pixelUV = vec2(uv.x * aspect * contentScale.x, uv.y * contentScale.y);
+
+    // Perlin noise UV displacement
+    float yDisp = cnoise(vec2(pixelUV.x * yScale, time * ySpeed)) * yAmplitude / contentScale.y;
+    float xDisp = cnoise(vec2(pixelUV.y * xScale, time * xSpeed + 43.21)) * xAmplitude / contentScale.x;
+    vec2 distortedCoord = vec2(uv.x + xDisp / aspect, uv.y + yDisp);
+
+    // Sample input at displaced coordinates
+    vec4 color = sampleInput(distortedCoord);
+
+    // Caustics overlay (same algorithm as caustics.iglu)
+    if (causticsEnabled > 0.5 && color.a > 0.0) {
+      // Aspect-corrected UV for caustics
+      vec2 causticUV = vec2(uv.x * contentScale.x, uv.y * contentScale.y);
+      causticUV.y *= inputSize.y / inputSize.x;
+
+      float t = time * causticsSpeed;
+      float r = caustics(causticUV, causticsScale, t, 1.0, causticsAberration);
+      float g = caustics(causticUV, causticsScale, t, 1.0, 0.0);
+      float b = caustics(causticUV, causticsScale, t, 1.0, -causticsAberration);
+
+      // Apply caustics to stroke, preserving alpha
+      color.r = color.r + r * causticsIntensity * color.a;
+      color.g = color.g + g * causticsIntensity * color.a;
+      color.b = color.b + b * causticsIntensity * color.a;
+    }
+
+    gl_FragColor = toOutputFormat(color);
+  }
+";
+
+# ==========================================================================
+# Pass 2-3: Directional Gaussian blur for bevel (same as doodle_glitter)
+# ==========================================================================
+string blurGlsl = "
+precision highp float;
+varying vec2 sourceTextureCoordinate;
+BaseUniformsOpenGL;
+
+uniform vec2 uDirection;
+uniform float uBlurAmount;
+uniform float uFalloff;
+uniform vec2 uResolution;
+
+void main() {
+  vec2 uv = sourceTextureCoordinate;
+  vec2 texelSize = 1.0 / uResolution;
+  vec4 result = vec4(0.0);
+  float totalWeight = 0.0;
+  for (int i = -12; i <= 12; i++) {
+    float fi = float(i);
+    if (abs(fi) > uBlurAmount) continue;
+    vec2 offset = uDirection * texelSize * fi;
+    float weight = exp(-abs(fi) * uFalloff / uBlurAmount);
+    result += sampleInput(uv + offset) * weight;
+    totalWeight += weight;
+  }
+  result /= totalWeight;
+  gl_FragColor = toOutputFormat(result);
+}
+";
+
+# ==========================================================================
+# Pass 4: Bevel compose — applies 3D bevel to water effect output
+# ==========================================================================
+string waterComposeGlsl = "
+precision highp float;
+varying vec2 sourceTextureCoordinate;
+BaseUniformsOpenGL;
+
+uniform sampler2D auxSampler1; // pass0 (displaced water color)
+uniform sampler2D auxSampler2; // bevelBlurV (blurred alpha)
+uniform float bevelStrength;
+uniform vec2 bevelOffset;
+uniform vec2 inputSize;
+
+void main() {
+  vec2 uv = sourceTextureCoordinate;
+  // 'default is the primary input (anchors aux binding in the IGLUScript host); the displaced
+  // water color comes from pass0 (auxSampler1), the blurred alpha from bevelBlurV (auxSampler2).
+  vec4 waterColor = texture2D(auxSampler1, uv);
+
+  if (waterColor.a < 0.01) {
+    gl_FragColor = toOutputFormat(vec4(0.0));
+    return;
+  }
+
+  // Bevel: parallax-shifted alpha subtraction on the displaced stroke
+  float bh = texture2D(auxSampler2, uv + bevelOffset / inputSize).a;
+  float bs = texture2D(auxSampler2, uv - bevelOffset / inputSize).a;
+  bh = max(0.0, waterColor.a - bh);
+  bs = max(0.0, waterColor.a - bs);
+  float bevel = (bh - bs) * bevelStrength;
+
+  // Apply bevel as lightness shift to the water color
+  vec3 color = waterColor.rgb + bevel * waterColor.a;
+  color = clamp(color, 0.0, 1.0);
+
+  gl_FragColor = toOutputFormat(vec4(color, waterColor.a));
+}
+";

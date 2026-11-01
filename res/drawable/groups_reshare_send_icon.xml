@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="@color/bds_white" />
+            <stroke android:width="2.0dp" android:color="@color/bds_transparent" />
+        </shape>
+    </item>
+    <item android:drawable="@drawable/instagram_direct_prism_filled_12" android:left="5.0dp" android:top="6.0dp" android:right="5.0dp" android:bottom="4.0dp" />
+</layer-list>

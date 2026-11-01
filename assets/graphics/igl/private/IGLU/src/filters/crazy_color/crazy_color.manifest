@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "identifier": "crazy_color",
+  "displayName": "Rio de Janeiro",
+  "description": "[IG Edits] Color filter name. With \"Rio de Janeiro\", the creator can remap colors through a 33-cube LUT and layer a max-blend overlay map for a vivid carnival look.",
+  "iglu": {
+    "legacyId": 642
+  }
+}

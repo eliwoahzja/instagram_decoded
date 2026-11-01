@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "basic_adjust",
+  "displayName": "Basic Adjust",
+  "description": "[IG Edits] Video effect name. With \"Basic Adjust\", the creator can tune brightness, contrast, exposure, saturation, clarity, vibrance, shadows, highlights, temp/tint and grain.",
+  "iglu": {}
+}

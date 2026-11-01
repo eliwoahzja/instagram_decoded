@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "text_distortion_whirl",
+  "displayName": "Whirl",
+  "description": "[IG Edits] Text effect name. With \"Whirl\", the creator twists a text layer into a swirling spiral that rotates letters around the center.",
+  "iglu": {}
+}

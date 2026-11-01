@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "identifier": "whatsapp_chrome_filter",
+  "displayName": "Whatsapp Chrome Filter",
+  "description": "[IG Edits] Color filter name. With \"Whatsapp Chrome Filter\", the creator can apply WhatsApp's Chrome look via a baked LUT (lut_chrome.png) for cool highlights and crisp contrast.",
+  "assets": [
+    {
+      "name": "lut_chrome.png",
+      "assetHash": "dc218c4c129bdec060294b2e5d440443fe2e4aff4426ab891358a1f35bc41961",
+      "hubAssetId": "1419533819129073"
+    }
+  ],
+  "iglu": {}
+}

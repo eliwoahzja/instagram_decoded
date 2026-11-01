@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "text_multipass_test",
+  "displayName": "Multipass Test",
+  "description": "[IG Edits] Text effect name. With \"Multipass Test\", the creator can render text through a red+green blend pass with a temporal feedback loop that cycles colors over time.",
+  "iglu": {}
+}

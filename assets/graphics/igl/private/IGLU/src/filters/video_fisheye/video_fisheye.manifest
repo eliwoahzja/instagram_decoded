@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_fisheye",
+  "displayName": "Fisheye",
+  "description": "[IG Edits] Video effect name. A video effect is a creative visual element that can be applied to a video. With \"Fisheye\", the creator can apply an effect of a wide angle distorted lens to their video.",
+  "iglu": {
+    "legacyId": 2078,
+    "customization": [
+      {
+        "name": "amount",
+        "default": 0.236,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Amount",
+        "displayNameDescription": "[IG Edits] Slider label controlling the magnitude or quantity of a video effect. Generic across many effects; exact range varies per effect."
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "e144c653",
+      "handle": "AQAD0lXB9ic9",
+      "md5": "40a9f38897b00a1f73a89a77a2a7061e"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQADeRtAa4TX",
+      "isImageFormat": true
+    }
+  }
+}

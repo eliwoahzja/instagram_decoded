@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "text_offset_transparent",
+  "displayName": "Offset Transparent",
+  "description": "[IG Edits] Text effect name. With \"Offset Transparent\", the creator can knock out the text fill and add a single-layer offset edge silhouette in the text color behind each glyph.",
+  "iglu": {}
+}

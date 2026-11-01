@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "identifier": "lively",
+  "displayName": "Lively",
+  "description": "[IG Edits] Color filter name. With \"Lively\", the creator can remap pixel RGB through the Lively 3D LUT for a saturated vibrant tone with boosted color energy.",
+  "iglu": {
+    "legacyId": 5042
+  },
+  "assets": [
+    {
+      "name": "lively.lutpk",
+      "assetHash": "0d38cef1bc808fcd71b0731402c0b1139710143138f53512dd5fe53d8b3ce4eb",
+      "hubAssetId": "995100813187186"
+    }
+  ]
+}

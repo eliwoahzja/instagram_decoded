@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "defect_detection",
+  "displayName": "Defect Detection",
+  "description": "[IG Edits] Video effect name. With \"Defect Detection\", the creator can lattice-sample pixels to detect black frames, frozen frames, and uniform-color defects in the render output.",
+  "iglu": {}
+}

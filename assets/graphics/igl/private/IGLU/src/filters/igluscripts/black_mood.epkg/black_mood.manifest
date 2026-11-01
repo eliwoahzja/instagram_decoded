@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "assets": [
+    {
+      "name": "black_mood_lut.png",
+      "assetHash": "a4376bf1722e4340714af125fde0b4d11c56db070ed685d3ebab596fb2eb7f1a",
+      "hubAssetId": "1353900213515799"
+    }
+  ],
+  "description": "[IG Edits] Color filter name. With \"Black Mood\", the creator gets a dark, moody 8x8 LUT color grade with a soft-focus blur.",
+  "displayName": "Black Mood",
+  "identifier": "4616b55c-795a-4562-b868-2d67c585ae36",
+  "android": {
+    "previewAsset": {
+      "key": "89a325d8",
+      "handle": "AQADxCNss8Q5",
+      "md5": "a3da3244de85b58d59d6fee304ac0864"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQADzQzioMtK"
+    }
+  },
+  "iglu": {
+    "legacyId": 3217
+  }
+}

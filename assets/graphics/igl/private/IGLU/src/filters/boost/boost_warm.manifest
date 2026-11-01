@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "identifier": "boost_warm",
+  "displayName": "Boost Warm",
+  "description": "Filter name for a warm-toned saturation/contrast boost",
+  "iglu": {
+    "legacyId": 1007
+  },
+  "assets": [
+    {
+      "name": "lut_boost_warm.png",
+      "assetHash": "a3fea8398d9d09bc89438867cf35345dd5f98d8af22102fe4da7b6ccfe40f248",
+      "hubAssetId": "916712450849273"
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <corners android:radius="@dimen/abc_floating_window_z" />
+    <solid android:color="?igds_color_overlay_ads_banner_background" />
+</shape>

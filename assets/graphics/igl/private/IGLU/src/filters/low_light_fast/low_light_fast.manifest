@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "low_light_fast",
+  "displayName": "Low Light Fast",
+  "description": "[IG Edits] Video effect. With \"Low Light Fast\", the creator can brighten dim footage by estimating scene luma through a 4-level downsample pyramid then lifting shadows more than highlights.",
+  "iglu": {}
+}

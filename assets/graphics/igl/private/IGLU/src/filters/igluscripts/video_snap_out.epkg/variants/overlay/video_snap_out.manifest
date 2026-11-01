@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "displayName": "Snap out",
+  "description": "[IG Edits] Effect name shown in the video effects picker. This is the user-facing label for a video effect.",
+  "iglu": {
+    "legacyId": 5137,
+    "behavior": {
+      "type": "fixedOutro",
+      "durationMs": 150,
+      "curve": "linear"
+    },
+    "customization": [
+      {
+        "name": "duration",
+        "default": 0.15,
+        "min": 0.1,
+        "max": 5.0,
+        "displayName": "Duration",
+        "displayMethod": "time"
+      }
+    ],
+    "subject": {
+      "overlay": true
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "e9c5b68d",
+      "handle": "AQAC4Fgl_PXi",
+      "md5": "1febeb94696fc54dac672f6bd09ccec7"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAIMRBikX2g"
+    }
+  }
+}

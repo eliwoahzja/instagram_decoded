@@ -1,0 +1,199 @@
+.class public final LX/XNT;
+.super LX/Q84;
+.source ""
+
+
+# static fields
+.field public static final __redex_internal_original_name:Ljava/lang/String; = "BlendViewerNuxFragment"
+
+
+# instance fields
+.field public final A00:LX/Esp;
+
+.field public final A01:LX/Ifn;
+
+
+# direct methods
+.method public constructor <init>()V
+    .locals 3
+
+    invoke-direct {p0}, LX/Q84;-><init>()V
+
+    const/16 v0, 0x69
+
+    invoke-static {p0, v0}, LX/221;->A0n(Ljava/lang/Object;I)LX/Esp;
+
+    move-result-object v0
+
+    iput-object v0, p0, LX/XNT;->A00:LX/Esp;
+
+    const-string v2, "blend_viewer_nux_fragment"
+
+    const/4 v1, 0x1
+
+    const/4 v0, 0x0
+
+    invoke-static {v2, v1, v0}, LX/0WP;->A01(Ljava/lang/String;ZZ)LX/0WQ;
+
+    move-result-object v0
+
+    iput-object v0, p0, LX/XNT;->A01:LX/Ifn;
+
+    return-void
+.end method
+
+
+# virtual methods
+.method public final getModuleName()Ljava/lang/String;
+    .locals 1
+
+    iget-object v0, p0, LX/XNT;->A01:LX/Ifn;
+
+    invoke-interface {v0}, LX/9PW;->getModuleName()Ljava/lang/String;
+
+    move-result-object v0
+
+    return-object v0
+.end method
+
+.method public final onCreateView(Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Landroid/os/Bundle;)Landroid/view/View;
+    .locals 6
+
+    const v0, -0x188e7de8
+
+    invoke-static {v0}, LX/3Et;->A02(I)I
+
+    move-result v3
+
+    const-string v0, "android_purge_26_q2_BlendViewerNuxFragment_onCreateView"
+
+    invoke-static {v0}, LX/3th;->A00(Ljava/lang/String;)V
+
+    const/4 v5, 0x1
+
+    const-string v0, "android_purge_26_q2_BlendViewerNuxFragment_setDarkMode"
+
+    invoke-static {v0}, LX/3th;->A00(Ljava/lang/String;)V
+
+    invoke-virtual {p0}, Landroidx/fragment/app/Fragment;->requireActivity()Landroidx/fragment/app/FragmentActivity;
+
+    move-result-object v1
+
+    invoke-virtual {p0}, LX/Q84;->getSession()Lcom/instagram/common/session/UserSession;
+
+    move-result-object v0
+
+    const/4 v4, 0x0
+
+    invoke-static {v1, p0, v0, v4, v5}, LX/5LI;->A02(Landroid/app/Activity;Landroidx/fragment/app/Fragment;Lcom/instagram/common/session/UserSession;ZZ)V
+
+    invoke-virtual {p0}, LX/Q84;->getSession()Lcom/instagram/common/session/UserSession;
+
+    move-result-object v0
+
+    invoke-static {v0}, LX/2AM;->A00(Lcom/instagram/common/session/UserSession;)LX/2AM;
+
+    move-result-object v2
+
+    iget-object v0, p0, LX/XNT;->A00:LX/Esp;
+
+    invoke-static {v0}, LX/16V;->A11(LX/Esp;)Ljava/lang/String;
+
+    move-result-object v1
+
+    sget-object v0, LX/UZu;->A00:LX/glS;
+
+    invoke-virtual {v2, v0, v1}, LX/2AM;->A01(LX/GaX;Ljava/lang/String;)Ljava/lang/Object;
+
+    move-result-object v0
+
+    check-cast v0, LX/3h2;
+
+    if-eqz v0, :cond_0
+
+    iget-object v0, v0, LX/3h2;->A01:LX/a0P;
+
+    invoke-static {v0}, LX/256;->A0Q(LX/a0P;)LX/AHX;
+
+    move-result-object v1
+
+    invoke-virtual {p0}, LX/Q84;->getSession()Lcom/instagram/common/session/UserSession;
+
+    move-result-object v0
+
+    invoke-static {v0, v1}, LX/AJV;->A00(Lcom/instagram/common/session/UserSession;LX/AHX;)Lcom/instagram/common/typedurl/ImageUrl;
+
+    move-result-object v2
+
+    :goto_0
+    const/16 v0, 0xf
+
+    new-instance v1, LX/BTB;
+
+    invoke-direct {v1, v0, v2, p0}, LX/BTB;-><init>(ILjava/lang/Object;Ljava/lang/Object;)V
+
+    const v0, -0x387bb204
+
+    invoke-static {v1, v0, v5}, LX/2DF;->A03(Ljava/lang/Object;IZ)LX/2DG;
+
+    move-result-object v0
+
+    invoke-static {p0, v0, v5, v4}, LX/HbU;->A04(LX/4Ka;LX/snk;ZZ)Landroidx/compose/ui/platform/ComposeView;
+
+    move-result-object v1
+
+    const v0, 0xb99b4c2
+
+    invoke-static {v0, v3}, LX/3Et;->A09(II)V
+
+    return-object v1
+
+    :cond_0
+    const/4 v2, 0x0
+
+    goto :goto_0
+.end method
+
+.method public final onDestroyView()V
+    .locals 8
+
+    const v0, 0x7682b63c
+
+    invoke-static {v0}, LX/3Et;->A02(I)I
+
+    move-result v1
+
+    const-string v0, "android_purge_26_q2_BlendViewerNuxFragment_onDestroyView"
+
+    invoke-static {v0}, LX/3th;->A00(Ljava/lang/String;)V
+
+    const-string v0, "android_purge_26_q2_BlendViewerNuxFragment_setDarkMode"
+
+    invoke-static {v0}, LX/3th;->A00(Ljava/lang/String;)V
+
+    sget-object v2, LX/5LI;->A00:LX/5LI;
+
+    move-object v4, p0
+
+    invoke-virtual {p0}, Landroidx/fragment/app/Fragment;->requireActivity()Landroidx/fragment/app/FragmentActivity;
+
+    move-result-object v3
+
+    invoke-virtual {p0}, LX/Q84;->getSession()Lcom/instagram/common/session/UserSession;
+
+    move-result-object v5
+
+    const/4 v6, 0x0
+
+    const/4 v7, 0x1
+
+    invoke-virtual/range {v2 .. v7}, LX/5LI;->A0A(Landroid/app/Activity;Landroidx/fragment/app/Fragment;Lcom/instagram/common/session/UserSession;ZZ)V
+
+    invoke-super {p0}, LX/4Ka;->onDestroyView()V
+
+    const v0, -0x78708f9
+
+    invoke-static {v0, v1}, LX/3Et;->A09(II)V
+
+    return-void
+.end method

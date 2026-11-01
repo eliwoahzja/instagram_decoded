@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="?igds_color_icon_on_media" />
+            <size android:height="10.0dp" android:width="10.0dp" />
+            <stroke android:width="2.0dp" android:color="?igds_color_media_background" />
+        </shape>
+    </item>
+    <item>
+        <bitmap android:gravity="center" android:src="@drawable/instagram_circle_add_filled_16" android:tint="@color/basel_stacked_trimmer_handle" />
+    </item>
+</layer-list>

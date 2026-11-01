@@ -1,0 +1,45 @@
+# IGLUSCRIPTCOLLISION_BYPASS: IGLUScript port of transition_slide_down, QE-selectable for A/B vs TransitionSlideFilter.
+[Filter TransitionSlideDown]
+
+[Init]
+fun init(Filter filter) {
+  makeTexture('transition);
+  filter.passes = {{
+    name = 'compose,
+    inputs = {'default, 'transition},
+    shaderInputNames = {'default, 's_texture1},
+    uniforms = { progress = 0.0 },
+    glslShader = glsl,
+  }};
+}
+
+fun easeOutBack(f32 t) f32 {
+  f32 u = t - 1.0;
+  return u * u * u + 1.0;
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  setShaderUniform('compose, 'progress, easeOutBack(getParameterFloat('progress)));
+}
+
+string glsl = "
+  varying vec2 sourceTextureCoordinate;
+  BaseUniformsOpenGL;
+  uniform sampler2D s_texture1;
+  uniform float progress;
+  vec2 mirrorRepeatUV(vec2 uv) {
+    uv = fract(uv * 0.5) * 2.0;
+    return 1.0 - abs(1.0 - uv);
+  }
+  void main() {
+    vec2 uv = sourceTextureCoordinate;
+    vec2 dir = vec2(0.0, -1.0);
+    vec2 uva = uv + dir * progress;
+    vec2 uvb = uva - dir;
+    float movingUV = dot(uva, dir);
+    float movingEdge = (dot(vec2(1.0, 1.0), dir) + 1.0) * 0.5;
+    float alpha = step(movingEdge, movingUV);
+    gl_FragColor = toOutputFormat(mix(sampleInput(uva), texture2D(s_texture1, mirrorRepeatUV(uvb)), alpha));
+  }
+";

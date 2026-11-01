@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "identifier": "c2cb9a78-8c01-4c05-a34b-519afa11517c",
+  "displayName": "Blinds in vertical",
+  "description": "[IG Edits] Effect name shown in the video effects picker. This is the user-facing label for a video effect.",
+  "iglu": {
+    "legacyId": 3167,
+    "behavior": {
+      "type": "fixedIntro",
+      "durationMs": 1600,
+      "curve": "quarticInOut"
+    },
+    "customization": [
+      {
+        "name": "direction",
+        "defaultSelection": "down",
+        "available": [
+          "up",
+          "down"
+        ],
+        "displayName": "Wipe Direction"
+      },
+      {
+        "name": "duration",
+        "default": 1.6,
+        "min": 1.0,
+        "max": 5.0,
+        "displayName": "Duration",
+        "displayMethod": "time"
+      },
+      {
+        "name": "amount",
+        "displayName": "Amount",
+        "default": 0.0,
+        "min": 0.0,
+        "max": 1.0
+      }
+    ]
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAF6aMCuFkt"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "e85294a",
+      "handle": "AQADo2e1-EP5",
+      "md5": "a9eec250bb8a045b17299ad8cd55d1e2"
+    }
+  },
+  "dependencies": [
+    "video_blinds_vertical"
+  ]
+}

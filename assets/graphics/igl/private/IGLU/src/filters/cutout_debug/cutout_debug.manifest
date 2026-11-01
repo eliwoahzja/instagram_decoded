@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "cutout_debug",
+  "displayName": "Cutout Debug",
+  "description": "[IG Edits] Video effect name. With \"Cutout Debug\", the creator can visualize segmentation masks and instance bounding boxes with blurred halo composites for debugging.",
+  "iglu": {}
+}

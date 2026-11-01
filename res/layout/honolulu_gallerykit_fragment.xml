@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout android:id="@id/gallerykit_root" android:background="@android:color/black" android:layout_width="match_parent" android:layout_height="match_parent"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout android:orientation="vertical" android:id="@id/gallerykit_content_container" android:layout_width="match_parent" android:layout_height="match_parent">
+        <include layout="@layout/honolulu_gallerykit_topbar" />
+        <FrameLayout android:id="@id/gallerykit_pager_container" android:background="@color/abc_decor_view_status_guard" android:layout_width="match_parent" android:layout_height="0.0dp" android:layout_weight="1.0">
+            <androidx.recyclerview.widget.RecyclerView android:id="@id/gallerykit_pager_recycler" android:layout_width="match_parent" android:layout_height="match_parent" />
+        </FrameLayout>
+        <com.instagram.honolulu.gallerykit.divider.SplitDividerView android:id="@id/gallerykit_divider_handle" android:background="@color/abc_decor_view_status_guard" android:layout_width="match_parent" android:layout_height="@dimen/abc_alert_dialog_button_dimen" />
+        <FrameLayout android:id="@id/gallerykit_thumbnail_container" android:background="@color/gallerykit_thumbnail_background" android:layout_width="match_parent" android:layout_height="0.0dp" android:layout_weight="1.0">
+            <androidx.recyclerview.widget.RecyclerView android:id="@id/gallerykit_thumbnail_recycler" android:clipToPadding="false" android:layout_width="match_parent" android:layout_height="match_parent" />
+        </FrameLayout>
+    </LinearLayout>
+    <LinearLayout android:gravity="center_horizontal" android:layout_gravity="center" android:orientation="vertical" android:id="@id/gallerykit_empty_state" android:visibility="gone" android:layout_width="wrap_content" android:layout_height="wrap_content" android:paddingStart="@dimen/abc_dialog_padding_material" android:paddingEnd="@dimen/abc_dialog_padding_material">
+        <TextView android:textSize="18.0sp" android:textStyle="bold" android:textColor="@color/bds_white" android:gravity="center" android:id="@id/gallerykit_empty_state_title" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/string_0x7f1300a1" />
+        <TextView android:textSize="14.0sp" android:textColor="@color/bds_grey_11" android:gravity="center" android:id="@id/gallerykit_empty_state_description" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="@dimen/abc_floating_window_z" android:text="@string/string_0x7f1300a0" />
+    </LinearLayout>
+    <FrameLayout android:id="@id/gallerykit_zoom_overlay" android:focusable="true" android:visibility="invisible" android:clickable="true" android:layout_width="match_parent" android:layout_height="match_parent">
+        <view android:id="@id/gallerykit_zoom_scrim" android:background="@android:color/black" android:layout_width="match_parent" android:layout_height="match_parent" class="android.view.View" />
+        <ImageView android:id="@id/gallerykit_zoom_image" android:layout_width="match_parent" android:layout_height="match_parent" android:scaleType="matrix" android:contentDescription="@null" />
+    </FrameLayout>
+</FrameLayout>

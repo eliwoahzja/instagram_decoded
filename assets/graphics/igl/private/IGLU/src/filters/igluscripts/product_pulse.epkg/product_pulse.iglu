@@ -1,0 +1,235 @@
+[Filter ProductPulse]
+[MaskBehavior composite]
+
+[Init]
+fun init(Filter filter) {
+  # Declares the named mask input that the host binds to the object silhouette.
+  makeTexture('mask);
+
+  filter.parameters = {
+    {thickness = 10.0, min = 0.0, max = 25.0, description = "Border Thickness"},
+    {softness = 0.15, min = 0.0, max = 1.0, description = "Edge Softness"},
+    {pulseSpeed = 0.65, min = 0.0, max = 4.0, description = "Pulse Speed"},
+    {gradientOpacity = 0.6, min = 0.0, max = 1.0, description = "Gradient Opacity"},
+    {borderOpacity = 1.0, min = 0.0, max = 1.0, description = "Border Opacity"},
+    {borderPulse = 0.5, min = 0.0, max = 1.0, description = "Border Pulse"},
+    {borderColor = {1.0, 1.0, 1.0, 1.0}, description = "Border Color"},
+    {gradientStartColor = {1.0, 1.0, 1.0, 1.0}, description = "Gradient Start Color (outer edge)"},
+    {gradientEndColor = {1.0, 1.0, 1.0, 0.0}, description = "Gradient End Color (middle)"},
+  };
+
+  filter.passes = {
+    {
+      name = 'center,
+      inputs = {'mask},
+      scale = {0.01, 0.01},
+      uniforms = {
+        aspect = 0.5625,
+      },
+      glslShader = centerGlsl,
+    },
+    {
+      name = 'dilate,
+      inputs = {'mask},
+      uniforms = {
+        outputSize = {1080.0, 1920.0},
+        radius = 10.0,
+        edgeFade = 0.15,
+      },
+      glslShader = dilateGlsl,
+    },
+    {
+      name = 'compose,
+      inputs = {'default, 'dilate, 'mask, 'center},
+      uniforms = {
+        outputSize = {1080.0, 1920.0},
+        phase = 0.0,
+        gradientOpacity = 0.6,
+        borderOpacity = 1.0,
+        borderPulse = 0.5,
+        borderColor = {1.0, 1.0, 1.0, 1.0},
+        gradientStartColor = {1.0, 1.0, 1.0, 1.0},
+        gradientEndColor = {1.0, 1.0, 1.0, 0.0},
+      },
+      glslShader = composeGlsl,
+    }
+  };
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  vec2 size = getTextureSize('default);
+  f32 sizeScale = min(size.x, size.y) / 1080.0;
+
+  setShaderUniform('center, 'aspect, size.x / size.y);
+
+  setShaderUniform('dilate, 'outputSize, size);
+  setShaderUniform('dilate, 'radius, getParameterFloat('thickness) * sizeScale);
+  setShaderUniform('dilate, 'edgeFade, getParameterFloat('softness));
+
+  f32 phase = getParameterFloat('time_sec) * getParameterFloat('pulseSpeed);
+
+  setShaderUniform('compose, 'outputSize, size);
+  setShaderUniform('compose, 'phase, phase);
+  setShaderUniform('compose, 'gradientOpacity, getParameterFloat('gradientOpacity));
+  setShaderUniform('compose, 'borderOpacity, getParameterFloat('borderOpacity));
+  setShaderUniform('compose, 'borderPulse, getParameterFloat('borderPulse));
+  setShaderUniform('compose, 'borderColor, getParameterVec4('borderColor));
+  setShaderUniform('compose, 'gradientStartColor, getParameterVec4('gradientStartColor));
+  setShaderUniform('compose, 'gradientEndColor, getParameterVec4('gradientEndColor));
+}
+
+string centerGlsl = "
+precision highp float;
+
+varying vec2 sourceTextureCoordinate;
+BaseUniformsOpenGL;
+
+uniform float aspect;
+
+#define GRID_SIZE 32
+#define RADIUS_SCALE 4.0
+
+float maskCoverage(vec4 c) {
+  return max(c.r, max(c.g, c.b));
+}
+
+void main() {
+  float gridStep = 1.0 / float(GRID_SIZE);
+
+  vec2 weighted = vec2(0.0);
+  float total = 0.0;
+
+  for (int y = 0; y < GRID_SIZE; y++) {
+    for (int x = 0; x < GRID_SIZE; x++) {
+      vec2 sampleUV = (vec2(float(x), float(y)) + 0.5) * gridStep;
+      float coverage = maskCoverage(sampleInput(sampleUV));
+      weighted += sampleUV * coverage;
+      total += coverage;
+    }
+  }
+
+  vec2 maskCenter = total > 0.0001 ? weighted / total : vec2(0.5);
+
+  float extent = 0.0;
+  for (int y = 0; y < GRID_SIZE; y++) {
+    for (int x = 0; x < GRID_SIZE; x++) {
+      vec2 sampleUV = (vec2(float(x), float(y)) + 0.5) * gridStep;
+      if (maskCoverage(sampleInput(sampleUV)) > 0.5) {
+        vec2 delta = sampleUV - maskCenter;
+        delta.x *= aspect;
+        extent = max(extent, length(delta));
+      }
+    }
+  }
+  extent = max(extent, 0.05);
+
+  gl_FragColor = toOutputFormat(vec4(maskCenter, extent / RADIUS_SCALE, 1.0));
+}
+";
+
+string dilateGlsl = "
+precision highp float;
+
+varying vec2 sourceTextureCoordinate;
+BaseUniformsOpenGL;
+
+uniform vec2 outputSize;
+uniform float radius;
+uniform float edgeFade;
+
+#define MAX_RADIUS 25
+
+float maskCoverage(vec4 c) {
+  return max(c.r, max(c.g, c.b));
+}
+
+float ramp(float edge0, float edge1, float x) {
+  return clamp((x - edge0) / (edge1 - edge0), 0.0, 1.0);
+}
+
+void main() {
+  vec2 uv = sourceTextureCoordinate;
+  vec2 duv = 1.0 / outputSize;
+
+  int rad = int(radius);
+  float circleRadius = max(1.0, min(float(MAX_RADIUS), radius));
+  float fade = max(edgeFade, 0.001);
+
+  float coverage = 0.0;
+  for (int x = -MAX_RADIUS; x <= MAX_RADIUS; ++x) {
+    if (x < -rad || x > rad) continue;
+
+    for (int y = -MAX_RADIUS; y <= MAX_RADIUS; ++y) {
+      if (y < -rad || y > rad) continue;
+
+      vec2 offset = vec2(float(x), float(y));
+      float circle = ramp(1.0, 1.0 - fade, length(offset) / circleRadius);
+      coverage = max(coverage, maskCoverage(sampleInput(uv + duv * offset)) * circle);
+    }
+  }
+
+  gl_FragColor = toOutputFormat(vec4(vec3(coverage), coverage));
+}
+";
+
+string composeGlsl = "
+precision highp float;
+
+varying vec2 sourceTextureCoordinate;
+BaseUniformsOpenGL;
+
+uniform sampler2D auxSampler1;
+uniform sampler2D auxSampler2;
+uniform sampler2D auxSampler3;
+
+uniform vec2 outputSize;
+uniform float phase;
+uniform float gradientOpacity;
+uniform float borderOpacity;
+uniform float borderPulse;
+uniform vec4 borderColor;
+uniform vec4 gradientStartColor;
+uniform vec4 gradientEndColor;
+
+#define TWO_PI 6.2831853
+#define RADIUS_SCALE 4.0
+
+float maskCoverage(vec4 c) {
+  return max(c.r, max(c.g, c.b));
+}
+
+void main() {
+  vec2 uv = sourceTextureCoordinate;
+
+  vec4 base = sampleInput(uv);
+  float dilated = maskCoverage(texture2D(auxSampler1, uv));
+  float subject = maskCoverage(texture2D(auxSampler2, uv));
+
+  float border = clamp(dilated - subject, 0.0, 1.0);
+
+  vec4 centerData = texture2D(auxSampler3, vec2(0.5));
+  vec2 center = centerData.xy;
+  float extent = max(centerData.z * RADIUS_SCALE, 0.001);
+
+  vec2 delta = uv - center;
+  delta.x *= outputSize.x / outputSize.y;
+
+  float dist = clamp(length(delta) / extent, 0.0, 1.0);
+
+  float gradient = smoothstep(0.0, 1.0, dist);
+  vec4 gradientColor = mix(gradientEndColor, gradientStartColor, gradient);
+
+  float wave = 0.5 + 0.5 * sin(phase * TWO_PI);
+
+  vec3 color = base.rgb;
+
+  float gradientAlpha = gradientColor.a * wave * subject * gradientOpacity;
+  color += gradientColor.rgb * gradientAlpha;
+
+  float borderAlpha = border * borderOpacity * borderColor.a * mix(1.0, wave, borderPulse);
+  color += borderColor.rgb * borderAlpha;
+
+  gl_FragColor = toOutputFormat(vec4(color, base.a));
+}
+";

@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "identifier": "jakarta",
+  "displayName": "Jakarta",
+  "description": "City-name color filter",
+  "iglu": {
+    "legacyId": 706
+  },
+  "assets": [
+    {
+      "name": "clut_clear.png",
+      "assetHash": "78573057336c1170fe6ca4b1dead406fabd8704b3590e213328902e85eaff6f3",
+      "hubAssetId": "1393471762102661"
+    }
+  ]
+}

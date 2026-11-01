@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "identifier": "indigo",
+  "displayName": "Indigo",
+  "description": "[IG Edits] Color filter name. With \"Indigo\", the creator can remap pixel RGB through the Indigo 3D LUT for a deep blue-violet color cast.",
+  "iglu": {
+    "legacyId": 5038
+  },
+  "assets": [
+    {
+      "name": "indigo.lutpk",
+      "assetHash": "f670d81576180c6b49a2b802b21612bc216851e26b141f138fd552a2c5970bde",
+      "hubAssetId": "3962151564086132"
+    }
+  ]
+}

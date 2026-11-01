@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "transition_frames",
+  "displayName": "Frames",
+  "description": "[IG Edits] Transition name. With \"Frames\", the creator can transition between clips by sliding posterized vertical bands while a rounded picture-frame border closes in and out.",
+  "iglu": {}
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_cutout_raw_mask",
+  "displayName": "Cutout Raw Mask",
+  "description": "[IG Edits] Video effect name. With \"Cutout Raw Mask\", the creator can render the raw segmentation mask premultiplied over the input as a debug/preview pass.",
+  "iglu": {
+    "legacyId": 2113,
+    "subject": {
+      "enabled": true,
+      "fullFrameEnabled": false,
+      "typeSuggestions": [
+        "person",
+        "head"
+      ]
+    }
+  }
+}

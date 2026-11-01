@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "fade_out_transition",
+  "displayName": "Fade Out Transition",
+  "description": "[IG Edits] Transition name. With \"Fade Out Transition\", the creator can fade the clip toward a configurable fade_color (default black) driven by transition_progress.",
+  "iglu": {}
+}

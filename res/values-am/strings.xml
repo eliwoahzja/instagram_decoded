@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="string_0x7f130003">ከተማ</string>
+    <string name="string_0x7f130004">አድራሻ</string>
+    <string name="string_0x7f130008">ከማስታወቂያ መለያዎ በካርዱ በራስሙሌት ይሞላ?</string>
+    <string name="string_0x7f13002c">ማሰሺያ ይዝጉ</string>
+    <string name="string_0x7f13002e">%1$s የመሳርያዎን ካሜራ እና ማይክሮፎን መጠቀም ይፈልጋል።</string>
+    <string name="string_0x7f13002f">%1$s የመሳርያዎን ካሜራ መጠቀም ይፈልጋል።</string>
+    <string name="string_0x7f130030">%1$sየመሳሪያዎን መገኛ ቦታ መጠቀም ይፈልጋል።</string>
+    <string name="string_0x7f130031">%1$s የመሳርያዎን ማይክሮፎን መጠቀም ይፈልጋል።</string>
+    <string name="string_0x7f130032">እባክዎ ሁሉም ሚዲያ ፋይል መራጭን እንዲጠቀሙ ይፍቀዱ</string>
+    <string name="string_0x7f130033">ይፍቀዱ</string>
+    <string name="string_0x7f130034">አግድ</string>
+    <string name="string_0x7f130035">አሳሽን ያሳንሱ</string>
+    <string name="string_0x7f130036">ተመለስ</string>
+    <string name="string_0x7f130037">አስተላልፍ</string>
+    <string name="string_0x7f130038">የዚህ ጣቢያ የደህንነት ምስክር ወረቀት ላይ ችግሮች አሉ።</string>
+    <string name="string_0x7f130039">ይመለሱ</string>
+    <string name="string_0x7f13003a">የደህንነት ስህተት</string>
+    <string name="string_0x7f13003b">ርዕስ</string>
+    <string name="string_0x7f13008e">ያሰናብቱ</string>
+    <string name="string_0x7f13008f">ኢሜይል</string>
+    <string name="string_0x7f130091">እየተመለከቱት ያሉት ድር ጣቢያ ውጫዊ መተግበሪያ ለመክፈት አየሞከረ ነው። መቀጠል ይፈልጋሉ?</string>
+    <string name="string_0x7f130092">ይመለሱ</string>
+    <string name="string_0x7f130093">ይቀጥሉ</string>
+    <string name="string_0x7f130094">ከመተግበሪያችን እየወጡ ነው</string>
+    <string name="string_0x7f130095">ይህ ለማስተካከል እየሰራንበት ባለነው ቴክኒካዊ እክል ምክንያት ሊሆን ይችላል። ይህንን ገጽ እንደገና ለመጫን ይሞክሩ</string>
+    <string name="string_0x7f130096">አድስ</string>
+    <string name="string_0x7f130097">ገጽ አሁን አይገኝም</string>
+    <string name="string_0x7f130098">የአያት ስም</string>
+    <string name="string_0x7f130099">ገጹ ሊጫን አልቻለም</string>
+    <string name="string_0x7f13009a">በ … ይክፈቱ</string>
+    <string name="string_0x7f13009b">በ%1$s ይክፈቱ</string>
+    <string name="string_0x7f13009c">ተጨማሪ አማራጮች</string>
+    <string name="string_0x7f1300af">አሁን ሙሉ ስክሪን እየተመለከቱ ነው። ለመውጣት ወደ ግራ በጣትዎ ያዘልሉ ወይም የተመለስ አዝራርን መታ ያድርጉ።</string>
+    <string name="string_0x7f1300cf">የአገናኝ ታሪክ። ከዚህ ቀደም ወደጎበኟቸው ድር ጣቢያዎች የሚወስዱ አገናኞች ዝርዝር ለማግኘት ሁለቴ መታ ያድርጉ።</string>
+    <string name="string_0x7f1300d0">ይሰርዙ</string>
+    <string name="string_0x7f1300da">ይዝጉ</string>
+    <string name="string_0x7f1300dd">ካርድ ለማከል መታ ያድርጉ</string>
+    <string name="string_0x7f13010b">ዚፕኮድ</string>
+    <string name="string_0x7f130119">ሂሳብ መክፈያ አድራሻ ከመላኪያ አድራሻ ጋር ተመሳሳይ መሆኑን ያረጋግጡ</string>
+    <string name="string_0x7f13011a">[የካርድ ብራንድ ወይም ሰጪ] የካርድ ምስል</string>
+    <string name="string_0x7f13011b">የራስሙሌት መረጃ እና መቆጣጠሪያዎችን ይዘርጉ</string>
+    <string name="string_0x7f130126">ተጨማሪ ይወቁ</string>
+    <string name="string_0x7f130192">የእርስዎ መነጽሮች ተገናኝተዋል</string>
+    <string name="string_0x7f1301d7">ሰዓት ያዘጋጁ</string>
+</resources>

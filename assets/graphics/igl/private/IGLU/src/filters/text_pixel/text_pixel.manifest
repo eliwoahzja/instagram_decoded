@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "text_pixel",
+  "displayName": "Pixel",
+  "description": "[IG Edits] Text effect name. With \"Pixel\", the creator pixelates a text layer into chunky low-resolution blocks for a retro look.",
+  "iglu": {}
+}

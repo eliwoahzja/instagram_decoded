@@ -1,0 +1,122 @@
+# IGLUSCRIPTCOLLISION_BYPASS: Intentional replacement of C++ native effect - IGLUScript takes precedence on Android/iOS; C++ filter retained as fallback for direct C++ callers (sample app, server tools).
+[Filter VideoSuperPulse]
+
+# Echo: a center-anchored zoom with a 3-tap radial blur, blended over the untouched frame.
+#
+# The effect reduces to two per-frame scalars, zoomFactor and blendFactor, resolved in [PreRender].
+# Only the playhead differs:
+#   useBeats false -> clock-driven, a ramped sawtooth with a parabolic blend arc
+#   useBeats true  -> beat-driven, beatProgress drives both scalars so the peak lands ON the beat
+#
+# useBeats is set by BeatReactiveController when a manifest declares beatReactive; with no such
+# manifest nothing writes it and the false default selects the clock.
+#
+# Evaluating in [PreRender] keeps the shader to geometry, blur and one mix -- no time, no beat, no
+# branch.
+#
+# The slider remaps below are VideoSuperPulseFilter's kPulseBlendMin/Max, kPulseZoomMin/Max and
+# kPulseSpeedMin/Max, so the shipped look is preserved at the manifest defaults:
+#   pulseBlend = mix(0.3,    1.0,   intensity)  ->  intensity 0.7142857 (5/7)   yields 0.8
+#   pulseZoom  = mix(0.1125, 0.375, intensity)  ->  intensity 0.7142857 (5/7)   yields 0.3
+#   pulseSpeed = mix(0.4,    4.0,   speed)      ->  speed     0.3055556 (11/36) yields 1.5
+# The C++ notes that both blend and zoom were ranged so one slider recovers 0.8 and 0.3 together;
+# that coupling is preserved.
+
+[Init]
+fun init(Filter filter) {
+  filter.parameters = {
+    {intensity = 0.7142857, min = 0.0, max = 1.0, description = "Echo strength: drives both blend and zoom"},
+    {speed = 0.3055556, min = 0.0, max = 1.0, description = "Oscillation rate of the clock-driven pulse"},
+    {useBeats = false, description = "True while the beat system is driving this effect"},
+    {beatProgress = 0.0, min = 0.0, max = 1.0, description = "Beat-driven pulse playhead"},
+  };
+
+  filter.passes = {{
+    name = 'super_pulse,
+    inputs = {'default},
+    uniforms = {
+      zoomFactor = 1.0,
+      blendFactor = 0.0,
+    },
+    glslShader = glslSuperPulse,
+  }};
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  f32 time = getParameterFloat('time_sec);
+  f32 intensity = getParameterFloat('intensity);
+  f32 speed = getParameterFloat('speed);
+  boolean useBeats = getParameterBoolean('useBeats);
+
+  f32 pulseBlend = 0.3 + (1.0 - 0.3) * intensity;
+  f32 pulseZoom = 0.1125 + (0.375 - 0.1125) * intensity;
+  f32 pulseSpeed = 0.4 + (4.0 - 0.4) * speed;
+
+  # The shader's two derived constants, hoisted out unchanged.
+  f32 zoomEnd = pulseZoom + 1.0;
+  f32 blendMax = pulseBlend / 2.0;
+
+  f32 zoomFactor = 1.0;
+  f32 blendFactor = 0.0;
+
+  if (useBeats) {
+    f32 beat = getParameterFloat('beatProgress);
+
+    # The envelope IS the pulse: 0 at rest resolves to passthrough, 1 on the beat to full zoom and
+    # full blend. This replaces the clock rather than attenuating it, so `speed` has no effect here.
+    zoomFactor = 1.0 + beat * (zoomEnd - 1.0);
+    blendFactor = beat * blendMax;
+  } else {
+    # fract() is vector-only in IGLUScript; floor() is the scalar equivalent.
+    f32 ramp = time * pulseSpeed;
+    f32 phase = ramp - floor(ramp);
+    f32 t = clamp(phase / 0.5, 0.0, 1.0);
+
+    zoomFactor = 1.0 + t * (zoomEnd - 1.0);
+    blendFactor = (4.0 * t * (1.0 - t)) * blendMax;
+  }
+
+  # The shader divides by zoomFactor. zoomEnd is at least 1.1125 and both playheads are clamped to
+  # [0, 1], so this only defends against a host writing an out-of-range parameter.
+  zoomFactor = max(zoomFactor, 1.0);
+
+  setShaderUniform('super_pulse, 'zoomFactor, zoomFactor);
+  setShaderUniform('super_pulse, 'blendFactor, blendFactor);
+}
+
+#### Single pass: zoom, radial blur, blend ####
+# A zoomFactor above 1.0 samples a smaller central region, so the blur taps stay inside the source
+# and need no boundary treatment.
+
+string glslSuperPulse = "
+  precision highp float;
+  varying vec2 sourceTextureCoordinate;
+  BaseUniformsOpenGL;
+
+  uniform float zoomFactor;
+  uniform float blendFactor;
+
+  void main() {
+    vec2 uv = sourceTextureCoordinate;
+    vec4 base = sampleInput(uv);
+
+    const vec2 center = vec2(0.5);
+    vec2 zoomedUV = center + (uv - center) / zoomFactor;
+
+    // 3-tap radial motion blur along the ray from center. At the exact center the ray is undefined,
+    // so collapse the offsets and let all three taps coincide.
+    vec2 dir = normalize(uv - center);
+    if (length(uv - center) < 0.0001) {
+      dir = vec2(0.0);
+    }
+
+    const float blurOffset = 0.005;
+    vec4 currentFrame = sampleInput(zoomedUV);
+    vec4 nextFrame = sampleInput(zoomedUV + dir * blurOffset);
+    vec4 prevFrame = sampleInput(zoomedUV - dir * blurOffset);
+    vec4 blurZoom = (currentFrame + nextFrame + prevFrame) / 3.0;
+
+    gl_FragColor = toOutputFormat(mix(base, blurZoom, blendFactor));
+  }
+";

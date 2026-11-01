@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "identifier": "subtle",
+  "displayName": "Subtle",
+  "description": "[IG Edits] Color filter name. With \"Subtle\", the creator can apply a gentle low-intensity color grade by remapping each pixel's RGB through a 3D color lookup table.",
+  "iglu": {
+    "legacyId": 819
+  },
+  "assets": [
+    {
+      "name": "subtle.png",
+      "assetHash": "5e443cceb1455cb07782bddd2674a2a78cc14d46fedac274cbc6ac1240ff9937",
+      "hubAssetId": "1378987740701169"
+    },
+    {
+      "name": "subtle_compressed.png",
+      "assetHash": "5786a6679526a535a60cb7306f3e2409c8b0e076bb332475aa5f3f38f17c758d",
+      "hubAssetId": "1966109244274490"
+    }
+  ]
+}

@@ -1,0 +1,88 @@
+.class public final LX/NtR;
+.super Ljava/lang/Object;
+.source ""
+
+# interfaces
+.implements Ljava/lang/Runnable;
+
+
+# instance fields
+.field public final synthetic A00:Landroid/content/Context;
+
+.field public final synthetic A01:LX/miz;
+
+.field public final synthetic A02:Ljava/lang/String;
+
+.field public final synthetic A03:Ljava/lang/String;
+
+
+# direct methods
+.method public constructor <init>(Landroid/content/Context;LX/miz;Ljava/lang/String;Ljava/lang/String;)V
+    .locals 0
+
+    iput-object p1, p0, LX/NtR;->A00:Landroid/content/Context;
+
+    iput-object p2, p0, LX/NtR;->A01:LX/miz;
+
+    iput-object p3, p0, LX/NtR;->A02:Ljava/lang/String;
+
+    iput-object p4, p0, LX/NtR;->A03:Ljava/lang/String;
+
+    invoke-direct {p0}, Ljava/lang/Object;-><init>()V
+
+    return-void
+.end method
+
+
+# virtual methods
+.method public final run()V
+    .locals 6
+
+    iget-object v5, p0, LX/NtR;->A00:Landroid/content/Context;
+
+    iget-object v4, p0, LX/NtR;->A01:LX/miz;
+
+    sget-object v0, LX/R95;->A05:LX/R95;
+
+    sget-object v3, LX/R86;->A0d:LX/R99;
+
+    sget-object v2, LX/R86;->A0a:LX/RE8;
+
+    sget-object v1, LX/R86;->A0c:LX/RP2;
+
+    sget-object v0, LX/RE4;->A04:LX/RE4;
+
+    sget-object v0, Lcom/meta/foa/cds/CdsBottomSheetDimmingBehaviour$Default;->A00:Lcom/meta/foa/cds/CdsBottomSheetDimmingBehaviour$Default;
+
+    invoke-static {v0, v2, v1, v3}, LX/Q87;->A01(Lcom/meta/foa/cds/CdsBottomSheetDimmingBehaviour;LX/RE8;LX/RP2;LX/R99;)LX/Rx8;
+
+    move-result-object v3
+
+    iget-object v2, p0, LX/NtR;->A02:Ljava/lang/String;
+
+    iget-object v0, p0, LX/NtR;->A03:Ljava/lang/String;
+
+    new-instance v1, LX/NVm;
+
+    invoke-direct {v1}, Ljava/lang/Object;-><init>()V
+
+    iput-object v4, v1, LX/NVm;->A00:LX/miz;
+
+    iput-object v2, v1, LX/NVm;->A01:Ljava/lang/String;
+
+    iput-object v0, v1, LX/NVm;->A02:Ljava/lang/String;
+
+    const/4 v0, 0x0
+
+    sput v0, Lredex/$StoreFenceHelper;->DUMMY_VOLATILE:I
+
+    const/16 v0, 0x6ef
+
+    invoke-static {v0}, LX/194;->A0n(I)LX/C84;
+
+    move-result-object v0
+
+    invoke-static {v5, v1, v3, v4, v0}, LX/Rx4;->A01(Landroid/content/Context;LX/piW;LX/ppM;LX/miz;Lkotlin/jvm/functions/Function0;)V
+
+    return-void
+.end method

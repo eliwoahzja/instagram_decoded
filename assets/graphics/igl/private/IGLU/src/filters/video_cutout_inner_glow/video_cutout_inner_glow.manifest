@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_cutout_inner_glow",
+  "displayName": "Inner Glow",
+  "description": "[Instagram Edits] Effect browser - Label for an effect that adds a soft, glowing light from the edges towards the center of subjects within the video. Character count for labels is 14 characters max.",
+  "iglu": {
+    "legacyId": 2106,
+    "customization": [
+      {
+        "name": "color",
+        "defaultSelection": "#FFFFFF",
+        "available": [
+          "#FFFFFF",
+          "#000000",
+          "#FFD600",
+          "#FF7A00",
+          "#FE1D37",
+          "#FF0169",
+          "#D300C5",
+          "#7638FA",
+          "#37038B",
+          "#1CD164",
+          "#0095F6",
+          "#AD88FC",
+          "#FDD5FD",
+          "#FFABE1",
+          "#FFC584",
+          "#FFF8C2",
+          "#09FF00",
+          "#FFFF00",
+          "#5AFAC7",
+          "#0000FF"
+        ],
+        "displayName": "Color",
+        "displayNameDescription": "[IG Edits] Color picker label. The user selects a color used by the video effect (e.g., glow tint, outline color, sparkle color); available palette varies per effect."
+      },
+      {
+        "name": "opacity",
+        "default": 0.4,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Opacity",
+        "displayNameDescription": "[IG Edits] Slider label controlling the opacity (transparency) of an element added by a video effect (low = invisible, high = fully opaque); exact range varies per effect."
+      },
+      {
+        "name": "size",
+        "default": 1.0,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Size",
+        "displayNameDescription": "[IG Edits] Slider label controlling the size or scale of an element produced by a video effect; exact units and range vary per effect."
+      }
+    ],
+    "subject": {
+      "enabled": true,
+      "fullFrameEnabled": false,
+      "typeSuggestions": [
+        "person",
+        "head"
+      ]
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "cbfb8074",
+      "handle": "AQAHgozWThy3",
+      "md5": "e59b8211038bb7f5118ec6721ac65a41"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "isImageFormat": true,
+      "handle": "AQBbSTiv-ISq"
+    }
+  }
+}

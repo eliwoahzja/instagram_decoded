@@ -1,0 +1,139 @@
+[Filter IgluscriptVideoPrismFilter]
+
+[Init]
+fun init(Filter filter) {
+  filter.parameters = {
+    {distance = 0.027, min = 0.0, max = 1.0},
+    {speed = 0.25, min = 0.0, max = 1.0}
+  };
+
+  filter.passes = {{
+      name = 'prism, inputs = {'default},
+      uniforms = {
+        inputSize = {1080.0, 1920.0},
+        prismCopies = 5.0,
+        prismSpread = 0.6,
+        prismRotate = 0.25,
+        chroma = 4.0,
+      },
+      glslShader = glsl
+    }};
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  f32 distance = getParameterFloat('distance);
+
+  # Compute minimum prismSpread to prevent black corners.
+  # Uses law of cosines: d² = corner² + R² - 2·corner·R·cos(halfGap)
+  # Solve R² - 2·corner·cos(halfGap)·R + (corner² - radius²) < 0
+  # → R_min = corner·cos(halfGap) - sqrt(corner²·cos²(halfGap) - corner² + radius²)
+  f32 copies = 5.0;
+  f32 halfGap = 3.14159265 / copies;
+  f32 cosHG = cos(halfGap);
+  f32 sinHG = sin(halfGap);
+  f32 cornerDist = 0.7071;
+  # Corner coverage: use full mask hard-cutoff radius (0.5 UV)
+  f32 cornerR = 0.5;
+  f32 c = cornerDist * cosHG;
+  f32 D = c * c - cornerDist * cornerDist + cornerR * cornerR;
+  f32 rMin = c - sqrt(D);
+  f32 minSpread = 2.0 * rMin;
+
+  # Max spread: adjacent masks must solidly overlap (tighter radius)
+  f32 overlapR = 0.3;
+  f32 rMax = overlapR / sinHG;
+  f32 maxSpread = 2.0 * rMax;
+
+  f32 spread = minSpread + distance * (maxSpread - minSpread);
+
+  setShaderUniform('prism, 'prismSpread, spread);
+  setShaderUniform('prism, 'prismRotate, getParameterFloat('speed));
+}
+
+string glsl = "precision highp float;
+
+varying vec2 textureCoordinate;
+varying vec2 sourceTextureCoordinate;
+
+BaseUniformsOpenGL;
+
+uniform float time_sec;
+uniform vec2 inputSize;
+uniform float prismCopies;
+uniform float prismSpread;
+uniform float prismRotate;
+uniform float chroma;
+
+const vec2 prismCenter = vec2(0.5);
+
+vec3 sampleChroma(vec2 uv, vec2 offset){
+  // Guard against division by zero - use safe fallback value
+  vec2 safeInputSize = max(inputSize, vec2(1.0));
+  vec2 uvOffset = offset / safeInputSize;
+
+  // If inputSize is invalid, return unmodified color
+  if (inputSize.x <= 0.0 || inputSize.y <= 0.0) {
+    return sampleInput(uv).rgb;
+  }
+  return vec3 (sampleInput(uv - uvOffset).r,
+              sampleInput(uv + uvOffset).g,
+              sampleInput(uv - uvOffset).b);
+}
+
+  void main() {
+
+  vec2 uv = sourceTextureCoordinate;
+  vec2 center = prismCenter;
+
+  // Guard against division by zero if inputSize is not initialized
+  // Use safe fallback values for all calculations
+  vec2 safeInputSize = max(inputSize, vec2(1.0, 1.0));
+  float safeSizeScale = min(safeInputSize.x, safeInputSize.y) / 1080.0;
+
+  if (inputSize.x <= 0.0 || inputSize.y <= 0.0) {
+    gl_FragColor = toOutputFormat(sampleInput(uv));
+    return;
+  }
+
+  vec2 ratio = vec2(safeInputSize.x / safeInputSize.y, 1.0);
+
+  vec3 accum = vec3(0.0);
+  float total = 0.0;
+
+  float stepA = 6.28318530718 / prismCopies;
+
+  for (int i = 0; i < int(prismCopies); i++){
+
+    float a = (prismRotate * time_sec) + stepA * float(i);
+    vec2 dir = vec2(cos(a), sin(a));
+    // dir = normalize(dir * ratio);
+
+    vec2 offUV = dir * prismSpread * 0.5;
+
+    float subRot = 0.02 * float(i);
+    float ca = cos(subRot);
+    float sa = sin(subRot);
+    mat2 rot = mat2(ca, -sa, sa, ca);
+
+    vec2 sampUV = rot * (uv - center) + center + offUV;
+
+    float m = 1.0  - smoothstep(0.5,1.0, length((uv - (center - offUV)) * 2.0));
+
+    // chroma scalesWithSize - use pre-calculated safe value
+    vec2 chromaOffset = dir * chroma * safeSizeScale;
+    vec3 col = sampleChroma(sampUV, chromaOffset);
+
+    accum += col * m;
+    total += m;
+  }
+
+  vec3 centerCol = sampleInput(uv).rgb;
+  float r = length((uv - center) * ratio);
+  float centerMask = 1.0 - smoothstep(0.1, 0.3, r);
+
+  vec3 outColor = accum / max(total, 1e-4);
+  vec4 color = vec4(mix(outColor, centerCol, centerMask), 1.0);
+  gl_FragColor = toOutputFormat(color);
+}
+";

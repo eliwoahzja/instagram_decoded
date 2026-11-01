@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape android:shape="rectangle"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="?igds_color_elevated_background" />
+    <corners android:topLeftRadius="@dimen/ai_agent_share_profile_sticker_padding" android:topRightRadius="@dimen/ai_agent_share_profile_sticker_padding" android:bottomLeftRadius="0.0dp" android:bottomRightRadius="0.0dp" />
+</shape>

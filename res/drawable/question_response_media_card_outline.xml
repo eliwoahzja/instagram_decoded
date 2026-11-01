@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_selected="true">
+        <shape android:shape="rectangle">
+            <corners android:radius="@dimen/abc_edit_text_inset_top_material" />
+            <stroke android:width="@dimen/account_preview_media_end_card_stroke_width" android:color="?questionResponseCardOutlineSelected" />
+            <solid android:color="@color/bds_transparent" />
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="rectangle">
+            <corners android:radius="@dimen/abc_edit_text_inset_top_material" />
+            <stroke android:width="@dimen/account_preview_media_end_card_stroke_width" android:color="?questionResponseCardOutline" />
+            <solid android:color="@color/bds_transparent" />
+        </shape>
+    </item>
+</selector>

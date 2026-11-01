@@ -1,0 +1,65 @@
+[Filter VideoMaskWipeRect]
+[MaskBehavior alpha]
+
+[Init]
+fun init(Filter filter) {
+    filter.parameters = {
+        {amount = 0.01, min = 0.0, max = 0.2, description = "Edge smoothness"},
+        {outro = 0.0, min = 0.0, max = 1.0, description = "0 = In, 1 = Out"},
+    };
+
+    filter.passes = {
+        {
+            name = 'pass0,
+            inputs = {'default},
+            uniforms = {
+                progress = 0.0,
+                amount = 0.01,
+                outro = 0.0,
+            },
+            glslShader = glsl,
+        },
+    };
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+    f32 progress = getParameterFloat('progress);
+    f32 amount = getParameterFloat('amount);
+    f32 outro = getParameterFloat('outro);
+
+    # keep amount off 0 so the smoothstep edge doesn't collapse
+    amount = max(0.001, amount);
+
+    setShaderUniform('pass0, 'progress, progress);
+    setShaderUniform('pass0, 'amount, amount);
+    setShaderUniform('pass0, 'outro, outro);
+}
+
+string glsl = "
+    precision highp float;
+    varying vec2 sourceTextureCoordinate;
+    uniform vec2 inputSize;
+    uniform float progress;
+    uniform float amount;
+    uniform float outro;
+
+    void main() {
+        vec2 uv = sourceTextureCoordinate;
+        vec4 color = sampleInput(uv);
+
+        float p = mix(progress, 1.0 - progress, outro);
+        float aspect = inputSize.x / inputSize.y;
+        vec2 pt = vec2((uv.x - 0.5) * aspect, uv.y - 0.5);
+        float maxExtent = max(aspect, 1.0);
+        float rp = mix(-amount, 1.0 + amount, p);
+        vec2 halfSize = vec2(rp * maxExtent * 0.5, rp * 0.5);
+        vec2 d = abs(pt) - halfSize;
+        float dist = length(max(d, 0.0)) + min(max(d.x, d.y), 0.0);
+        float mask = smoothstep(amount, -amount, dist);
+
+        color.a = color.a * mask;
+        color.rgb *= color.a;
+        gl_FragColor = toOutputFormat(color);
+    }
+";

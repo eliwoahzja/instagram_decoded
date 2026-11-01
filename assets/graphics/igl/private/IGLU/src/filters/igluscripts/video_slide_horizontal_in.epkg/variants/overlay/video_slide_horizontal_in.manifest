@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "displayName": "Slide in horizontal",
+  "description": "[IG Edits] Effect name shown in the video effects picker. This is the user-facing label for a video effect.",
+  "iglu": {
+    "legacyId": 5132,
+    "behavior": {
+      "type": "fixedIntro",
+      "durationMs": 360,
+      "curve": "linear"
+    },
+    "customization": [
+      {
+        "name": "direction",
+        "defaultSelection": "left",
+        "available": [
+          "left",
+          "right"
+        ],
+        "displayName": "Direction"
+      },
+      {
+        "name": "duration",
+        "default": 0.36,
+        "min": 0.1,
+        "max": 1.5,
+        "displayName": "Duration",
+        "displayMethod": "time"
+      }
+    ],
+    "subject": {
+      "overlay": true
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAJEJ2Xu1pg"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "b272e27c",
+      "handle": "AQAEnH5A5c94",
+      "md5": "1b9df823c3d6059dec2bbd2495610ab2"
+    }
+  }
+}

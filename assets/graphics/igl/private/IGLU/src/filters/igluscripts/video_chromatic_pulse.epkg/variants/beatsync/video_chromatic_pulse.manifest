@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "iglu": {
+    "customization": [
+      {
+        "name": "intensity",
+        "default": 0.33333333,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Intensity",
+        "displayNameDescription": "[IG Edits] Slider label controlling the strength of a video effect. Generic across many effects (glow, blur, color, distortion, etc.); exact range varies per effect."
+      },
+      {
+        "name": "beatProgress",
+        "default": 0.0,
+        "min": 0.0,
+        "max": 1.0,
+        "beatReactive": {
+          "mode": "envelope",
+          "envelope": {
+            "attack": 0.13,
+            "decay": 0.18,
+            "sustain": 0.63,
+            "release": 0.25,
+            "curve": "exponential",
+            "timing": "beatRelative",
+            "minDuration": 0.1,
+            "maxDuration": 1.5
+          },
+          "range": [
+            0.0,
+            1.0
+          ]
+        }
+      }
+    ]
+  }
+}

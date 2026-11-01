@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "identifier": "AC9C8AF2-5686-49FD-AD6E-C3508B1F9F42",
+  "displayName": "Camcorder",
+  "description": "[IG Edits] Video effect name. With \"Camcorder\", the creator can apply a retro VHS/camcorder look with scanlines, a rec dot, chromatic aberration, and a vignette.",
+  "iglu": {
+    "legacyId": 3196,
+    "customization": [
+      {
+        "name": "intensity",
+        "default": 1.0,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Intensity"
+      }
+    ]
+  },
+  "assets": [
+    {
+      "name": "camcorder_overlay.png",
+      "assetHash": "8eac70bcd0a905620cccd3f642915e012d09831a2fca89a3ea6772706d85fe01",
+      "hubAssetId": "2375713226295387"
+    }
+  ],
+  "android": {
+    "previewAsset": {
+      "key": "a03bf7c2",
+      "handle": "AQADp1TD7wgF",
+      "md5": "9bdc9afbf2f80a6537f7c4fb564c957e"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAE2QzDPA_R"
+    }
+  }
+}

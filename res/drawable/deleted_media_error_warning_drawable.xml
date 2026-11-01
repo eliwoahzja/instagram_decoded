@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape>
+            <solid android:color="?igds_color_stories_loading_background" />
+        </shape>
+    </item>
+    <item android:drawable="@drawable/deleted_media_error_warning_archive_drawable__app_bitmap_0" android:left="18.0dp" android:top="18.0dp" android:right="18.0dp" android:bottom="18.0dp" />
+</layer-list>

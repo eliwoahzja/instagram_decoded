@@ -1,0 +1,21 @@
+.class public interface abstract LX/lOF;
+.super Ljava/lang/Object;
+.source ""
+
+# interfaces
+.implements LX/knx;
+.implements LX/lR2;
+
+
+# virtual methods
+.method public abstract CDN()Ljava/util/List;
+.end method
+
+.method public abstract COz()Ljava/lang/String;
+.end method
+
+.method public abstract Dem()Ljava/lang/String;
+.end method
+
+.method public abstract EQM()Z
+.end method

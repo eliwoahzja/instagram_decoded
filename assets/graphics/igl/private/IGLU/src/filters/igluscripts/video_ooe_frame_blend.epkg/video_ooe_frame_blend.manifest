@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_ooe_frame_blend",
+  "displayName": "Frame Blend",
+  "description": "[IG Edits] Effect name shown in the video effects picker. With \"Frame Blend\", the creator can blend consecutive video frames together for a ghosting or motion-trail look.",
+  "iglu": {
+    "legacyId": 10015,
+    "customization": [
+      {
+        "name": "color",
+        "defaultSelection": "#FFFFFF",
+        "available": [
+          "#FFFFFF",
+          "#FFD600",
+          "#FF7A00",
+          "#FE1D37",
+          "#FF0169",
+          "#D300C5",
+          "#7638FA",
+          "#37038B",
+          "#1CD164",
+          "#0095F6",
+          "#AD88FC",
+          "#FDD5FD",
+          "#FFABE1",
+          "#FFC584",
+          "#FFF8C2",
+          "#09FF00",
+          "#FFFF00",
+          "#5AFAC7",
+          "#0000FF"
+        ],
+        "displayName": "Color"
+      },
+      {
+        "name": "intensity",
+        "default": 0.5,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Intensity"
+      }
+    ]
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQBiJ0i7Cy3m"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "208338ef",
+      "handle": "AQAFon4mit3A",
+      "md5": "4984e31e0f517aeef13366b3356c3185"
+    }
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "identifier": "0D648AF5-5D54-4A72-83BC-DEBB1D36BC88",
+  "displayName": "Blue Sky",
+  "description": "[IG Edits] Color filter name. With \"Blue Sky\", the creator gets a pure 8x8 LUT color grade applied to the camera image at 64% mix strength.",
+  "android": {
+    "previewAsset": {
+      "key": "722210ae",
+      "handle": "AQAFvlH5chbq",
+      "md5": "18f54c731db6df31b1fdc466930da636"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQALH_Ba0PmH"
+    }
+  },
+  "iglu": {
+    "legacyId": 3212
+  },
+  "assets": [
+    {
+      "name": "blue_sky_lut.png",
+      "assetHash": "b41ace3130f7aed60a018ce8ac97975ea95a5949487756dfd5820871aa09647b",
+      "hubAssetId": "37336621172652476"
+    }
+  ]
+}

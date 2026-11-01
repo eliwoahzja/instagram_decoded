@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "dual",
+  "displayName": "Dual",
+  "description": "Camera tool for simultaneously capturing from multiple cameras",
+  "iglu": {}
+}

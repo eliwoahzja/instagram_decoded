@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "identifier": "zoom_blur",
+  "displayName": "Zoom Blur",
+  "description": "Filter name for a radial zoom-blur effect",
+  "iglu": {
+    "legacyId": 1105
+  }
+}

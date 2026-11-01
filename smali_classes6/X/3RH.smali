@@ -1,0 +1,64 @@
+.class public final synthetic LX/3RH;
+.super LX/5B4;
+.source ""
+
+# interfaces
+.implements LX/snk;
+
+
+# static fields
+.field public static final A00:LX/3RH;
+
+
+# direct methods
+.method public static constructor <clinit>()V
+    .locals 1
+
+    new-instance v0, LX/3RH;
+
+    invoke-direct {v0}, LX/3RH;-><init>()V
+
+    sput-object v0, LX/3RH;->A00:LX/3RH;
+
+    return-void
+.end method
+
+.method public constructor <init>()V
+    .locals 6
+
+    const-class v2, Lcom/instagram/common/ui/widget/imageview/IgImageView;
+
+    const-string v4, "setProgressiveImageConfig(Lcom/instagram/common/cache/image/utils/ProgressiveImageConfig;)V"
+
+    const/4 v5, 0x0
+
+    const/4 v1, 0x2
+
+    const-string v3, "setProgressiveImageConfig"
+
+    move-object v0, p0
+
+    invoke-direct/range {v0 .. v5}, LX/5B4;-><init>(ILjava/lang/Class;Ljava/lang/String;Ljava/lang/String;I)V
+
+    return-void
+.end method
+
+
+# virtual methods
+.method public final bridge synthetic invoke(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+    .locals 1
+
+    check-cast p1, Lcom/instagram/common/ui/widget/imageview/IgImageView;
+
+    check-cast p2, LX/8kC;
+
+    const/4 v0, 0x0
+
+    invoke-static {p1, v0}, LX/5B5;->A0U(Ljava/lang/Object;I)V
+
+    iput-object p2, p1, Lcom/instagram/common/ui/widget/imageview/IgImageView;->A0C:LX/8kC;
+
+    sget-object v0, LX/4z7;->A00:LX/4z7;
+
+    return-object v0
+.end method

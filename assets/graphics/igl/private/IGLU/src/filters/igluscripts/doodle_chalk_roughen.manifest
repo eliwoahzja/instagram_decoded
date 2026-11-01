@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "7c8e687d-b093-48ee-9756-2b704d3366dd",
+  "displayName": "Doodle Chalk Roughen",
+  "description": "[IG Edits] Drawing brush effect name. With \"Doodle Chalk Roughen\", the creator can roughen brush-stroke edges via alpha threshold then separable horizontal and vertical min-kernel erosion.",
+  "iglu": {}
+}

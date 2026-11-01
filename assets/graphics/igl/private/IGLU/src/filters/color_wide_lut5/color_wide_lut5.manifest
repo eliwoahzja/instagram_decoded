@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "identifier": "butter",
+  "displayName": "Butter",
+  "description": "[IG Edits] Color filter name. With \"Butter\", the creator can apply a soft buttery yellow color grade via a 3D LUT lookup.",
+  "iglu": {
+    "legacyId": 5028
+  },
+  "assets": [
+    {
+      "name": "butter.lutpk",
+      "assetHash": "8c7283a93bb0da999df6282a8536b9aa99de85476f033d4f359aa8795e8f98a7",
+      "hubAssetId": "1243503407864618"
+    }
+  ]
+}

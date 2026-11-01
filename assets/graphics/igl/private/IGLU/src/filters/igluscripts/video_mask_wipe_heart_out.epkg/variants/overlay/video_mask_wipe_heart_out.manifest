@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "displayName": "Wipe out heart",
+  "description": "[IG Edits] Effect name shown in the video effects picker. This is the user-facing label for a video effect.",
+  "iglu": {
+    "legacyId": 5115,
+    "behavior": {
+      "type": "fixedOutro",
+      "durationMs": 1500,
+      "curve": "quadraticInOut"
+    },
+    "customization": [
+      {
+        "name": "duration",
+        "default": 1.5,
+        "min": 0.5,
+        "max": 5.0,
+        "displayName": "Duration",
+        "displayMethod": "time"
+      },
+      {
+        "name": "amount",
+        "displayName": "Amount",
+        "default": 0.5,
+        "min": 0.0,
+        "max": 1.0
+      }
+    ],
+    "subject": {
+      "overlay": true
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAEorsSY-0m"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "a5af3cbd",
+      "handle": "AQAFuzv9C-db",
+      "md5": "3c8ab446c205469f75491ec7907836a4"
+    }
+  }
+}

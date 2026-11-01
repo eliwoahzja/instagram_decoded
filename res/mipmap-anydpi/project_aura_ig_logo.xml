@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="utf-8"?>
+<inset android:drawable="@mipmap/project_aura_ig_logo_fg" android:inset="12.0%"
+  xmlns:android="http://schemas.android.com/apk/res/android" />

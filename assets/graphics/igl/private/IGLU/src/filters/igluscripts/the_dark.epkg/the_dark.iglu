@@ -1,0 +1,151 @@
+[Filter TheDark]
+# "The Dark" — LUT color grading + radial vignette (moody dark lighting).
+#
+# Single-pass IGLUScript. The LUT half is identical to black_ii /
+# black_and_white (8x8 grid trilinear sampling). The vignette half is a
+# standard radial darkening computed from distance to UV center, tuned
+# stronger/darker than Black II for a moody atmosphere.
+#
+# LUT delivered via ARD (effectId / assetHash filled in once provided).
+#
+# Lighting emulation:
+#   Spark scene used 20% ambient + 80% directional, both pure white.
+#   On a flat plane facing the directional light, that math reduces to
+#   color * (0.2 + 0.8 * dot(N, L)) = color * (0.2 + 0.8 * 1.0) = color * 1.0
+#   i.e. a no-op at default. The `brightness` uniform below makes that
+#   knob explicit so it can be tuned at runtime via Custom Parameters
+#   without recompiling.
+#
+# Vignette math (per pixel):
+#   d = length(uv - 0.5) * sqrt(2.0)            // 0 at center, 1 at corners
+#   v = smoothstep(1 - vignette_softness, 1.0, d)
+#   darkness = 1 - v * vignette_strength
+#   out.rgb = lutGraded.rgb * darkness
+# Defaults (dialed in vs Spark reference):
+#   strength = 0.515          — LUT mix at 51.5% (subtle grade, lets vignette dominate).
+#   brightness = 1.021        — slight global lift (~2.1%) to compensate for sample-app vs Spark pipeline delta.
+#   vignette_strength = 0.797 — corners ~80% darker than center (moody, stronger than Black II's 0.52).
+#   vignette_softness = 0.75  — broader falloff (vs initial 0.5) for smoother darkening gradient.
+# All four are 0..1 (brightness 0..2), wired unconditionally in [PreRender]
+# so host-set 0.0 is respected.
+
+[Init]
+fun init(Filter filter)
+{
+    makeTexture('lut);
+
+    # Host-tunable parameters. All have valid 0.0 minimums; we wire them
+    # unconditionally in [PreRender] so a host-set 0.0 takes effect (per CRA
+    # findings on black_and_white — guarded sets blocked legitimate zeros).
+    filter.parameters = {
+        {strength = 0.515, min = 0.0, max = 1.0, description = "LUT mix strength"},
+        {brightness = 1.021, min = 0.0, max = 2.0, description = "Output brightness (Spark scene-light emulation)"},
+        {vignette_strength = 0.797, min = 0.0, max = 1.0, description = "Vignette darkness at corners (0 = none, 1 = pure black)"},
+        {vignette_softness = 0.75, min = 0.0, max = 1.0, description = "Vignette gradient width (0 = hard edge, 1 = full-frame falloff)"},
+    };
+
+    filter.passes = {{
+      name = 'pass0,
+      inputs = {'default, 'lut},
+      uniforms = {
+        strength = 0.515,
+        brightness = 1.021,
+        vignette_strength = 0.797,
+        vignette_softness = 0.75,
+      },
+      glslShader = glslLutVignette,
+    }};
+}
+
+string lut_path = "lut_path";
+string lut_filename = "";
+
+[PreRender]
+fun preRender(Filter filter){
+    string lut_filename_parameter = getParameterString(lut_path);
+    if (lut_filename_parameter != "") {
+        string new_lut_filename = stringAppend("textureFilePath://", lut_filename_parameter);
+        if (new_lut_filename != lut_filename) {
+            lut_filename = new_lut_filename;
+            loadTexture('lut, lut_filename);
+        }
+    }
+
+    # All four parameters wired unconditionally — filter.parameters declares
+    # min=0.0 for each, so host-set zeros are valid input and must propagate.
+
+    # LUT mix strength
+    f32 s = getParameterFloat('strength);
+    setShaderUniform('pass0, 'strength, s);
+
+    # Spark scene-light emulation (default 1.0 = no-op)
+    f32 b = getParameterFloat('brightness);
+    setShaderUniform('pass0, 'brightness, b);
+
+    # Vignette knobs
+    f32 vs = getParameterFloat('vignette_strength);
+    setShaderUniform('pass0, 'vignette_strength, vs);
+    f32 vsoft = getParameterFloat('vignette_softness);
+    setShaderUniform('pass0, 'vignette_softness, vsoft);
+}
+
+#### GLSL shader ####
+
+string glslLutVignette = "
+    varying vec2 sourceTextureCoordinate;
+    BaseUniformsOpenGL;
+
+    uniform sampler2D auxSampler0;
+    uniform sampler2D auxSampler1;
+    uniform sampler2D auxSampler2;
+
+    uniform float brightness;
+    uniform float vignette_strength;
+    uniform float vignette_softness;
+
+    void main() {
+      vec2 uv = sourceTextureCoordinate;
+
+      // --- Layer 1: LUT color grading (same shader as black_ii) ---
+      vec4 texel = sampleInput(uv);
+
+      texel.rgb = clamp(texel.rgb, 0.00781, 0.98438);
+
+      float x = texel.r / 8.0;
+      float y = texel.g / 8.0;
+      float z = texel.b;
+
+      float blueY = floor(z * 8.0) / 8.0;
+      float blueX = floor((z - blueY) * 64.0) / 8.0;
+
+      x += blueX;
+      y += blueY;
+
+      vec3 color = texture2D(auxSampler1, vec2(x, y)).xyz;
+
+      texel = mix(texel, vec4(color, texel.a), strength);
+
+      // Spark scene-light emulation: ambient(0.2) + directional(0.8) white,
+      // collapsed to a single brightness multiplier on a flat plane. Default 1.0.
+      texel.rgb *= brightness;
+
+      // --- Layer 2: radial vignette (stronger/darker than Black II) ---
+      // d normalized so center=0, corners=1.0. sqrt(2) ≈ 1.4142 because
+      // length(vec2(0.5,0.5)) = 0.7071, and we want corner distance = 1.0.
+      float d = length(uv - vec2(0.5)) * 1.4142;
+
+      // smoothstep from (1 - softness) to 1.0 produces a falloff that
+      // occupies the outer `softness` fraction of the radial range.
+      // softness=0 → step at d=1.0 (no visible vignette).
+      // softness=1 → smooth ramp from center to corner (broadest).
+      float v = smoothstep(1.0 - vignette_softness, 1.0, d);
+
+      // darkness multiplier in [1 - vignette_strength, 1.0].
+      // strength=0 → no darkening; strength=1 → corners fully black.
+      // Default 0.75 = corners 75% darker (moody, vs Black II's 0.52).
+      float darkness = 1.0 - v * vignette_strength;
+      texel.rgb *= darkness;
+
+      gl_FragColor = toOutputFormat(texel);
+    }
+    ";

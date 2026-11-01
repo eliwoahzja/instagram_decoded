@@ -1,0 +1,50 @@
+[Filter IgluscriptVideoGridZoomFilter]
+
+
+
+[Init]
+fun init(Filter filter) {
+  filter.passes = {{
+      name = 'grid_zoom, inputs = {'default},
+      uniforms = {
+        progress = 0.0,
+      },
+      glslShader = glslShader
+    }};
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  # Get behavior parameters from parameter map (set by JNI/keyframe system)
+  f32 progressValue = getParameterFloat('progress);
+
+  # Apply to shader uniform
+  setShaderUniform('grid_zoom, 'progress, progressValue);
+}
+
+string glslShader = "precision highp float;
+
+varying vec2 textureCoordinate;
+varying vec2 sourceTextureCoordinate;
+
+BaseUniformsOpenGL;
+
+uniform float progress;
+
+void main() {
+
+vec2 uv = sourceTextureCoordinate;
+
+vec2 gridUV = fract(uv * 3.0);
+vec4 gridColor = sampleInput(gridUV);
+
+float scale = mix(1.0, 1.0/3.0, progress);
+vec2 zoomed = (uv - 0.5) * scale + 0.5;
+vec2 zoomGridUV = fract(zoomed * 3.0);
+vec4 zoomCol = sampleInput(zoomGridUV);
+
+vec4 color = mix(gridColor, zoomCol, progress);
+
+gl_FragColor = toOutputFormat(zoomCol);
+}
+";

@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "text_gradient_trio",
+  "displayName": "Gradient Trio",
+  "description": "[IG Edits] Text effect name. With \"Gradient Trio\", the creator can fill text with a three-tone vertical gradient driven by a 0.5-st.y per-paragraph ramp and a large 0.3 hue spread.",
+  "iglu": {}
+}

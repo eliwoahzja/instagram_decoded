@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_cubic_distortion_aberration_hd",
+  "displayName": "Cubic Distortion HD",
+  "description": "[IG Edits] Video effect name. With \"Cubic Distortion HD\", the creator can apply the cubic lens barrel distortion and chromatic aberration tuned for high-resolution output.",
+  "iglu": {}
+}

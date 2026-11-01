@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "identifier": "0928E2D8-DF9B-4313-A9B8-D59C4CC50D33",
+  "displayName": "Black and White",
+  "description": "[IG Edits] Color filter name. With \"Black and White\", the creator can convert the frame to monochrome via an 8x8 grid LUT lookup with a Spark scene-light brightness multiplier.",
+  "android": {
+    "previewAsset": {
+      "key": "6c9a332f",
+      "handle": "AQAFqFFqd8EY",
+      "md5": "367eb018829a6078c247e299fb0b2230"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAGriNJ2JFM"
+    }
+  },
+  "iglu": {
+    "legacyId": 3071
+  },
+  "assets": [
+    {
+      "name": "black_and_white_lut.png",
+      "assetHash": "d2f17fc955966e2f6b562f9134fd95a2c342f188cb331d2e7133ed2c7926f78d",
+      "hubAssetId": "1698256318069246"
+    }
+  ]
+}

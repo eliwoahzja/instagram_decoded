@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "identifier": "9083E3B9-4A84-4D3B-9D90-0EB44F9AE9CE",
+  "displayName": "Beach",
+  "description": "[IG Edits] Color preset filter name. Applies a warm beach color grade with skin smoothing.",
+  "android": {
+    "previewAsset": {
+      "key": "724effb5",
+      "handle": "AQAHoVgJ7u48",
+      "md5": "ef6846c527f8ded5638321b44af7db5d"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAE9VhV-bB4"
+    }
+  },
+  "iglu": {
+    "legacyId": 3171
+  },
+  "assets": [
+    {
+      "name": "beach_lut.png",
+      "assetHash": "cf41638d33b9bccdb0f39c4dfc3ccfdc804c7ee60fa505f03ec041972eb34451",
+      "hubAssetId": "931502243315215"
+    }
+  ]
+}

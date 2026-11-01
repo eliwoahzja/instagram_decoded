@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_scale_bounce_out",
+  "displayName": "Scale bump out",
+  "description": "[IG Edits] Video effect name. With \"Scale Bounce Out\", the creator can animate the layer scaling out with a reversed elastic motion that wobbles as it shrinks.",
+  "iglu": {
+    "legacyId": 3062,
+    "behavior": {
+      "type": "fixedOutro",
+      "durationMs": 2000,
+      "curve": "linear"
+    },
+    "customization": [
+      {
+        "name": "duration",
+        "default": 2.0,
+        "min": 0.1,
+        "max": 5.0,
+        "displayName": "Duration",
+        "displayMethod": "time"
+      },
+      {
+        "name": "size",
+        "default": 0.45,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Size"
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "3f18b68e",
+      "handle": "AQAFfWzcwzJ1",
+      "md5": "86ed32e5c43b15c6ff14f92fdcbce6bf"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAHwRiYt8Pt"
+    }
+  },
+  "dependencies": [
+    "video_scale_bounce"
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "rounded_rect2",
+  "displayName": "Rounded Rect 2",
+  "description": "[IG Edits] Video effect name. With \"Rounded Rect 2\", the creator can crop to a rounded rectangle with CSS-style proportional radius scaling when adjacent corner radii would overflow the edge.",
+  "iglu": {}
+}

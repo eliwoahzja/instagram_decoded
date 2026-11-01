@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="rectangle">
+            <size android:height="@dimen/abc_dialog_padding_material" android:width="@dimen/abc_dialog_padding_material" />
+            <corners android:radius="@dimen/base_user_row_username_drawable_padding" />
+            <solid android:color="@color/checkbox_background_color_selector_on_media" />
+        </shape>
+    </item>
+    <item android:gravity="center" android:left="@dimen/abc_action_bar_elevation_material" android:top="@dimen/abc_action_bar_elevation_material" android:right="@dimen/abc_action_bar_elevation_material" android:bottom="@dimen/abc_action_bar_elevation_material">
+        <bitmap android:src="@drawable/instagram_check_pano_filled_16" android:tint="@color/checkbox_on_media_enabled_tint" />
+    </item>
+</layer-list>

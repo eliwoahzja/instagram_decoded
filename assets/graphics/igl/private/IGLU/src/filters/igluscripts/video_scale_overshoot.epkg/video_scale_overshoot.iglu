@@ -1,0 +1,60 @@
+[Filter IgluscriptVideoScaleOvershootFilter]
+[MaskBehavior alpha]
+
+fun mix(f32 a, f32 b, f32 t) f32 {
+  return a * (1.0 - t) + b * t;
+}
+
+# Back ease-out: overshoots past 1.0 then settles
+fun easeOutBack(f32 t) f32 {
+  f32 s = 1.70158;
+  f32 u = t - 1.0;
+  return u * u * ((s + 1.0) * u + s) + 1.0;
+}
+
+[Init]
+fun init(Filter filter) {
+  filter.parameters = {
+    {center = {0.5, 0.5}, min = {0.0, 0.0}, max = {1.0, 1.0}},
+    {outro = 0.0, min = 0.0, max = 1.0, description = "0 = In, 1 = Out"},
+    {size = 0.45, min = 0.0, max = 1.0, description = "Overshoot Amount"},
+  };
+
+  filter.passes = {{
+      name = 'scaleFx,
+      igid = 'video_scale_opacity,
+      inputs = {'default},
+      uniforms = {
+        progress = 0.0,
+        scale = 0.001,
+        opacity = 0.0,
+        center = {0.5, 0.5},
+      }
+    }};
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  f32 p = getParameterFloat('progress);
+  f32 outro = getParameterFloat('outro);
+  if (outro > 0.5) { p = 1.0 - p; }
+
+  # Remap time: faster rise, slower settle-back
+  # Shifts overshoot peak to ~25% of timeline
+  f32 inv = 1.0 - p;
+  p = 1.0 - inv * inv * inv;
+
+  f32 t = easeOutBack(p);
+
+  # Scale the overshoot: multiply the deviation from 1.0
+  f32 size = mix(1.0, 8.0, getParameterFloat('size));
+  t = 1.0 + (t - 1.0) * size;
+
+  f32 scale = mix(0.0, 1.0, t);
+  f32 opacity = clamp(p * 5.0, 0.0, 1.0);
+
+  setShaderUniform('scaleFx, 'progress, p);
+  setShaderUniform('scaleFx, 'scale, scale);
+  setShaderUniform('scaleFx, 'opacity, opacity);
+  setShaderUniform('scaleFx, 'center, getParameterVec2('center));
+}

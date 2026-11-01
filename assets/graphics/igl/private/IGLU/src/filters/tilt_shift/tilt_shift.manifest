@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "tilt_shift",
+  "displayName": "Tilt Shift",
+  "description": "[IG Edits] Video effect name. With \"Tilt Shift\", the creator can apply a two-pass Gaussian defocus whose sigma ramps with distance from a linear or radial focal region.",
+  "iglu": {}
+}

@@ -1,0 +1,503 @@
+[Filter DoodleGlitter]
+[MaskBehavior alpha]
+
+[Init]
+fun init(Filter filter) {
+  filter.parameters = {
+    {glitterScale = 261.96, min = 50.0, max = 800.0, description = "Glitter Scale"},
+    {noiseScale = 367.93, min = 50.0, max = 800.0, description = "Noise Scale"},
+    {animationSpeed = 1.0, min = 0.0, max = 5.0, description = "Animation Speed"},
+    {density = 0.47, min = 0.0, max = 1.0, description = "Density"},
+    {noiseStrength = 1.04, min = 0.0, max = 3.0, description = "Noise Strength"},
+    {bevelStrength = 1.03, min = 0.0, max = 5.0, description = "Bevel Strength"},
+    {bevelRadius = 5.26, min = 1.0, max = 8.0, description = "Bevel Radius"},
+    {sparkleStrength = 0.3, min = 0.0, max = 2.0, description = "Sparkle Strength"},
+    {seed = 1.0, min = 0.0, max = 100.0, description = "Seed"},
+    {brushColor = {0.988, 0.0, 0.8196, 1.0}, description = "Brush Color"},
+  };
+
+  filter.passes = {
+  {
+    name = 'voronoi,
+    inputs = {'default},
+    uniforms = {
+      time = 0.0,
+      uScale = 261.96,
+      uSpeed = 1.0,
+      uSeed = 1.0,
+      inputSize = {1080.0, 1920.0},
+      contentAR = 0.5625,
+      contentScale = {1.0, 1.0},
+    },
+    glslShader = voronoiGlsl,
+  },
+  {
+    name = 'voronoiBlurH,
+    inputs = {'voronoi},
+    uniforms = {
+      uDirection = {1.0, 0.0},
+      uBlurAmount = 4.0,
+      uFalloff = 0.6,
+      uResolution = {1080.0, 1920.0},
+    },
+    glslShader = blurGlsl,
+  },
+  {
+    name = 'voronoiBlurV,
+    inputs = {'voronoiBlurH},
+    uniforms = {
+      uDirection = {0.0, 1.0},
+      uBlurAmount = 4.0,
+      uFalloff = 0.6,
+      uResolution = {1080.0, 1920.0},
+    },
+    glslShader = blurGlsl,
+  },
+  {
+    name = 'noiseCompose,
+    inputs = {'default, 'voronoi, 'voronoiBlurV},
+    uniforms = {
+      time = 0.0,
+      uScale = 367.93,
+      uSpeed = 0.8,
+      uDensity = 0.47,
+      brushColor = {0.988, 0.0, 0.8196, 1.0},
+      inputSize = {1080.0, 1920.0},
+      contentAR = 0.5625,
+      contentScale = {1.0, 1.0},
+    },
+    glslShader = noiseComposeGlsl,
+  },
+  {
+    name = 'bevelBlurH,
+    inputs = {'default},
+    uniforms = {
+      uDirection = {1.0, 0.0},
+      uBlurAmount = 5.26,
+      uFalloff = 0.4,
+      uResolution = {1080.0, 1920.0},
+    },
+    glslShader = blurGlsl,
+  },
+  {
+    name = 'bevelBlurV,
+    inputs = {'bevelBlurH},
+    uniforms = {
+      uDirection = {0.0, 1.0},
+      uBlurAmount = 5.26,
+      uFalloff = 0.4,
+      uResolution = {1080.0, 1920.0},
+    },
+    glslShader = blurGlsl,
+  },
+  {
+    name = 'glitterCompose,
+    inputs = {'default, 'bevelBlurV, 'noiseCompose, 'voronoi},
+    uniforms = {
+      noiseStrength = 1.04,
+      sparkleStrength = 0.3,
+      bevelStrength = 1.03,
+      bevelOffset = {1.2, -1.2},
+      inputSize = {1080.0, 1920.0},
+    },
+    glslShader = glitterComposeGlsl,
+  }
+  };
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  vec2 size = getTextureSize('default);
+  f32 contentAR = getParameterFloat('contentAspectRatio);
+  if (contentAR < 0.001) { contentAR = size.x / size.y; }
+  vec2 contentScale = getParameterVec2('contentScale);
+  if (contentScale.x < 0.001) { contentScale = {1.0, 1.0}; }
+
+  f32 glitterScale = getParameterFloat('glitterScale);
+  f32 noiseScale = getParameterFloat('noiseScale);
+  f32 speed = getParameterFloat('animationSpeed);
+  f32 density = getParameterFloat('density);
+  f32 noiseStrength = getParameterFloat('noiseStrength);
+  f32 bevelStrength = getParameterFloat('bevelStrength);
+  f32 bevelRadius = getParameterFloat('bevelRadius);
+  f32 sparkleStrength = getParameterFloat('sparkleStrength);
+  f32 seed = getParameterFloat('seed);
+  f32 time = getParameterFloat('time_sec);
+
+  # Voronoi pass
+  setShaderUniform('voronoi, 'time, time);
+  setShaderUniform('voronoi, 'uScale, glitterScale);
+  setShaderUniform('voronoi, 'uSpeed, speed);
+  setShaderUniform('voronoi, 'uSeed, seed);
+  setShaderUniform('voronoi, 'inputSize, size);
+  setShaderUniform('voronoi, 'contentAR, contentAR);
+  setShaderUniform('voronoi, 'contentScale, contentScale);
+
+  # Voronoi blur passes
+  setShaderUniform('voronoiBlurH, 'uResolution, size);
+  setShaderUniform('voronoiBlurV, 'uResolution, size);
+
+  # Noise compose pass
+  setShaderUniform('noiseCompose, 'time, time);
+  setShaderUniform('noiseCompose, 'uScale, noiseScale);
+  setShaderUniform('noiseCompose, 'uSpeed, speed * 0.8);
+  setShaderUniform('noiseCompose, 'uDensity, density);
+  setShaderUniform('noiseCompose, 'inputSize, size);
+  setShaderUniform('noiseCompose, 'contentAR, contentAR);
+  setShaderUniform('noiseCompose, 'contentScale, contentScale);
+  # NOTE: brushColor is set via applyChangedOptionsToPasses, not read here
+
+  # Bevel blur passes
+  setShaderUniform('bevelBlurH, 'uBlurAmount, bevelRadius);
+  setShaderUniform('bevelBlurH, 'uResolution, size);
+  setShaderUniform('bevelBlurV, 'uBlurAmount, bevelRadius);
+  setShaderUniform('bevelBlurV, 'uResolution, size);
+
+  # Glitter compose pass
+  setShaderUniform('glitterCompose, 'noiseStrength, noiseStrength);
+  setShaderUniform('glitterCompose, 'sparkleStrength, sparkleStrength);
+  setShaderUniform('glitterCompose, 'bevelStrength, bevelStrength);
+  setShaderUniform('glitterCompose, 'inputSize, size);
+}
+
+# ==========================================================================
+# Pass 1: Animated Voronoi cellular noise for sparkle positions
+# ==========================================================================
+string voronoiGlsl = "
+precision highp float;
+varying vec2 sourceTextureCoordinate;
+BaseUniformsOpenGL;
+
+uniform float time;
+uniform float uScale;
+uniform float uSpeed;
+uniform float uSeed;
+uniform vec2 inputSize;
+uniform float contentAR;
+uniform vec2 contentScale;
+
+vec2 hash22(vec2 p) {
+  p = p + uSeed * 0.01;
+  vec3 p3 = fract(vec3(p.x, p.y, p.x) * vec3(0.1031, 0.1030, 0.0973));
+  p3 += dot(p3, vec3(p3.y, p3.z, p3.x) + 33.33);
+  return fract(vec2((p3.x + p3.y) * p3.z, (p3.x + p3.z) * p3.y));
+}
+
+float hash21(vec2 p) {
+  p = p + uSeed * 0.01;
+  return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
+}
+
+vec3 voronoi(vec2 uv, float t) {
+  vec2 i = floor(uv);
+  vec2 f = fract(uv);
+  float minDist = 1.0;
+  float minDist2 = 1.0;
+  vec2 minCell = vec2(0.0);
+  for (int x = -1; x <= 1; x++) {
+    for (int y = -1; y <= 1; y++) {
+      vec2 neighbor = vec2(float(x), float(y));
+      vec2 cellId = i + neighbor;
+      vec2 point = hash22(cellId);
+      point = 0.5 + 0.4 * sin(t + 6.2831 * point);
+      float dist = length(neighbor + point - f);
+      if (dist < minDist) {
+        minDist2 = minDist;
+        minDist = dist;
+        minCell = cellId;
+      } else if (dist < minDist2) {
+        minDist2 = dist;
+      }
+    }
+  }
+  float edge = minDist2 - minDist;
+  float cellValue = hash21(minCell);
+  return vec3(minDist, edge, cellValue);
+}
+
+void main() {
+  vec2 uv = sourceTextureCoordinate;
+  vec4 stroke = sampleInput(uv);
+  float aspect = contentAR;
+  float t = time * uSpeed;
+  vec2 voronoiUV = vec2(uv.x * aspect * contentScale.x, uv.y * contentScale.y) * uScale;
+  vec3 v = voronoi(voronoiUV, t);
+  float cellDist = 1.0 - smoothstep(0.0, 0.5, v.x);
+  float edgeFactor = smoothstep(0.0, 0.15, v.y);
+  gl_FragColor = toOutputFormat(vec4(cellDist, v.z, edgeFactor, stroke.a));
+}
+";
+
+# ==========================================================================
+# Pass 2-3 / 5-6: Directional Gaussian blur (voronoi + bevel)
+# ==========================================================================
+string blurGlsl = "
+precision highp float;
+varying vec2 sourceTextureCoordinate;
+BaseUniformsOpenGL;
+
+uniform vec2 uDirection;
+uniform float uBlurAmount;
+uniform float uFalloff;
+uniform vec2 uResolution;
+
+void main() {
+  vec2 uv = sourceTextureCoordinate;
+  vec2 texelSize = 1.0 / uResolution;
+  vec4 result = vec4(0.0);
+  float totalWeight = 0.0;
+  for (int i = -12; i <= 12; i++) {
+    float fi = float(i);
+    if (abs(fi) > uBlurAmount) continue;
+    vec2 offset = uDirection * texelSize * fi;
+    float weight = exp(-abs(fi) * uFalloff / uBlurAmount);
+    result += sampleInput(uv + offset) * weight;
+    totalWeight += weight;
+  }
+  result /= totalWeight;
+  gl_FragColor = toOutputFormat(result);
+}
+";
+
+# ==========================================================================
+# Pass 4: Noise compose — 4D simplex noise + 3-color palette over voronoi
+# Derives palette from single brushColor via HSL conversion
+# ==========================================================================
+string noiseComposeGlsl = "
+precision highp float;
+varying vec2 sourceTextureCoordinate;
+BaseUniformsOpenGL;
+
+uniform sampler2D auxSampler1;
+uniform sampler2D auxSampler2;
+uniform float time;
+uniform float uScale;
+uniform float uSpeed;
+uniform float uDensity;
+uniform vec4 brushColor;
+uniform vec2 inputSize;
+uniform float contentAR;
+uniform vec2 contentScale;
+
+// 4D Simplex noise
+vec4 permute4(vec4 x) { return mod(((x * 34.0) + 1.0) * x, 289.0); }
+float permute1(float x) { return floor(mod(((x * 34.0) + 1.0) * x, 289.0)); }
+vec4 taylorInvSqrt4(vec4 r) { return 1.79284291400159 - 0.85373472095314 * r; }
+float taylorInvSqrt1(float r) { return 1.79284291400159 - 0.85373472095314 * r; }
+
+vec4 grad4(float j, vec4 ip) {
+  vec4 ones = vec4(1.0, 1.0, 1.0, -1.0);
+  vec4 p;
+  vec4 s;
+  p.x = floor(fract(j * ip.x) * 7.0) * ip.z - 1.0;
+  p.y = floor(fract(j * ip.y) * 7.0) * ip.z - 1.0;
+  p.z = floor(fract(j * ip.z) * 7.0) * ip.z - 1.0;
+  p.w = 1.5 - dot(abs(vec3(p.x, p.y, p.z)), vec3(ones.x, ones.y, ones.z));
+  s = vec4(lessThan(p, vec4(0.0)));
+  p.x = p.x + (s.x * 2.0 - 1.0) * s.w;
+  p.y = p.y + (s.y * 2.0 - 1.0) * s.w;
+  p.z = p.z + (s.z * 2.0 - 1.0) * s.w;
+  return p;
+}
+
+float snoise4D(vec4 v) {
+  vec2 C = vec2(0.138196601125010504, 0.309016994374947451);
+  vec4 i = floor(v + dot(v, vec4(C.y, C.y, C.y, C.y)));
+  vec4 x0 = v - i + dot(i, vec4(C.x, C.x, C.x, C.x));
+  vec4 i0;
+  vec3 isX = step(vec3(x0.y, x0.z, x0.w), vec3(x0.x, x0.x, x0.x));
+  vec3 isYZ = step(vec3(x0.z, x0.w, x0.w), vec3(x0.y, x0.y, x0.z));
+  i0.x = isX.x + isX.y + isX.z;
+  i0.y = 1.0 - isX.x + isYZ.x + isYZ.y;
+  i0.z = 1.0 - isX.y - isYZ.x + 1.0 + isYZ.z;
+  i0.w = 1.0 - isX.z - isYZ.y - isYZ.z + 1.0;
+  i0 = clamp(i0, 0.0, 3.0);
+  vec4 i3 = clamp(i0, 0.0, 1.0);
+  vec4 i2 = clamp(i0 - 1.0, 0.0, 1.0);
+  vec4 i1 = clamp(i0 - 2.0, 0.0, 1.0);
+  vec4 x1 = x0 - i1 + C.x;
+  vec4 x2 = x0 - i2 + 2.0 * C.x;
+  vec4 x3 = x0 - i3 + 3.0 * C.x;
+  vec4 x4 = x0 - 1.0 + 4.0 * C.x;
+  i = mod(i, 289.0);
+  float j0 = permute1(permute1(permute1(permute1(i.w) + i.z) + i.y) + i.x);
+  vec4 j1 = permute4(permute4(permute4(permute4(
+      i.w + vec4(i1.w, i2.w, i3.w, 1.0))
+      + i.z + vec4(i1.z, i2.z, i3.z, 1.0))
+      + i.y + vec4(i1.y, i2.y, i3.y, 1.0))
+      + i.x + vec4(i1.x, i2.x, i3.x, 1.0));
+  vec4 ip = vec4(1.0/294.0, 1.0/49.0, 1.0/7.0, 0.0);
+  vec4 p0 = grad4(j0, ip);
+  vec4 p1 = grad4(j1.x, ip);
+  vec4 p2 = grad4(j1.y, ip);
+  vec4 p3 = grad4(j1.z, ip);
+  vec4 p4 = grad4(j1.w, ip);
+  vec4 norm = taylorInvSqrt4(vec4(dot(p0,p0), dot(p1,p1), dot(p2,p2), dot(p3,p3)));
+  p0 *= norm.x; p1 *= norm.y; p2 *= norm.z; p3 *= norm.w;
+  p4 *= taylorInvSqrt1(dot(p4, p4));
+  vec3 m0 = max(0.6 - vec3(dot(x0,x0), dot(x1,x1), dot(x2,x2)), 0.0);
+  vec2 m1 = max(0.6 - vec2(dot(x3,x3), dot(x4,x4)), 0.0);
+  m0 = m0 * m0; m1 = m1 * m1;
+  return 49.0 * (dot(m0*m0, vec3(dot(p0,x0), dot(p1,x1), dot(p2,x2)))
+               + dot(m1*m1, vec2(dot(p3,x3), dot(p4,x4))));
+}
+
+// RGB to HSL conversion
+vec3 rgb2hsl(vec3 c) {
+  float maxC = max(c.r, max(c.g, c.b));
+  float minC = min(c.r, min(c.g, c.b));
+  float l = (maxC + minC) * 0.5;
+  if (maxC == minC) return vec3(0.0, 0.0, l);
+  float d = maxC - minC;
+  float s = l > 0.5 ? d / (2.0 - maxC - minC) : d / (maxC + minC);
+  float h;
+  if (maxC == c.r) h = (c.g - c.b) / d + (c.g < c.b ? 6.0 : 0.0);
+  else if (maxC == c.g) h = (c.b - c.r) / d + 2.0;
+  else h = (c.r - c.g) / d + 4.0;
+  h /= 6.0;
+  return vec3(h, s, l);
+}
+
+float hue2rgb(float p, float q, float t) {
+  if (t < 0.0) t += 1.0;
+  if (t > 1.0) t -= 1.0;
+  if (t < 1.0/6.0) return p + (q - p) * 6.0 * t;
+  if (t < 0.5) return q;
+  if (t < 2.0/3.0) return p + (q - p) * (2.0/3.0 - t) * 6.0;
+  return p;
+}
+
+vec3 hsl2rgb(vec3 hsl) {
+  if (hsl.y == 0.0) return vec3(hsl.z);
+  float q = hsl.z < 0.5 ? hsl.z * (1.0 + hsl.y) : hsl.z + hsl.y - hsl.z * hsl.y;
+  float p = 2.0 * hsl.z - q;
+  return vec3(
+    hue2rgb(p, q, hsl.x + 1.0/3.0),
+    hue2rgb(p, q, hsl.x),
+    hue2rgb(p, q, hsl.x - 1.0/3.0)
+  );
+}
+
+// Derive deep jewel tone (color2) from brush color — mirrors generateGlitterPalette()
+vec3 deriveDeepColor(vec3 bc) {
+  vec3 hsl = rgb2hsl(bc);
+  float hueShift = 0.15;
+  if (hsl.x < 0.1 || hsl.x > 0.9) hueShift = 0.15;
+  else if (hsl.x < 0.2) hueShift = 0.12;
+  else if (hsl.x < 0.5) hueShift = 0.18;
+  else if (hsl.x < 0.7) hueShift = 0.1;
+  else hueShift = -0.1;
+  return hsl2rgb(vec3(
+    fract(hsl.x + hueShift + 1.0),
+    min(1.0, hsl.y * 1.1),
+    max(0.2, hsl.z * 0.5)
+  ));
+}
+
+vec3 paletteColor(float noise, float brightness, vec3 c1, vec3 c2, vec3 c3) {
+  vec3 color;
+  float t = noise;
+  if (t < 0.4) {
+    color = mix(c2, c1, t / 0.4);
+  } else if (t < 0.7) {
+    color = c1;
+  } else {
+    color = mix(c1, c3, (t - 0.7) / 0.3);
+  }
+  color = mix(color, c3, brightness * brightness);
+  return color;
+}
+
+void main() {
+  vec2 uv = sourceTextureCoordinate;
+  vec4 stroke = sampleInput(uv);
+  vec4 voronoiTex = texture2D(auxSampler1, uv);
+  if (stroke.a < 0.01) { gl_FragColor = toOutputFormat(vec4(0.0)); return; }
+
+  // Derive 3-color palette from single brushColor
+  vec3 c1 = brushColor.rgb;
+  vec3 c2 = deriveDeepColor(brushColor.rgb);
+  vec3 c3 = vec3(1.0);
+
+  float aspect = contentAR;
+  float loopDuration = 5.0;
+  float angle = (time * uSpeed / loopDuration) * 6.28318530718;
+  float zOffset = sin(angle);
+  float wOffset = cos(angle);
+  vec2 noiseUV = vec2(uv.x * aspect * contentScale.x, uv.y * contentScale.y) * uScale;
+  float noise1 = snoise4D(vec4(noiseUV.x, noiseUV.y, zOffset, wOffset));
+  float noise2 = snoise4D(vec4(noiseUV.x * 1.5, noiseUV.y * 1.5, zOffset * 0.8, wOffset * 0.8));
+  float voronoiVal = voronoiTex.r;
+  float cellRandom = voronoiTex.g;
+  float animatedNoise = voronoiVal * (0.5 + noise1 * 0.5);
+  float sparkle1 = smoothstep(1.0 - uDensity, 1.0, abs(fract(voronoiVal - noise1 * uSpeed)));
+  float sparkle2 = smoothstep(1.0 - uDensity, 1.0, abs(fract(cellRandom - noise2 * uSpeed * 0.8)));
+  float combinedSparkle = (sparkle1 + sparkle2) * 0.5;
+  float baseNoise = noise1 * 0.5 + 0.5;
+  baseNoise = baseNoise * (0.6 + voronoiVal * 0.4);
+  float brightness = max(combinedSparkle, baseNoise * step(0.7, baseNoise));
+  vec3 color = paletteColor(baseNoise + cellRandom * 0.3, brightness, c1, c2, c3);
+  color = mix(color * 0.7, color * 1.3, combinedSparkle);
+  color = clamp(color, 0.0, 1.0);
+  float alpha = stroke.a;
+  gl_FragColor = toOutputFormat(vec4(color, alpha));
+}
+";
+
+# ==========================================================================
+# Pass 7: Final compose — bevel + shimmer overlay
+# ==========================================================================
+string glitterComposeGlsl = "
+precision highp float;
+varying vec2 sourceTextureCoordinate;
+BaseUniformsOpenGL;
+
+uniform sampler2D auxSampler1;
+uniform sampler2D auxSampler2;
+uniform sampler2D auxSampler3;
+uniform float noiseStrength;
+uniform float sparkleStrength;
+uniform float bevelStrength;
+uniform vec2 bevelOffset;
+uniform vec2 inputSize;
+
+float blendScreenF(float base, float blend) {
+  return 1.0 - ((1.0 - base) * (1.0 - blend));
+}
+vec3 blendScreen3(vec3 base, vec3 blend) {
+  return vec3(blendScreenF(base.r, blend.r), blendScreenF(base.g, blend.g), blendScreenF(base.b, blend.b));
+}
+
+void main() {
+  vec2 uv = sourceTextureCoordinate;
+  vec4 stroke = sampleInput(uv);
+  vec4 bevelBlur = texture2D(auxSampler1, uv);
+  vec4 noiseCompose = texture2D(auxSampler2, uv);
+  vec4 voronoi = texture2D(auxSampler3, uv);
+
+  if (stroke.a < 0.01) {
+    gl_FragColor = toOutputFormat(vec4(0.0));
+    return;
+  }
+
+  // Bevel: parallax-shifted alpha subtraction
+  float bh = texture2D(auxSampler1, uv + bevelOffset / inputSize).a;
+  float bs = texture2D(auxSampler1, uv - bevelOffset / inputSize).a;
+  bh = max(0.0, stroke.a - bh);
+  bs = max(0.0, stroke.a - bs);
+  float bevel = (bh - bs) * bevelStrength;
+
+  vec3 color = blendScreen3(vec3(0.0), noiseCompose.rgb * noiseStrength);
+  color = blendScreen3(color, voronoi.rgb * sparkleStrength);
+
+  // Apply bevel as lightness shift
+  color = clamp(color + bevel, 0.0, 1.0);
+
+  float brightness = max(noiseCompose.r, max(noiseCompose.g, noiseCompose.b));
+  if (brightness > 0.8) {
+    color = mix(color, vec3(1.0), (brightness - 0.8) * 2.0);
+  }
+  color = clamp(color, 0.0, 1.0);
+  gl_FragColor = toOutputFormat(vec4(color * stroke.a, stroke.a));
+}
+";

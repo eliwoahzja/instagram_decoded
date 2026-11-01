@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "transition_fade_flicker",
+  "displayName": "Fade Flicker",
+  "description": "[IG Edits] Transition name. With \"Fade Flicker\", the creator can cut between clips through a flickering fade-to-color burst driven by a sine-pulse flicker map.",
+  "iglu": {}
+}

@@ -1,0 +1,43 @@
+.class public final Lcom/google/android/gms/media/effect/enhancement/internal/t;
+.super Lcom/google/android/gms/media/effect/enhancement/internal/b;
+.source ""
+
+
+# instance fields
+.field public final synthetic A00:LX/mVl;
+
+
+# direct methods
+.method public constructor <init>(LX/mVl;)V
+    .locals 3
+
+    iput-object p1, p0, Lcom/google/android/gms/media/effect/enhancement/internal/t;->A00:LX/mVl;
+
+    const-string v2, "com.google.android.gms.media.effect.enhancement.IEnhancementCallback"
+
+    invoke-direct {p0}, Landroid/os/Binder;-><init>()V
+
+    const v0, -0x1d4fc21c
+
+    invoke-static {v0}, LX/3Et;->A03(I)I
+
+    move-result v1
+
+    invoke-virtual {p0, p0, v2}, Landroid/os/Binder;->attachInterface(Landroid/os/IInterface;Ljava/lang/String;)V
+
+    const v0, -0x4c166448
+
+    invoke-static {v0, v1}, LX/3Et;->A0A(II)V
+
+    const v0, 0x64dc7d31
+
+    invoke-static {v0}, LX/3Et;->A03(I)I
+
+    move-result v1
+
+    const v0, 0x1439091e
+
+    invoke-static {v0, v1}, LX/3Et;->A0A(II)V
+
+    return-void
+.end method

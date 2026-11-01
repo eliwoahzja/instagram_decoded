@@ -1,0 +1,56 @@
+.class public interface abstract Lapp/morphe/extension/crimera/internal/google/common/io/LineProcessor;
+.super Ljava/lang/Object;
+.source "LineProcessor.java"
+
+
+# annotations
+.annotation build Lapp/morphe/extension/crimera/internal/google/common/annotations/GwtIncompatible;
+.end annotation
+
+.annotation build Lapp/morphe/extension/crimera/internal/google/common/annotations/J2ktIncompatible;
+.end annotation
+
+.annotation runtime Lapp/morphe/extension/crimera/internal/google/common/io/ElementTypesAreNonnullByDefault;
+.end annotation
+
+.annotation system Ldalvik/annotation/Signature;
+    value = {
+        "<T:",
+        "Ljava/lang/Object;",
+        ">",
+        "Ljava/lang/Object;"
+    }
+.end annotation
+
+
+# virtual methods
+.method public abstract getResult()Ljava/lang/Object;
+    .annotation runtime Lapp/morphe/extension/crimera/internal/google/common/io/ParametricNullness;
+    .end annotation
+
+    .annotation system Ldalvik/annotation/Signature;
+        value = {
+            "()TT;"
+        }
+    .end annotation
+.end method
+
+.method public abstract processLine(Ljava/lang/String;)Z
+    .annotation build Lapp/morphe/extension/crimera/internal/google/errorprone/annotations/CanIgnoreReturnValue;
+    .end annotation
+
+    .annotation system Ldalvik/annotation/MethodParameters;
+        accessFlags = {
+            0x0
+        }
+        names = {
+            "line"
+        }
+    .end annotation
+
+    .annotation system Ldalvik/annotation/Throws;
+        value = {
+            Ljava/io/IOException;
+        }
+    .end annotation
+.end method

@@ -1,0 +1,191 @@
+.class public final LX/8Sq;
+.super LX/4Li;
+.source ""
+
+# interfaces
+.implements LX/Zmi;
+
+
+# static fields
+.field public static final A00:LX/8Sq;
+
+
+# direct methods
+.method public static constructor <clinit>()V
+    .locals 1
+
+    new-instance v0, LX/8Sq;
+
+    invoke-direct {v0}, Ljava/lang/Object;-><init>()V
+
+    sput-object v0, LX/8Sq;->A00:LX/8Sq;
+
+    return-void
+.end method
+
+.method public constructor <init>()V
+    .locals 0
+
+    invoke-direct {p0}, Ljava/lang/Object;-><init>()V
+
+    return-void
+.end method
+
+
+# virtual methods
+.method public final bridge synthetic unsafeParseFromJson(LX/4Bd;)Ljava/lang/Object;
+    .locals 3
+
+    invoke-static {p1}, LX/5B5;->A0Q(Ljava/lang/Object;)V
+
+    new-instance v2, LX/8Ss;
+
+    invoke-direct {v2}, LX/8Ss;-><init>()V
+
+    invoke-virtual {p1}, LX/4Bd;->A1d()LX/1xw;
+
+    move-result-object v1
+
+    sget-object v0, LX/1xw;->A0D:LX/1xw;
+
+    if-eq v1, v0, :cond_0
+
+    invoke-virtual {p1}, LX/4Bd;->A1f()V
+
+    const/4 v0, 0x0
+
+    return-object v0
+
+    :cond_0
+    :goto_0
+    invoke-virtual {p1}, LX/4Bd;->A1N()LX/1xw;
+
+    move-result-object v1
+
+    sget-object v0, LX/1xw;->A09:LX/1xw;
+
+    if-eq v1, v0, :cond_2
+
+    invoke-static {p1}, LX/1yd;->A08(LX/4Bd;)Ljava/lang/String;
+
+    move-result-object v1
+
+    invoke-virtual {v1}, Ljava/lang/String;->hashCode()I
+
+    move-result v0
+
+    sparse-switch v0, :sswitch_data_0
+
+    :cond_1
+    :goto_1
+    invoke-virtual {p1}, LX/4Bd;->A1f()V
+
+    goto :goto_0
+
+    :sswitch_0
+    const-string v0, "key"
+
+    invoke-virtual {v1, v0}, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
+
+    move-result v0
+
+    if-eqz v0, :cond_1
+
+    invoke-static {p1}, LX/1yd;->A07(LX/4Bd;)Ljava/lang/String;
+
+    move-result-object v0
+
+    invoke-static {v0}, LX/1yd;->A0H(Ljava/lang/Object;)V
+
+    iput-object v0, v2, LX/8Ss;->A03:Ljava/lang/String;
+
+    goto :goto_1
+
+    :sswitch_1
+    const-string v0, "lockerContainerModule"
+
+    invoke-virtual {v1, v0}, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
+
+    move-result v0
+
+    if-eqz v0, :cond_1
+
+    invoke-static {p1}, LX/1yd;->A07(LX/4Bd;)Ljava/lang/String;
+
+    move-result-object v0
+
+    if-eqz v0, :cond_1
+
+    iput-object v0, v2, LX/8Ss;->A04:Ljava/lang/String;
+
+    goto :goto_1
+
+    :sswitch_2
+    const-string v0, "fetchTimestampMs"
+
+    invoke-virtual {v1, v0}, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
+
+    move-result v0
+
+    if-eqz v0, :cond_1
+
+    invoke-virtual {p1}, LX/4Bd;->A1c()J
+
+    move-result-wide v0
+
+    iput-wide v0, v2, LX/8Ss;->A00:J
+
+    goto :goto_1
+
+    :sswitch_3
+    const-string v0, "mediaIDList"
+
+    invoke-virtual {v1, v0}, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
+
+    move-result v0
+
+    if-eqz v0, :cond_1
+
+    invoke-static {p1}, LX/1yd;->A0B(LX/4Bd;)Ljava/util/ArrayList;
+
+    move-result-object v0
+
+    invoke-static {v0}, LX/1yd;->A0H(Ljava/lang/Object;)V
+
+    invoke-static {v0}, LX/5B5;->A0Q(Ljava/lang/Object;)V
+
+    iput-object v0, v2, LX/8Ss;->A06:Ljava/util/List;
+
+    goto :goto_1
+
+    :sswitch_4
+    const-string/jumbo v0, "prefetch_trigger_type"
+
+    invoke-virtual {v1, v0}, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
+
+    move-result v0
+
+    if-eqz v0, :cond_1
+
+    invoke-static {p1}, LX/1yd;->A07(LX/4Bd;)Ljava/lang/String;
+
+    move-result-object v0
+
+    if-eqz v0, :cond_1
+
+    iput-object v0, v2, LX/8Ss;->A05:Ljava/lang/String;
+
+    goto :goto_1
+
+    :cond_2
+    return-object v2
+
+    :sswitch_data_0
+    .sparse-switch
+        -0x75d653eb -> :sswitch_1
+        -0x3dedb1be -> :sswitch_2
+        -0x27dee2c3 -> :sswitch_3
+        0x19e5f -> :sswitch_0
+        0x436cd6a9 -> :sswitch_4
+    .end sparse-switch
+.end method

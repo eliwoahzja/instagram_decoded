@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "text_gradient_trippy",
+  "displayName": "Gradient Trippy",
+  "description": "[IG Edits] Text effect name. With \"Gradient Trippy\", the creator can fill text with an animated aspect-corrected radial gradient driven by 1-1.414*length((st-0.5)*aspect)+1.25*time pulse.",
+  "iglu": {}
+}

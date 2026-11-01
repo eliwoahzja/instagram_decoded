@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape android:shape="oval"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@color/white_25_transparent" />
+    <size android:height="@dimen/abc_alert_dialog_button_dimen" android:width="@dimen/abc_alert_dialog_button_dimen" />
+</shape>

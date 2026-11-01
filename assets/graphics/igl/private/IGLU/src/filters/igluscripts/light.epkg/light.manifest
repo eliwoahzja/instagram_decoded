@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "identifier": "E7295F72-4041-4F25-963B-419B3A65FD8F",
+  "displayName": "Light",
+  "description": "[IG Edits] Color filter name. LUT color grade with a chromatic-aberration RGB-shift multiplied onto the result for a luminous, edge-fringed glow.",
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAGdA7__n83"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "3acfa38f",
+      "handle": "AQADhsxJDFXH",
+      "md5": "b017106d2a2550c2100e63225847cd48"
+    }
+  },
+  "iglu": {
+    "legacyId": 3110
+  },
+  "assets": [
+    {
+      "name": "light_lut.png",
+      "assetHash": "2e7a00677d0691644bf5d7dad8689c68e124e0bd62267e5dd736a23e5d2a9c9c",
+      "hubAssetId": "26811003505198953"
+    }
+  ]
+}

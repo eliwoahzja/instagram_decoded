@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "blur_blink_fade_out",
+  "displayName": "Blur Blink Fade Out",
+  "description": "[IG Edits] Transition name. With \"Blur Blink Fade Out\", the creator can ramp a 7x7 box blur in over the first 40% of time then fade to black over the remaining 60%.",
+  "iglu": {}
+}

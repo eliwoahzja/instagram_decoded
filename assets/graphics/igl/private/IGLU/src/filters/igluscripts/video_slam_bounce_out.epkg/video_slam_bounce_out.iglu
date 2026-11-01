@@ -1,0 +1,33 @@
+[Filter VideoSlamBounceOut]
+[MaskBehavior alpha]
+
+# Composable wrapper — delegates to VideoSlamBounce with outro=1.0
+
+[Init]
+fun init(Filter filter) {
+  filter.passes = {
+    {
+      name = 'slamBounceOut,
+      igid = 'video_slam_bounce_in,
+      inputs = {'default},
+      uniforms = {
+        outro = 1.0,
+      },
+    }
+  };
+
+  filter.parameters = {
+    {progress = 0.0, min = 0.0, max = 1.0, description = "Animation Progress"},
+    {center = {0.5, 0.5}, min = {0.0, 0.0}, max = {1.0, 1.0}},
+    {size = 0.30, min = 0.0, max = 1.0, description = "Starting Scale"},
+  };
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  f32 p = getParameterFloat('progress);
+  setShaderUniform('slamBounceOut, 'progress, p);
+  setShaderUniform('slamBounceOut, 'outro, 1.0);
+  setShaderUniform('slamBounceOut, 'center, getParameterVec2('center));
+  setShaderUniform('slamBounceOut, 'size, getParameterFloat('size));
+}

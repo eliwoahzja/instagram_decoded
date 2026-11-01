@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_cutout_pulse",
+  "displayName": "Pulse",
+  "description": "[Instagram Edits] Effect browser - Label for an effect that creates a rhythmic, pulsating motion or effect in the video or subjects within the video. Character count for labels is 14 characters max.",
+  "iglu": {
+    "legacyId": 2101,
+    "customization": [
+      {
+        "name": "speed",
+        "default": 0.52,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Speed",
+        "displayNameDescription": "[IG Edits] Slider label controlling the playback or animation speed of a video effect (noun, not a verb); exact range varies per effect."
+      },
+      {
+        "name": "size",
+        "default": 0.5,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Size",
+        "displayNameDescription": "[IG Edits] Slider label controlling the size or scale of an element produced by a video effect; exact units and range vary per effect."
+      }
+    ],
+    "subject": {
+      "enabled": true,
+      "fullFrameEnabled": true,
+      "typeSuggestions": [
+        "head",
+        "person",
+        "clothing"
+      ]
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "bdf4bd1f",
+      "handle": "AQAPCUHarmnw",
+      "md5": "69cccf977e6e1e8c1f6f5b911cc2cc11"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAPIbPR2yut"
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "identifier": "vintage_warm",
+  "displayName": "Vintage warm",
+  "description": "[IG Edits] Color filter name. With \"Vintage warm\", the creator can apply a warm faded retro film-stock look by remapping each pixel's RGB through a 3D color lookup table.",
+  "iglu": {
+    "legacyId": 826
+  },
+  "assets": [
+    {
+      "name": "vintage_warm.png",
+      "assetHash": "7805698c37c3232385456ed8f3e0e04f544c6f265a2e9006f56d2d0521cc3893",
+      "hubAssetId": "1671675927392087"
+    },
+    {
+      "name": "vintage_warm_compressed.png",
+      "assetHash": "66ab921269cc94c50b63265f3a71ec9304bc83d8935c80834c0c67f5f1367108",
+      "hubAssetId": "976431365310364"
+    }
+  ]
+}

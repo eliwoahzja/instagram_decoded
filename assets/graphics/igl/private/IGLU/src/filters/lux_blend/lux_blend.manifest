@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "lux_blend",
+  "displayName": "Lux Blend",
+  "description": "[IG Edits] Video effect. With \"Lux Blend\", the creator can use one slider that applies AntiLux for negative values (taming highlights) or Starlight for positive values (enhancing contrast).",
+  "iglu": {}
+}

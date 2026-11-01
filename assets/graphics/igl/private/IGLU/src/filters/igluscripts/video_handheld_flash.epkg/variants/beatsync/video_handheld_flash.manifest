@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "iglu": {
+    "customization": [
+      {
+        "name": "beatProgress",
+        "default": 0.0,
+        "min": 0.0,
+        "max": 1.0,
+        "beatReactive": {
+          "mode": "envelope",
+          "envelope": {
+            "attack": 0.02,
+            "decay": 0.2,
+            "sustain": 0.8,
+            "release": 0.15,
+            "curve": "exponential",
+            "timing": "beatRelative"
+          },
+          "range": [
+            0.0,
+            1.0
+          ]
+        }
+      }
+    ]
+  }
+}

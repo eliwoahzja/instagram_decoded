@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "identifier": "C4CF2615-3A1E-4C83-B0DB-20A915E9A377",
+  "displayName": "Soft White",
+  "description": "[IG Edits] Color filter name. With \"Soft White\", the creator can apply a soft-focus makeup-camera look via 8x8 LUT color grade, 28% LUT mix, 5-tap cross-pattern blur, and a subtle warm rouge boost.",
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAD2MgqDmKf"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "eec21b87",
+      "handle": "AQAObmL9k4pv",
+      "md5": "f629b7e15838fd366289cd5b090e797b"
+    }
+  },
+  "iglu": {
+    "legacyId": 3087
+  },
+  "assets": [
+    {
+      "name": "soft_white_lut.png",
+      "assetHash": "665a1fb17d992bffdfa0dec1e8285b45ed05a306ff8ca922918e4554a0a8024f",
+      "hubAssetId": "1525908072485610"
+    }
+  ]
+}

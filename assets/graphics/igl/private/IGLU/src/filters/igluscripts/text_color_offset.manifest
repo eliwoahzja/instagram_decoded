@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "text_color_offset",
+  "displayName": "Color Offset",
+  "description": "Text effect with color offset",
+  "iglu": {}
+}

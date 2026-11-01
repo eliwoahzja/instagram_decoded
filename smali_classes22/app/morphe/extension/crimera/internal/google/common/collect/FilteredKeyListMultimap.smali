@@ -1,0 +1,268 @@
+.class final Lapp/morphe/extension/crimera/internal/google/common/collect/FilteredKeyListMultimap;
+.super Lapp/morphe/extension/crimera/internal/google/common/collect/FilteredKeyMultimap;
+.source "FilteredKeyListMultimap.java"
+
+# interfaces
+.implements Lapp/morphe/extension/crimera/internal/google/common/collect/ListMultimap;
+
+
+# annotations
+.annotation build Lapp/morphe/extension/crimera/internal/google/common/annotations/GwtCompatible;
+.end annotation
+
+.annotation runtime Lapp/morphe/extension/crimera/internal/google/common/collect/ElementTypesAreNonnullByDefault;
+.end annotation
+
+.annotation system Ldalvik/annotation/Signature;
+    value = {
+        "<K:",
+        "Ljava/lang/Object;",
+        "V:",
+        "Ljava/lang/Object;",
+        ">",
+        "Lapp/morphe/extension/crimera/internal/google/common/collect/FilteredKeyMultimap<",
+        "TK;TV;>;",
+        "Lapp/morphe/extension/crimera/internal/google/common/collect/ListMultimap<",
+        "TK;TV;>;"
+    }
+.end annotation
+
+
+# direct methods
+.method public constructor <init>(Lapp/morphe/extension/crimera/internal/google/common/collect/ListMultimap;Lapp/morphe/extension/crimera/internal/google/common/base/Predicate;)V
+    .locals 0
+    .annotation system Ldalvik/annotation/MethodParameters;
+        accessFlags = {
+            0x0,
+            0x0
+        }
+        names = {
+            "unfiltered",
+            "keyPredicate"
+        }
+    .end annotation
+
+    .annotation system Ldalvik/annotation/Signature;
+        value = {
+            "(",
+            "Lapp/morphe/extension/crimera/internal/google/common/collect/ListMultimap<",
+            "TK;TV;>;",
+            "Lapp/morphe/extension/crimera/internal/google/common/base/Predicate<",
+            "-TK;>;)V"
+        }
+    .end annotation
+
+    .line 35
+    invoke-direct {p0, p1, p2}, Lapp/morphe/extension/crimera/internal/google/common/collect/FilteredKeyMultimap;-><init>(Lapp/morphe/extension/crimera/internal/google/common/collect/Multimap;Lapp/morphe/extension/crimera/internal/google/common/base/Predicate;)V
+
+    return-void
+.end method
+
+
+# virtual methods
+.method public bridge synthetic get(Ljava/lang/Object;)Ljava/util/Collection;
+    .locals 0
+    .param p1    # Ljava/lang/Object;
+        .annotation runtime Lapp/morphe/extension/crimera/internal/google/common/collect/ParametricNullness;
+        .end annotation
+    .end param
+    .annotation system Ldalvik/annotation/MethodParameters;
+        accessFlags = {
+            0x1000
+        }
+        names = {
+            "key"
+        }
+    .end annotation
+
+    .line 30
+    invoke-virtual {p0, p1}, Lapp/morphe/extension/crimera/internal/google/common/collect/FilteredKeyListMultimap;->get(Ljava/lang/Object;)Ljava/util/List;
+
+    move-result-object p0
+
+    return-object p0
+.end method
+
+.method public get(Ljava/lang/Object;)Ljava/util/List;
+    .locals 0
+    .param p1    # Ljava/lang/Object;
+        .annotation runtime Lapp/morphe/extension/crimera/internal/google/common/collect/ParametricNullness;
+        .end annotation
+    .end param
+    .annotation system Ldalvik/annotation/MethodParameters;
+        accessFlags = {
+            0x0
+        }
+        names = {
+            "key"
+        }
+    .end annotation
+
+    .annotation system Ldalvik/annotation/Signature;
+        value = {
+            "(TK;)",
+            "Ljava/util/List<",
+            "TV;>;"
+        }
+    .end annotation
+
+    .line 45
+    invoke-super {p0, p1}, Lapp/morphe/extension/crimera/internal/google/common/collect/FilteredKeyMultimap;->get(Ljava/lang/Object;)Ljava/util/Collection;
+
+    move-result-object p0
+
+    check-cast p0, Ljava/util/List;
+
+    return-object p0
+.end method
+
+.method public bridge synthetic removeAll(Ljava/lang/Object;)Ljava/util/Collection;
+    .locals 0
+    .param p1    # Ljava/lang/Object;
+        .annotation runtime Ljavax/annotation/CheckForNull;
+        .end annotation
+    .end param
+    .annotation system Ldalvik/annotation/MethodParameters;
+        accessFlags = {
+            0x1000
+        }
+        names = {
+            "key"
+        }
+    .end annotation
+
+    .line 30
+    invoke-virtual {p0, p1}, Lapp/morphe/extension/crimera/internal/google/common/collect/FilteredKeyListMultimap;->removeAll(Ljava/lang/Object;)Ljava/util/List;
+
+    move-result-object p0
+
+    return-object p0
+.end method
+
+.method public removeAll(Ljava/lang/Object;)Ljava/util/List;
+    .locals 0
+    .param p1    # Ljava/lang/Object;
+        .annotation runtime Ljavax/annotation/CheckForNull;
+        .end annotation
+    .end param
+    .annotation system Ldalvik/annotation/MethodParameters;
+        accessFlags = {
+            0x0
+        }
+        names = {
+            "key"
+        }
+    .end annotation
+
+    .annotation system Ldalvik/annotation/Signature;
+        value = {
+            "(",
+            "Ljava/lang/Object;",
+            ")",
+            "Ljava/util/List<",
+            "TV;>;"
+        }
+    .end annotation
+
+    .line 50
+    invoke-super {p0, p1}, Lapp/morphe/extension/crimera/internal/google/common/collect/FilteredKeyMultimap;->removeAll(Ljava/lang/Object;)Ljava/util/Collection;
+
+    move-result-object p0
+
+    check-cast p0, Ljava/util/List;
+
+    return-object p0
+.end method
+
+.method public bridge synthetic replaceValues(Ljava/lang/Object;Ljava/lang/Iterable;)Ljava/util/Collection;
+    .locals 0
+    .param p1    # Ljava/lang/Object;
+        .annotation runtime Lapp/morphe/extension/crimera/internal/google/common/collect/ParametricNullness;
+        .end annotation
+    .end param
+    .annotation system Ldalvik/annotation/MethodParameters;
+        accessFlags = {
+            0x1000,
+            0x1000
+        }
+        names = {
+            "key",
+            "values"
+        }
+    .end annotation
+
+    .line 30
+    invoke-virtual {p0, p1, p2}, Lapp/morphe/extension/crimera/internal/google/common/collect/FilteredKeyListMultimap;->replaceValues(Ljava/lang/Object;Ljava/lang/Iterable;)Ljava/util/List;
+
+    move-result-object p0
+
+    return-object p0
+.end method
+
+.method public replaceValues(Ljava/lang/Object;Ljava/lang/Iterable;)Ljava/util/List;
+    .locals 0
+    .param p1    # Ljava/lang/Object;
+        .annotation runtime Lapp/morphe/extension/crimera/internal/google/common/collect/ParametricNullness;
+        .end annotation
+    .end param
+    .annotation system Ldalvik/annotation/MethodParameters;
+        accessFlags = {
+            0x0,
+            0x0
+        }
+        names = {
+            "key",
+            "values"
+        }
+    .end annotation
+
+    .annotation system Ldalvik/annotation/Signature;
+        value = {
+            "(TK;",
+            "Ljava/lang/Iterable<",
+            "+TV;>;)",
+            "Ljava/util/List<",
+            "TV;>;"
+        }
+    .end annotation
+
+    .line 55
+    invoke-super {p0, p1, p2}, Lapp/morphe/extension/crimera/internal/google/common/collect/AbstractMultimap;->replaceValues(Ljava/lang/Object;Ljava/lang/Iterable;)Ljava/util/Collection;
+
+    move-result-object p0
+
+    check-cast p0, Ljava/util/List;
+
+    return-object p0
+.end method
+
+.method public unfiltered()Lapp/morphe/extension/crimera/internal/google/common/collect/ListMultimap;
+    .locals 0
+    .annotation system Ldalvik/annotation/Signature;
+        value = {
+            "()",
+            "Lapp/morphe/extension/crimera/internal/google/common/collect/ListMultimap<",
+            "TK;TV;>;"
+        }
+    .end annotation
+
+    .line 40
+    invoke-super {p0}, Lapp/morphe/extension/crimera/internal/google/common/collect/FilteredKeyMultimap;->unfiltered()Lapp/morphe/extension/crimera/internal/google/common/collect/Multimap;
+
+    move-result-object p0
+
+    check-cast p0, Lapp/morphe/extension/crimera/internal/google/common/collect/ListMultimap;
+
+    return-object p0
+.end method
+
+.method public bridge synthetic unfiltered()Lapp/morphe/extension/crimera/internal/google/common/collect/Multimap;
+    .locals 0
+
+    .line 30
+    invoke-virtual {p0}, Lapp/morphe/extension/crimera/internal/google/common/collect/FilteredKeyListMultimap;->unfiltered()Lapp/morphe/extension/crimera/internal/google/common/collect/ListMultimap;
+
+    move-result-object p0
+
+    return-object p0
+.end method

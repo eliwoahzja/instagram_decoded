@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "text_gradient_metal",
+  "displayName": "Gradient Metal",
+  "description": "[IG Edits] Text effect name. With \"Gradient Metal\", the creator can fill text with a 5-stop per-line HSL gradient that mimics polished chrome banding, using hueShift=0.5 and large brightness range.",
+  "iglu": {}
+}

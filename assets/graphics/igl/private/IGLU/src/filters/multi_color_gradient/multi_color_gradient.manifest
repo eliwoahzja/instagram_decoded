@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "multi_color_gradient",
+  "displayName": "Multi Color Gradient",
+  "description": "[IG Edits] Video effect. With \"Multi Color Gradient\", the creator can render a gradient of up to 10 colors in vertical, horizontal, or diagonal directions and composite it with photo via alpha.",
+  "iglu": {}
+}

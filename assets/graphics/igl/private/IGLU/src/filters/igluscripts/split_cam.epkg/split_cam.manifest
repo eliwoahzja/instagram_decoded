@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "identifier": "B5597DAE-9ECE-4C6D-993D-EF1FA3E28CAD",
+  "displayName": "Split Cam",
+  "description": "[IG Edits] Color filter name. Tiled grid of camera copies with per-tile animated zoom and flip — disorienting kaleidoscope-like split.",
+  "ios": {
+    "previewAsset": {
+      "handle": "AQADy-6t3LPi"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "bf499fb6",
+      "handle": "AQADuHEcpPJx",
+      "md5": "27451e7b085b76d5ed4b0df82679d248"
+    }
+  },
+  "iglu": {
+    "legacyId": 3111
+  },
+  "assets": []
+}

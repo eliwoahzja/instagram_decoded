@@ -1,0 +1,168 @@
+[Filter BlackBlur]
+# "Black Blur" — LUT + 9-tap radial gaussian blur + global darkening.
+#
+# Ported from a Spark AR effect (marketing/tracker name "Dark Blur",
+# effectId 607888744113772; Spark scene name "Black Filter"). The
+# tracker name "dark_blur" is already taken by an unrelated directional-
+# motion-blur filter in this tree, so we ship this one as "black_blur"
+# — keeping the "blur" association from the marketing name while
+# nodding to the original Spark scene name.
+#
+# Spark scene composition (simplified):
+#   1. camera --> procedural multi-tap gaussian blur --> 8x8-tiled LUT
+#   2. full-screen black rectangle at 40% opacity, multiply blend
+#      (equivalent to multiplying the frame by 0.60)
+#   3. face retouching pass  <-- dropped; visually negligible
+#
+# Two passes:
+#   'graded --- LUT color grade with brightness multiplier
+#              (same shader as aesthetic_blur / dark_blur / drammatico).
+#   'output --- 9-tap radial gaussian blur of the graded output,
+#              multiplied by 'darken' to bake in the black-multiply overlay.
+#
+# 9-tap gaussian weights: center 0.25, axis 0.125 each (x4), diag 0.0625 each (x4)
+# --- sums to 1.0. Blur size in pixels is 'blur_radius' * texelSize.
+# Default blur_radius = 12.0 approximates the ~8x8-mean downsample look of Spark.
+
+[Init]
+fun init(Filter filter)
+{
+    makeTexture('lut);
+
+    filter.parameters = {
+        {strength = 0.844, min = 0.0, max = 1.0, description = "LUT mix strength"},
+        {brightness = 1.080, min = 0.0, max = 2.0, description = "Output brightness (Spark scene-light emulation)"},
+        {blur_radius = 3.883, min = 0.0, max = 64.0, description = "Radial blur radius (pixels)"},
+        {darken = 0.564, min = 0.0, max = 1.0, description = "Global darkening multiplier (Spark 40% black multiply = 0.60)"},
+    };
+
+    filter.passes = {
+        {
+            name = 'graded,
+            inputs = {'default, 'lut},
+            uniforms = {
+                strength = 0.844,
+                brightness = 1.080,
+            },
+            glslShader = lutShader,
+        },
+        {
+            name = 'output,
+            inputs = {'graded},
+            uniforms = {
+                blur_radius = 3.883,
+                darken = 0.564,
+                source_size_x = 1024.0,
+                source_size_y = 1024.0,
+            },
+            glslShader = blurShader,
+        },
+    };
+}
+
+string lut_path = "lut_path";
+string lut_filename = "";
+
+[PreRender]
+fun preRender(Filter filter){
+    string lut_filename_parameter = getParameterString(lut_path);
+    if (lut_filename_parameter != "") {
+        string new_lut_filename = stringAppend("textureFilePath://", lut_filename_parameter);
+        if (new_lut_filename != lut_filename) {
+            lut_filename = new_lut_filename;
+            loadTexture('lut, lut_filename);
+        }
+    }
+
+    f32 s = getParameterFloat('strength);
+    setShaderUniform('graded, 'strength, s);
+
+    f32 b = getParameterFloat('brightness);
+    setShaderUniform('graded, 'brightness, b);
+
+    vec2 srcSize = getTextureSize('default);
+    if (srcSize.x > 0.0) {
+        setShaderUniform('output, 'source_size_x, srcSize.x);
+    }
+    if (srcSize.y > 0.0) {
+        setShaderUniform('output, 'source_size_y, srcSize.y);
+    }
+
+    f32 br = getParameterFloat('blur_radius);
+    setShaderUniform('output, 'blur_radius, br);
+
+    f32 d = getParameterFloat('darken);
+    setShaderUniform('output, 'darken, d);
+}
+
+#### GLSL shaders ####
+
+string lutShader = "
+    varying vec2 sourceTextureCoordinate;
+    BaseUniformsOpenGL;
+
+    uniform sampler2D auxSampler0;
+    uniform sampler2D auxSampler1;
+    uniform sampler2D auxSampler2;
+
+    uniform float brightness;
+
+    void main() {
+      vec4 texel = sampleInput(sourceTextureCoordinate);
+
+      texel.rgb = clamp(texel.rgb, 0.00781, 0.98438);
+
+      float x = texel.r / 8.0;
+      float y = texel.g / 8.0;
+      float z = texel.b;
+
+      float blueY = floor(z * 8.0) / 8.0;
+      float blueX = floor((z - blueY) * 64.0) / 8.0;
+
+      x += blueX;
+      y += blueY;
+
+      vec3 color = texture2D(auxSampler1, vec2(x, y)).xyz;
+
+      texel = mix(texel, vec4(color, texel.a), strength);
+
+      texel.rgb *= brightness;
+
+      gl_FragColor = toOutputFormat(texel);
+    }
+    ";
+
+string blurShader = "
+    varying vec2 sourceTextureCoordinate;
+    BaseUniformsOpenGL;
+
+    uniform sampler2D auxSampler0;
+    uniform sampler2D auxSampler1;
+    uniform sampler2D auxSampler2;
+
+    uniform float blur_radius;
+    uniform float darken;
+    uniform float source_size_x;
+    uniform float source_size_y;
+
+    void main() {
+      vec2 uv = sourceTextureCoordinate;
+
+      vec2 texel = vec2(1.0 / max(source_size_x, 1.0), 1.0 / max(source_size_y, 1.0));
+      vec2 off = texel * blur_radius;
+
+      vec4 c  = sampleInput(uv) * 0.25;
+      c += sampleInput(uv + vec2( off.x, 0.0))     * 0.125;
+      c += sampleInput(uv + vec2(-off.x, 0.0))     * 0.125;
+      c += sampleInput(uv + vec2(0.0,  off.y))     * 0.125;
+      c += sampleInput(uv + vec2(0.0, -off.y))     * 0.125;
+      c += sampleInput(uv + vec2( off.x,  off.y))  * 0.0625;
+      c += sampleInput(uv + vec2(-off.x,  off.y))  * 0.0625;
+      c += sampleInput(uv + vec2( off.x, -off.y))  * 0.0625;
+      c += sampleInput(uv + vec2(-off.x, -off.y))  * 0.0625;
+
+      c.rgb *= darken;
+
+      gl_FragColor = toOutputFormat(c);
+    }
+    ";

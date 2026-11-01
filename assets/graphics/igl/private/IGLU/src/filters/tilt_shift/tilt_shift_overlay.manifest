@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "tilt_shift_overlay",
+  "displayName": "Tilt Shift Overlay",
+  "description": "[IG Edits] Video effect name. With \"Tilt Shift Overlay\", the creator can paint a radial or linear white haze around an in-focus center to mimic a tilt-shift falloff overlay.",
+  "iglu": {}
+}

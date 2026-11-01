@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "identifier": "AEC07423-A815-4787-BB2D-232371426D89",
+  "displayName": "Film Burn II",
+  "description": "[IG Edits] Color filter name. LUT color grade with animated blue light-leak bokeh and flickering top-edge film-frame markers.",
+  "ios": {
+    "previewAsset": {
+      "handle": "AQBl4p4u9107"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "b30b3f4a",
+      "handle": "AQAGRtKI7Ubl",
+      "md5": "7e2307bfe25559ae2b8e192841442154"
+    }
+  },
+  "iglu": {
+    "legacyId": 3105
+  },
+  "assets": [
+    {
+      "name": "film_burn_ii_lut.png",
+      "assetHash": "92640d72b2a462145762f1ab7b580c1d215c5087e07f9439b2a0f18251f76b4e",
+      "hubAssetId": "895408086917055"
+    },
+    {
+      "name": "film_burn_ii_labels.png",
+      "assetHash": "d7f36276fd9bba356416553423f53e6c2ff1b0911e7aec7460707cac6d5db0de",
+      "hubAssetId": "1984703002145684"
+    },
+    {
+      "name": "film_burn_ii_leaks.png",
+      "assetHash": "fbf3bd139016c756d9f2079d7cc5e7e256eb473b1d3fe3744b90a88c509f00b5",
+      "hubAssetId": "1341913254514837"
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_particles_in",
+  "displayName": "Particles in",
+  "description": "Video effects selection. Particle animation intro effect.",
+  "iglu": {
+    "legacyId": 5086,
+    "behavior": {
+      "type": "fixedIntro",
+      "durationMs": 2500,
+      "curve": "quadraticInOut"
+    },
+    "subject": {
+      "overlay": true
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQBc_n9KJkb3"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "2da867a3",
+      "handle": "AQAFQOnnykHB",
+      "md5": "685e3921e236472219dac195fb174c68"
+    }
+  },
+  "assets": [
+    {
+      "name": "rgba_noise_256.png",
+      "assetHash": "3415067e1e7cd2965854c813f34bdb028aed7f87695903797ff6ec62f156c506",
+      "hubAssetId": "1274215854629798"
+    }
+  ]
+}

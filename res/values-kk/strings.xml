@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="string_0x7f130004">Мекенжай</string>
+    <string name="string_0x7f130008">Жарнама аккаунтында картамен автоматты толтырылсын ба?</string>
+    <string name="string_0x7f13002c">Браузерді жабу</string>
+    <string name="string_0x7f13002f">%1$s құрылғыңыздың камерасын пайдаланғысы келеді.</string>
+    <string name="string_0x7f130030">%1$s құрылғыңыздың геодеректерін пайдаланғысы келеді.</string>
+    <string name="string_0x7f130033">Рұқсат беру</string>
+    <string name="string_0x7f130034">Блоктау</string>
+    <string name="string_0x7f130038">Бұл сайтқа арналған қауіпсіздік сертификатына қатысты мәселе туындады</string>
+    <string name="string_0x7f13003a">Қауіпсіздік қатесі</string>
+    <string name="string_0x7f13008d">Бірдеңе дұрыс болмады</string>
+    <string name="string_0x7f13008f">Электрондық пошта</string>
+    <string name="string_0x7f130091">Сіз қарап отырған веб-сайт сыртқы қолданбаны ашпақ. Жалғастырғыңыз келе ме?</string>
+    <string name="string_0x7f130092">Артқа</string>
+    <string name="string_0x7f130093">Жалғастыру</string>
+    <string name="string_0x7f130094">Қолданбамыздан шығудасыз</string>
+    <string name="string_0x7f130095">Бұл техникалық қатеге байланысты болуы мүмкін. Оны түзетіп жатырмыз. Осы бетті қайта жүктеп көріңіз.</string>
+    <string name="string_0x7f130096">Жаңарту</string>
+    <string name="string_0x7f130097">Дәл қазір бет қолжетімді емес</string>
+    <string name="string_0x7f130098">Тегіңіз</string>
+    <string name="string_0x7f130099">Бетті жүктеу мүмкін емес</string>
+    <string name="string_0x7f13009a">… арқылы ашу</string>
+    <string name="string_0x7f13009b">%1$s қолданбасында ашу</string>
+    <string name="string_0x7f13009c">Қосымша опциялар</string>
+    <string name="string_0x7f1300aa">Есіміңіз</string>
+    <string name="string_0x7f1300af">Толық экран режимі қосылды. Одан шығу үшін солға сырғыту немесе \"Артқа\" түймесін басу керек.</string>
+    <string name="string_0x7f1300cb">Дәл қазір %2$s үшін %1$s тілін орнату мүмкін емес. Қайталап көруіңізге немесе %2$s қолданбасын әзірше ағылшын (АҚШ) тілінде пайдалануыңызға болады.</string>
+    <string name="string_0x7f1300cc">Кішкене күте тұрыңыз. %1$s орнатылуда…</string>
+    <string name="string_0x7f1300cd">Қайталап көру</string>
+    <string name="string_0x7f1300ce">Ағылшын тілінде (АҚШ) жалғастыру</string>
+    <string name="string_0x7f1300da">Жабу</string>
+    <string name="string_0x7f1300dd">Карта қосу үшін түртіңіз</string>
+    <string name="string_0x7f130192">Көзілдіріктер қосулы</string>
+    <string name="string_0x7f1301d3">Телефон</string>
+    <string name="string_0x7f1301d7">Уақытты орнату</string>
+</resources>

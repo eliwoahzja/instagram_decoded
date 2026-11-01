@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "identifier": "0ffcbcee-cf4d-49fe-b0e2-09f7fdcfd61e",
+  "displayName": "ARClown",
+  "description": "[IG Edits] Video effect name. \"ARClown\" paints a UV-mapped clown makeup texture over the tracked face via the Ocean face tracker's canonical UV layout.",
+  "assets": [
+    {
+      "name": "bdaut.png",
+      "assetHash": "6412901772b0922b4efa48a5521aee5baec951bf719d1cdf5a42bd0284692834",
+      "hubAssetId": "2045668050167897"
+    }
+  ],
+  "iglu": {}
+}

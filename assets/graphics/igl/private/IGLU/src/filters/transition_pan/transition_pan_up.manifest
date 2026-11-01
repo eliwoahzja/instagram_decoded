@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "transition_pan_up",
+  "displayName": "Pan Up",
+  "description": "Video transition selection. Chooses to apply pan up transition.",
+  "iglu": {}
+}

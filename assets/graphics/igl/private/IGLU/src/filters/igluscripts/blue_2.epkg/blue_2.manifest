@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "identifier": "B50A115F-64A0-43D9-8566-42C95190298D",
+  "displayName": "Blue 2",
+  "description": "[IG Edits] Color filter name. Cool blue LUT color grade for a moody, slightly-desaturated look.",
+  "android": {
+    "previewAsset": {
+      "key": "e8d96894",
+      "handle": "AQAFsEebtOFl",
+      "md5": "4f4cb19c2e5b07679b1c1e818b2a9465"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAFu_SgVav_"
+    }
+  },
+  "iglu": {
+    "legacyId": 3102
+  },
+  "assets": [
+    {
+      "name": "blue_2.png",
+      "assetHash": "53fb47d46d95823300097234401d550931b31fb0d0312acc4b8081405f38cd6f",
+      "hubAssetId": "1508904967639832"
+    }
+  ]
+}

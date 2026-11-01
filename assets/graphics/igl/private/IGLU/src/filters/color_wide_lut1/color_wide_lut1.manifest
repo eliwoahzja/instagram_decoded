@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "identifier": "amber",
+  "displayName": "Amber",
+  "description": "[IG Edits] Color filter name. With \"Amber\", the creator can apply a warm amber-gold color grade via a 3D LUT lookup.",
+  "iglu": {
+    "legacyId": 5024
+  },
+  "assets": [
+    {
+      "name": "amber.lutpk",
+      "assetHash": "fefb9c55512a3bbe941df59cf2c0fa8ed5bccb38df1a2d651ab73289b0ecd55c",
+      "hubAssetId": "1444354580210304"
+    }
+  ]
+}

@@ -1,0 +1,70 @@
+# IGLUSCRIPTCOLLISION_BYPASS: Intentional replacement of C++ native effect
+[Filter VideoBWPulse]
+# B&W Pulse - pulses between color and black-and-white.
+# Ported 1:1 from the C++ VideoBWPulseFilter single-pass shader.
+#
+# Carries both behaviors:
+#   useBeats false -> clock-driven square wave (time_sec x pulse_speed)
+#   useBeats true  -> beat-driven mix, beatProgress supplied per beat
+#
+# useBeats is set by BeatReactiveController when a manifest declares beatReactive;
+# with no such manifest nothing writes it and the false default selects the clock.
+
+[Init]
+fun init(Filter filter) {
+    filter.parameters = {
+        {speed = 0.182, min = 0.0, max = 1.0, description = "Pulse speed"},
+        {useBeats = false, description = "True while the beat system is driving this effect"},
+        {beatProgress = 0.0, min = 0.0, max = 1.0, description = "Beat-driven B&W mix"},
+    };
+
+    filter.passes = {{
+        name = 'single_pass,
+        inputs = {'default},
+        uniforms = {
+            pulse_speed = 1.5,
+            useBeats = false,
+            beatProgress = 0.0,
+        },
+        glslShader = glslBWPulse,
+    }};
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+    # Matches the C++ lerp(kPulseSpeedMin 0.5, kPulseSpeedMax 6.0, speed).
+    f32 speed = getParameterFloat('speed);
+    f32 pulseSpeed = 0.5 + speed * (6.0 - 0.5);
+    setShaderUniform('single_pass, 'pulse_speed, pulseSpeed);
+
+    f32 beatProgress = getParameterFloat('beatProgress);
+    setShaderUniform('single_pass, 'beatProgress, beatProgress);
+
+    boolean useBeats = getParameterBoolean('useBeats);
+    setShaderUniform('single_pass, 'useBeats, useBeats);
+}
+
+string glslBWPulse = "
+    precision highp float;
+    varying vec2 sourceTextureCoordinate;
+    BaseUniformsOpenGL;
+    uniform float time_sec;
+
+    uniform float pulse_speed;
+    uniform bool useBeats;
+    uniform float beatProgress;
+
+    void main() {
+        vec2 uv = sourceTextureCoordinate;
+        vec4 color = sampleInput(uv);
+
+        float clockPulse = step(0.0, sin(time_sec * pulse_speed * 6.2831));
+        float pulse = useBeats ? beatProgress : clockPulse;
+
+        // Guarded divide: the original C++ divides by color.a unguarded.
+        float luma = dot(color.rgb / max(color.a, 0.001), vec3(0.299, 0.587, 0.114));
+
+        color.rgb = mix(color.rgb, vec3(luma) * color.a, pulse);
+        gl_FragColor = toOutputFormat(color);
+    }
+";

@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "identifier": "text_stretch",
+  "displayName": "Text Stretch",
+  "description": "[IG Edits] Text effect name. With \"Text Stretch\", the creator can animate text squashing and stretching on X and Y axes driven by a baked stretch animation texture.",
+  "assets": [
+    {
+      "name": "stretch.png",
+      "assetHash": "5143ee1fb6e226055af915ca371b734ad70b330f58d93ef3c403503e33129a99",
+      "hubAssetId": "1889347115032280"
+    }
+  ],
+  "iglu": {}
+}

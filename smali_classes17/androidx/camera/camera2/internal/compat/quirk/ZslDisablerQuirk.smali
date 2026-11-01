@@ -1,0 +1,54 @@
+.class public Landroidx/camera/camera2/internal/compat/quirk/ZslDisablerQuirk;
+.super Ljava/lang/Object;
+.source ""
+
+# interfaces
+.implements LX/qcx;
+
+
+# static fields
+.field public static final A00:Ljava/util/List;
+
+.field public static final A01:Ljava/util/List;
+
+
+# direct methods
+.method public static constructor <clinit>()V
+    .locals 4
+
+    const-string v3, "SM-F936"
+
+    const-string v2, "SM-S901U"
+
+    const-string v1, "SM-S908U"
+
+    const-string v0, "SM-S908U1"
+
+    filled-new-array {v3, v2, v1, v0}, [Ljava/lang/String;
+
+    move-result-object v0
+
+    invoke-static {v0}, Ljava/util/Arrays;->asList([Ljava/lang/Object;)Ljava/util/List;
+
+    move-result-object v0
+
+    sput-object v0, Landroidx/camera/camera2/internal/compat/quirk/ZslDisablerQuirk;->A00:Ljava/util/List;
+
+    const-string v0, "MI 8"
+
+    invoke-static {v0}, LX/0E2;->A16(Ljava/lang/String;)Ljava/util/List;
+
+    move-result-object v0
+
+    sput-object v0, Landroidx/camera/camera2/internal/compat/quirk/ZslDisablerQuirk;->A01:Ljava/util/List;
+
+    return-void
+.end method
+
+.method public constructor <init>()V
+    .locals 0
+
+    invoke-direct {p0}, Ljava/lang/Object;-><init>()V
+
+    return-void
+.end method

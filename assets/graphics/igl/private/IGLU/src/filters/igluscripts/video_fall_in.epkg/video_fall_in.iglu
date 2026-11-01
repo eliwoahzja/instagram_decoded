@@ -1,0 +1,244 @@
+[Filter IgluscriptVideoFallInFilter]
+[MaskBehavior alpha]
+
+# Fall from top with bounce -- exact AE bezier curves from POSITION_FALL_DOWN_IN
+
+fun mix(f32 a, f32 b, f32 t) f32 {
+  return a * (1.0 - t) + b * t;
+}
+
+fun cssBezier(f32 time, f32 x1, f32 y1, f32 x2, f32 y2) f32 {
+  f32 t = time;
+  f32 i = 0.0;
+  while (i < 8.0) {
+    f32 u = 1.0 - t;
+    f32 xt = 3.0 * u * u * t * x1 + 3.0 * u * t * t * x2 + t * t * t;
+    f32 dxdt = 3.0 * u * u * x1 + 6.0 * u * t * (x2 - x1) + 3.0 * t * t * (1.0 - x2);
+    t = t - (xt - time) / max(dxdt, 0.0001);
+    t = clamp(t, 0.0, 1.0);
+    i = i + 1.0;
+  }
+  f32 u = 1.0 - t;
+  return 3.0 * u * u * t * y1 + 3.0 * u * t * t * y2 + t * t * t;
+}
+
+[Init]
+fun init(Filter filter) {
+  filter.parameters = {
+    {outro = 0.0, min = 0.0, max = 1.0, description = "0 = In, 1 = Out"},
+  };
+
+  filter.passes = {
+    {
+      name = 'fallFx,
+      inputs = {'default},
+      uniforms = {
+        offsetY = 0.0,
+        rotation = 0.0,
+        opacity = 0.0,
+        inputSize = {720.0, 1280.0},
+      },
+      glslShader = glsl,
+    },
+    {
+      name = 'dirBlur,
+      inputs = {'fallFx},
+      uniforms = {
+        ghostSpread = 0.0,
+      },
+      glslShader = blurGlsl,
+    },
+  };
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  f32 p = getParameterFloat('progress);
+  f32 outro = getParameterFloat('outro);
+  if (outro > 0.5) { p = 1.0 - p; }
+
+  f32 pi = 3.14159;
+
+  # --- Y Position (6 keyframes, exact AE bezier) ---
+  f32 YPT0 = 0.0;
+  f32 YPT1 = 0.231389;
+  f32 YPT2 = 0.405;
+  f32 YPT3 = 0.578611;
+  f32 YPT4 = 0.752222;
+  f32 YPT5 = 1.0;
+  f32 YPK0 = -1.0;
+  f32 YPK1 = 0.080196;
+  f32 YPK2 = 0.025586;
+  f32 YPK3 = 0.086837;
+  f32 YPK4 = 0.074727;
+  f32 YPK5 = 0.092305;
+
+  f32 posY = YPK5;
+  f32 f = 0.0;
+  f32 t = 0.0;
+
+  if (p < YPT1) {
+    f = p / YPT1;
+    t = cssBezier(f, 0.109463, 0.047422, 0.833333, 0.833374);
+    posY = mix(YPK0, YPK1, t);
+  } else if (p < YPT2) {
+    f = (p - YPT1) / (YPT2 - YPT1);
+    t = cssBezier(f, 0.166667, 0.166667, 0.517996, 1.089004);
+    posY = mix(YPK1, YPK2, t);
+  } else if (p < YPT3) {
+    f = (p - YPT2) / (YPT3 - YPT2);
+    t = cssBezier(f, 0.573986, 0.029141, 0.887189, 0.961364);
+    posY = mix(YPK2, YPK3, t);
+  } else if (p < YPT4) {
+    f = (p - YPT3) / (YPT4 - YPT3);
+    t = cssBezier(f, 0.160721, -0.278416, 0.688274, 1.0);
+    posY = mix(YPK3, YPK4, t);
+  } else if (p < YPT5) {
+    f = (p - YPT4) / (YPT5 - YPT4);
+    t = cssBezier(f, 0.338934, 0.0, 0.833333, 0.833295);
+    posY = mix(YPK4, YPK5, t);
+  }
+
+  # Offset from final rest position (positive = above, falling down)
+  f32 offsetY = YPK5 - posY;
+
+  # --- Rotation (6 keyframes, exact AE bezier, degrees -> radians) ---
+  f32 RT0 = 0.0;
+  f32 RT1 = 0.222133;
+  f32 RT2 = 0.555467;
+  f32 RT3 = 0.611067;
+  f32 RT4 = 0.777733;
+  f32 RT5 = 1.0;
+  f32 RK0 = -15.0;
+  f32 RK1 = -21.0;
+  f32 RK2 = 4.0;
+  f32 RK3 = 4.0;
+  f32 RK4 = -1.0;
+  f32 RK5 = 0.0;
+
+  f32 rotDeg = RK5;
+  f = 0.0;
+  t = 0.0;
+
+  if (p < RT1) {
+    f = p / RT1;
+    t = cssBezier(f, 1.0, 0.0, 0.833333, 0.833374);
+    rotDeg = mix(RK0, RK1, t);
+  } else if (p < RT2) {
+    f = (p - RT1) / (RT2 - RT1);
+    t = f;
+    rotDeg = mix(RK1, RK2, t);
+  } else if (p < RT3) {
+    f = (p - RT2) / (RT3 - RT2);
+    t = f;
+    rotDeg = mix(RK2, RK3, t);
+  } else if (p < RT4) {
+    f = (p - RT3) / (RT4 - RT3);
+    t = cssBezier(f, 0.166667, 0.166667, 0.833333, 1.0);
+    rotDeg = mix(RK3, RK4, t);
+  } else if (p < RT5) {
+    f = (p - RT4) / (RT5 - RT4);
+    t = cssBezier(f, 0.166667, 0.0, 0.833333, 0.833313);
+    rotDeg = mix(RK4, RK5, t);
+  }
+
+  f32 rotation = rotDeg * pi / 180.0;
+
+  # Motion blur from fall velocity
+  vec2 size = getTextureSize('default);
+  f32 texelSize = 1.0 / size.y;
+  f32 ghostSpread = abs(offsetY) * 12.0 * texelSize;
+
+  # Opacity: invisible at p=0, visible once animation starts
+  f32 opacity = 1.0;
+  if (p < 0.001) { opacity = 0.0; }
+
+  setShaderUniform('fallFx, 'offsetY, offsetY);
+  setShaderUniform('fallFx, 'rotation, rotation);
+  setShaderUniform('fallFx, 'opacity, opacity);
+  setShaderUniform('fallFx, 'inputSize, size);
+  setShaderUniform('dirBlur, 'ghostSpread, ghostSpread);
+}
+
+string blurGlsl = "varying vec2 sourceTextureCoordinate;
+
+BaseUniformsOpenGL;
+
+uniform float ghostSpread;
+
+float clipAlpha(vec2 uv) {
+  float e = 0.005;
+  return smoothstep(0.0, e, uv.x) * smoothstep(0.0, e, 1.0 - uv.x)
+       * smoothstep(0.0, e, uv.y) * smoothstep(0.0, e, 1.0 - uv.y);
+}
+
+void main() {
+  vec2 uv = sourceTextureCoordinate;
+  vec4 color = vec4(0.0);
+  float totalWeight = 0.0;
+
+  // Vertical blur along fall axis. Weighting each ghost by clipAlpha drops
+  // samples that land outside the frame instead of letting them wrap to the
+  // opposite edge, and renormalizing by totalWeight keeps the edge from darkening.
+  for (int i = -4; i <= 4; i++) {
+    float fi = float(i);
+    vec2 gUV = uv + vec2(0.0, ghostSpread * fi);
+    float k = 2.0;
+    float weight = (1.0 / (1.0 + k * abs(fi))) * clipAlpha(gUV);
+    color += sampleInput(gUV) * weight;
+    totalWeight += weight;
+  }
+
+  gl_FragColor = toOutputFormat(color / max(totalWeight, 0.001));
+}
+";
+
+string glsl = "varying vec2 sourceTextureCoordinate;
+
+BaseUniformsOpenGL;
+
+uniform float offsetY;
+uniform float rotation;
+uniform float opacity;
+uniform vec2 inputSize;
+
+// One-pixel antialiased frame edge. The +0.5 bias puts the ramp entirely outside the
+// first interior pixel, so an untransformed frame stays fully opaque. A fixed uv
+// epsilon instead fades a fraction of the frame regardless of resolution, which shows
+// up as a permanent margin once the animation settles.
+float clipAlpha(vec2 uv) {
+  vec2 texel = 1.0 / max(inputSize, vec2(1.0));
+  vec2 d = min(uv, 1.0 - uv);
+  vec2 a = clamp(d / texel + 0.5, 0.0, 1.0);
+  return a.x * a.y;
+}
+
+void main() {
+  vec2 uv = sourceTextureCoordinate;
+
+  // Translate -- shift vertically.
+  // UP is +1.0 on OpenGL and -1.0 on Metal, so this leaves the Android/GL path
+  // as authored and flips the iOS/Metal path to match it. Swap to DOWN to flip
+  // Android instead. Whichever is used must also apply to the rotation below,
+  // since mirroring the y axis reverses the sense of a rotation.
+  uv.y -= UP * offsetY;
+
+  // Rotate around center with aspect ratio correction
+  float aspect = inputSize.x / inputSize.y;
+  vec2 center = vec2(0.5);
+  uv -= center;
+  uv.x *= aspect;
+  float rot = UP * rotation;
+  float c = cos(rot);
+  float s = sin(rot);
+  uv = vec2(c * uv.x - s * uv.y, s * uv.x + c * uv.y);
+  uv.x /= aspect;
+  uv += center;
+
+  // Clip rather than repeat: without this the sampler wraps and tiles the frame
+  // once the fall/rotation pushes uv outside [0,1].
+  float ca = clipAlpha(uv);
+  vec4 color = sampleInput(uv) * ca * opacity;
+  gl_FragColor = toOutputFormat(color);
+}
+";

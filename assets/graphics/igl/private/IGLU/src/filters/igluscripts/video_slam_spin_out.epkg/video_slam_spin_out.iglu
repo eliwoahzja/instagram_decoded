@@ -1,0 +1,33 @@
+[Filter VideoSlamSpinOut]
+[MaskBehavior alpha]
+
+# Composable wrapper — delegates to VideoSlamSpin with outro=1.0
+
+[Init]
+fun init(Filter filter) {
+  filter.passes = {
+    {
+      name = 'slamSpinOut,
+      igid = 'video_slam_spin_in,
+      inputs = {'default},
+      uniforms = {
+        outro = 1.0,
+      },
+    }
+  };
+
+  filter.parameters = {
+    {progress = 0.0, min = 0.0, max = 1.0, description = "Animation Progress"},
+    {center = {0.5, 0.5}, min = {0.0, 0.0}, max = {1.0, 1.0}},
+    {amount = 0.20, min = 0.0, max = 1.0, description = "Spin Amount"},
+  };
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  f32 p = getParameterFloat('progress);
+  setShaderUniform('slamSpinOut, 'progress, p);
+  setShaderUniform('slamSpinOut, 'outro, 1.0);
+  setShaderUniform('slamSpinOut, 'center, getParameterVec2('center));
+  setShaderUniform('slamSpinOut, 'amount, getParameterFloat('amount));
+}

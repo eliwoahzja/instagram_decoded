@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "retouching_wa_hdr",
+  "displayName": "Retouching WA HDR",
+  "description": "[IG Edits] Video effect name. With \"Retouching WA HDR\", the creator can run the ML-mask-driven frequency-separation skin smoother on HDR input.",
+  "iglu": {}
+}

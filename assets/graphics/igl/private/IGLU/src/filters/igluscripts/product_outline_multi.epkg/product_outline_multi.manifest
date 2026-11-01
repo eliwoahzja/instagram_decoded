@@ -1,0 +1,123 @@
+{
+  "schemaVersion": 1,
+  "identifier": "86912812-be18-4183-9664-aea7fd3692d2",
+  "displayName": "Product Outline Multi",
+  "description": "[IG Visual Discovery] Product highlight effect name. With \"Product Outline Multi\", a light sweeps around a glowing rim traced on each product a viewer can select in a paused reel.",
+  "iglu": {
+    "behavior": {
+      "type": "fixedIntro",
+      "durationMs": 4000,
+      "curve": "linear"
+    },
+    "customization": [
+      {
+        "name": "thickness",
+        "default": 5,
+        "min": 0,
+        "max": 25
+      },
+      {
+        "name": "softness",
+        "default": 0.15,
+        "min": 0,
+        "max": 1
+      },
+      {
+        "name": "blurRadius",
+        "default": 3.48,
+        "min": 0,
+        "max": 8
+      },
+      {
+        "name": "edgeWidth",
+        "default": 0.25,
+        "min": 0.01,
+        "max": 0.5
+      },
+      {
+        "name": "edgeBlurOffset",
+        "default": 0.6,
+        "min": 0,
+        "max": 1
+      },
+      {
+        "name": "falloffLead",
+        "default": 47,
+        "min": 0,
+        "max": 360
+      },
+      {
+        "name": "falloffTrail",
+        "default": 360,
+        "min": 0,
+        "max": 360
+      },
+      {
+        "name": "radialMod",
+        "default": 1,
+        "min": 1,
+        "max": 4
+      },
+      {
+        "name": "easeIn",
+        "default": 0.336957,
+        "min": 0,
+        "max": 1
+      },
+      {
+        "name": "easeInPower",
+        "default": 3.77174,
+        "min": 1,
+        "max": 6
+      },
+      {
+        "name": "easeOut",
+        "default": 0.4,
+        "min": 0,
+        "max": 1
+      },
+      {
+        "name": "easeOutPower",
+        "default": 4.1,
+        "min": 1,
+        "max": 6
+      },
+      {
+        "name": "edgeGain",
+        "default": 9.2,
+        "min": 0,
+        "max": 16
+      },
+      {
+        "name": "edgeBlur",
+        "default": 1.6,
+        "min": 0,
+        "max": 8
+      },
+      {
+        "name": "embossAmount",
+        "default": 0.6,
+        "min": 0,
+        "max": 1
+      },
+      {
+        "name": "embossSlope",
+        "default": 3.38,
+        "min": 0.25,
+        "max": 6
+      },
+      {
+        "name": "baseOpacity",
+        "default": 0,
+        "min": 0,
+        "max": 1
+      },
+      {
+        "name": "opacity",
+        "default": 0.9,
+        "min": 0,
+        "max": 1
+      }
+    ]
+  }
+}

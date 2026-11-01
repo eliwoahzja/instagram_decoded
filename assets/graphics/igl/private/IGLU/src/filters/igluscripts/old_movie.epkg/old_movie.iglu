@@ -1,0 +1,309 @@
+[Filter OldMovie]
+# "Old Movie" -- vintage cinema look. Single fragment pass with six
+# logical stages composed in order:
+#
+#   Stage 1 -- Content shift (dual-mode jitter):
+#     * Continuous 2-octave sin drift (smooth, always active, small
+#       magnitude).
+#     * Overlaid snap-and-hold jitter (toxic_glitch-style bucket hash):
+#       every 1/snap_rate seconds a new random (dir_x, dir_y, magnitude)
+#       is hashed; some buckets land near zero for "no jump" frames,
+#       others land at full snap_magnitude for the occasional herky-
+#       jerky jump. Snap and drift are ADDED so both effects layer.
+#
+#   Stage 2 -- Pre-LUT Adjust Colors:
+#     * contrast: standard 0.5-pivot multiplier (1.0 = no-op).
+#     * saturation: mix toward Rec.709 luma (1.0 = no-op, 0 = grayscale).
+#     * lightness: multiplicative (1.0 = no-op, <1 darkens).
+#
+#   Stage 3 -- LUT color grade (8x8 grid) with graceful fallback if the
+#     LUT texture isn't loaded yet (probe center pixel).
+#
+#   Stage 4 -- Animated procedural dust particles at 12 fps.
+#     ~dust_count tiny bright specks scattered randomly per frame,
+#     matching Spark's dust-on-film reference frames. Additive blend
+#     so specks read as bright regardless of underlying color. Sizes
+#     vary: mostly ~0.003-0.005 UV, occasionally ~0.005-0.008 UV for
+#     the "clump" specks. NO vertical stripes (that was old_film's
+#     scratch look which does not match the Spark reference).
+#
+#   Stage 5 -- Procedural grain overlay. Coarse hash noise added at
+#     grain_strength to break up flat regions.
+#
+#   Stage 6 -- Radial vignette (locked to screen). sqrt(2)-normalized
+#     distance from center + smoothstep falloff, same math as Black II.
+#     vignette_strength = corner darkness (0 = none, 1 = pure black).
+#     vignette_softness = gradient width (0 = hard edge at corners,
+#     1 = full-frame ramp).
+#
+# NO frame border, NO tick marks -- full-frame effect (per user spec).
+#
+# Time source: getLocalTime() (monotonic wall-clock since shader start)
+# per the Time Source rule for continuous animations. The host's
+# `time_sec` wraps with the sample-app video loop and would break
+# scratch / drift / grain continuity.
+
+[Init]
+fun init(Filter filter)
+{
+    makeTexture('lut);
+
+    filter.parameters = {
+        # LUT.
+        {lut_strength = 1.0, min = 0.0, max = 1.0, description = "LUT mix strength (1.0 = full LUT, 0.0 = camera passthrough)"},
+
+        # Pre-LUT Adjust Colors (user spec: contrast +0.1, saturation -0.5, lightness -0.1).
+        {contrast = 1.094, min = 0.0, max = 2.0, description = "Pre-LUT contrast around 0.5 mid-gray (1.0 = no-op, >1 boosts)"},
+        {saturation = 0.603, min = 0.0, max = 2.0, description = "Pre-LUT saturation (1.0 = no-op, 0 = grayscale)"},
+        {lightness = 0.848, min = 0.0, max = 2.0, description = "Pre-LUT lightness multiplier (1.0 = no-op, <1 darkens)"},
+
+        # Procedural dust particles.
+        {dust_strength = 0.184, min = 0.0, max = 1.0, description = "Dust particle overlay opacity (bright specks additive)"},
+        {dust_count = 14.390, min = 0.0, max = 60.0, description = "Approximate dust particle count per frame"},
+
+        # Content shift -- smooth drift.
+        {drift_magnitude = 0.010, min = 0.0, max = 0.030, description = "Smooth 2-octave-sin drift magnitude (UV units)"},
+
+        # Content shift -- snap-and-hold jitter.
+        {snap_magnitude = 0.002, min = 0.0, max = 0.050, description = "Snap-jump max magnitude (UV units)"},
+        {snap_rate = 14.638, min = 1.0, max = 60.0, description = "Snap events per second"},
+        {snap_probability = 0.392, min = 0.0, max = 1.0, description = "Fraction of snap buckets that produce a visible jump (rest are near-zero for 'no-jitter' frames)"},
+
+        # Procedural grain.
+        {grain_strength = 0.06, min = 0.0, max = 0.30, description = "Procedural film grain overlay opacity"},
+
+        # Radial vignette (Spark: vignette_strength = 0.35).
+        {vignette_strength = 0.482, min = 0.0, max = 1.0, description = "Vignette darkness at corners (0 = none, 1 = pure black)"},
+        {vignette_softness = 0.605, min = 0.0, max = 1.0, description = "Vignette gradient width (0 = hard edge, 1 = full-frame falloff)"},
+    };
+
+    filter.passes = {{
+      name = 'pass0,
+      inputs = {'default, 'lut},
+      uniforms = {
+        lut_strength     = 1.0,
+        contrast         = 1.094,
+        saturation       = 0.603,
+        lightness        = 0.848,
+        dust_strength    = 0.184,
+        dust_count       = 14.390,
+        drift_magnitude  = 0.010,
+        snap_magnitude   = 0.002,
+        snap_rate        = 14.638,
+        snap_probability = 0.392,
+        grain_strength   = 0.06,
+        vignette_strength = 0.482,
+        vignette_softness = 0.605,
+        time             = 0.0,
+      },
+      glslShader = glslOldMovie,
+    }};
+}
+
+# Custom Parameter string for sample-app + ARD LUT loading.
+string lut_path = "lut_path";
+string lut_filename = "";
+
+[PreRender]
+fun preRender(Filter filter){
+    string filename_parameter = getParameterString(lut_path);
+    if (filename_parameter != "") {
+        string new_filename = stringAppend("textureFilePath://", filename_parameter);
+        if (new_filename != lut_filename) {
+            lut_filename = new_filename;
+            loadTexture('lut, lut_filename);
+        }
+    }
+
+    f32 ls = getParameterFloat('lut_strength);
+    setShaderUniform('pass0, 'lut_strength, ls);
+    f32 co = getParameterFloat('contrast);
+    setShaderUniform('pass0, 'contrast, co);
+    f32 sa = getParameterFloat('saturation);
+    setShaderUniform('pass0, 'saturation, sa);
+    f32 li = getParameterFloat('lightness);
+    setShaderUniform('pass0, 'lightness, li);
+    f32 ds = getParameterFloat('dust_strength);
+    setShaderUniform('pass0, 'dust_strength, ds);
+    f32 dc = getParameterFloat('dust_count);
+    setShaderUniform('pass0, 'dust_count, dc);
+    f32 dm = getParameterFloat('drift_magnitude);
+    setShaderUniform('pass0, 'drift_magnitude, dm);
+    f32 sm = getParameterFloat('snap_magnitude);
+    setShaderUniform('pass0, 'snap_magnitude, sm);
+    f32 sr = getParameterFloat('snap_rate);
+    setShaderUniform('pass0, 'snap_rate, sr);
+    f32 sp = getParameterFloat('snap_probability);
+    setShaderUniform('pass0, 'snap_probability, sp);
+    f32 gs = getParameterFloat('grain_strength);
+    setShaderUniform('pass0, 'grain_strength, gs);
+    f32 vs = getParameterFloat('vignette_strength);
+    setShaderUniform('pass0, 'vignette_strength, vs);
+    f32 vsf = getParameterFloat('vignette_softness);
+    setShaderUniform('pass0, 'vignette_softness, vsf);
+
+    # Continuous animation time.
+    f32 time = getLocalTime();
+    setShaderUniform('pass0, 'time, time);
+}
+
+#### GLSL shader ####
+
+string glslOldMovie = "
+    varying vec2 sourceTextureCoordinate;
+    BaseUniformsOpenGL;
+
+    uniform sampler2D auxSampler0;  // 'default (camera)
+    uniform sampler2D auxSampler1;  // 'lut
+
+    uniform float lut_strength;
+    uniform float contrast;
+    uniform float saturation;
+    uniform float lightness;
+    uniform float dust_strength;
+    uniform float dust_count;
+    uniform float drift_magnitude;
+    uniform float snap_magnitude;
+    uniform float snap_rate;
+    uniform float snap_probability;
+    uniform float grain_strength;
+    uniform float vignette_strength;
+    uniform float vignette_softness;
+    uniform float time;
+
+    // 1D pseudo-random hash.
+    float hash11(float x) {
+      return fract(sin(x * 12.9898) * 43758.5453);
+    }
+
+    // 2D hash for grain.
+    float hash21(vec2 p) {
+      return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
+    }
+
+    // 8x8 grid LUT lookup on auxSampler1.
+    vec3 lutLookup(vec3 inRgb) {
+      vec3 c = clamp(inRgb, 0.00781, 0.98438);
+      float x = c.r / 8.0;
+      float y = c.g / 8.0;
+      float z = c.b;
+      float blueY = floor(z * 8.0) / 8.0;
+      float blueX = floor((z - blueY) * 64.0) / 8.0;
+      x += blueX;
+      y += blueY;
+      return texture2D(auxSampler1, vec2(x, y)).xyz;
+    }
+
+    void main() {
+      vec2 uv = sourceTextureCoordinate;
+
+      // ============================================================
+      // Stage 1: Content shift = smooth drift + snap-and-hold jitter.
+      // ============================================================
+
+      // Smooth drift: two independent 2-octave sin sums, small mag.
+      float drift_x = sin(time * 0.83) * 0.6 + sin(time * 1.71 + 1.3) * 0.4;
+      float drift_y = sin(time * 0.61 + 2.1) * 0.6 + sin(time * 1.29 + 0.7) * 0.4;
+      vec2 smooth_drift = vec2(drift_x, drift_y) * drift_magnitude;
+
+      // Snap-and-hold: per-bucket hash. Some buckets land near-zero
+      // (no visible jump) when hash > snap_probability -- gives the
+      // 'some frames jump, others don't' pattern.
+      float bucket = floor(time * snap_rate);
+      float snap_present = step(hash11(bucket * 7.13 + 3.7), snap_probability);
+      float snap_dx = (hash11(bucket * 13.31 + 1.7) * 2.0 - 1.0) * snap_present;
+      float snap_dy = (hash11(bucket * 17.71 + 3.1) * 2.0 - 1.0) * snap_present;
+      vec2 snap_shift = vec2(snap_dx, snap_dy) * snap_magnitude;
+
+      vec2 content_uv = uv - (smooth_drift + snap_shift);
+
+      // ============================================================
+      // Stage 2: Sample camera + pre-LUT Adjust Colors.
+      // ============================================================
+      vec4 cam_raw = sampleInput(content_uv);
+      vec3 c = cam_raw.rgb;
+
+      // Contrast around 0.5 pivot: (c - 0.5) * contrast + 0.5.
+      c = (c - 0.5) * contrast + 0.5;
+      // Saturation: mix from Rec.709 luma.
+      float luma709 = dot(c, vec3(0.2125, 0.7154, 0.0721));
+      c = mix(vec3(luma709), c, saturation);
+      // Lightness: multiplicative.
+      c = c * lightness;
+      c = clamp(c, 0.0, 1.0);
+
+      // ============================================================
+      // Stage 3: LUT color grade with graceful fallback if LUT texture
+      // isn't loaded (probe center pixel).
+      // ============================================================
+      vec3 lut_rgb = lutLookup(c);
+      vec3 lut_probe = texture2D(auxSampler1, vec2(0.5, 0.5)).rgb;
+      float lut_loaded = step(0.05, max(max(lut_probe.r, lut_probe.g), lut_probe.b));
+      vec3 base = mix(c, lut_rgb, lut_strength * lut_loaded);
+
+      // ============================================================
+      // Stage 4: Procedural dust particles at 12 fps. Each frame draws
+      // ~dust_count random tiny bright specks (2-4 UV units). Matches
+      // the dust/dirt on film reference frames: bright specks on the
+      // graded image, NOT vertical scratches. Additive blend so specks
+      // read as bright regardless of underlying color.
+      //
+      // We iterate a fixed max count (60) and gate each particle's
+      // existence by dust_count -- lets the host dial density.
+      // IMPORTANT: do NOT put double-quote chars in these comments --
+      // the IGLUScript runtime parses the surrounding string and any
+      // embedded double-quote prematurely terminates it (causes:
+      // Cannot resolve shader: no string variable named glslOldMovie).
+      // ============================================================
+      float dframe = floor(time * 12.0);
+      float dust_alpha = 0.0;
+      const int MAX_DUST = 60;
+      for (int i = 0; i < MAX_DUST; i++) {
+        float fi = float(i);
+        // Gate: only draw the first `dust_count` particles.
+        float gate = step(fi + 0.5, dust_count);
+        // Random position for this particle in this frame.
+        float dseed = dframe * 31.7 + fi * 7.13;
+        vec2 dpos = vec2(hash11(dseed * 11.71), hash11(dseed * 17.31));
+        // Size: mostly tiny (~0.003-0.005 UV), occasionally slightly
+        // bigger (~0.006-0.008 UV) for the clump reference.
+        float size_hash = hash11(dseed * 23.13);
+        float dsize = 0.003 + 0.002 * size_hash;
+        if (size_hash > 0.85) {
+          dsize = 0.005 + 0.003 * hash11(dseed * 29.7);
+        }
+        // Radial falloff from the particle center (soft-edged dot).
+        vec2 dd = uv - dpos;
+        float r = length(dd);
+        float dot_a = (1.0 - smoothstep(dsize * 0.5, dsize, r)) * gate;
+        dust_alpha += dot_a;
+      }
+      dust_alpha = clamp(dust_alpha, 0.0, 1.0);
+      // Additive blend: bright specks on the graded image.
+      base = clamp(base + vec3(dust_alpha * dust_strength), 0.0, 1.0);
+
+      // ============================================================
+      // Stage 5: Procedural grain overlay. Time-seeded 2D hash on
+      // shifted UV. Bipolar so grain adds & subtracts around zero.
+      // ============================================================
+      float t_frame = floor(time * 24.0);
+      float grain = hash21(uv * 1024.0 + vec2(t_frame, t_frame * 1.7)) - 0.5;
+      vec3 grained = base + vec3(grain * grain_strength);
+      grained = clamp(grained, 0.0, 1.0);
+
+      // ============================================================
+      // Stage 6: Radial vignette (locked to screen). Same math as
+      // Black II. sqrt(2) normalizes so center=0, corners=1.
+      // smoothstep produces a soft falloff over the outer
+      // (vignette_softness) fraction of the radial range.
+      // strength=0 -> no darkening; strength=1 -> corners fully black.
+      // ============================================================
+      float d = length(uv - vec2(0.5)) * 1.4142;
+      float v = smoothstep(1.0 - vignette_softness, 1.0, d);
+      float darkness = 1.0 - v * vignette_strength;
+      grained = grained * darkness;
+
+      gl_FragColor = toOutputFormat(vec4(grained, cam_raw.a));
+    }
+    ";
+

@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "blend",
+  "displayName": "Blend",
+  "description": "[IG Edits] Video effect name. With \"Blend\", the creator can composite a named overlay input onto the source using a selectable blend_mode and opacity uniform.",
+  "iglu": {}
+}

@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "identifier": "dandelion",
+  "displayName": "Dandelion",
+  "description": "[IG Edits] Color filter name. With \"Dandelion\", the creator can remap pixel RGB through the Dandelion 3D LUT for a warm bright yellow-pushed tone.",
+  "iglu": {
+    "legacyId": 5031
+  },
+  "assets": [
+    {
+      "name": "dandelion.lutpk",
+      "assetHash": "4340558136c28e3f769e5b4aeea58e3de7c8a2e8fdb4a8088f76050a00c5509a",
+      "hubAssetId": "814990825019183"
+    }
+  ]
+}

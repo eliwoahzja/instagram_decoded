@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "transition_checkerboard",
+  "displayName": "Checkerboard",
+  "description": "Video transition selection. Chooses to apply checkerboard transition.",
+  "iglu": {}
+}

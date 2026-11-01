@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "transition_wipe_clock",
+  "displayName": "Wipe Clock",
+  "description": "[IG Edits] Transition name. With \"Wipe Clock\", the creator can reveal the next clip with a radial atan2 sweep around the frame center, soft-edged by a box+Gaussian blurred mask.",
+  "iglu": {}
+}

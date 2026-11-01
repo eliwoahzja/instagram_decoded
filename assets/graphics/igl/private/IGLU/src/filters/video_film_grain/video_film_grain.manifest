@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_film_grain",
+  "displayName": "Film grain",
+  "description": "Video effects selection. Mimics film grain.",
+  "iglu": {
+    "legacyId": 2027,
+    "customization": [
+      {
+        "name": "intensity",
+        "default": 0.4117647,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Intensity",
+        "displayNameDescription": "[IG Edits] Slider label controlling the strength of a video effect. Generic across many effects (glow, blur, color, distortion, etc.); exact range varies per effect."
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "1096c87f",
+      "handle": "AQAJuP8KvQZA",
+      "md5": "f0e173d7d8a6566e581bee22aee51d61"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAHgKy6Wrp0",
+      "isImageFormat": true
+    }
+  }
+}

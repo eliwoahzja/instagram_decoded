@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "high_pass_retouching_hdr",
+  "displayName": "High Pass Retouching HDR",
+  "description": "[IG Edits] Video effect name. With \"High Pass Retouching HDR\", the creator can run the edge-aware skin smoothing pipeline with RGBA_F16 intermediate passes for HDR (BT.2100 HLG/PQ) input.",
+  "iglu": {}
+}

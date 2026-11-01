@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "identifier": "bright_contrast",
+  "displayName": "Melbourne",
+  "description": "City-name color filter",
+  "iglu": {
+    "legacyId": 640
+  }
+}

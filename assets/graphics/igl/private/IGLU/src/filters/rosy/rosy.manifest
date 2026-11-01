@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "identifier": "rosy",
+  "displayName": "Rosy",
+  "description": "Filter name for a rosy / pink-toned look",
+  "iglu": {
+    "legacyId": 1011
+  },
+  "assets": [
+    {
+      "name": "lut_rosy.png",
+      "assetHash": "8b401bda94821e9c0cd9d358c33e413e0b0a7d9437c3317990861e02bb5d8715",
+      "hubAssetId": "772415542154351"
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_drift_up",
+  "displayName": "Drift up",
+  "description": "Video effects selection. Mimics the camera moving up.",
+  "iglu": {
+    "legacyId": 2025,
+    "behavior": {
+      "type": "fixedIntro",
+      "durationMs": 3000,
+      "curve": "sinusoidalOut"
+    },
+    "customization": [
+      {
+        "name": "duration",
+        "default": 3.0,
+        "min": 0.2,
+        "max": 10.0,
+        "displayName": "Duration",
+        "displayNameDescription": "[IG Edits] Slider label controlling how long a video effect's animation lasts; exact units and range vary per effect (seconds or normalized).",
+        "displayMethod": "time"
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "93f12085",
+      "handle": "AQBmXQxUzvdY",
+      "md5": "25cc369f1872c4a2f99a38ee4adaa98f"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAEbyV0lq_w"
+    }
+  }
+}

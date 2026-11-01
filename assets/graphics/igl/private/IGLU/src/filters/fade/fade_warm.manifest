@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "identifier": "fade_warm",
+  "displayName": "Fade Warm",
+  "description": "Filter name for a faded, warm-toned look",
+  "iglu": {
+    "legacyId": 1001
+  },
+  "assets": [
+    {
+      "name": "lut_fade_warm.png",
+      "assetHash": "95c7e13d90fbbe2aa6a53af6fc08030900c7a6f01ca2f146636570eee9b56df9",
+      "hubAssetId": "2799491827049462"
+    }
+  ]
+}

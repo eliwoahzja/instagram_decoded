@@ -1,0 +1,1 @@
+(function(locatorJSON,text){return window._META.IABInnerFrame.fill(JSON.parse(locatorJSON),text)})

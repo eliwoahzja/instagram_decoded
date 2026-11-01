@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_mirror_horizontal",
+  "displayName": "Mirror Horizontal",
+  "description": "[IG Edits] Video effect name. With \"Mirror Horizontal\", the creator can fold the frame across a horizontal line at a chosen position with optional vertical scrolling.",
+  "iglu": {
+    "legacyId": 2032,
+    "customization": [
+      {
+        "name": "position",
+        "default": 0.5,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Position",
+        "displayNameDescription": "[IG Edits] Slider label controlling the location of a video effect along a single axis; exact units and range vary per effect (normalized or pixels).",
+        "displayMethod": "percent"
+      },
+      {
+        "name": "speed",
+        "default": 0.0,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Speed",
+        "displayNameDescription": "[IG Edits] Slider label controlling the playback or animation speed of a video effect (noun, not a verb); exact range varies per effect."
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "fcd3b68c",
+      "handle": "AQAFbyayLHTN",
+      "md5": "187bb8e6f05814a9d5b4d0445d086688"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAGOK3Jkh-O"
+    }
+  }
+}

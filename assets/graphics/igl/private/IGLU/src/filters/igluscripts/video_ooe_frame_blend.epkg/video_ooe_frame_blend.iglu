@@ -1,0 +1,525 @@
+# IGLUSCRIPTCOLLISION_BYPASS: Intentional replacement of C++ native effect - IGLUScript takes precedence on Android/iOS; C++ filter retained as fallback for direct C++ callers.
+[Filter VideoOOEFrameBlend]
+
+f32 currentFrame = 0.0;
+f32 lastTimeSec = 0.0;
+f32 lastHistoryDepth = -1.0;
+f32 lastInputWidth = -1.0;
+f32 lastInputHeight = -1.0;
+f32 lastBlendStrength = -1.0;
+vec4 lastHalationColor = {-1.0, -1.0, -1.0, -1.0};
+
+f32[40.0] historyWeights = {
+  0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+  0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+  0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+  0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
+};
+
+vec4[40.0] historySampleData = {
+  {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0},
+  {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0},
+  {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0},
+  {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0},
+  {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0},
+  {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0},
+  {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0},
+  {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0},
+  {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0},
+  {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0},
+  {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0},
+  {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0},
+  {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0},
+  {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0},
+  {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0},
+  {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0},
+  {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0},
+  {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0},
+  {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0},
+  {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0}
+};
+
+fun cubicBezierSample(f32 t, f32 p1, f32 p2) f32 {
+  f32 oneMinusT = 1.0 - t;
+  return 3.0 * oneMinusT * oneMinusT * t * p1 +
+      3.0 * oneMinusT * t * t * p2 + t * t * t;
+}
+
+fun cubicBezierDerivative(f32 t, f32 p1, f32 p2) f32 {
+  f32 oneMinusT = 1.0 - t;
+  return 3.0 * oneMinusT * oneMinusT * p1 +
+      6.0 * oneMinusT * t * (p2 - p1) +
+      3.0 * t * t * (1.0 - p2);
+}
+
+fun solveCubicBezierT(f32 x, f32 x1, f32 x2) f32 {
+  f32 t = x;
+  for (f32 i = 0.0; i < 8.0; i = i + 1.0) {
+    f32 currentX = cubicBezierSample(t, x1, x2);
+    f32 derivative = cubicBezierDerivative(t, x1, x2);
+    if (abs(derivative) >= 0.00001) {
+      t = clamp(t - (currentX - x) / derivative, 0.0, 1.0);
+    }
+  }
+  return t;
+}
+
+fun evaluateCubicBezier(f32 x, f32 x1, f32 y1, f32 x2, f32 y2) f32 {
+  if (x <= 0.0) {
+    return 0.0;
+  }
+  if (x >= 1.0) {
+    return 1.0;
+  }
+  return cubicBezierSample(solveCubicBezierT(x, x1, x2), y1, y2);
+}
+
+[Init]
+fun init(Filter filter) {
+  makeHistoricalTexture('previous_history, 'history_writer, 1.0);
+
+  filter.parameters = {
+    {intensity = 1.0, min = 0.0, max = 1.0, description = "History blend strength"},
+    {color = {1.0, 0.301960784, 0.101960784, 1.0}, description = "Halation tint"},
+  };
+
+  filter.passes = {
+    {
+      name = 'temporal_composite,
+      inputs = {'default, 'previous_history},
+      shaderInputNames = {'default, 'historySpritesheetTex},
+      uniforms = {
+        historyDepth = 0.0,
+        blendStrength = 1.0,
+        historySampleData[] = {
+          {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0},
+          {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0},
+          {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0},
+          {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0},
+          {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0},
+          {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0},
+          {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0},
+          {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0},
+          {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0},
+          {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0},
+          {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0},
+          {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0},
+          {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0},
+          {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0},
+          {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0},
+          {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0},
+          {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0},
+          {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0},
+          {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0},
+          {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0}
+        },
+      },
+      glslShader = compositeGlsl,
+    },
+    {
+      name = 'history_encode,
+      inputs = {'default, 'temporal_composite},
+      shaderInputNames = {'default, 'tex1},
+      uniforms = {
+        feedbackMix = 0.4,
+        pixelWeightLUT[] = {
+          0.0, 0.156494796, 0.222194999, 0.272740066,
+          0.315345526, 0.352813631, 0.386584848, 0.417516559,
+          0.446168423, 0.472929865, 0.498084515, 0.521847069,
+          0.544384003, 0.565828085, 0.586286604, 0.605848253,
+          0.624586940, 0.642564774, 0.659835339, 0.676444292,
+          0.692431331, 0.707831085, 0.722674131, 0.736986995,
+          0.750793874, 0.764115512, 0.776971221, 0.789377689,
+          0.801350176, 0.812902451, 0.824046731, 0.834794223,
+          0.845155001, 0.855138123, 0.864751756, 0.874003410,
+          0.882899702, 0.891446710, 0.899649799, 0.907513916,
+          0.915043414, 0.922242045, 0.929113269, 0.935660064,
+          0.941884935, 0.947790265, 0.953377724, 0.958648801,
+          0.963604629, 0.968246281, 0.972573996, 0.976588249,
+          0.980288684, 0.983675301, 0.986747265, 0.989503741,
+          0.991943598, 0.994065344, 0.995867193, 0.997347295,
+          0.998503327, 0.999332666, 0.999832630, 1.0
+        },
+      },
+      glslShader = historyEncodeGlsl,
+    },
+    {
+      name = 'history_writer,
+      inputs = {'history_encode, 'previous_history},
+      shaderInputNames = {'default, 'spritesheetTex},
+      uniforms = {
+        spritesheet_index = 0.0,
+        spritesheet_size = {7.0, 7.0},
+      },
+      glslShader = historyWriterGlsl,
+    },
+    {
+      name = 'threshold,
+      inputs = {'temporal_composite},
+      scale = {0.5, 0.5},
+      uniforms = {
+        threshold_val = 0.4,
+        feather = 0.3,
+        darken = 0.4,
+      },
+      glslShader = thresholdGlsl,
+    },
+    {
+      name = 'blur_h,
+      inputs = {'threshold},
+      scale = {0.5, 0.5},
+      uniforms = {
+        blurStep = 1.3,
+        numSamples = 20.0,
+        falloffCurve = 2.0,
+        axis = {1.0, 0.0},
+        outputSize = {1.0, 1.0},
+      },
+      glslShader = gaussianBlurGlsl,
+    },
+    {
+      name = 'blur_v,
+      inputs = {'blur_h},
+      scale = {0.5, 0.5},
+      uniforms = {
+        blurStep = 1.3,
+        numSamples = 20.0,
+        falloffCurve = 2.0,
+        axis = {0.0, 1.0},
+        outputSize = {1.0, 1.0},
+      },
+      glslShader = gaussianBlurGlsl,
+    },
+    {
+      name = 'halation_compose,
+      # The graph traversal is LIFO. Keep the shared temporal node last so it is
+      # rendered before both dependent branches and is not scheduled twice.
+      inputs = {'history_writer, 'blur_v, 'temporal_composite},
+      shaderInputNames = {'default, 'tex1, 'sourceTex},
+      uniforms = {
+        halation_opacity = 1.0,
+        halation_bloomStrength = 2.0,
+        halationColor = {1.0, 0.301960784, 0.101960784, 1.0},
+        halationColorMix = 1.0,
+      },
+      glslShader = halationComposeGlsl,
+    },
+  };
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  f32 time = getParameterFloat('time_sec);
+  if (lastTimeSec > time) {
+    currentFrame = 0.0;
+  }
+  lastTimeSec = time;
+
+  f32 depth = floor(min(min(40.0, currentFrame), 49.0));
+  if (depth != lastHistoryDepth) {
+    for (f32 i = 0.0; i < 40.0; i = i + 1.0) {
+      historyWeights[i] = 0.0;
+      if (i < depth) {
+        f32 weightPosition = 0.5;
+        if (depth > 1.0) {
+          weightPosition = i / (depth - 1.0);
+        }
+        historyWeights[i] = evaluateCubicBezier(weightPosition, 0.0, 1.71, 0.18, 1.11);
+      }
+    }
+    setShaderUniform('temporal_composite, 'historyDepth, depth);
+    lastHistoryDepth = depth;
+  }
+
+  f32 spritesheetSlot = currentFrame - floor(currentFrame / 49.0) * 49.0;
+  for (f32 i = 0.0; i < 40.0; i = i + 1.0) {
+    f32 slot = spritesheetSlot - i - 1.0;
+    if (slot < 0.0) {
+      slot = slot + 49.0;
+    }
+    f32 row = floor(slot / 7.0);
+    f32 col = slot - row * 7.0;
+    vec4 sampleData = {col / 7.0, row / 7.0, historyWeights[i], 0.0};
+    historySampleData[i] = sampleData;
+  }
+
+  vec2 inputSize = getTextureSize('default);
+  boolean inputSizeChanged = false;
+  if (inputSize.x != lastInputWidth) {
+    inputSizeChanged = true;
+  }
+  if (inputSize.y != lastInputHeight) {
+    inputSizeChanged = true;
+  }
+  if (inputSizeChanged) {
+    f32 maxDimension = max(inputSize.x, inputSize.y);
+    if (maxDimension > 0.0) {
+      f32 spriteScale = min(2.0, 8192.0 / maxDimension);
+      vec2 spritesheetSize = {
+        floor(inputSize.x * spriteScale),
+        floor(inputSize.y * spriteScale)
+      };
+      setTextureSize('history_writer, spritesheetSize);
+
+      vec2 bloomSize = {inputSize.x * 0.5, inputSize.y * 0.5};
+      setShaderUniform('blur_h, 'outputSize, bloomSize);
+      setShaderUniform('blur_v, 'outputSize, bloomSize);
+      lastInputWidth = inputSize.x;
+      lastInputHeight = inputSize.y;
+    }
+  }
+
+  f32 blendStrength = getParameterFloat('intensity);
+  if (blendStrength != lastBlendStrength) {
+    setShaderUniform('temporal_composite, 'blendStrength, blendStrength);
+    lastBlendStrength = blendStrength;
+  }
+  setShaderUniform('temporal_composite, 'historySampleData, historySampleData);
+  setShaderUniform('history_writer, 'spritesheet_index, currentFrame);
+
+  vec4 color = getParameterVec4('color);
+  boolean shouldUpdateColor = color.r > 0.0;
+  if (color.g > 0.0) {
+    shouldUpdateColor = true;
+  }
+  if (color.b > 0.0) {
+    shouldUpdateColor = true;
+  }
+  if (shouldUpdateColor) {
+    boolean colorChanged = false;
+    if (color.r != lastHalationColor.r) {
+      colorChanged = true;
+    }
+    if (color.g != lastHalationColor.g) {
+      colorChanged = true;
+    }
+    if (color.b != lastHalationColor.b) {
+      colorChanged = true;
+    }
+    if (color.a != lastHalationColor.a) {
+      colorChanged = true;
+    }
+    if (colorChanged) {
+      setShaderUniform('halation_compose, 'halationColor, color);
+      lastHalationColor = color;
+    }
+  }
+
+  currentFrame = currentFrame + 1.0;
+}
+
+string compositeGlsl = "
+  precision highp float;
+
+  varying vec2 textureCoordinate;
+  varying vec2 sourceTextureCoordinate;
+
+  VideoShaderUniformsOpenGL;
+
+  const int kMaxHistoryDepthSh = 40;
+
+  uniform bool hasHistory;
+  uniform float historyDepth;
+  uniform float blendStrength;
+  uniform vec4 historySampleData[40];
+  uniform sampler2D historySpritesheetTex;
+
+  void main() {
+    vec4 current = sampleInput(sourceTextureCoordinate);
+
+    if (!hasHistory || historyDepth < 1.0 || blendStrength < 0.001) {
+      gl_FragColor = toOutputFormat(current);
+      return;
+    }
+
+    float depth = min(historyDepth, float(kMaxHistoryDepthSh));
+    vec3 accum = vec3(0.0);
+    float totalWeight = 0.0;
+    vec2 spriteBaseUV = textureCoordinate / 7.0;
+
+    if (depth < 2.0) {
+      vec4 sampleData = historySampleData[0];
+      vec4 history = texture2D(historySpritesheetTex, spriteBaseUV + sampleData.xy);
+      float pixelWeight = sampleData.z * history.a;
+      accum += history.rgb * pixelWeight;
+      totalWeight += pixelWeight;
+    }
+
+    for (int historyIndex = 1; historyIndex < kMaxHistoryDepthSh; historyIndex++) {
+      if (float(historyIndex) >= depth) {
+        break;
+      }
+      vec4 sampleData = historySampleData[historyIndex];
+      vec4 history = texture2D(historySpritesheetTex, spriteBaseUV + sampleData.xy);
+      float pixelWeight = sampleData.z * history.a;
+      accum += history.rgb * pixelWeight;
+      totalWeight += pixelWeight;
+    }
+
+    if (totalWeight < 0.001) {
+      gl_FragColor = toOutputFormat(current);
+      return;
+    }
+
+    vec3 blended = accum / totalWeight;
+    vec3 mixed = 0.5 * (current.rgb + blended);
+    vec3 result = mix(current.rgb, mixed, blendStrength);
+    gl_FragColor = toOutputFormat(vec4(result, current.a));
+  }
+";
+
+string historyEncodeGlsl = "
+  precision highp float;
+
+  varying vec2 textureCoordinate;
+  varying vec2 sourceTextureCoordinate;
+
+  VideoShaderUniformsOpenGL;
+
+  const int kPixelWeightLUTSizeSh = 64;
+
+  uniform float feedbackMix;
+  uniform float pixelWeightLUT[64];
+  uniform sampler2D tex1;
+
+  float sampleLUT(float x) {
+    float f = clamp(x, 0.0, 1.0) * float(kPixelWeightLUTSizeSh - 1);
+    float i0f = floor(f);
+    int i0 = int(i0f);
+    int i1 = i0 + 1;
+    if (i1 > kPixelWeightLUTSizeSh - 1) {
+      i1 = kPixelWeightLUTSizeSh - 1;
+    }
+    return mix(pixelWeightLUT[i0], pixelWeightLUT[i1], f - i0f);
+  }
+
+  void main() {
+    vec3 original = sampleInput(sourceTextureCoordinate).rgb;
+    vec3 processed = texture2D(tex1, textureCoordinate).rgb;
+    vec3 historyColor = mix(original, processed, feedbackMix);
+    float luma = dot(historyColor, vec3(0.2126, 0.7152, 0.0722));
+    gl_FragColor = toOutputFormat(vec4(historyColor, sampleLUT(luma)));
+  }
+";
+
+string historyWriterGlsl = "
+  precision highp float;
+
+  varying vec2 textureCoordinate;
+  varying vec2 sourceTextureCoordinate;
+
+  VideoShaderUniformsOpenGL;
+
+  uniform float spritesheet_index;
+  uniform vec2 spritesheet_size;
+  uniform sampler2D spritesheetTex;
+
+  float sdfRectangle(vec2 uv, vec2 center, vec2 size) {
+    vec2 d = abs(uv - center) - size;
+    return length(max(d, 0.0)) + min(max(d.x, d.y), 0.0);
+  }
+
+  void main() {
+    vec2 size = spritesheet_size;
+    float cellIndex = mod(spritesheet_index, size.x * size.y);
+    vec2 cellCoordinates = floor(vec2(mod(cellIndex, size.x), cellIndex / size.x));
+    vec2 spriteUV = sourceTextureCoordinate * size - cellCoordinates;
+    vec4 encodedHistory = sampleInput(spriteUV);
+
+    float rectMask = sdfRectangle(spriteUV, vec2(0.5), vec2(0.5));
+    rectMask = step(rectMask, 0.0);
+    vec4 spritesheet = texture2D(spritesheetTex, textureCoordinate);
+    gl_FragColor = toOutputFormat(mix(spritesheet, encodedHistory, rectMask));
+  }
+";
+
+string thresholdGlsl = "
+  precision highp float;
+
+  varying vec2 sourceTextureCoordinate;
+  BaseUniformsOpenGL;
+
+  uniform float threshold_val;
+  uniform float feather;
+  uniform float darken;
+
+  void main() {
+    vec4 color = sampleInput(sourceTextureCoordinate);
+    float luma = dot(color.rgb, vec3(0.2126, 0.7152, 0.0722));
+    color.rgb *= smoothstep(threshold_val - feather, threshold_val + feather, luma);
+    color.rgb *= darken;
+    color.a = 1.0;
+    gl_FragColor = toOutputFormat(color);
+  }
+";
+
+string gaussianBlurGlsl = "
+  precision highp float;
+
+  varying vec2 sourceTextureCoordinate;
+  BaseUniformsOpenGL;
+
+  uniform float blurStep;
+  uniform vec2 axis;
+  uniform vec2 outputSize;
+
+  void main() {
+    vec2 uv = sourceTextureCoordinate;
+    vec4 accumColor = vec4(0.0);
+    vec2 offset = axis * blurStep / outputSize;
+
+    accumColor += 0.987577800494 *
+        (sampleInput(uv - 0.5 * offset) + sampleInput(uv + 0.5 * offset));
+    accumColor += 0.893597347109 *
+        (sampleInput(uv - 1.5 * offset) + sampleInput(uv + 1.5 * offset));
+    accumColor += 0.731615628947 *
+        (sampleInput(uv - 2.5 * offset) + sampleInput(uv + 2.5 * offset));
+    accumColor += 0.541994188459 *
+        (sampleInput(uv - 3.5 * offset) + sampleInput(uv + 3.5 * offset));
+    accumColor += 0.363309569359 *
+        (sampleInput(uv - 4.5 * offset) + sampleInput(uv + 4.5 * offset));
+    accumColor += 0.220358392783 *
+        (sampleInput(uv - 5.5 * offset) + sampleInput(uv + 5.5 * offset));
+    accumColor += 0.120935250070 *
+        (sampleInput(uv - 6.5 * offset) + sampleInput(uv + 6.5 * offset));
+    accumColor += 0.060054667895 *
+        (sampleInput(uv - 7.5 * offset) + sampleInput(uv + 7.5 * offset));
+    accumColor += 0.026984301716 *
+        (sampleInput(uv - 8.5 * offset) + sampleInput(uv + 8.5 * offset));
+    accumColor += 0.010970998367 *
+        (sampleInput(uv - 9.5 * offset) + sampleInput(uv + 9.5 * offset));
+    accumColor *= 0.126345639649;
+    gl_FragColor = toOutputFormat(accumColor);
+  }
+";
+
+string halationComposeGlsl = "
+  precision highp float;
+
+  varying vec2 sourceTextureCoordinate;
+  BaseUniformsOpenGL;
+
+  uniform float halation_opacity;
+  uniform float halation_bloomStrength;
+  uniform vec4 halationColor;
+  uniform float halationColorMix;
+  uniform sampler2D tex1;
+  uniform sampler2D sourceTex;
+
+  vec3 blendScreen(vec3 base, vec3 blend) {
+    return 1.0 - (1.0 - base) * (1.0 - blend);
+  }
+
+  void main() {
+    vec2 uv = sourceTextureCoordinate;
+    vec4 source = texture2D(sourceTex, uv);
+    vec4 glow = texture2D(tex1, uv) * vec4(halation_bloomStrength);
+    float glowLuma = dot(glow.rgb, vec3(0.2126, 0.7152, 0.0722));
+    vec3 tinted = halationColor.rgb * glowLuma;
+    glow.rgb = blendScreen(glow.rgb, tinted * halationColorMix);
+
+    vec3 result = blendScreen(source.rgb, glow.rgb) * halation_opacity +
+        source.rgb * (1.0 - halation_opacity);
+    gl_FragColor = toOutputFormat(vec4(result, source.a));
+  }
+";

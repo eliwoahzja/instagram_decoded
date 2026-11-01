@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_tilt",
+  "displayName": "Tilt",
+  "description": "[IG Edits] Video effect name. With \"Tilt\", the creator applies an animated tilt to the video frame as a fixed intro (default 0.6s, intensity 0.62).",
+  "iglu": {
+    "legacyId": 3011,
+    "behavior": {
+      "type": "fixedIntro",
+      "durationMs": 600,
+      "curve": "linear"
+    },
+    "customization": [
+      {
+        "name": "duration",
+        "default": 0.6,
+        "min": 0.2,
+        "max": 3.0,
+        "displayName": "Duration",
+        "displayNameDescription": "[IG Edits] Slider label controlling how long a video effect's animation lasts; exact units and range vary per effect (seconds or normalized).",
+        "displayMethod": "time"
+      },
+      {
+        "name": "intensity",
+        "default": 0.61538462,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Intensity",
+        "displayNameDescription": "[IG Edits] Slider label controlling the strength of a video effect. Generic across many effects (glow, blur, color, distortion, etc.); exact range varies per effect."
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "665ddd3e",
+      "handle": "AQAJlfAaKASS",
+      "md5": "a97da96b2568812b0ac0b1acccae1fe6"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAFDy4cNcpt"
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "identifier": "retouching",
+  "displayName": "Retouching",
+  "description": "[IG Edits] Video effect name. With \"Retouching\", the creator can smooth facial skin via a frequency-separation pipeline guided by landmarks and a face bbox while preserving features.",
+  "assets": [
+    {
+      "name": "canonical_mask.png",
+      "assetHash": "dd768a6f390e7e3d466cb6d88f64a040363732e0b750624fcd92a2aee45eb5a8",
+      "hubAssetId": "1565765408013731"
+    },
+    {
+      "name": "erika_mask.png",
+      "assetHash": "f89823632a1b8d2d10e72c5a3940de1acc4335a0d1c1829409fd1674a1013837",
+      "hubAssetId": "26168714706078867"
+    }
+  ],
+  "iglu": {}
+}

@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "asset_image_overlay",
+  "displayName": "Asset Image Overlay",
+  "description": "[IG Edits] Video effect name. With \"Asset Image Overlay\", the creator can composite a resource-loaded sticker/PNG over the frame with alpha blending and strength fade.",
+  "iglu": {}
+}

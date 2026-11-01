@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "assets": [
+    {
+      "name": "lingo_jam_lut.png",
+      "assetHash": "c9a204e256e178c961b3e4bb0b22ef76a98f906ed848c1089db96d67f954601e",
+      "hubAssetId": "1526942518601265"
+    }
+  ],
+  "description": "[IG Edits] Color filter name. With \"Lingo Jam\", the creator gets a pure 8x8 LUT color grade applied to the camera image at 75% mix strength.",
+  "displayName": "Lingo Jam",
+  "identifier": "5d4c9236-1bbf-40ca-96fa-1d7baa76d681",
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAFrR3_ENv5"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "caf075c1",
+      "handle": "AQAEFg_BjRrS",
+      "md5": "1e6d7584d45579adf1aa6a3f3cd5d801"
+    }
+  },
+  "iglu": {
+    "legacyId": 3215
+  }
+}

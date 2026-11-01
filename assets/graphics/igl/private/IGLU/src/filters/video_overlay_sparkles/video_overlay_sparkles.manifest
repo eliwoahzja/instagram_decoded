@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_cutout_sparkles",
+  "displayName": "Sparkles",
+  "description": "[IG Edits] Video effect name. With \"Sparkles\", the creator can overlay rotating, parabola-scaled sparkle sprites that twinkle across the frame with adjustable size and speed.",
+  "iglu": {
+    "legacyId": 5071,
+    "customization": [
+      {
+        "name": "size",
+        "default": 0.26,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Size",
+        "displayNameDescription": "[IG Edits] Slider label controlling the size or scale of an element produced by a video effect; exact units and range vary per effect."
+      },
+      {
+        "name": "speed",
+        "default": 0.38,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Speed",
+        "displayNameDescription": "[IG Edits] Slider label controlling the playback or animation speed of a video effect (noun, not a verb); exact range varies per effect."
+      }
+    ],
+    "subject": {
+      "overlay": true
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "8fc36b41",
+      "handle": "AQAC6NkdGy5D",
+      "md5": "1c171ff7aee4438d670f3dd56064a4de"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQACsM--2Oga"
+    }
+  },
+  "assets": [
+    {
+      "name": "sparkle.png",
+      "assetHash": "2415f14f09363bd40d92336804dd819927481d951d25d97cc6f8cfdbd9e83de8",
+      "hubAssetId": "787086830563012"
+    }
+  ]
+}

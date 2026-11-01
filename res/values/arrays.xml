@@ -1,0 +1,661 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="add_comment_for_non_self_hint_variants">
+        <item>Add a comment for %1$s</item>
+        <item>Start the conversation…</item>
+        <item>What do you think of this?</item>
+    </string-array>
+    <string-array name="add_comment_for_non_self_hint_variants_with_comments">
+        <item>Add a comment for %1$s</item>
+        <item>Join the conversation…</item>
+        <item>What do you think of this?</item>
+    </string-array>
+    <string-array name="add_to_directory_us_states">
+        <item>Alabama</item>
+        <item>Alaska</item>
+        <item>Arizona</item>
+        <item>Arkansas</item>
+        <item>California</item>
+        <item>Colorado</item>
+        <item>Connecticut</item>
+        <item>Delaware</item>
+        <item>Florida</item>
+        <item>Georgia</item>
+        <item>Hawaii</item>
+        <item>Idaho</item>
+        <item>Illinois</item>
+        <item>Indiana</item>
+        <item>Iowa</item>
+        <item>Kansas</item>
+        <item>Kentucky</item>
+        <item>Louisiana</item>
+        <item>Maine</item>
+        <item>Maryland</item>
+        <item>Massachusetts</item>
+        <item>Michigan</item>
+        <item>Minnesota</item>
+        <item>Mississippi</item>
+        <item>Missouri</item>
+        <item>Montana</item>
+        <item>Nebraska</item>
+        <item>Nevada</item>
+        <item>New Hampshire</item>
+        <item>New Jersey</item>
+        <item>New Mexico</item>
+        <item>New York</item>
+        <item>North Carolina</item>
+        <item>North Dakota</item>
+        <item>Ohio</item>
+        <item>Oklahoma</item>
+        <item>Oregon</item>
+        <item>Pennsylvania</item>
+        <item>Rhode Island</item>
+        <item>South Carolina</item>
+        <item>South Dakota</item>
+        <item>Tennessee</item>
+        <item>Texas</item>
+        <item>Utah</item>
+        <item>Vermont</item>
+        <item>Virginia</item>
+        <item>Washington</item>
+        <item>West Virginia</item>
+        <item>Wisconsin</item>
+        <item>Wyoming</item>
+    </string-array>
+    <string-array name="assume_strong_biometrics_models">
+        <item>Pixel 4</item>
+        <item>Pixel 4 XL</item>
+    </string-array>
+    <string-array name="cloud_streaming_loading_screen_text_set_1">
+        <item>Well, hi there!</item>
+        <item>Sup!</item>
+        <item>Great to see you!</item>
+        <item>Looking fire today!</item>
+        <item>New worlds are waiting!</item>
+        <item>Cool, we were waiting for you!</item>
+        <item>Good, um, morning? What time is it there, anyway?</item>
+        <item>Welcome, traveler!</item>
+        <item>Howdy!</item>
+        <item>Greetings! Take me to your leader</item>
+        <item>Come on in!</item>
+        <item>Hi!</item>
+        <item>"How's it going?"</item>
+        <item>Ahoy!</item>
+        <item>Vibe Check!</item>
+    </string-array>
+    <string-array name="cloud_streaming_loading_screen_text_set_2">
+        <item>Turning the ignition key</item>
+        <item>What do you want to do today?</item>
+        <item>Where will you go today?</item>
+        <item>"What's it gonna be, new world or favorite?"</item>
+        <item>Who will you meet today?</item>
+        <item>Wait, do you smell that?</item>
+        <item>Ready to explore?</item>
+        <item>Avatar dressed for the occasion?</item>
+        <item>"Who's the GOAT, LeBron or Jordan?"</item>
+        <item>Opening the docking bay doors</item>
+        <item>The journey begins</item>
+        <item>Opening doors to so many worlds</item>
+        <item>Leaving port for adventure</item>
+        <item>Ready to get your game on?</item>
+        <item>Wait, you can see this?</item>
+    </string-array>
+    <string-array name="cloud_streaming_loading_screen_text_set_3">
+        <item>Virtualizing reality…</item>
+        <item>Being just a little extra</item>
+        <item>"Untangling the cat's fur"</item>
+        <item>Flipping tables</item>
+        <item>"Sippin' some tea, munching on a bagel"</item>
+        <item>Fictionalizing characters</item>
+        <item>Putting more hamsters in the wheel</item>
+        <item>Blowing the dust out of the cartridge</item>
+        <item>Petting some puppies</item>
+        <item>Taking a selfie</item>
+        <item>Fore!</item>
+        <item>Increasing the awesome</item>
+        <item>"Vibin'"</item>
+        <item>IYKYK</item>
+        <item>Fit check!</item>
+        <item>Getting caught in 4K</item>
+        <item>"Hoping this doesn't sound too cringe"</item>
+    </string-array>
+    <string-array name="cloud_streaming_loading_screen_text_set_4">
+        <item>Traveled about 55.0112358132134% of the way</item>
+        <item>About 54.1337% loaded</item>
+        <item>Almost halfway there</item>
+        <item>LOAD *,8,1</item>
+        <item>Making progress</item>
+        <item>Halfway up the mountain</item>
+        <item>Glass is half full</item>
+        <item>Shields at 50%, Captain!</item>
+        <item>Colors 50% saturated</item>
+        <item>Low key working on this loading thing</item>
+        <item>Just loading that one really cool texture…</item>
+        <item>Are we there yet?</item>
+        <item>Entering orbit</item>
+        <item>Mid-point achievement unlocked</item>
+        <item>At maximum dynamic pressure</item>
+    </string-array>
+    <string-array name="cloud_streaming_loading_screen_text_set_5">
+        <item>Booking the entertainment lineup for Venues</item>
+        <item>So 3 avatars walk into the Soapstone Comedy Club…</item>
+        <item>Shooting blasters in Arena Clash</item>
+        <item>So many worlds to see!</item>
+        <item>So many games to play…</item>
+        <item>Action, puzzles or exploration today?</item>
+        <item>Equalizing The Stu</item>
+        <item>Getting a game on in the Arcade…</item>
+        <item>Opening a portal to travel with friends</item>
+        <item>"Wood-firing the pizza at Questy's"</item>
+        <item>Wiping the tables at Soapstone</item>
+        <item>Putting on avatar outfit</item>
+        <item>Scanning the popular worlds list</item>
+        <item>Taking selfies in every world</item>
+        <item>Eating crisps at A Very British Pub</item>
+        <item>Objecting loudly at Meta Court</item>
+        <item>Resupplying towers in Factory Defense</item>
+        <item>Guessing right in Meta Feud</item>
+        <item>Recharging and running in Monster Tag</item>
+        <item>"Racking 'em up in Crazy Eights"</item>
+        <item>Blocking a jab in Regal Boxing</item>
+        <item>Sciencing for survival in Out of Control</item>
+        <item>Climbing the beanstalk in The Land Beyond</item>
+        <item>Dodging bones in Retro Zombies</item>
+        <item>Hanging on the chill deck in Rooftop 42</item>
+        <item>"Parkouring around Kawaii's Playroom"</item>
+    </string-array>
+    <string-array name="cloud_streaming_loading_screen_text_set_6">
+        <item>Opening the docking bay doors</item>
+        <item>Scraping the cookie dough off the bowl</item>
+        <item>Vacuuming crumbs</item>
+        <item>Lighting the end of the tunnel</item>
+        <item>Just one more bite</item>
+        <item>Crossing the finish line</item>
+        <item>So close you can taste it</item>
+        <item>Putting on the finishing touches</item>
+        <item>Squeezing the last bit of juice out</item>
+        <item>Almost there, no cap</item>
+        <item>Wiping down the table</item>
+        <item>Tightening up the graphics on level 3</item>
+        <item>Hold on, just building the future here</item>
+        <item>Just a few more numbers to randomize</item>
+        <item>Maximizing the fun</item>
+    </string-array>
+    <string-array name="cloud_streaming_loading_screen_text_set_7">
+        <item>"LET'S GOOOOOOOOOOOOOOO!"</item>
+        <item>"Let's do this!"</item>
+        <item>Here we go!</item>
+        <item>WHEEEEEEEEEEEEEEEEE!</item>
+        <item>Entering in 3, 2, 1</item>
+        <item>Go fist bump some new friends today!</item>
+        <item>CANNON BALL!</item>
+        <item>"Let's dive in!"</item>
+        <item>Houston, we have liftoff!</item>
+        <item>Cleared for takeoff on runway 27</item>
+        <item>Fun is on the Horizon!</item>
+        <item>Just gotta write my name on this</item>
+        <item>Approaching Horizon city limits!</item>
+        <item>Giving you 10 seconds back</item>
+        <item>Hold on to your hat!</item>
+        <item>Highkey ready to do this!</item>
+        <item>LEEROY JENKINS!!!</item>
+    </string-array>
+    <string-array name="cloud_streaming_loading_screen_text_set_kaiju">
+        <item>Placing the plasma bolts</item>
+        <item>Fueling your jetpack</item>
+        <item>Shield generators powered!</item>
+        <item>"Don't let The Kaiju grab you!"</item>
+        <item>Directive: defeat The Kaiju!</item>
+        <item>Watch out! The Kaiju can throw things</item>
+        <item>Stick together!</item>
+        <item>Grab charge packs as you go</item>
+        <item>Defeat The Kaiju before it gets to HQ</item>
+        <item>Are there more Kaiju out there?</item>
+    </string-array>
+    <array name="com_google_android_gms_fonts_certs">
+        <item>@array/com_google_android_gms_fonts_certs_dev</item>
+        <item>@array/com_google_android_gms_fonts_certs_prod</item>
+    </array>
+    <string-array name="com_google_android_gms_fonts_certs_dev">
+        <item>MIIEqDCCA5CgAwIBAgIJANWFuGx90071MA0GCSqGSIb3DQEBBAUAMIGUMQswCQYDVQQGEwJVUzETMBEGA1UECBMKQ2FsaWZvcm5pYTEWMBQGA1UEBxMNTW91bnRhaW4gVmlldzEQMA4GA1UEChMHQW5kcm9pZDEQMA4GA1UECxMHQW5kcm9pZDEQMA4GA1UEAxMHQW5kcm9pZDEiMCAGCSqGSIb3DQEJARYTYW5kcm9pZEBhbmRyb2lkLmNvbTAeFw0wODA0MTUyMzM2NTZaFw0zNTA5MDEyMzM2NTZaMIGUMQswCQYDVQQGEwJVUzETMBEGA1UECBMKQ2FsaWZvcm5pYTEWMBQGA1UEBxMNTW91bnRhaW4gVmlldzEQMA4GA1UEChMHQW5kcm9pZDEQMA4GA1UECxMHQW5kcm9pZDEQMA4GA1UEAxMHQW5kcm9pZDEiMCAGCSqGSIb3DQEJARYTYW5kcm9pZEBhbmRyb2lkLmNvbTCCASAwDQYJKoZIhvcNAQEBBQADggENADCCAQgCggEBANbOLggKv+IxTdGNs8/TGFy0PTP6DHThvbbR24kT9ixcOd9W+EaBPWW+wPPKQmsHxajtWjmQwWfna8mZuSeJS48LIgAZlKkpFeVyxW0qMBujb8X8ETrWy550NaFtI6t9+u7hZeTfHwqNvacKhp1RbE6dBRGWynwMVX8XW8N1+UjFaq6GCJukT4qmpN2afb8sCjUigq0GuMwYXrFVee74bQgLHWGJwPmvmLHC69EH6kWr22ijx4OKXlSIx2xT1AsSHee70w5iDBiK4aph27yH3TxkXy9V89TDdexAcKk/cVHYNnDBapcavl7y0RiQ4biu8ymM8Ga/nmzhRKya6G0cGw8CAQOjgfwwgfkwHQYDVR0OBBYEFI0cxb6VTEM8YYY6FbBMvAPyT+CyMIHJBgNVHSMEgcEwgb6AFI0cxb6VTEM8YYY6FbBMvAPyT+CyoYGapIGXMIGUMQswCQYDVQQGEwJVUzETMBEGA1UECBMKQ2FsaWZvcm5pYTEWMBQGA1UEBxMNTW91bnRhaW4gVmlldzEQMA4GA1UEChMHQW5kcm9pZDEQMA4GA1UECxMHQW5kcm9pZDEQMA4GA1UEAxMHQW5kcm9pZDEiMCAGCSqGSIb3DQEJARYTYW5kcm9pZEBhbmRyb2lkLmNvbYIJANWFuGx90071MAwGA1UdEwQFMAMBAf8wDQYJKoZIhvcNAQEEBQADggEBABnTDPEF+3iSP0wNfdIjIz1AlnrPzgAIHVvXxunW7SBrDhEglQZBbKJEk5kT0mtKoOD1JMrSu1xuTKEBahWRbqHsXclaXjoBADb0kkjVEJu/Lh5hgYZnOjvlba8Ld7HCKePCVePoTJBdI4fvugnL8TsgK05aIskyY0hKI9L8KfqfGTl1lzOv2KoWD0KWwtAWPoGChZxmQ+nBli+gwYMzM1vAkP+aayLe0a1EQimlOalO762r0GXO0ks+UeXde2Z4e+8S/pf7pITEI/tP+MxJTALw9QUWEv9lKTk+jkbqxbsh8nfBUapfKqYn0eidpwq2AzVp3juYl7//fKnaPhJD9gs=</item>
+    </string-array>
+    <string-array name="com_google_android_gms_fonts_certs_prod">
+        <item>MIIEQzCCAyugAwIBAgIJAMLgh0ZkSjCNMA0GCSqGSIb3DQEBBAUAMHQxCzAJBgNVBAYTAlVTMRMwEQYDVQQIEwpDYWxpZm9ybmlhMRYwFAYDVQQHEw1Nb3VudGFpbiBWaWV3MRQwEgYDVQQKEwtHb29nbGUgSW5jLjEQMA4GA1UECxMHQW5kcm9pZDEQMA4GA1UEAxMHQW5kcm9pZDAeFw0wODA4MjEyMzEzMzRaFw0zNjAxMDcyMzEzMzRaMHQxCzAJBgNVBAYTAlVTMRMwEQYDVQQIEwpDYWxpZm9ybmlhMRYwFAYDVQQHEw1Nb3VudGFpbiBWaWV3MRQwEgYDVQQKEwtHb29nbGUgSW5jLjEQMA4GA1UECxMHQW5kcm9pZDEQMA4GA1UEAxMHQW5kcm9pZDCCASAwDQYJKoZIhvcNAQEBBQADggENADCCAQgCggEBAKtWLgDYO6IIrgqWbxJOKdoR8qtW0I9Y4sypEwPpt1TTcvZApxsdyxMJZ2JORland2qSGT2y5b+3JKkedxiLDmpHpDsz2WCbdxgxRczfey5YZnTJ4VZbH0xqWVW/8lGmPav5xVwnIiJS6HXk+BVKZF+JcWjAsb/GEuq/eFdpuzSqeYTcfi6idkyugwfYwXFU1+5fZKUaRKYCwkkFQVfcAs1fXA5V+++FGfvjJ/CxURaSxaBvGdGDhfXE28LWuT9ozCl5xw4Yq5OGazvV24mZVSoOO0yZ31j7kYvtwYK6NeADwbSxDdJEqO4k//0zOHKrUiGYXtqw/A0LFFtqoZKFjnkCAQOjgdkwgdYwHQYDVR0OBBYEFMd9jMIhF1Ylmn/Tgt9r45jk14alMIGmBgNVHSMEgZ4wgZuAFMd9jMIhF1Ylmn/Tgt9r45jk14aloXikdjB0MQswCQYDVQQGEwJVUzETMBEGA1UECBMKQ2FsaWZvcm5pYTEWMBQGA1UEBxMNTW91bnRhaW4gVmlldzEUMBIGA1UEChMLR29vZ2xlIEluYy4xEDAOBgNVBAsTB0FuZHJvaWQxEDAOBgNVBAMTB0FuZHJvaWSCCQDC4IdGZEowjTAMBgNVHRMEBTADAQH/MA0GCSqGSIb3DQEBBAUAA4IBAQBt0lLO74UwLDYKqs6Tm8/yzKkEu116FmH4rkaymUIE0P9KaMftGlMexFlaYjzmB2OxZyl6euNXEsQH8gjwyxCUKRJNexBiGcCEyj6z+a1fuHHvkiaai+KL8W1EyNmgjmyy8AW7P+LLlkR+ho5zEHatRbM/YAnqGcFh5iZBqpknHf1SKMXFh4dd239FJ1jWYfbMDMy3NS5CTMQ2XFI1MvcyUTdZPErjQfTbQe3aDQsQcafEQPD+nqActifKZ0Np0IS9L9kR/wbNvyz6ENwPiTrjV2KRkEjH78ZMcUQXg0L3BYHJ3lc69Vs5Ddf9uUGGMYldX3WfMBEmh/9iFBDAaTCK</item>
+    </string-array>
+    <string-array name="comments_sorting_options">
+        <item>Top comments</item>
+        <item>Newest first</item>
+    </string-array>
+    <array name="crypto_fingerprint_fallback_prefixes" />
+    <string-array name="crypto_fingerprint_fallback_vendors">
+        <item>samsung</item>
+    </string-array>
+    <string-array name="delay_showing_prompt_models">
+        <item>Pixel 4</item>
+        <item>Pixel 4 XL</item>
+    </string-array>
+    <string-array name="exo_controls_playback_speeds">
+        <item>0.25x</item>
+        <item>0.5x</item>
+        <item>0.75x</item>
+        <item>Normal</item>
+        <item>1.25x</item>
+        <item>1.5x</item>
+        <item>2x</item>
+    </string-array>
+    <array name="export_primary_resources">
+        <item>@drawable/export_notification_progress_horizontal</item>
+    </array>
+    <array name="fcm_refresh_push_token_job_service_ids">
+        <item>@id/fcm_refresh_push_token_job_service_id</item>
+    </array>
+    <string-array name="graduation_date_picker_months">
+        <item>January</item>
+        <item>February</item>
+        <item>March</item>
+        <item>April</item>
+        <item>May</item>
+        <item>June</item>
+        <item>July</item>
+        <item>August</item>
+        <item>September</item>
+        <item>October</item>
+        <item>November</item>
+        <item>December</item>
+    </string-array>
+    <string-array name="hide_fingerprint_instantly_prefixes">
+        <item>SM-A50</item>
+        <item>SM-G973</item>
+        <item>SM-G975</item>
+        <item>SM-G977</item>
+        <item>SM-G770</item>
+        <item>SM-N970</item>
+        <item>SM-N971</item>
+        <item>SM-N975</item>
+        <item>SM-N976</item>
+        <item>SM-N770</item>
+        <item>SC-03L</item>
+        <item>SC-04L</item>
+        <item>SC-05L</item>
+        <item>SC-01M</item>
+        <item>SCV41</item>
+        <item>SCV42</item>
+        <item>SCV45</item>
+    </string-array>
+    <array name="iig_dialog_autosize_text_sizes">
+        <item>@dimen/add_payment_bottom_sheet_row_subtitle_size</item>
+        <item>@dimen/abc_edit_text_inset_top_material</item>
+        <item>@dimen/button_text_size</item>
+        <item>@dimen/add_payment_bottom_sheet_row_subtitle_size</item>
+        <item>@dimen/auth_edit_field_text_size</item>
+        <item>@dimen/abc_text_size_menu_header_material</item>
+        <item>@dimen/auth_title_text_size</item>
+        <item>@dimen/account_group_management_row_text_size</item>
+    </array>
+    <array name="job_scheduler_memory_dump_upload">
+        <item>@id/job_id_upload_task</item>
+    </array>
+    <array name="jobscheduler_pushlite_job_ids">
+        <item>@id/jobscheduler_pushlist_refresh_token_job</item>
+    </array>
+    <array name="media_sticker_bottom_legibility_gradient_colors">
+        <item>@color/bds_black_50_transparent</item>
+        <item>@color/black_35_transparent</item>
+        <item>@color/black_25_transparent</item>
+        <item>@color/black_12_transparent</item>
+        <item>@color/bds_black_5_transparent</item>
+        <item>@color/bds_transparent</item>
+    </array>
+    <array name="media_sticker_top_legibility_gradient_colors">
+        <item>@color/bds_black_20_transparent</item>
+        <item>@color/bds_black_15_transparent</item>
+        <item>@color/bds_black_10_transparent</item>
+        <item>@color/bds_black_5_transparent</item>
+        <item>@color/black_3_transparent</item>
+        <item>@color/bds_transparent</item>
+    </array>
+    <string-array name="meta_ai_image_memu_input_prompt_identifiers">
+        <item>me</item>
+        <item>imagine me</item>
+    </string-array>
+    <string-array name="meta_ai_imagine_canvas_memu_input_prompt_identifiers">
+        <item>me</item>
+        <item>imagine me</item>
+    </string-array>
+    <string-array name="notes_birthday_blocked_words">
+        <item>rest in peace</item>
+        <item>rip</item>
+        <item>rest easy</item>
+        <item>passed away</item>
+        <item>in loving memory</item>
+        <item>gone too soon</item>
+        <item>rest in paradise</item>
+        <item>hate</item>
+        <item>sucks</item>
+        <item>suck</item>
+        <item>😭</item>
+        <item>🥺</item>
+        <item>😢</item>
+        <item>😥</item>
+        <item>😪</item>
+        <item>😓</item>
+        <item>😔</item>
+        <item>☹️</item>
+        <item>😕</item>
+        <item>🙁</item>
+        <item>😟</item>
+        <item>😞</item>
+        <item>🪦</item>
+        <item>💔</item>
+        <item>🕊</item>
+        <item>🤬</item>
+        <item>😡</item>
+        <item>⚰️</item>
+        <item>⚱</item>
+        <item>❤️‍🩹</item>
+    </string-array>
+    <string-array name="notes_birthday_trigger_words">
+        <item>happy birthday</item>
+        <item>happy bday</item>
+        <item>hbd</item>
+        <item>birthday vibes</item>
+        <item>make a wish</item>
+        <item>birthday queen</item>
+        <item>birthday king</item>
+        <item>my birthday</item>
+        <item>🎂</item>
+        <item>🎁</item>
+        <item>🎈</item>
+        <item>🥳</item>
+        <item>🎉</item>
+    </string-array>
+    <string-array name="quiz_sticker_answer_row_hint_text">
+        <item>Option 1</item>
+        <item>Option 2</item>
+        <item>Option 3</item>
+        <item>Option 4</item>
+    </string-array>
+    <string-array name="quiz_sticker_answer_row_options">
+        <item>A</item>
+        <item>B</item>
+        <item>C</item>
+        <item>D</item>
+    </string-array>
+    <array name="reel_reshare_fully_immersive_top_gradient_colors">
+        <item>@color/bds_black_50_transparent</item>
+        <item>@color/bds_transparent</item>
+    </array>
+    <array name="register_push_periodic_job_service_ids">
+        <item>@id/register_push_periodic_job_service_id</item>
+    </array>
+    <array name="ui_com_google_android_gms_fonts_certs">
+        <item>@array/ui_com_google_android_gms_fonts_certs_dev</item>
+        <item>@array/ui_com_google_android_gms_fonts_certs_prod</item>
+    </array>
+    <string-array name="ui_com_google_android_gms_fonts_certs_dev">
+        <item>MIIEqDCCA5CgAwIBAgIJANWFuGx90071MA0GCSqGSIb3DQEBBAUAMIGUMQswCQYDVQQGEwJVUzETMBEGA1UECBMKQ2FsaWZvcm5pYTEWMBQGA1UEBxMNTW91bnRhaW4gVmlldzEQMA4GA1UEChMHQW5kcm9pZDEQMA4GA1UECxMHQW5kcm9pZDEQMA4GA1UEAxMHQW5kcm9pZDEiMCAGCSqGSIb3DQEJARYTYW5kcm9pZEBhbmRyb2lkLmNvbTAeFw0wODA0MTUyMzM2NTZaFw0zNTA5MDEyMzM2NTZaMIGUMQswCQYDVQQGEwJVUzETMBEGA1UECBMKQ2FsaWZvcm5pYTEWMBQGA1UEBxMNTW91bnRhaW4gVmlldzEQMA4GA1UEChMHQW5kcm9pZDEQMA4GA1UECxMHQW5kcm9pZDEQMA4GA1UEAxMHQW5kcm9pZDEiMCAGCSqGSIb3DQEJARYTYW5kcm9pZEBhbmRyb2lkLmNvbTCCASAwDQYJKoZIhvcNAQEBBQADggENADCCAQgCggEBANbOLggKv+IxTdGNs8/TGFy0PTP6DHThvbbR24kT9ixcOd9W+EaBPWW+wPPKQmsHxajtWjmQwWfna8mZuSeJS48LIgAZlKkpFeVyxW0qMBujb8X8ETrWy550NaFtI6t9+u7hZeTfHwqNvacKhp1RbE6dBRGWynwMVX8XW8N1+UjFaq6GCJukT4qmpN2afb8sCjUigq0GuMwYXrFVee74bQgLHWGJwPmvmLHC69EH6kWr22ijx4OKXlSIx2xT1AsSHee70w5iDBiK4aph27yH3TxkXy9V89TDdexAcKk/cVHYNnDBapcavl7y0RiQ4biu8ymM8Ga/nmzhRKya6G0cGw8CAQOjgfwwgfkwHQYDVR0OBBYEFI0cxb6VTEM8YYY6FbBMvAPyT+CyMIHJBgNVHSMEgcEwgb6AFI0cxb6VTEM8YYY6FbBMvAPyT+CyoYGapIGXMIGUMQswCQYDVQQGEwJVUzETMBEGA1UECBMKQ2FsaWZvcm5pYTEWMBQGA1UEBxMNTW91bnRhaW4gVmlldzEQMA4GA1UEChMHQW5kcm9pZDEQMA4GA1UECxMHQW5kcm9pZDEQMA4GA1UEAxMHQW5kcm9pZDEiMCAGCSqGSIb3DQEJARYTYW5kcm9pZEBhbmRyb2lkLmNvbYIJANWFuGx90071MAwGA1UdEwQFMAMBAf8wDQYJKoZIhvcNAQEEBQADggEBABnTDPEF+3iSP0wNfdIjIz1AlnrPzgAIHVvXxunW7SBrDhEglQZBbKJEk5kT0mtKoOD1JMrSu1xuTKEBahWRbqHsXclaXjoBADb0kkjVEJu/Lh5hgYZnOjvlba8Ld7HCKePCVePoTJBdI4fvugnL8TsgK05aIskyY0hKI9L8KfqfGTl1lzOv2KoWD0KWwtAWPoGChZxmQ+nBli+gwYMzM1vAkP+aayLe0a1EQimlOalO762r0GXO0ks+UeXde2Z4e+8S/pf7pITEI/tP+MxJTALw9QUWEv9lKTk+jkbqxbsh8nfBUapfKqYn0eidpwq2AzVp3juYl7//fKnaPhJD9gs=</item>
+    </string-array>
+    <string-array name="ui_com_google_android_gms_fonts_certs_prod">
+        <item>MIIEQzCCAyugAwIBAgIJAMLgh0ZkSjCNMA0GCSqGSIb3DQEBBAUAMHQxCzAJBgNVBAYTAlVTMRMwEQYDVQQIEwpDYWxpZm9ybmlhMRYwFAYDVQQHEw1Nb3VudGFpbiBWaWV3MRQwEgYDVQQKEwtHb29nbGUgSW5jLjEQMA4GA1UECxMHQW5kcm9pZDEQMA4GA1UEAxMHQW5kcm9pZDAeFw0wODA4MjEyMzEzMzRaFw0zNjAxMDcyMzEzMzRaMHQxCzAJBgNVBAYTAlVTMRMwEQYDVQQIEwpDYWxpZm9ybmlhMRYwFAYDVQQHEw1Nb3VudGFpbiBWaWV3MRQwEgYDVQQKEwtHb29nbGUgSW5jLjEQMA4GA1UECxMHQW5kcm9pZDEQMA4GA1UEAxMHQW5kcm9pZDCCASAwDQYJKoZIhvcNAQEBBQADggENADCCAQgCggEBAKtWLgDYO6IIrgqWbxJOKdoR8qtW0I9Y4sypEwPpt1TTcvZApxsdyxMJZ2JORland2qSGT2y5b+3JKkedxiLDmpHpDsz2WCbdxgxRczfey5YZnTJ4VZbH0xqWVW/8lGmPav5xVwnIiJS6HXk+BVKZF+JcWjAsb/GEuq/eFdpuzSqeYTcfi6idkyugwfYwXFU1+5fZKUaRKYCwkkFQVfcAs1fXA5V+++FGfvjJ/CxURaSxaBvGdGDhfXE28LWuT9ozCl5xw4Yq5OGazvV24mZVSoOO0yZ31j7kYvtwYK6NeADwbSxDdJEqO4k//0zOHKrUiGYXtqw/A0LFFtqoZKFjnkCAQOjgdkwgdYwHQYDVR0OBBYEFMd9jMIhF1Ylmn/Tgt9r45jk14alMIGmBgNVHSMEgZ4wgZuAFMd9jMIhF1Ylmn/Tgt9r45jk14aloXikdjB0MQswCQYDVQQGEwJVUzETMBEGA1UECBMKQ2FsaWZvcm5pYTEWMBQGA1UEBxMNTW91bnRhaW4gVmlldzEUMBIGA1UEChMLR29vZ2xlIEluYy4xEDAOBgNVBAsTB0FuZHJvaWQxEDAOBgNVBAMTB0FuZHJvaWSCCQDC4IdGZEowjTAMBgNVHRMEBTADAQH/MA0GCSqGSIb3DQEBBAUAA4IBAQBt0lLO74UwLDYKqs6Tm8/yzKkEu116FmH4rkaymUIE0P9KaMftGlMexFlaYjzmB2OxZyl6euNXEsQH8gjwyxCUKRJNexBiGcCEyj6z+a1fuHHvkiaai+KL8W1EyNmgjmyy8AW7P+LLlkR+ho5zEHatRbM/YAnqGcFh5iZBqpknHf1SKMXFh4dd239FJ1jWYfbMDMy3NS5CTMQ2XFI1MvcyUTdZPErjQfTbQe3aDQsQcafEQPD+nqActifKZ0Np0IS9L9kR/wbNvyz6ENwPiTrjV2KRkEjH78ZMcUQXg0L3BYHJ3lc69Vs5Ddf9uUGGMYldX3WfMBEmh/9iFBDAaTCK</item>
+    </string-array>
+    <string-array name="piko_array_customise_story_timestamp">
+        <item>@string/piko_array_default</item>
+        <item>@string/piko_array_detailed_timestamp</item>
+        <item>@string/piko_array_post_time</item>
+        <item>@string/piko_array_time_left</item>
+    </string-array>
+    <string-array name="piko_array_customise_story_timestamp_val">
+        <item>default</item>
+        <item>detailed</item>
+        <item>posttime</item>
+        <item>timeleft</item>
+    </string-array>
+    <string-array name="piko_array_focus_lock_duration">
+        <item>@string/piko_focus_lock_duration_1_minute</item>
+        <item>@string/piko_focus_lock_duration_5_minutes</item>
+        <item>@string/piko_focus_lock_duration_10_minutes</item>
+        <item>@string/piko_focus_lock_duration_30_minutes</item>
+        <item>@string/piko_focus_lock_duration_1_hour</item>
+        <item>@string/piko_focus_lock_duration_2_hours</item>
+        <item>@string/piko_focus_lock_duration_6_hours</item>
+        <item>@string/piko_focus_lock_duration_12_hours</item>
+        <item>@string/piko_focus_lock_duration_1_day</item>
+        <item>@string/piko_focus_lock_duration_3_days</item>
+        <item>@string/piko_focus_lock_duration_1_week</item>
+        <item>@string/piko_focus_lock_duration_2_weeks</item>
+        <item>@string/piko_focus_lock_duration_1_month</item>
+        <item>@string/piko_focus_lock_duration_3_months</item>
+    </string-array>
+    <string-array name="piko_array_focus_lock_duration_val">
+        <item>1</item>
+        <item>5</item>
+        <item>10</item>
+        <item>30</item>
+        <item>60</item>
+        <item>120</item>
+        <item>360</item>
+        <item>720</item>
+        <item>1440</item>
+        <item>4320</item>
+        <item>10080</item>
+        <item>20160</item>
+        <item>43200</item>
+        <item>129600</item>
+    </string-array>
+    <string-array name="piko_array_change_like_animation">
+        <item>@string/piko_array_default</item>
+        <item>@string/piko_like_animation_random</item>
+        <item>Anyway like activation</item>
+        <item>Adrain</item>
+        <item>Aki kochi</item>
+        <item>Brain</item>
+        <item>Brickley</item>
+        <item>Cole</item>
+        <item>DJAG</item>
+        <item>Dolly</item>
+        <item>Elyse</item>
+        <item>Film</item>
+        <item>Futura</item>
+        <item>Gabriel</item>
+        <item>Golloria</item>
+        <item>Homestead</item>
+        <item>Kids</item>
+        <item>Laufey</item>
+        <item>Linda</item>
+        <item>Mimles</item>
+        <item>Nigel</item>
+        <item>Nina</item>
+        <item>Olivia</item>
+        <item>Seb</item>
+        <item>Twins</item>
+        <item>Tyshawn</item>
+        <item>Zarna</item>
+    </string-array>
+    <string-array name="piko_array_change_like_animation_val">
+        <item>ARES_LIKE_ACTIVATION</item>
+        <item>RANDOM</item>
+        <item>ANYWAY_LIKE_ACTIVATION</item>
+        <item>RINGS_LIKE_ADRIAN</item>
+        <item>RINGS_LIKE_AKI_KOCHI</item>
+        <item>RINGS_LIKE_BRIAN</item>
+        <item>RINGS_LIKE_BRICKLEY</item>
+        <item>RINGS_LIKE_COLE</item>
+        <item>RINGS_LIKE_DJAG</item>
+        <item>RINGS_LIKE_DOLLY</item>
+        <item>RINGS_LIKE_ELYSE</item>
+        <item>RINGS_LIKE_FILM</item>
+        <item>RINGS_LIKE_FUTURA</item>
+        <item>RINGS_LIKE_GABRIEL</item>
+        <item>RINGS_LIKE_GOLLORIA</item>
+        <item>RINGS_LIKE_HOMESTEAD</item>
+        <item>RINGS_LIKE_KIDS</item>
+        <item>RINGS_LIKE_LAUFEY</item>
+        <item>RINGS_LIKE_LINDA</item>
+        <item>RINGS_LIKE_MIMLES</item>
+        <item>RINGS_LIKE_NIGEL</item>
+        <item>RINGS_LIKE_NINA</item>
+        <item>RINGS_LIKE_OLIVIA</item>
+        <item>RINGS_LIKE_SEB</item>
+        <item>RINGS_LIKE_TWINS</item>
+        <item>RINGS_LIKE_TYSHAWN</item>
+        <item>RINGS_LIKE_ZARNA</item>
+    </string-array>
+    <string-array name="piko_array_action_bar_main_feed">
+        <item>@string/piko_action_bar_button_settings_icon</item>
+        <item>@string/piko_action_bar_button_ghost_mode_icon</item>
+        <item>@string/piko_action_bar_button_create_icon</item>
+        <item>@string/piko_action_bar_button_notifications_icon</item>
+    </string-array>
+    <string-array name="piko_array_action_bar_main_feed_val">
+        <item>SETTINGS_ICON</item>
+        <item>GHOST_MODE_ICON</item>
+        <item>CREATE</item>
+        <item>NOTIFICATIONS</item>
+    </string-array>
+    <string-array name="piko_array_action_bar_user_profile">
+        <item>@string/piko_action_bar_button_settings_icon</item>
+        <item>@string/piko_action_bar_button_profile_info_icon</item>
+        <item>@string/piko_action_bar_button_ghost_mode_icon</item>
+        <item>@string/piko_action_bar_button_create_icon</item>
+    </string-array>
+    <string-array name="piko_array_action_bar_user_profile_val">
+        <item>SETTINGS_ICON</item>
+        <item>PROFILE_INFO_ICON</item>
+        <item>GHOST_MODE_ICON</item>
+        <item>CREATE</item>
+    </string-array>
+    <string-array name="piko_array_action_bar_chat">
+        <item>@string/piko_action_bar_button_settings_icon</item>
+        <item>@string/piko_action_bar_button_ghost_mode_icon</item>
+    </string-array>
+    <string-array name="piko_array_action_bar_chat_val">
+        <item>SETTINGS_ICON</item>
+        <item>GHOST_MODE_ICON</item>
+    </string-array>
+    <string-array name="piko_array_action_bar_inbox">
+        <item>@string/piko_action_bar_button_settings_icon</item>
+        <item>@string/piko_action_bar_button_ghost_mode_icon</item>
+    </string-array>
+    <string-array name="piko_array_action_bar_inbox_val">
+        <item>SETTINGS_ICON</item>
+        <item>GHOST_MODE_ICON</item>
+    </string-array>
+    <string-array name="piko_array_reel_type">
+        <item>@string/piko_reel_type_ads_reel</item>
+        <item>@string/piko_reel_type_ar_effect_preview</item>
+        <item>@string/piko_reel_type_archive_day_media_reel</item>
+        <item>@string/piko_reel_type_archive_day_reel</item>
+        <item>@string/piko_reel_type_archive_friend_reel</item>
+        <item>@string/piko_reel_type_archive_map_reel</item>
+        <item>@string/piko_reel_type_archive_scheduled_for_deletion_reel</item>
+        <item>@string/piko_reel_type_archive_shop_reel</item>
+        <item>@string/piko_reel_type_axe_reel</item>
+        <item>@string/piko_reel_type_birthday_highlights</item>
+        <item>@string/piko_reel_type_bloks</item>
+        <item>@string/piko_reel_type_broadcast_reel</item>
+        <item>@string/piko_reel_type_daily_snapshot_reel</item>
+        <item>@string/piko_reel_type_election_reel</item>
+        <item>@string/piko_reel_type_empty_story_state_reel</item>
+        <item>@string/piko_reel_type_end_of_year</item>
+        <item>@string/piko_reel_type_expiring_story_reel</item>
+        <item>@string/piko_reel_type_fan_club_story</item>
+        <item>@string/piko_reel_type_follow_versaries</item>
+        <item>@string/piko_reel_type_friend_map_reel</item>
+        <item>@string/piko_reel_type_group_mention</item>
+        <item>@string/piko_reel_type_group_reel</item>
+        <item>@string/piko_reel_type_hallpass_reel</item>
+        <item>@string/piko_reel_type_highlight_reel</item>
+        <item>@string/piko_reel_type_highlight_rewind_reel</item>
+        <item>@string/piko_reel_type_inactive_hallpass_reel</item>
+        <item>@string/piko_reel_type_mas_reel</item>
+        <item>@string/piko_reel_type_media_reshare</item>
+        <item>@string/piko_reel_type_memory_reel</item>
+        <item>@string/piko_reel_type_my_week_reel</item>
+        <item>@string/piko_reel_type_netego_reel</item>
+        <item>@string/piko_reel_type_nux_reel</item>
+        <item>@string/piko_reel_type_private_story</item>
+        <item>@string/piko_reel_type_prompt_sticker_reel</item>
+        <item>@string/piko_reel_type_reconsideration_injected_story</item>
+        <item>@string/piko_reel_type_shopping_auto_highlight_reel</item>
+        <item>@string/piko_reel_type_shopping_pdp_reel</item>
+        <item>@string/piko_reel_type_shopping_smart_reel</item>
+        <item>@string/piko_reel_type_stars_welcome_reel</item>
+        <item>@string/piko_reel_type_story_stationary_timeline_reel</item>
+        <item>@string/piko_reel_type_subscription_shoutout_mention</item>
+        <item>@string/piko_reel_type_suggested_creator_reel</item>
+        <item>@string/piko_reel_type_suggested_user</item>
+        <item>@string/piko_reel_type_suggested_user_reel</item>
+        <item>@string/piko_reel_type_superlative_reel</item>
+        <item>@string/piko_reel_type_third_party_app_story</item>
+        <item>@string/piko_reel_type_typed_container</item>
+        <item>@string/piko_reel_type_user_reel</item>
+    </string-array>
+    <string-array name="piko_array_reel_type_val">
+        <item>ads_reel</item>
+        <item>ar_effect_preview</item>
+        <item>archive_day_media_reel</item>
+        <item>archive_day_reel</item>
+        <item>archive_friend_reel</item>
+        <item>archive_map_reel</item>
+        <item>archive_scheduled_for_deletion_reel</item>
+        <item>archive_shop_reel</item>
+        <item>axe_reel</item>
+        <item>birthday_highlights</item>
+        <item>bloks</item>
+        <item>broadcast_reel</item>
+        <item>daily_snapshot_reel</item>
+        <item>election_reel</item>
+        <item>empty_story_state_reel</item>
+        <item>end_of_year</item>
+        <item>expiring_story_reel</item>
+        <item>fan_club_story</item>
+        <item>follow_versaries</item>
+        <item>friend_map_reel</item>
+        <item>group_mention</item>
+        <item>group_reel</item>
+        <item>hallpass_reel</item>
+        <item>highlight_reel</item>
+        <item>highlight_rewind_reel</item>
+        <item>inactive_hallpass_reel</item>
+        <item>mas_reel</item>
+        <item>media_reshare</item>
+        <item>memory_reel</item>
+        <item>my_week_reel</item>
+        <item>netego_reel</item>
+        <item>nux_reel</item>
+        <item>private_story</item>
+        <item>prompt_sticker_reel</item>
+        <item>reconsideration_injected_story</item>
+        <item>shopping_auto_highlight_reel</item>
+        <item>shopping_pdp_reel</item>
+        <item>shopping_smart_reel</item>
+        <item>stars_welcome_reel</item>
+        <item>story_stationary_timeline_reel</item>
+        <item>subscription_shoutout_mention</item>
+        <item>suggested_creator_reel</item>
+        <item>suggested_user</item>
+        <item>suggested_user_reel</item>
+        <item>superlative_reel</item>
+        <item>third_party_app_story</item>
+        <item>typed_container</item>
+        <item>user_reel</item>
+    </string-array>
+    <string-array name="piko_array_user_type">
+        <item>@string/piko_user_type_unverified</item>
+        <item>@string/piko_user_type_verified</item>
+    </string-array>
+    <string-array name="piko_array_user_type_val">
+        <item>unverified</item>
+        <item>verified</item>
+    </string-array>
+    <string-array name="piko_array_recmd_flag_states">
+        <item>@string/piko_array_default</item>
+        <item>@string/piko_array_recmd_flag_state_enable</item>
+        <item>@string/piko_array_recmd_flag_state_disable</item>
+    </string-array>
+    <string-array name="piko_array_recmd_flag_states_val">
+        <item>default</item>
+        <item>enable</item>
+        <item>disable</item>
+    </string-array>
+</resources>

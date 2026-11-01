@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "identifier": "03791A5A-C4C3-49C5-BBBD-647285B130FF",
+  "displayName": "Anamorphic Lens",
+  "description": "[IG Edits] Video effect name. Simulates anamorphic lens flares with horizontal streaks and glow from bright highlights.",
+  "iglu": {
+    "legacyId": 3088,
+    "customization": [
+      {
+        "name": "intensity",
+        "displayName": "Intensity",
+        "default": 0.9,
+        "min": 0.0,
+        "max": 1.0
+      },
+      {
+        "name": "size",
+        "displayName": "Size",
+        "default": 0.2,
+        "min": 0.0,
+        "max": 1.0
+      },
+      {
+        "name": "amount",
+        "displayName": "Amount",
+        "default": 0.2,
+        "min": 0.0,
+        "max": 1.0
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "df37d439",
+      "handle": "AQADF78kvjVm",
+      "md5": "4547446ce507658dd7a7beceed7c1f4a"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAE1SPMwTZc",
+      "isImageFormat": true
+    }
+  }
+}

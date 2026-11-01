@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "grain_adjust",
+  "displayName": "Grain Adjust",
+  "description": "[IG Edits] Video effect name. With \"Grain Adjust\", the creator can add blocky film-grain noise plus a soft blur, shadow lift, highlight crush and slight tint to give footage a film stock feel.",
+  "iglu": {}
+}

@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_static_grid",
+  "displayName": "Grid",
+  "description": "[IG Edits] Video effect name. With \"Grid\", the creator can tile their video into an N×N grid (default 3, range 2-8) for a kaleidoscopic repeat pattern.",
+  "iglu": {
+    "legacyId": 2001,
+    "customization": [
+      {
+        "name": "amount",
+        "default": 3.0,
+        "min": 2.0,
+        "max": 8.0,
+        "displayName": "Amount",
+        "displayNameDescription": "[IG Edits] Slider label controlling the magnitude or quantity of a video effect. Generic across many effects; exact range varies per effect.",
+        "displayMethod": "number"
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "27ed651b",
+      "handle": "AQAKbNX-dpCA",
+      "md5": "203bf54b16d70808f498cef13c949cd0"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAHgs6nvj6D",
+      "isImageFormat": true
+    }
+  }
+}

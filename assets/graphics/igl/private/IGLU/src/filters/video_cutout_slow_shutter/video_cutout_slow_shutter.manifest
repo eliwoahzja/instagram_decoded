@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_cutout_slow_shutter",
+  "displayName": "Cutout Slow Shutter",
+  "description": "[IG Edits] Video effect name. With \"Cutout Slow Shutter\", the creator can leave additive motion trails behind a moving subject by accumulating box-blurred previous frames with decay.",
+  "iglu": {
+    "subject": {
+      "enabled": true,
+      "fullFrameEnabled": false
+    }
+  }
+}

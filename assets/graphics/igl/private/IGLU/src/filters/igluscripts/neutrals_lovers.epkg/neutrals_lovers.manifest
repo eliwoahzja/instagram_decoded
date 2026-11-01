@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "identifier": "A13B8237-4A8E-46FF-B1FE-07E3C3A28D41",
+  "displayName": "Neutrals Lovers",
+  "description": "[IG Edits] Color filter name. Soft neutral LUT grade with a subtle skin-tone rouge boost and a heart symbol overlay.",
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAD2BaEH67E"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "a5fd01ba",
+      "handle": "AQADuy3oDVF1",
+      "md5": "a68c984247f84908dbb681d3bee8ae76"
+    }
+  },
+  "iglu": {
+    "legacyId": 3101
+  },
+  "assets": [
+    {
+      "name": "neutrals_lovers_lut.png",
+      "assetHash": "faafdaeba9ea7e315de87d1e475e295ff0f6924f87dbcf07de4b886e14c76f08",
+      "hubAssetId": "1009728704865343"
+    },
+    {
+      "name": "neutrals_lovers_overlay.png",
+      "assetHash": "3f7a82d9d6172394aa3fdf6876c11d5d8125db20186381c4ca71ed85382da47c",
+      "hubAssetId": "4252052611725382"
+    }
+  ]
+}

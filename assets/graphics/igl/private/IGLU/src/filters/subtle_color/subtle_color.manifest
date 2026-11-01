@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "identifier": "subtle_color",
+  "displayName": "Oslo",
+  "description": "Oslo city style filter",
+  "iglu": {
+    "legacyId": 643
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "identifier": "text_comic",
+  "displayName": "Text Comic",
+  "description": "[IG Edits] Text effect name. With \"Text Comic\", the creator can render text with an inked outline, matcap shading and time-posterized noise jitter for a comic-book look.",
+  "assets": [
+    {
+      "name": "comic_matcap.png",
+      "assetHash": "29df94d6955e7736623e55bf451b1fc3546a13dd1341ea6bf606ef086832ea7e",
+      "hubAssetId": "919899897298823"
+    },
+    {
+      "name": "comic_matcap_clear.png",
+      "assetHash": "bd8257aee43531e4ac5eeb9e315bdbc6fa0e2b883bb90379a52b3c754da3832d",
+      "hubAssetId": "1570307820869685"
+    }
+  ],
+  "iglu": {}
+}

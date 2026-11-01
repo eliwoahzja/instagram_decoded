@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_slow_shutter",
+  "displayName": "Slow shutter",
+  "description": "[IG Edits] Video effect name. With \"Slow shutter\", the creator can imitate the effect of a camera's capturing blur from movement.",
+  "iglu": {
+    "legacyId": 2070,
+    "customization": [
+      {
+        "name": "intensity",
+        "default": 0.571,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Intensity",
+        "displayNameDescription": "[IG Edits] Slider label controlling the strength of a video effect. Generic across many effects (glow, blur, color, distortion, etc.); exact range varies per effect."
+      },
+      {
+        "name": "amount",
+        "default": 0.45,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Amount",
+        "displayNameDescription": "[IG Edits] Slider label controlling the magnitude or quantity of a video effect. Generic across many effects; exact range varies per effect."
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "bff1112a",
+      "handle": "AQAFqnzXI_36",
+      "md5": "2df57b1dbff1deaec5357f8dbfd7f385"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAGS3L_0pYF"
+    }
+  }
+}

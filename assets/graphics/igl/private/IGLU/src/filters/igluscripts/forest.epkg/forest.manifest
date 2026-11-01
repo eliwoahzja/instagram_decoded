@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "identifier": "A63BA411-0746-4C69-89A9-729E73C13952",
+  "displayName": "Forest",
+  "description": "[IG Edits] Video effect name. With \"Forest\", the creator can apply a forest LUT color grade plus a subtle 5-tap cross-blur soft-focus pass that gently smooths skin and fine detail.",
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAGY1uP7-q7"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "b7c3b468",
+      "handle": "AQAHt_1MlPjd",
+      "md5": "785fc5acb0ac766249c708e412d97d39"
+    }
+  },
+  "iglu": {
+    "legacyId": 3083
+  },
+  "assets": [
+    {
+      "name": "forest_lut.png",
+      "assetHash": "a32ffb505930ce911b8c0fcc466668606565ddaab6ac6d50c4f4ca35a8c26040",
+      "hubAssetId": "1278125937361499"
+    }
+  ]
+}

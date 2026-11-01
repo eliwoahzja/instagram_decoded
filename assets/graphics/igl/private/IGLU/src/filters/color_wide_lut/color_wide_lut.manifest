@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "color_wide_lut",
+  "displayName": "Color Wide Lut",
+  "description": "[IG Edits] Color filter name. With \"Color Wide Lut\", the creator can remap pixel RGB through a packed 2D-atlas 3D LUT with trilinear Z interpolation for graded color looks.",
+  "iglu": {}
+}

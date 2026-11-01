@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="clips_interstitial_afi_cta_padding_vertical">14.0dp</dimen>
+    <dimen name="clips_interstitial_afi_cta_text_size">16.0sp</dimen>
+    <dimen name="clips_interstitial_afi_title_text_size">21.0sp</dimen>
+</resources>

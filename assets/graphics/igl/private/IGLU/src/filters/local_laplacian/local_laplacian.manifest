@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "local_laplacian",
+  "displayName": "Local Laplacian",
+  "description": "[IG Edits] Video effect name. With \"Local Laplacian\", the creator can boost local contrast and tone detail by adding a strength-scaled Laplacian mask back onto the source frame.",
+  "iglu": {}
+}

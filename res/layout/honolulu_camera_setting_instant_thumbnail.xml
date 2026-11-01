@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:orientation="vertical" android:id="@id/camera_settings_instant_thumbnail_main_layout" android:visibility="gone" android:layout_width="match_parent" android:layout_height="wrap_content"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <TextView android:textSize="18.0sp" android:textStyle="bold" android:layout_gravity="start" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/string_0x7f13005b" />
+    <TextView android:textSize="12.0sp" android:layout_gravity="start" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_margin="4.0dp" android:text="@string/string_0x7f130058" />
+    <FrameLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_margin="4.0dp">
+        <TextView android:textSize="16.0sp" android:layout_gravity="start|center" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/string_0x7f13005a" />
+        <RadioButton android:layout_gravity="end|center" android:id="@id/camera_settings_instant_thumbnail_radio_on" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+    </FrameLayout>
+    <FrameLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_margin="4.0dp">
+        <TextView android:textSize="16.0sp" android:layout_gravity="start|center" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/string_0x7f130059" />
+        <RadioButton android:layout_gravity="end|center" android:id="@id/camera_settings_instant_thumbnail_radio_off" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+    </FrameLayout>
+</LinearLayout>

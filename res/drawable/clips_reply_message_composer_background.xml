@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape android:shape="rectangle"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="?igds_color_clips_reply_bar_pill" />
+    <stroke android:width="1.0px" android:color="?igds_color_elevated_highlight_background" />
+    <corners android:radius="@dimen/direct_composer_background_corner_radius" />
+</shape>

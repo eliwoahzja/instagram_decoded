@@ -1,0 +1,109 @@
+[Filter VideoWaveLoop]
+# Wave — looping wave distortion effect.
+# Ported from GLSL text animation: "Wave" (2025 H2 Text Animations)
+#
+# Single-pass: cosine wave displaces y-coordinate over time.
+# Uses system-provided time_sec base uniform for continuous animation.
+
+[Init]
+fun init(Filter filter) {
+    filter.parameters = {
+        {speed = 0.16666667, min = 0.0, max = 1.0, description = "Speed"},
+        {intensity = 0.16666667, min = 0.0, max = 1.0, description = "Intensity"},
+    };
+
+    filter.passes = {
+        {
+            name = 'pass0,
+            inputs = {'default},
+            uniforms = {
+                speed = 1.25,
+                amplitude = 0.1,
+                frequency = 2.0,
+            },
+            glslShader = glslWaveLoop,
+            metalShader = metalWaveLoop,
+        },
+    };
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+    f32 speed = getParameterFloat('speed);
+    f32 animationSpeed = 0.5 + speed * (5.0 - 0.5);
+    setShaderUniform('pass0, 'speed, animationSpeed);
+
+    f32 intensity = getParameterFloat('intensity);
+    f32 amplitude = 0.02 + intensity * (0.5 - 0.02);
+    setShaderUniform('pass0, 'amplitude, amplitude);
+}
+
+string glslWaveLoop = "
+    precision highp float;
+    varying vec2 sourceTextureCoordinate;
+
+    BaseUniformsOpenGL;
+    uniform float time_sec;
+    uniform float speed;
+    uniform float amplitude;
+    uniform float frequency;
+
+    #define PI 3.14159265
+
+    float mirror(float x) {
+        return 1.0 - abs(mod(x + 2.0, 2.0) - 1.0);
+    }
+
+    vec2 mirrorUV(vec2 uv) {
+        return vec2(mirror(uv.x), mirror(uv.y));
+    }
+
+    void main() {
+        vec2 uv = sourceTextureCoordinate;
+        float t = time_sec * speed;
+        float theta = uv.x * frequency + t;
+        theta *= PI;
+        uv.y += cos(theta) * amplitude * 0.25;
+        uv = mirrorUV(uv);
+        vec4 color = sampleInput(uv);
+        gl_FragColor = toOutputFormat(color);
+    }
+";
+
+string metalWaveLoop = "
+    struct fragmentOut { float4 _gl_FragColor [[color(0)]]; };
+    struct fragmentIn { float2 sourceTextureCoordinate [[user(locn1)]]; };
+
+    typedef struct {
+        float4x4 content_transform;
+        float4x4 texture_transform;
+        float time_sec;
+        float speed;
+        float amplitude;
+        float frequency;
+    } Uniforms;
+
+    float mirror(float x) {
+        return 1.0 - abs(fmod(x + 2.0, 2.0) - 1.0);
+    }
+
+    float2 mirrorUV(float2 uv) {
+        return float2(mirror(uv.x), mirror(uv.y));
+    }
+
+    fragment fragmentOut fragmentShader(fragmentIn in [[stage_in]],
+                                        constant Uniforms & uniforms [[buffer(1)]],
+                                        DefaultInputs defaultInputs
+                                        ) {
+        float2 uv = in.sourceTextureCoordinate;
+        float t = uniforms.time_sec * uniforms.speed;
+        float theta = uv.x * uniforms.frequency + t;
+        theta *= 3.14159265;
+        uv.y += cos(theta) * uniforms.amplitude * 0.25;
+        uv = mirrorUV(uv);
+        float4 color = sampleInput(defaultInputs, uv);
+        fragmentOut out = {};
+        out._gl_FragColor = toOutputFormat(color);
+        return out;
+    }
+";

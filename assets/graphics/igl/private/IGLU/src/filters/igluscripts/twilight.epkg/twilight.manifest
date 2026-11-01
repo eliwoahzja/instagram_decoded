@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "identifier": "31201682-31C1-4629-8D10-6018869FC31C",
+  "displayName": "Twilight",
+  "description": "[IG Edits] Color filter name. Moody motion-blurred look with a cool blue tint — horizontal directional blur plus a baked color LUT extracted from the Spark reference effect.",
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAFy-GpIvcV"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "b02ec86d",
+      "handle": "AQAGHcuD6Vox",
+      "md5": "ff1c6be45675d322e3228f2813a7c749"
+    }
+  },
+  "iglu": {
+    "legacyId": 3184
+  },
+  "assets": [
+    {
+      "name": "twilight_lut.png"
+    }
+  ]
+}

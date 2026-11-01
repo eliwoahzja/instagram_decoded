@@ -1,0 +1,1 @@
+(function(outerHeight){window.__outer_height_override__=outerHeight})

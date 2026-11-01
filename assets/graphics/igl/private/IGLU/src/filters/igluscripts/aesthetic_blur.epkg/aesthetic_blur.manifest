@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "identifier": "8FDA5A23-E23E-48A2-BDF9-F7ACE856D555",
+  "displayName": "Aesthetic Blur",
+  "description": "[IG Edits] Video effect name. With \"Aesthetic Blur\", the creator can apply an 8x8 LUT color grade then a 15-tap quartic-weighted directional blur (default dir 10,2) for a dreamy soft look.",
+  "ios": {
+    "previewAsset": {
+      "handle": "AQADze6b7gQ3"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "fdd0b096",
+      "handle": "AQAPy3v7vsEg",
+      "md5": "0866265b47476e432bf1ec153bdd9b56"
+    }
+  },
+  "iglu": {
+    "legacyId": 3072
+  },
+  "assets": [
+    {
+      "name": "aesthetic_blur_lut.png",
+      "assetHash": "137bcacaf5e4c250bd08648f993e27dd6c039249ee8464c6747d26875422174f",
+      "hubAssetId": "968066209167874"
+    },
+    {
+      "name": "aesthetic_blur_grain.png",
+      "assetHash": "5475ff5485838843d6ccbcab98fab8f27d25af5af1931e498b4455e07924ae37",
+      "hubAssetId": "1653066202647325"
+    }
+  ]
+}

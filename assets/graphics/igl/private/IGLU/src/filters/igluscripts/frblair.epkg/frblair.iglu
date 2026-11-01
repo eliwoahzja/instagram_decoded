@@ -1,0 +1,220 @@
+[Filter Frblair]
+# "Frblair" — multi-layer composite: LUT + RGB shift -> camera multiply
+# blend -> tinted grain -> flat lighting -> global rouge.
+#
+# Two ARD-delivered named inputs (same loading pattern as bas_a_droite):
+#   * 'lut   — color LUT, 8x8 grid (frblair_lut.png)
+#   * 'grain — grain texture (grain.png) tinted with rgb(227,199,164)
+#              before alpha-compositing
+#
+# Pipeline (single fragment pass, blend stack bottom -> top):
+#   Layer 1 — LUT-graded source with static radial RGB channel shift:
+#     Per-channel UV scaling around frame center (Spark patch pattern):
+#       T = rgb_shift_intensity * 0.1   (To Range 0..0.1 in Spark)
+#       scale_R = 1.0 + T               (default 1.03 at intensity=0.30)
+#       scale_G = 1.0                   (no scale on G)
+#       scale_B = 1.0 + 2*T             (default 1.06 at intensity=0.30)
+#     Sample LUT-graded source at the per-channel scaled UV (pivot 0.5),
+#     pick channel, recombine. Add-blend collapses to vec3 channel pick.
+#     Hardcoded * 1.3 brightness boost matches the Spark Multiply node
+#     that follows the Add-blend recombine.
+#       layer1 = vec3(lutR.r, lutG.g, lutB.b) * 1.3
+#     This is a radial chromatic aberration — nearly imperceptible at
+#     center, faint near edges. Subtler than a horizontal translation.
+#   Layer 2 — Camera multiply blend at multiply_opacity:
+#     * multiplied = layer1 * camera_source.rgb
+#     * layer2 = mix(layer1, multiplied, multiply_opacity)
+#   Layer 3 — Tinted grain via SCREEN blend at grain_opacity:
+#     * tinted_grain = grain.rgb * vec3(0.890, 0.780, 0.643)
+#     * screen = 1.0 - (1.0 - layer2) * (1.0 - tinted_grain)
+#     * layer3 = mix(layer2, screen, grain_opacity * grain.a)
+#     Spark uses Screen blend at 20% opacity; we ship 0.15 to give a
+#     slightly subtler grain in the sample app (visual A/B with author).
+#   Flat lighting (Low Light pattern):
+#     * color *= ambient_strength + directional_strength
+#     * Defaults 0.20 + 0.80 = 1.0 (no-op multiplier matching Spark
+#       scene-light pattern). Wired host-tunable per CRA convention.
+#   Global rouge (now-filter pattern):
+#     * r *= 1.0 + rouge_strength (default 0.05)
+#     * Coarse approximation of the Spark face-tracked rouge effect.
+#       IGLUScript does not expose face-tracking inputs to the shader,
+#       so this is applied uniformly. Most visible on warm tones (skin,
+#       lips) and least visible on cool tones; lifts background reds too.
+#
+# LUT and grain both delivered via ARD; effectIds and assetHashes will
+# be filled in once provided. **WIP — DO NOT LAND** while the manifest
+# carries TODO placeholders.
+#
+# Locally overrideable via Custom Parameters in the sample app:
+#   * `lut_path`   -> binds a textureFilePath:// to 'lut
+#   * `grain_path` -> binds a textureFilePath:// to 'grain
+
+[Init]
+fun init(Filter filter)
+{
+    makeTexture('lut);
+    makeTexture('grain);
+
+    # Host-tunable parameters. All wired unconditionally in [PreRender]
+    # per CRA finding on black_and_white (filter.parameters declares
+    # min=0.0 for each, so host-set zeros propagate).
+    filter.parameters = {
+        {strength = 1.0, min = 0.0, max = 1.0, description = "LUT mix strength"},
+        {rgb_shift_intensity = 0.015, min = 0.0, max = 1.0, description = "Radial RGB shift intensity; 1.0 maps to scale 1.10 R / 1.20 B around center"},
+        {multiply_opacity = 0.534, min = 0.0, max = 1.0, description = "Camera multiply blend opacity"},
+        {grain_opacity = 0.262, min = 0.0, max = 1.0, description = "Tinted grain screen blend opacity"},
+        {ambient_strength = 0.1, min = 0.0, max = 2.0, description = "Flat ambient lift"},
+        {directional_strength = 0.6, min = 0.0, max = 2.0, description = "Flat directional lift"},
+        {rouge_strength = 0.084, min = 0.0, max = 0.5, description = "Global red channel boost"},
+    };
+
+    filter.passes = {{
+      name = 'pass0,
+      inputs = {'default, 'lut, 'grain},
+      uniforms = {
+        strength = 1.0,
+        rgb_shift_intensity = 0.015,
+        multiply_opacity = 0.534,
+        grain_opacity = 0.262,
+        ambient_strength = 0.1,
+        directional_strength = 0.6,
+        rouge_strength = 0.084,
+      },
+      glslShader = glslFrblair,
+    }};
+}
+
+string lut_path = "lut_path";
+string lut_filename = "";
+string grain_path = "grain_path";
+string grain_filename = "";
+
+[PreRender]
+fun preRender(Filter filter){
+    string lut_filename_parameter = getParameterString(lut_path);
+    if (lut_filename_parameter != "") {
+        string new_lut_filename = stringAppend("textureFilePath://", lut_filename_parameter);
+        if (new_lut_filename != lut_filename) {
+            lut_filename = new_lut_filename;
+            loadTexture('lut, lut_filename);
+        }
+    }
+
+    string grain_filename_parameter = getParameterString(grain_path);
+    if (grain_filename_parameter != "") {
+        string new_grain_filename = stringAppend("textureFilePath://", grain_filename_parameter);
+        if (new_grain_filename != grain_filename) {
+            grain_filename = new_grain_filename;
+            loadTexture('grain, grain_filename);
+        }
+    }
+
+    # All seven scalar parameters wired unconditionally per CRA convention.
+    f32 s = getParameterFloat('strength);
+    setShaderUniform('pass0, 'strength, s);
+
+    f32 rsi = getParameterFloat('rgb_shift_intensity);
+    setShaderUniform('pass0, 'rgb_shift_intensity, rsi);
+
+    f32 mo = getParameterFloat('multiply_opacity);
+    setShaderUniform('pass0, 'multiply_opacity, mo);
+
+    f32 go = getParameterFloat('grain_opacity);
+    setShaderUniform('pass0, 'grain_opacity, go);
+
+    f32 amb = getParameterFloat('ambient_strength);
+    setShaderUniform('pass0, 'ambient_strength, amb);
+
+    f32 dir = getParameterFloat('directional_strength);
+    setShaderUniform('pass0, 'directional_strength, dir);
+
+    f32 r = getParameterFloat('rouge_strength);
+    setShaderUniform('pass0, 'rouge_strength, r);
+}
+
+#### GLSL shader ####
+
+string glslFrblair = "
+    varying vec2 sourceTextureCoordinate;
+    BaseUniformsOpenGL;
+
+    uniform sampler2D auxSampler0;
+    uniform sampler2D auxSampler1;
+    uniform sampler2D auxSampler2;
+
+    uniform float rgb_shift_intensity;
+    uniform float multiply_opacity;
+    uniform float grain_opacity;
+    uniform float ambient_strength;
+    uniform float directional_strength;
+    uniform float rouge_strength;
+
+    // Apply 8x8 grid LUT trilinear sampling (same as black_and_white).
+    // Mixes with the input RGB by `strength` so the strength uniform
+    // controls LUT effect at sample-position.
+    vec3 applyLut(vec3 inRgb) {
+      vec3 c = clamp(inRgb, 0.00781, 0.98438);
+      float x = c.r / 8.0;
+      float y = c.g / 8.0;
+      float z = c.b;
+      float blueY = floor(z * 8.0) / 8.0;
+      float blueX = floor((z - blueY) * 64.0) / 8.0;
+      x += blueX;
+      y += blueY;
+      vec3 lutColor = texture2D(auxSampler1, vec2(x, y)).xyz;
+      return mix(inRgb, lutColor, strength);
+    }
+
+    void main() {
+      vec2 uv = sourceTextureCoordinate;
+
+      // Original camera source for layer 2 multiply blend.
+      vec4 origSrc = sampleInput(uv);
+
+      // Layer 1: LUT + static radial RGB channel shift (Spark patch).
+      // Per-channel UV scaling around the frame center, pivot 0.5.
+      //   T       = rgb_shift_intensity * 0.1   (Spark To Range 0..0.1)
+      //   scale_R = 1.0 + T,    scale_G = 1.0,    scale_B = 1.0 + 2*T
+      // Sample at the inverse-transformed UV so the per-channel image
+      // appears slightly zoomed in around the pivot.
+      // Final * 1.3 matches Sparks Multiply node after the Add-blend
+      // recombine of the three swizzled channels.
+      float T = rgb_shift_intensity * 0.1;
+      float scaleR = 1.0 + T;
+      float scaleB = 1.0 + 2.0 * T;
+      vec2 center = vec2(0.5);
+      vec2 r_uv = center + (uv - center) / max(scaleR, 0.001);
+      vec2 g_uv = uv;
+      vec2 b_uv = center + (uv - center) / max(scaleB, 0.001);
+      vec3 lutR = applyLut(sampleInput(r_uv).rgb);
+      vec3 lutG = applyLut(sampleInput(g_uv).rgb);
+      vec3 lutB = applyLut(sampleInput(b_uv).rgb);
+      vec3 layer1 = vec3(lutR.r, lutG.g, lutB.b) * 1.3;
+
+      // Layer 2: camera multiply blend at multiply_opacity.
+      vec3 multiplied = layer1 * origSrc.rgb;
+      vec3 layer2 = mix(layer1, multiplied, multiply_opacity);
+
+      // Layer 3: tinted grain over layer2 via SCREEN blend
+      // (matches Spark blend mode). Screen = 1 - (1-a) * (1-b),
+      // a brightening blend that preserves highlights.
+      vec4 grainTex = texture2D(auxSampler2, uv);
+      vec3 tintedGrain = grainTex.rgb * vec3(0.890, 0.780, 0.643);
+      vec3 screened = 1.0 - (1.0 - layer2) * (1.0 - tintedGrain);
+      vec3 layer3 = mix(layer2, screened, grain_opacity * grainTex.a);
+
+      // Flat lighting (Low Light pattern). Defaults 0.20 + 0.80 = 1.0
+      // give a no-op multiplier matching the Spark scene-light pattern.
+      vec3 lit = layer3 * (ambient_strength + directional_strength);
+
+      // Global rouge boost (now-filter pattern). Uniform red lift across
+      // the frame; not face-tracked. See header for the known gap note.
+      lit.r *= 1.0 + rouge_strength;
+
+      // Clamp to LDR display range so additive lights / rouge don't
+      // push past 1.0.
+      lit = clamp(lit, 0.0, 1.0);
+
+      gl_FragColor = toOutputFormat(vec4(lit, origSrc.a));
+    }
+    ";

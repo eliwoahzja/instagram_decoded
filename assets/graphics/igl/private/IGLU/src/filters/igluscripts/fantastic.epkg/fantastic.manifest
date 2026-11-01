@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "identifier": "50EF4144-3160-4F07-936D-A10ABB44020F",
+  "displayName": "Fantastic",
+  "description": "[IG Edits] Color preset filter name. Applies a fantastic color grade with overlay and skin smoothing.",
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAGM7Kiekvg"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "8caf27f2",
+      "handle": "AQAHtkdf1lSU",
+      "md5": "880320feb97a734835e28ef9966b79a5"
+    }
+  },
+  "iglu": {
+    "legacyId": 3182
+  },
+  "assets": [
+    {
+      "name": "fantastic_lut.png",
+      "assetHash": "1b874dbf96890d46956ccad2d280add29569d8f285aaff0a25f9be090835b7d0",
+      "hubAssetId": "1502906791309724"
+    },
+    {
+      "name": "fantastic_overlay.png",
+      "assetHash": "92549acad50a8a46e02b213d1c7f9d7d9f479601f7d0dee5394db05e7e73dae4",
+      "hubAssetId": "1044687028242857"
+    }
+  ]
+}

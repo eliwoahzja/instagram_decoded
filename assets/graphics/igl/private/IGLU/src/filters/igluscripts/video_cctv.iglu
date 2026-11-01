@@ -1,0 +1,387 @@
+[Filter CCTV]
+# CCTV / surveillance camera effect
+# Features: scanlines, vignette, desaturation + greenish/bluish tint,
+# subtle horizontal noise band, soft signal noise, and slight chromatic
+# distortion to mimic a low-grade security camera feed.
+# Uses system-provided time_sec base uniform for continuous animation.
+
+[Init]
+fun init(Filter filter) {
+
+  filter.parameters = {
+    {intensity = 1.0, min = 0.0, max = 1.0, description = "Effect intensity"},
+    {color = {1.0, 0.478, 0.0, 1.0}, description = "Color tint"},
+    {opacity = 0.1, min = 0.0, max = 1.0, description = "Color opacity"},
+    {amount = 0.33, min = 0.0, max = 1.0, description = "Lens convergence"},
+  };
+
+  filter.passes = {
+  {
+    name = 'cctv,
+    inputs = {'default},
+    uniforms = {
+      intensity = 1.0,
+      time_sec = 0.0,
+      scanlineIntensity = 0.35,
+      scanlineDensity = 1800.0,
+      scanlineSpeed = 1.5,
+      vignetteAmount = 0.5,
+      noiseAmount = 0.12,
+      desaturation = 0.0,
+      chromaticAmount = 0.0035,
+      bandSpeed = 0.25,
+      color = {1.0, 1.0, 1.0},
+      colorOpacity = 1.0,
+    },
+    glslShader = cctvShader,
+  },
+  {
+      name = 'cclens,
+      inputs = {'cctv},
+      uniforms = {
+        lensCenter = {0.5, 0.5},
+        lensSize = 1.5,
+        lensConvergence = -1.0,
+        edgeFade = 0.02,
+        outputSize = {480.0, 270.0},
+        intensity = 1.0,
+      },
+      glslShader = ccLensShader,
+    },
+   {
+      name = 'gaussianH,
+      inputs = {'cclens},
+      scale = {0.5, 0.5},
+      uniforms = {
+        progress = 0.0,
+        axis = {1.0, 0.0},
+        blurStep = 0.3,
+        numSamples = 40.0,
+        falloffCurve = 9.0,
+        outputSize = {480.0, 270.0},
+        intensity = 1.0,
+      },
+      glslShader = gaussianGlsl,
+    },
+    {
+      name = 'gaussianV,
+      inputs = {'gaussianH},
+      scale = {0.5, 0.5},
+      uniforms = {
+        progress = 0.0,
+        axis = {0.0, 1.0},
+        blurStep = 0.3,
+        numSamples = 40.0,
+        falloffCurve = 9.0,
+        outputSize = {480.0, 270.0},
+        intensity = 1.0,
+      },
+      glslShader = gaussianGlsl,
+    },
+    {
+      name = 'transform,
+      inputs = {'gaussianV},
+      uniforms = {
+        position = {0.0, 0.0},
+        scale = {1.12, 1.12},
+        rotation = 0.0,
+        anchorPoint = {0.5, 0.5},
+      },
+      glslShader = textureTransformShader,
+    }
+  };
+
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  f32 t = getParameterFloat('time_sec);
+  setShaderUniform('cctv, 'time_sec, t);
+
+  f32 v = mix(-3.0, 0.0, 1.0 - getParameterFloat('amount));
+  setShaderUniform('cclens, 'lensConvergence, v);
+
+  f32 opacity = getParameterFloat('opacity);
+  setShaderUniform('cctv, 'colorOpacity, opacity);
+
+  f32 intensity = getParameterFloat('intensity);
+  setShaderUniform('cctv, 'scanlineIntensity, intensity * 0.40);
+
+  setShaderUniform('cctv, 'noiseAmount, intensity * 0.12);
+  setShaderUniform('cctv, 'vignetteAmount, intensity * 0.5);
+}
+
+string ccLensShader = "
+  // CC Lens — spherical/fisheye lens distortion modeled after
+  // After Effects' CC Lens. The image is mapped onto a virtual
+  // sphere centered at lensCenter with radius lensSize.
+  // Convergence > 0  => bulge / fisheye
+  // Convergence < 0  => pinch / inverse-fisheye
+  // Convergence = 0  => no distortion
+  varying vec2 sourceTextureCoordinate;
+
+  uniform vec2 lensCenter;
+  uniform float lensSize;
+  uniform float lensConvergence;
+  uniform float edgeFade;
+  uniform vec2 outputSize;
+
+  uniform float intensity;
+
+  void main() {
+    vec2 uv = sourceTextureCoordinate;
+
+    // Normalize so the frame's half-diagonal is 1.0. The corner then sits at
+    // |p| = 1 for every aspect ratio, which keeps the tube geometrically
+    // similar in portrait, square and landscape. lensSize is measured in
+    // half-diagonals: larger = the pinched edge pushes further off-frame.
+    vec2 aspectScale = outputSize / max(0.5 * length(outputSize), 1.0);
+    vec2 p = (uv - lensCenter) * aspectScale;
+
+    float radius = max(lensSize, 0.0001);
+    vec2 q = p / radius;          // -1..1 inside the lens
+    float r2 = dot(q, q);
+
+    vec2 srcUv = uv;
+    float lensMask = 0.0;
+
+    if (r2 < 1.0) {
+      // Spherical projection: z is the height of the unit hemisphere
+      float z = sqrt(1.0 - r2);
+
+      // Refraction-like remap.
+      //  bend = 1 (flat) when convergence = 0
+      //  bend = z (compresses sample → bulges image)  when convergence = +1
+      //  bend = 2 - z (expands sample → pinches image) when convergence = -1
+
+      float finalLensConvergence = lensConvergence; //mix(0.0, lensConvergence, intensity);
+
+      float bend;
+      if (finalLensConvergence >= 0.0) {
+        bend = mix(1.0, z, finalLensConvergence);
+      } else {
+        bend = mix(1.0, 2.0 - z, 0.0 - finalLensConvergence);
+      }
+      bend = max(bend, 0.0001);
+
+      vec2 warped = q * bend * radius / aspectScale;
+      srcUv = lensCenter + warped;
+
+      // Soft anti-aliased edge of the lens disk
+      float r = sqrt(r2);
+      lensMask = 1.0 - smoothstep(1.0 - edgeFade, 1.0, r);
+    }
+
+    // Sample inside the lens; outside we still keep the original frame
+    // but the lens disk gets the warped sample.
+
+    vec4 lensSample = sampleInput(clamp(srcUv, vec2(0.0), vec2(1.0)));
+    vec4 outsideSample = sampleInput(uv);
+    vec4 outColor = mix(outsideSample, lensSample, lensMask);
+
+    if(srcUv.x < 0.0 || srcUv.x > 1.0 || srcUv.y < 0.0 || srcUv.y > 1.0) {
+      outColor = vec4(0.0, 0.0, 0.0, 1.0);
+    }
+
+    gl_FragColor = toOutputFormat(outColor);
+  }
+";
+
+string gaussianGlsl = "
+varying vec2 sourceTextureCoordinate;
+
+uniform float blurStep;
+uniform float numSamples;
+uniform float falloffCurve;
+uniform vec2 axis;
+uniform vec2 outputSize;
+uniform float intensity;
+
+
+float trianglePulse(float t) {
+  return 1.0 - abs(2.0 * fract(t) - 1.0);
+}
+
+float gauss(float x, float e) {
+  return exp(-(x * x) / e);
+}
+
+void main() {
+  vec2 uv = sourceTextureCoordinate;
+
+  // Match the cclens normalization so the blur ring tracks the tube edge.
+  vec2 aspectScale = outputSize / max(length(outputSize), 1.0);
+  vec2 centeredUv = sourceTextureCoordinate * 2.0 - 1.0;
+  float dist = min(distance(centeredUv * aspectScale, vec2(0.0, 0.0)), 1.4);
+  float frameOffset = 0.5;
+  float frame = min(max(smoothstep(0.0 + frameOffset, 0.8 + frameOffset, dist), 0.00), 0.9);
+
+  float kernelSizef = numSamples * frame * intensity; // * trianglePulse(progress);
+  int kernelSize = int(kernelSizef);
+  float halfKernel = -0.5 * float(kernelSize - 1);
+
+  if (kernelSize <= 1) {
+    gl_FragColor = toOutputFormat(sampleInput(uv));
+    return;
+  }
+
+  float falloff = falloffCurve * kernelSizef * 0.5;
+  float accumWeight = 0.0;
+  vec4 accumColor = vec4(0.0);
+  vec2 offset = axis * blurStep / outputSize;
+
+  const int maxSamples = 40;
+
+  for (int i = 0; i < maxSamples; i++) {
+    if (i >= kernelSize) break;
+    float x = halfKernel + float(i);
+    float weight = gauss(x, falloff);
+    vec4 tex = sampleInput(uv + x * offset);
+    accumColor += weight * tex;
+    accumWeight += weight;
+  }
+  accumColor /= accumWeight;
+
+  gl_FragColor = toOutputFormat(accumColor);
+}
+";
+
+string cctvShader = "
+  varying vec2 sourceTextureCoordinate;
+
+  uniform float time_sec;
+  uniform float scanlineIntensity;
+  uniform float scanlineDensity;
+  uniform float scanlineSpeed;
+  uniform float vignetteAmount;
+  uniform float noiseAmount;
+  uniform float desaturation;
+  uniform float chromaticAmount;
+  uniform float bandSpeed;
+  uniform vec3  color;
+  uniform float colorOpacity;
+
+  uniform float intensity;
+
+  // Pseudo-random hash
+  float hash(vec2 p) {
+    return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453);
+  }
+
+  void main() {
+    vec2 uv = sourceTextureCoordinate;
+
+    vec4 srcColor = sampleInput(uv);
+
+    // --- Chromatic aberration (subtle channel split) ---
+    vec2 dir = uv - vec2(0.5);
+    float r = sampleInput(uv + dir * chromaticAmount).r;
+    float g = sampleInput(uv).g;
+    float b = sampleInput(uv - dir * chromaticAmount).b;
+    float a = sampleInput(uv).a;
+    vec3 finalColor = vec3(r, g, b);
+
+    // --- Desaturate toward luminance ---
+    float luma = dot(finalColor, vec3(0.299, 0.587, 0.114));
+    finalColor = mix(finalColor, vec3(luma), desaturation);
+
+    // --- CCTV tint ---
+    finalColor = mix(finalColor, finalColor * color, colorOpacity);
+
+    // --- Scanlines (rolling slowly downward) ---
+    float scan = sin((uv.y + time_sec * scanlineSpeed * 0.02) * scanlineDensity);
+    scan = 0.5 + 0.5 * scan; // 0..1
+    float scanFactor = mix(1.0, scan, scanlineIntensity);
+    finalColor *= scanFactor;
+
+    // --- Soft horizontal scanline darkening pattern (every other line) ---
+    float hardScan = mod(floor(uv.y * scanlineDensity * 0.5), 2.0);
+    finalColor *= mix(1.0, 0.85, hardScan * scanlineIntensity * 0.5);
+
+    // --- Moving noise band (VHS-like glitch) ---
+    float band = smoothstep(0.0, 0.04, fract(uv.y - time_sec * bandSpeed));
+    band = 1.0 - band;
+    band = pow(band, 8.0);
+    finalColor += band * 0.18 * scanlineIntensity;
+
+    // --- Random noise ---
+    float n = hash(uv * vec2(800.0, 600.0) + time_sec * 60.0);
+    finalColor += (n - 0.5) * noiseAmount;
+
+    // --- Vignette (corner darkening) ---
+    float dist = distance(uv, vec2(0.5));
+    float vig = smoothstep(0.85, 0.2, dist);
+    finalColor *= mix(1.0, vig, vignetteAmount);
+
+    // --- Slight lift in blacks for that washed CCTV look ---
+    finalColor = finalColor * 0.95 + 0.03;
+
+    gl_FragColor = toOutputFormat(vec4(finalColor, 1.0));
+  }
+";
+
+
+string textureTransformShader = "
+  varying vec2 sourceTextureCoordinate;
+
+  uniform vec2 position;
+  uniform vec2 scale;
+  uniform float rotation;
+  uniform vec2 anchorPoint;
+  uniform vec2 outputSize;
+
+  // ---------------------------------------------------------------
+  // Transforms a UV by an inverse position/scale/rotation around an
+  // anchor point, then samples `tex0` with bounds masking (pixels
+  // outside [0,1] return vec4(0)). Aspect-corrected so rotation and
+  // scale stay visually uniform regardless of canvas ratio.
+  // ---------------------------------------------------------------
+  vec2 sampleTransformed(
+    vec2 uv,
+    vec2 position,
+    vec2 scale,
+    float rotation,
+    vec2 anchorPoint,
+    vec2 outputSize
+  ) {
+    float aspect = outputSize.x / max(outputSize.y, 1.0);
+
+    // Move to anchor-local space, then aspect-correct
+    vec2 p = uv - anchorPoint;
+    p.x *= aspect;
+
+    // Undo translation
+    p -= vec2(position.x * aspect, position.y);
+
+    // Undo rotation
+    float c = cos(-rotation);
+    float s = sin(-rotation);
+    p = mat2(c, -s, s, c) * p;
+
+    // Undo scale
+    p /= scale;
+
+    // Restore aspect and anchor
+    p.x /= aspect;
+    p += anchorPoint;
+
+    return p;
+  }
+
+  void main() {
+    vec2 transformedUv = sampleTransformed(
+      sourceTextureCoordinate,
+      position,
+      scale,
+      rotation,
+      anchorPoint,
+      outputSize
+    );
+
+    // Sample with bounds masking
+    vec4 color = sampleInput(transformedUv);
+    vec2 inside = step(vec2(0.0), transformedUv) * step(transformedUv, vec2(1.0));
+
+    gl_FragColor = toOutputFormat(color * inside.x * inside.y);
+  }
+";

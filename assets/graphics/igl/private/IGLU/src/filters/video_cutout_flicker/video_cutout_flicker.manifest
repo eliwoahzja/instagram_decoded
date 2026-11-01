@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_cutout_flicker",
+  "displayName": "Flicker",
+  "description": "[IG Edits] Video effect name shared across full-frame, subject-cutout, and overlay surfaces. With \"Flicker\", the image rapidly flickers in brightness or opacity.",
+  "iglu": {
+    "legacyId": 2084,
+    "customization": [
+      {
+        "name": "speed",
+        "default": 0.7,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Speed",
+        "displayNameDescription": "[IG Edits] Slider label controlling the playback or animation speed of a video effect (noun, not a verb); exact range varies per effect."
+      }
+    ],
+    "subject": {
+      "enabled": true,
+      "fullFrameEnabled": true,
+      "typeSuggestions": [
+        "person",
+        "head",
+        "clothing"
+      ]
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "13a820b6",
+      "handle": "AQAEU08f9MWK",
+      "md5": "4f1ed7e6052c979fa427f8701c76d2d8"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAEkbNsXPQZ"
+    }
+  }
+}

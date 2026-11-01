@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "identifier": "oscars_2026",
+  "displayName": "Oscars 2026",
+  "description": "[IG Edits] Video effect name. With \"Oscars 2026\", the creator can apply a Nolitaco LUT grade, a multi-scale noise grain composite, and a rounded-corner framed border overlay.",
+  "assets": [
+    {
+      "name": "lut_nolitaco.png",
+      "assetHash": "2de4ef53d2c8d1caef69c9d35e131d3e4c40f2d062cd495bb79dbb75ba44a3c7",
+      "hubAssetId": "1439774934514816"
+    },
+    {
+      "name": "lut_nolitaco_small.png",
+      "assetHash": "8b249d7066a3d3e68c5d3dd69aad69c497f168ebc4163ee3932d47b64f27a313",
+      "hubAssetId": "1487651666365742"
+    }
+  ],
+  "iglu": {}
+}

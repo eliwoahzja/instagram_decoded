@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "text_glow",
+  "displayName": "Glow",
+  "description": "Text effect with glow",
+  "iglu": {}
+}

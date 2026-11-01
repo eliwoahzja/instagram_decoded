@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "identifier": "3b0a0d43-1b13-4b37-a310-e012db3dc7c5",
+  "displayName": "Clone Slide Horizontal In",
+  "description": "[IG Edits] Transition name. \"Clone Slide Horizontal In\" slides the segmented subject in from the side in repeating clone passes with motion-blur ghosting as a 1-second intro.",
+  "iglu": {
+    "legacyId": 3996,
+    "behavior": {
+      "type": "fixedIntro",
+      "durationMs": 1000,
+      "curve": "linear"
+    },
+    "customization": [
+      {
+        "name": "duration",
+        "default": 1.0,
+        "min": 0.1,
+        "max": 5.0,
+        "displayName": "Duration",
+        "displayMethod": "time"
+      }
+    ]
+  },
+  "dependencies": [
+    "video_clone_slide"
+  ],
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAFvZnHzOSN"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "d16b1254",
+      "handle": "AQAFoeGr2O71",
+      "md5": "80968bd1e51f336338eaa9650df9ead2"
+    }
+  }
+}

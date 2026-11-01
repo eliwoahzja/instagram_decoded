@@ -1,0 +1,453 @@
+[Filter VideoAnamorphicLens]
+[MaskBehavior alpha]
+
+[Init]
+fun init(Filter filter) {
+
+  filter.parameters = {
+    {intensity = 0.9, min = 0.0, max = 1.0, description = "Glow intensity"},
+    {size = 0.2, min = 0.0, max = 1.0, description = "Streak length"},
+    {amount = 0.2, min = 0.0, max = 1.0, description = "Threshold amount"},
+
+    {kernelSize = 40.0, min = 1.0, max = 100.0, description = "Blur kernel size"},
+    {sigma = 3.0, min = 0.1, max = 50.0, description = "Blur sigma"},
+  };
+
+  filter.passes = {
+  {
+    name = 'threshold,
+    inputs = {'default},
+    uniforms = {
+      threshold = 0.85,
+      feather = 0.1,
+      darken = 1.0,
+    },
+    glslShader = thresholdGlsl,
+  },
+    {
+      name = 'verticalPassA,
+      inputs = {'threshold},
+      scale = {0.5, 0.5},
+      uniforms = {
+        strength = 0.2,
+        sigma = 3.0,
+        kernelSize = 40.0,
+        blurStep = {1.0,0.0}, # H or V step size
+        invTotalWeight = 1.0, # scaling
+        dda = {1.0,1.0,1.0}, # used to compute powers
+      },
+      glslShader  = glslSeparableBlur,
+    },{
+      name = 'horizontalPassA,
+      inputs = {'verticalPassA},
+      scale = {0.5, 0.5},
+      uniforms = {
+        strength = 1.0,
+        sigma = 3.0,
+        kernelSize = 40.0,
+        blurStep = {0.0,1.0}, # H or V step size
+        invTotalWeight = 1.0, # scaling
+        dda = {1.0,1.0,1.0},  # used to compute powers
+      },
+      glslShader  = glslSeparableBlur,
+    },
+  {
+    name = 'starglow_streaks,
+    inputs = {'threshold, 'horizontalPassA },
+    scale = {0.5, 0.5},
+    uniforms = {
+        inputSize = {1080.0, 1920.0},
+        numRays = 2.0,
+        rotation = 0.0,
+        streakLength = 1.0,
+        decayEff = 0.9,
+        stepScale = 1.0,
+        energyScale = 1.0,
+        glowIntensity = 0.64,
+        streakIntensity = 0.6
+      },
+    glslShader = starglow_streaks,
+  },
+    {
+      name = 'verticalPassB,
+      inputs = {'starglow_streaks},
+      scale = {0.25, 0.25},
+      uniforms = {
+        strength = 1.0,
+        sigma = 3.5,
+        kernelSize = 11.0,
+        blurStep = {1.0,0.0}, # H or V step size
+        invTotalWeight = 1.0, # scaling
+        dda = {1.0,1.0,1.0}, # used to compute powers
+      },
+      glslShader  = glslSeparableBlur,
+    },{
+      name = 'horizontalPassB,
+      inputs = {'verticalPassB},
+      scale = {0.25, 0.25},
+      uniforms = {
+        strength = 1.0,
+        sigma = 3.5,
+        kernelSize = 11.0,
+        blurStep = {0.0,1.0}, # H or V step size
+        invTotalWeight = 1.0, # scaling
+        dda = {1.0,1.0,1.0},  # used to compute powers
+      },
+      glslShader  = glslSeparableBlur,
+    },
+  {
+    name = 'composite,
+    inputs = {'default, 'horizontalPassB},
+    uniforms = { exposure = 0.8,
+                  saturation = 1.0,
+                  tintColor = {1.0, 1.0, 1.0},
+                  bloomTintColor = { 0.58, 0.82, 1.0}
+                  },
+    glslShader  = glslShader,
+  }
+  };
+}
+
+f32 lastKernelSize = -1.0;
+f32 lastSigma = -1.0;
+vec2 lastOutputSize = {-1.0,-1.0};
+vec2 dV = {1.0,1.0};
+vec2 dH = {1.0,1.0};
+f32 invTotalWeight = 1.0;
+vec3 forwardDifferencer = {1.0,1.0,1.0};
+
+# Pass B uses fixed sigma=3.5 / kernelSize=11.0. Compute its Gaussian weights
+# and forward-difference coefficients once and cache them, instead of reusing
+# Pass A's values (which are derived from user-controlled sigma/kernelSize and
+# would produce incorrectly weighted/normalized output for Pass B).
+f32 passBInitialized = 0.0;
+f32 invTotalWeightB = 1.0;
+vec3 forwardDifferencerB = {1.0,1.0,1.0};
+
+# Streak taps per direction: the shader used to run 16, it now runs
+# kStreakTaps. The step is widened by kStreakTapsOld / kStreakTaps so the
+# streak still reaches the same distance.
+f32 kStreakTapsOld = 16.0;
+f32 kStreakTaps = 10.0;
+f32 kStreakDecay = 0.85;
+
+# Total weight of a merged streak: one centre tap plus (n - 1) symmetric pairs
+# whose weights are d^1..d^(n-1). Used to keep brightness fixed when the tap
+# count changes.
+fun streakEnergy(f32 d, f32 n) f32 {
+  f32 energy = 2.0 * n - 1.0;
+  if (abs(d - 1.0) >= 0.001) {
+    energy = 2.0 * (1.0 - pow(d, n)) / (1.0 - d) - 1.0;
+  }
+  return energy;
+}
+
+[PreRender]
+fun preRender(Filter filter){
+  f32 glowIntensity = getParameterFloat('intensity);
+  f32 streakLength = getParameterFloat('size) * 0.8;
+
+  setShaderUniform('starglow_streaks, 'glowIntensity, glowIntensity);
+  setShaderUniform('starglow_streaks, 'streakLength, streakLength);
+  setShaderUniform('composite, 'exposure, glowIntensity);
+
+  # One-time computation of Pass B Gaussian weights (sigma=3.5, kernelSize=11.0).
+  if (passBInitialized < 0.5) {
+    passBInitialized = 1.0;
+    f32 sigmaB = 3.5;
+    f32 kernelSizeB = 11.0;
+    f32 totalWeightB = 0.0;
+    f32 pow1B = exp(-0.5/(sigmaB*sigmaB));
+    f32 jb = -kernelSizeB;
+    while (jb <= kernelSizeB) {
+      totalWeightB = totalWeightB + pow(pow1B, jb*jb);
+      jb = jb + 1.0;
+    }
+    invTotalWeightB = 1.0/totalWeightB;
+    forwardDifferencerB.x = pow1B*pow1B;
+    forwardDifferencerB.y = pow1B*pow1B*pow1B;
+    forwardDifferencerB.z = pow1B;
+  }
+
+    vec2 outputSize = getTextureSize('default);
+  if (length(lastOutputSize - outputSize) > 0.00001)
+  {
+      lastOutputSize = outputSize;
+
+      dV = {0.0,1.0/outputSize.y};
+      dH = {1.0/outputSize.x,0.0};
+
+  }
+  setShaderUniform('verticalPassA,'blurStep, dV);
+  setShaderUniform('horizontalPassA,'blurStep, dH);
+
+  setShaderUniform('verticalPassB,'blurStep, dV);
+  setShaderUniform('horizontalPassB,'blurStep, dH);
+
+
+  f32 kernelSize = getParameterFloat('kernelSize);
+  f32 sigma = getParameterFloat('sigma);
+
+  if (abs(lastKernelSize - kernelSize) + abs(lastSigma - sigma) > 0.00001)
+  {
+    lastKernelSize = kernelSize;
+    lastSigma = sigma;
+
+    # special case: to match the sampled pixels, where they are taken 2 at a time,
+    # ensure kernel is odd sized (center pixel + N pairs..)
+    kernelSize = 2.0*floor(kernelSize/2.0)+1.0;
+
+
+    f32 totalWeight = 0.0;
+    f32 pow1 = exp(-0.5/(sigma*sigma));
+    f32 i = -kernelSize;
+    while (i <= kernelSize)
+    {
+      totalWeight = totalWeight + pow(pow1,i*i);
+      i = i + 1.0;
+    }
+    invTotalWeight = 1.0/totalWeight;
+
+    forwardDifferencer.x = pow1*pow1;
+    forwardDifferencer.y = pow1*pow1*pow1;
+    forwardDifferencer.z = pow1;
+  }
+
+setShaderUniform('verticalPassA, 'invTotalWeight, invTotalWeight);
+setShaderUniform('horizontalPassA, 'invTotalWeight, invTotalWeight);
+setShaderUniform('verticalPassA, 'dda, forwardDifferencer);
+setShaderUniform('horizontalPassA, 'dda, forwardDifferencer);
+setShaderUniform('verticalPassA, 'sigma, lastSigma);
+setShaderUniform('verticalPassA, 'kernelSize, kernelSize);
+setShaderUniform('horizontalPassA, 'sigma, lastSigma);
+setShaderUniform('horizontalPassA, 'kernelSize, kernelSize);
+
+setShaderUniform('verticalPassB, 'invTotalWeight, invTotalWeightB);
+setShaderUniform('horizontalPassB, 'invTotalWeight, invTotalWeightB);
+setShaderUniform('verticalPassB, 'dda, forwardDifferencerB);
+setShaderUniform('horizontalPassB, 'dda, forwardDifferencerB);
+setShaderUniform('verticalPassB, 'sigma, 3.5);
+setShaderUniform('horizontalPassB, 'sigma, 3.5);
+
+
+f32 threshold = 1.0 - (getParameterFloat('amount) * 0.8);
+setShaderUniform('threshold, 'threshold, threshold);
+
+# Missing uniforms from setup defaults
+
+# threshold pass
+setShaderUniform('threshold, 'feather, 0.1);
+setShaderUniform('threshold, 'darken, 1.0);
+
+# verticalPassA / horizontalPassA
+setShaderUniform('verticalPassA, 'strength, 0.2);
+setShaderUniform('horizontalPassA, 'strength, 1.0);
+
+# starglow_streaks
+# Note: 'streakLength is driven by the user-facing 'size parameter above.
+# 'streakIntensity is held at a fixed default; only 'streakLength is exposed.
+# Raising decay to stepScale keeps the falloff profile at the taps that remain,
+# and rescaling by the ratio of the two weight sums keeps the streak brightness
+# identical.
+vec2 streaksInputSize = lastOutputSize;
+f32 streakStepScale = kStreakTapsOld / kStreakTaps;
+f32 streakDecayEff = pow(kStreakDecay, streakStepScale);
+f32 streakEnergyScale = streakEnergy(kStreakDecay, kStreakTapsOld) /
+                        streakEnergy(streakDecayEff, kStreakTaps);
+setShaderUniform('starglow_streaks, 'inputSize, streaksInputSize);
+setShaderUniform('starglow_streaks, 'numRays, 2.0);
+setShaderUniform('starglow_streaks, 'rotation, 0.0);
+setShaderUniform('starglow_streaks, 'streakIntensity, 0.6);
+setShaderUniform('starglow_streaks, 'decayEff, streakDecayEff);
+setShaderUniform('starglow_streaks, 'stepScale, streakStepScale);
+setShaderUniform('starglow_streaks, 'energyScale, streakEnergyScale);
+
+# verticalPassB / horizontalPassB
+setShaderUniform('verticalPassB, 'strength, 1.0);
+setShaderUniform('verticalPassB, 'kernelSize, 11.0);
+setShaderUniform('horizontalPassB, 'strength, 1.0);
+setShaderUniform('horizontalPassB, 'kernelSize, 11.0);
+
+# composite
+setShaderUniform('composite, 'saturation, 1.0);
+vec3 compTintColor = {1.0, 1.0, 1.0};
+vec3 compBloomTintColor = {0.58, 0.82, 1.0};
+setShaderUniform('composite, 'tintColor, compTintColor);
+setShaderUniform('composite, 'bloomTintColor, compBloomTintColor);
+
+}
+
+string thresholdGlsl = "
+precision highp float;
+
+uniform float threshold;
+uniform float feather;
+uniform float darken;
+
+varying vec2 textureCoordinate;
+
+// Note this is a custom luma kernel weighted towards red
+float luma(vec3 color) {
+  // return dot(color, vec3(0.7, 0.2, 0.1));
+  // return dot(color, vec3(0.6, 0.3, 0.1));
+  return dot(color, vec3(0.3, 0.6, 0.1));
+}
+
+void main() {
+  vec2 uv = textureCoordinate;
+  vec4 color = sampleInput(uv);
+
+  float l = luma(color.xyz);
+
+  color.rgb *= smoothstep(threshold - feather, threshold + feather , l);
+  color.rgb *= darken;
+  color.a = 1.0;
+
+  gl_FragColor = color;
+}
+";
+
+#### GLSL shaders ####
+
+# double pass separables
+string glslSeparableBlur = "
+      precision highp float;
+
+      varying vec2 textureCoordinate;
+      varying vec2 sourceTextureCoordinate;
+      BaseUniformsOpenGL;
+      uniform float sigma;
+      uniform float kernelSize;
+      uniform vec2 blurStep;
+      uniform float invTotalWeight;
+      uniform vec3 dda;  // used to compute powers
+      uniform sampler2D auxSampler1;
+
+      void main() {
+
+        vec2 uv = sourceTextureCoordinate;
+
+        if (kernelSize <= 1.0) {
+          gl_FragColor = toOutputFormat(sampleInput(uv));
+          return;
+        }
+
+        vec4 color = sampleInput(uv);
+        vec3 accumColor = color.rgb;
+
+        float d0 = dda.x;
+        float d1 = dda.y;
+        float d2 = dda.z;
+
+        for (float i = 1.0; i <= kernelSize; i = i + 2.0)
+        {
+            float s = 1.0 + d1;
+            float a = d1 / s;
+            vec2 step = (a + i) * blurStep;
+
+            // sample 4 pixels via bilinear hardware
+            accumColor += (s * d2) * (
+              sampleInput(uv + step).rgb +
+              sampleInput(uv - step).rgb
+              );
+
+            d2 = d2 * d1;
+            d1 = d1 * d0;
+            d2 = d2 * d1;
+            d1 = d1 * d0;
+        }
+
+        gl_FragColor = toOutputFormat(vec4(accumColor * invTotalWeight,color.a));
+  }";
+
+
+# ==========================================================================
+# Streaks shader
+# ==========================================================================
+string starglow_streaks = "
+precision highp float;
+
+varying vec2 textureCoordinate;
+
+uniform sampler2D auxSampler1;
+
+uniform vec2 inputSize;
+uniform float numRays;
+uniform float rotation;
+uniform float streakLength;
+uniform float decayEff;
+uniform float stepScale;
+uniform float energyScale;
+
+uniform float glowIntensity;
+uniform float streakIntensity;
+// Cheap 2D pseudo-random hash. Returns a value in roughly [0, 1).
+float hash21(vec2 p) {
+  return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453);
+}
+
+void main() {
+  vec2 uv = textureCoordinate;
+  float stepPx = (2.0 + streakLength * 30.0) * stepScale;
+
+  float nnumRays = numRays ;
+
+  // Every ray shares the same centre tap, so fetch it once.
+  vec4 col = sampleInput(uv) * nnumRays;
+
+  for (float r = 0.0; r < 16.0; r++) {
+    if (r >= nnumRays) break;
+
+
+    float angle = (6.28318 / nnumRays) * r + rotation;
+    vec2 step = vec2(cos(angle), sin(angle)) * stepPx / inputSize;
+    step += vec2(hash21(uv + r) * 0.01, 0.0); // add jitter
+
+    float w = 1.0;
+    for (int i = 1; i < 10; i++) {
+      w *= decayEff;
+      col += (sampleInput(uv + step * float(i)) +
+              sampleInput(uv - step * float(i))) * w;
+    }
+  }
+
+  vec4 bloom = texture2D(auxSampler1, uv) * glowIntensity;
+  col = col * streakIntensity * streakIntensity * 0.3 * energyScale;
+
+  gl_FragColor = toOutputFormat(col + bloom);
+}
+";
+
+# ==========================================================================
+# Bloom compose
+# ==========================================================================
+
+string glslShader = "
+varying vec2 sourceTextureCoordinate;
+BaseUniformsOpenGL;
+
+uniform float exposure;
+uniform float saturation;
+uniform vec3 bloomTintColor;
+uniform vec3 tintColor;
+
+uniform sampler2D auxSampler1;
+
+vec3 adjustSaturation(vec3 rgb, float adjustment) {
+  // Standard luminance weights for Rec. 709
+  const vec3 W = vec3(0.2125, 0.7154, 0.0721);
+  vec3 intensity = vec3(dot(rgb, W));
+
+  // adjustment = 0.0 (grayscale), 1.0 (original), > 1.0 (boosted)
+  return mix(intensity, rgb, adjustment);
+}
+
+void main() {
+
+  vec4 color = sampleInput(sourceTextureCoordinate) * vec4(tintColor, 1.0);
+  vec3 bloom = texture2D(auxSampler1, sourceTextureCoordinate).rgb * bloomTintColor * exposure;
+
+  vec4 result = vec4(adjustSaturation(color.rgb, saturation) + bloom, 1.0);
+  gl_FragColor = toOutputFormat( result );
+}
+";

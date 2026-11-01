@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_cutout_blur",
+  "displayName": "Blur",
+  "description": "Video effects selection. Blurs video.",
+  "iglu": {
+    "legacyId": 5051,
+    "customization": [
+      {
+        "name": "color",
+        "defaultSelection": "#000000",
+        "available": [
+          "#000000",
+          "#FFFFFF",
+          "#FFD600",
+          "#FF7A00",
+          "#FE1D37",
+          "#FF0169",
+          "#D300C5",
+          "#7638FA",
+          "#37038B",
+          "#1CD164",
+          "#0095F6",
+          "#AD88FC",
+          "#FDD5FD",
+          "#FFABE1",
+          "#FFC584",
+          "#FFF8C2",
+          "#09FF00",
+          "#FFFF00",
+          "#5AFAC7",
+          "#0000FF"
+        ],
+        "displayName": "Color",
+        "displayNameDescription": "[IG Edits] Color picker label. The user selects a color used by the video effect (e.g., glow tint, outline color, sparkle color); available palette varies per effect."
+      },
+      {
+        "name": "amount",
+        "default": 0.04,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Amount",
+        "displayNameDescription": "[IG Edits] Slider label controlling the magnitude or quantity of a video effect. Generic across many effects; exact range varies per effect."
+      }
+    ],
+    "subject": {
+      "overlay": true
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "16c8a81d",
+      "handle": "AQAG3bHdCXKo",
+      "md5": "14c95bf9a67785110cebe933bcddb8bc"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "isImageFormat": true,
+      "handle": "AQACwN7aWaOT"
+    }
+  },
+  "assets": [
+    {
+      "name": "gradient_orange.png",
+      "assetHash": "32edfea62f355125f02c7bdb00eca706f06850c52d7f9fdfe38f8dbed4b1622b",
+      "hubAssetId": "919213973916839"
+    }
+  ]
+}

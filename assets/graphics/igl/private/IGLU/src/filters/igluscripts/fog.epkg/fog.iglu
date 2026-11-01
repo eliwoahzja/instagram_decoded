@@ -1,0 +1,235 @@
+[Filter Fog]
+# "Fog" — pure-IGLUScript rising-smoke overlay with color LUT.
+#
+# Ports Spark "fog" filter (which stacked a LUT + a 106-frame smoke
+# sequence). Reproduced procedurally here — no PNG sequence bundled,
+# only the LUT is delivered via ARD.
+#
+# Technique: 4-octave FBM over hash12-based value noise, with
+# animated 1-level domain warp for organic turbulence, decoupled
+# bulk-rising and detail-motion speeds, plus a SECOND smoke layer at
+# a larger scale + slower motion for parallax depth. Standard
+# procedural-smoke approach used across shader toys and game engines
+# when a real fluid sim isn't available.
+
+[Init]
+fun init(Filter filter)
+{
+    makeTexture('lut);
+
+    filter.parameters = {
+        {strength = 1.000, min = 0.0, max = 1.0, description = "LUT mix strength"},
+        {fog_opacity = 0.617, min = 0.0, max = 1.0, description = "Fog opacity"},
+        {speed = 0.823, min = 0.0, max = 3.0, description = "Rising motion speed"},
+        {evolution = 0.738, min = 0.0, max = 3.0, description = "Wisp evolution / detail motion speed"},
+        {density = 0.503, min = 0.0, max = 1.0, description = "Smoke density (higher = thicker wisps)"},
+        {turbulence = 0.324, min = 0.0, max = 1.0, description = "Swirl / curl intensity"},
+    };
+
+    filter.passes = {{
+      name = 'pass0,
+      inputs = {'default, 'lut},
+      uniforms = {
+        strength = 1.000,
+        fog_opacity = 0.617,
+        speed = 0.823,
+        evolution = 0.738,
+        density = 0.503,
+        turbulence = 0.324,
+        time = 0.0,
+      },
+      glslShader = glslFog,
+    }};
+}
+
+string lut_path = "lut_path";
+string lut_filename = "";
+
+[PreRender]
+fun preRender(Filter filter){
+    string lut_filename_parameter = getParameterString(lut_path);
+    if (lut_filename_parameter != "") {
+        string new_lut_filename = stringAppend("textureFilePath://", lut_filename_parameter);
+        if (new_lut_filename != lut_filename) {
+            lut_filename = new_lut_filename;
+            loadTexture('lut, lut_filename);
+        }
+    }
+
+    f32 s = getParameterFloat('strength);
+    setShaderUniform('pass0, 'strength, s);
+
+    f32 fo = getParameterFloat('fog_opacity);
+    setShaderUniform('pass0, 'fog_opacity, fo);
+
+    f32 sp = getParameterFloat('speed);
+    setShaderUniform('pass0, 'speed, sp);
+
+    f32 ev = getParameterFloat('evolution);
+    setShaderUniform('pass0, 'evolution, ev);
+
+    f32 d = getParameterFloat('density);
+    setShaderUniform('pass0, 'density, d);
+
+    f32 tr = getParameterFloat('turbulence);
+    setShaderUniform('pass0, 'turbulence, tr);
+
+    # Use getLocalTime() for monotonic continuous animation.
+    f32 time = getLocalTime();
+    setShaderUniform('pass0, 'time, time);
+}
+
+#### GLSL shader ####
+
+string glslFog = "
+    varying vec2 sourceTextureCoordinate;
+    BaseUniformsOpenGL;
+
+    uniform sampler2D auxSampler0;
+    uniform sampler2D auxSampler1;
+    uniform sampler2D auxSampler2;
+
+    uniform float fog_opacity;
+    uniform float speed;
+    uniform float evolution;
+    uniform float density;
+    uniform float turbulence;
+    uniform float time;
+
+    // Iñigo Quílez-style hash12 with explicit vec3 constructors for
+    // strict Metal compilation via shaderc (proven from film_35mm).
+    float hash12(vec2 p) {
+      vec3 p3 = fract(vec3(p.x, p.y, p.x) * 0.1031);
+      p3 = p3 + vec3(dot(p3, vec3(p3.y, p3.z, p3.x) + vec3(33.33)));
+      return fract((p3.x + p3.y) * p3.z);
+    }
+
+    // Value noise — bilinear-interpolated hash12 at cell corners.
+    float valueNoise(vec2 p) {
+      vec2 i = floor(p);
+      vec2 f = fract(p);
+      vec2 u = f * f * (vec2(3.0) - 2.0 * f);
+      float a = hash12(i);
+      float b = hash12(i + vec2(1.0, 0.0));
+      float c = hash12(i + vec2(0.0, 1.0));
+      float d = hash12(i + vec2(1.0, 1.0));
+      return mix(mix(a, b, u.x), mix(c, d, u.x), u.y);
+    }
+
+    // 4-octave FBM (scale 2.03 to avoid grid-aligned self-similarity).
+    float fbm(vec2 p) {
+      float v = 0.0;
+      float a = 0.5;
+      for (int i = 0; i < 4; i++) {
+        v = v + a * valueNoise(p);
+        p = p * 2.03;
+        a = a * 0.5;
+      }
+      return v;
+    }
+
+    // Compute one smoke layer. `scale` sizes the wisps (larger = smaller
+    // wisps), `driftFreq` sets horizontal wobble frequency, `warpBase`
+    // sets warpStrength floor. All time inputs already speed-scaled by
+    // caller. Returns density in [0, 1].
+    float smokeLayer(vec2 uv, float tw, vec2 scale, vec2 offset,
+                     float riseRate, float driftFreq, float driftAmp,
+                     float warpRate, float warpBase) {
+      vec2 p = uv * scale + offset;
+      p.y = p.y + tw * riseRate;
+      float driftA = sin(tw * driftFreq) * 0.6;
+      float driftB = sin(tw * driftFreq * 0.53 + 1.7) * 0.4;
+      p.x = p.x + (driftA + driftB) * driftAmp;
+
+      vec2 warpTime = vec2(tw * warpRate, tw * (warpRate * 0.72));
+      vec2 q = vec2(
+        fbm(p + warpTime),
+        fbm(p + warpTime + vec2(5.2, 1.3))
+      );
+
+      float warpStrength = warpBase + turbulence * 4.0;
+      return fbm(p + warpStrength * q);
+    }
+
+    // 8x8 grid LUT lookup on auxSampler1 (drammatico pattern; works
+    // for 512x512 packed 64x64 slices AND 1024x1024 packed 128x128
+    // slices — math is grid-relative, not pixel-absolute).
+    vec3 lutLookup(vec3 inRgb) {
+      vec3 c = clamp(inRgb, 0.00781, 0.98438);
+      float x = c.r / 8.0;
+      float y = c.g / 8.0;
+      float z = c.b;
+      float blueY = floor(z * 8.0) / 8.0;
+      float blueX = floor((z - blueY) * 64.0) / 8.0;
+      x = x + blueX;
+      y = y + blueY;
+      return texture2D(auxSampler1, vec2(x, y)).xyz;
+    }
+
+    void main() {
+      vec4 texel = sampleInput(sourceTextureCoordinate);
+      vec2 uv = sourceTextureCoordinate;
+
+      // Bound time to protect sin/fract precision over long sessions.
+      float tw = mod(time, 200.0);
+
+      // Layer A — foreground: taller wisps, faster rising, tighter
+      // curls, dominant contribution to visible smoke. Drift amp
+      // dialed low (0.12) so smoke mostly rises vertically with only
+      // subtle horizontal wobble.
+      float smokeA = smokeLayer(
+        uv, tw,
+        vec2(3.0, 5.0), vec2(0.0, 0.0),   // scale, offset
+        0.15 * speed,                      // rise rate
+        0.35 * speed, 0.12,                // drift freq & amp
+        0.18 * evolution,                  // warp evolution rate
+        1.5                                // warp strength base
+      );
+
+      // Layer B — background: larger, softer wisps drifting slower for
+      // parallax depth. Different offset so the two layers do not
+      // grid-align. Slightly less warping so the far layer reads as
+      // calmer. Drift amp even lower (0.10) — background moves less.
+      float smokeB = smokeLayer(
+        uv, tw,
+        vec2(1.8, 3.0), vec2(17.3, 5.7),
+        0.08 * speed,
+        0.22 * speed, 0.10,
+        0.11 * evolution,
+        1.0
+      );
+
+      // Contrast-shape each layer with slightly different thresholds —
+      // background layer is softer and less contrasty.
+      float loA = mix(0.5, 0.2, density);
+      float hiA = mix(0.9, 0.6, density);
+      smokeA = smoothstep(loA, hiA, smokeA);
+
+      float loB = mix(0.55, 0.3, density);
+      float hiB = mix(0.85, 0.55, density);
+      smokeB = smoothstep(loB, hiB, smokeB);
+
+      // Subtle vertical modulation on each layer — slightly denser
+      // near the bottom, but not a hard cutoff.
+      float vMask = mix(1.0, 0.6, smoothstep(0.0, 1.0, uv.y));
+      smokeA = smokeA * vMask;
+      smokeB = smokeB * vMask * 0.7;  // background quieter overall
+
+      // Combine layers: additive-with-saturate for a screen-like feel
+      // that lets the darker background layer show through when
+      // foreground has gaps, without oversaturating on overlap.
+      float smoke = clamp(smokeA + smokeB * 0.6, 0.0, 1.0);
+
+      // Apply LUT color grade to camera FIRST, then composite smoke
+      // on top. strength slider mixes camera vs graded.
+      vec3 graded = lutLookup(texel.rgb);
+      vec3 base = mix(texel.rgb, graded, strength);
+
+      // Smoke color: cool blue-white tint. Alpha-blend at slider
+      // opacity.
+      vec3 smokeColor = vec3(0.85, 0.90, 1.0);
+      vec3 result = mix(base, smokeColor, smoke * fog_opacity);
+
+      gl_FragColor = toOutputFormat(vec4(result, texel.a));
+    }
+    ";

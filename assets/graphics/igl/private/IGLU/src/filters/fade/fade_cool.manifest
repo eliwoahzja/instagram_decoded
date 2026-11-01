@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "identifier": "fade_cool",
+  "displayName": "Fade Cool",
+  "description": "Filter name for a faded, cool-toned look",
+  "iglu": {
+    "legacyId": 1002
+  },
+  "assets": [
+    {
+      "name": "lut_fade_cool.png",
+      "assetHash": "2a2cfcc70df6209c60bd6e53ca88d7d92873ad21ab5dbcd8ce9befd157660249",
+      "hubAssetId": "1615750892896758"
+    }
+  ]
+}

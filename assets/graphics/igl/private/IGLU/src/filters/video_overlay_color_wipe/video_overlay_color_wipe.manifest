@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_cutout_color_wipe",
+  "displayName": "Color Wipe",
+  "description": "[Instagram Edits] Effect browser - Label for an effect that transitions from black and white to color in a sweeping motion. It can be applied to the whole video or subjects within the video.",
+  "iglu": {
+    "legacyId": 5061,
+    "customization": [
+      {
+        "name": "color",
+        "defaultSelection": "#FFFFFF",
+        "available": [
+          "#FFFFFF",
+          "#000000",
+          "#FFD600",
+          "#FF7A00",
+          "#FE1D37",
+          "#FF0169",
+          "#D300C5",
+          "#7638FA",
+          "#37038B",
+          "#1CD164",
+          "#0095F6",
+          "#AD88FC",
+          "#FDD5FD",
+          "#FFABE1",
+          "#FFC584",
+          "#FFF8C2",
+          "#09FF00",
+          "#FFFF00",
+          "#5AFAC7",
+          "#0000FF"
+        ],
+        "displayName": "Color",
+        "displayNameDescription": "[IG Edits] Color picker label. The user selects a color used by the video effect (e.g., glow tint, outline color, sparkle color); available palette varies per effect."
+      },
+      {
+        "name": "speed",
+        "default": 0.29,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Speed",
+        "displayNameDescription": "[IG Edits] Slider label controlling the playback or animation speed of a video effect (noun, not a verb); exact range varies per effect."
+      }
+    ],
+    "subject": {
+      "overlay": true
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "4bf4bed5",
+      "handle": "AQAIg2h8zx-7",
+      "md5": "cc629eb8a7d94648ef8ba1f11ae3cabc"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAEWdhRXjX7"
+    }
+  }
+}

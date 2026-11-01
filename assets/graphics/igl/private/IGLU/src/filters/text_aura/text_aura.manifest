@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "text_aura",
+  "displayName": "Aura",
+  "description": "Label for the Aura text effect style.",
+  "iglu": {}
+}

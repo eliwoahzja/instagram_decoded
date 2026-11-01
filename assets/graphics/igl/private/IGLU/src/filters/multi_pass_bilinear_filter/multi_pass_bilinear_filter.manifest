@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "multi_pass_bilinear_filter",
+  "displayName": "Multi Pass Bilinear",
+  "description": "[IG Edits] Video effect. With \"Multi Pass Bilinear\", the creator can high-quality downscale a large image through repeated 1.9x bilinear passes, reducing aliasing vs a single-pass shrink.",
+  "iglu": {}
+}

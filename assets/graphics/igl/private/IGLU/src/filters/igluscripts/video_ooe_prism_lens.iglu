@@ -1,0 +1,484 @@
+[Filter VideoOoePrismLensFilter]
+[MaskBehavior none]
+
+[Init]
+fun init(Filter filter) {
+
+  # Caustics video overlay — bare filename matches the production asset
+  # name (Asset Name: ooe_lens_caustics, Asset Hash: 44989f6410…). In easel,
+  # `video://` resolves to assets/video/; in production, IGLUKit's asset
+  # pipeline (bsl_ios_remote_iglu_asset_launcher) resolves the same bare
+  # filename to a CDN-fetched local cache entry. Same iglu, both worlds.
+  loadTexture('overlay, 'video://ooe_lens_caustics.mp4);
+
+  filter.parameters = {
+    {opacity = 0.34, min = 0.0, max = 1.0, description = "Opacity of Clones"},
+    {amount = 1.0, min = 0.0, max = 1.0, description = "Copies"},
+    {overlayIntensity = 1.0, min = 0.0, max = 2.0, description = "Overlay Intensity"},
+  };
+
+  filter.passes = {{
+    name = 'prismClones,
+    inputs = {'default},
+    uniforms = {
+      time = 0.0,
+      inputSize = {1080.0, 1920.0},
+      prismCopies = 12.0,
+      prismSpread = 1.0,
+      ringSpeed = 0.0,
+      chroma = 8.0,
+      hexRadius = 0.3,
+      hexFeather = 0.0,
+      gradientAngle = 0.0,
+      gradientContrast = 1.0,
+    },
+    glslShader = prismClonesGlsl,
+  },
+  {
+    name = 'cloneBlur0,
+    inputs = {'prismClones},
+    uniforms = {
+      blurOffset = 2.0,
+      outputSize = {1080.0, 1920.0},
+    },
+    glslShader = kawaseGlsl,
+  },
+  {
+    name = 'cloneBlur1,
+    inputs = {'cloneBlur0},
+    uniforms = {
+      blurOffset = 4.0,
+      outputSize = {1080.0, 1920.0},
+    },
+    glslShader = kawaseGlsl,
+  },
+  {
+    name = 'prismCompose,
+    inputs = {'default, 'cloneBlur1},
+    uniforms = {
+      cloneOpacity = 1.0,
+    },
+    glslShader = prismComposeGlsl,
+  },
+  {
+    name = 'ortonBlur,
+    inputs = {'prismCompose},
+    uniforms = {
+      outputSize = {1080.0, 1920.0},
+    },
+    glslShader = lensBlurGlsl,
+  },
+  {
+    name = 'ortonCompose,
+    # First input MUST be 'default for aux-index alignment on Metal (see video_skate_cam.iglu).
+    # 'default is unused in the shader; 'prismCompose -> auxSampler1, 'ortonBlur -> auxSampler2.
+    inputs = {'default, 'prismCompose, 'ortonBlur},
+    uniforms = {
+      ortonStrength = 1.0,
+      progress = 0.0,
+    },
+    glslShader = ortonGlsl,
+  },
+  {
+    name = 'kawase0,
+    inputs = {'ortonCompose},
+    uniforms = {
+      blurOffset = 0.5,
+      outputSize = {1080.0, 1920.0},
+    },
+    glslShader = kawaseGlsl,
+  },
+  {
+    name = 'kawase1,
+    inputs = {'kawase0},
+    uniforms = {
+      blurOffset = 1.5,
+      outputSize = {1080.0, 1920.0},
+    },
+    glslShader = kawaseGlsl,
+  },
+  {
+    name = 'chromaFinal,
+    inputs = {'kawase1},
+    uniforms = {
+      overlayIntensity = 1.0,
+      outputSize = {1080.0, 1920.0},
+    },
+    glslShader = chromaFinalGlsl,
+  }
+  };
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  # System params (runtime-injected)
+  f32 progress = getParameterFloat('progress);
+  f32 time_sec = getParameterFloat('time_sec);
+
+  # Read user-facing controls
+  f32 blurParam = 0.34;
+  f32 chromaParam = 0.1;
+  # Map normalized 'amount [0,1] to an integer copy count in [1,12]; round (not ceil) for
+  # continuous slider feel, clamped to >=1 to avoid TAU/0 in prismClonesGlsl.
+  f32 numCopies = max(1.0, round(getParameterFloat('amount) * 12.0));
+
+  f32 cloneOpacity = getParameterFloat('opacity);
+
+  # Compute uniform values from controls (linear interpolation)
+  f32 softBlurAmount = 3.0 * blurParam;
+  f32 softBlurOffset = 4.0 * blurParam;
+  f32 maskBlurAmount = 10.0 * blurParam;
+  f32 chromaAmount = 20.0 * chromaParam;
+  f32 finalChromaAmount = 0.05 * chromaParam;
+
+  f32 spread = 0.93;
+  f32 outro = 0.0;
+
+  # Compute progress direction — flips for outro
+  f32 progressDirection = progress;
+  if (outro >= 0.5) {
+    progressDirection = 1.0 - progress;
+  }
+
+  # Cubic falloff — drives both spread and blur
+  f32 blurT = 1.0 - progressDirection;
+  f32 cubicT = blurT * blurT * blurT;
+
+  f32 animatedSpread = spread * (0.5 + 0.5 * (1.0 - cubicT));
+  f32 animatedChroma = chromaAmount * progressDirection;
+
+  # Prism pass
+  setShaderUniform('prismClones, 'prismCopies, numCopies);
+  setShaderUniform('prismClones, 'prismSpread, animatedSpread);
+
+  f32 hexSize = 0.16;
+  f32 hexFeather = 0.03;
+  setShaderUniform('prismClones, 'chroma, animatedChroma);
+  setShaderUniform('prismClones, 'hexRadius, hexSize);
+  setShaderUniform('prismClones, 'hexFeather, hexFeather);
+  setShaderUniform('prismClones, 'time, time_sec);
+
+  f32 gradientAngle = 4.16;
+  f32 gradientContrast = 2.44;
+  setShaderUniform('prismClones, 'gradientAngle, gradientAngle);
+  setShaderUniform('prismClones, 'gradientContrast, gradientContrast);
+
+  f32 ringSpeed = 0.125;
+  setShaderUniform('prismClones, 'ringSpeed, ringSpeed);
+
+  vec2 sz = getTextureSize('default);
+  setShaderUniform('prismClones, 'inputSize, sz);
+
+  # Clone mask blur
+  setShaderUniform('cloneBlur0, 'blurOffset, maskBlurAmount);
+  setShaderUniform('cloneBlur0, 'outputSize, sz);
+  setShaderUniform('cloneBlur1, 'blurOffset, maskBlurAmount);
+  setShaderUniform('cloneBlur1, 'outputSize, sz);
+
+  # Clone compose — opacity controls how much the hex ring clones show
+  setShaderUniform('prismCompose, 'cloneOpacity, cloneOpacity);
+
+  # Kawase soft blur — starts blurry, resolves to sharp (cubic falloff)
+  f32 kawaseScale = cubicT * softBlurAmount;
+  setShaderUniform('kawase0, 'blurOffset, softBlurOffset * kawaseScale);
+  setShaderUniform('kawase0, 'outputSize, sz);
+  setShaderUniform('kawase1, 'blurOffset, softBlurOffset * 2.0 * kawaseScale);
+  setShaderUniform('kawase1, 'outputSize, sz);
+
+  # Orton — lens blur + screen-blend compose (after prism, before kawase)
+  setShaderUniform('ortonBlur, 'outputSize, sz);
+
+  f32 ortonStrength = 0.3;
+  setShaderUniform('ortonCompose, 'ortonStrength, ortonStrength);
+  setShaderUniform('ortonCompose, 'progress, progressDirection);
+
+  # Final chromatic aberration pass
+  # setShaderUniform('chromaFinal, 'chromaAmount, finalChromaAmount);
+  setShaderUniform('chromaFinal, 'outputSize, sz);
+
+  # Caustics overlay strength — bound by uniform name on the chromaFinal pass.
+  # The 'overlay sampler2D is auto-bound on every pass by
+  # MultipassFilter.applyFilterTextureOptions, so we only forward the strength.
+  f32 overlayIntensity = getParameterFloat('overlayIntensity);
+  setShaderUniform('chromaFinal, 'overlayIntensity, overlayIntensity);
+
+}
+
+# ==========================================================================
+# Kawase blur — 5-tap diagonal kernel, iterated for progressive softening
+# ==========================================================================
+string kawaseGlsl = "
+precision highp float;
+
+varying vec2 sourceTextureCoordinate;
+BaseUniformsOpenGL;
+
+uniform float blurOffset;
+uniform vec2 outputSize;
+
+void main() {
+  vec2 uv = sourceTextureCoordinate;
+
+  // At zero offset every tap collapses onto the centre texel and the kernel
+  // reduces to identity. kawase0/kawase1 sit at zero for the whole of a
+  // non-animating clip, so this skips four redundant full-res fetches.
+  if (blurOffset == 0.0) {
+    gl_FragColor = toOutputFormat(sampleInput(uv));
+    return;
+  }
+
+  vec2 px = 1.0 / max(outputSize, vec2(1.0));
+
+  vec4 color = sampleInput(uv) * 4.0;
+  color += sampleInput(uv + vec2(-blurOffset, -blurOffset) * px);
+  color += sampleInput(uv + vec2( blurOffset, -blurOffset) * px);
+  color += sampleInput(uv + vec2(-blurOffset,  blurOffset) * px);
+  color += sampleInput(uv + vec2( blurOffset,  blurOffset) * px);
+
+  gl_FragColor = toOutputFormat(color / 8.0);
+}
+";
+
+# ==========================================================================
+# Prism clones — renders clone content with premultiplied alpha (no original base)
+# ==========================================================================
+string prismClonesGlsl = "
+precision highp float;
+
+varying vec2 sourceTextureCoordinate;
+BaseUniformsOpenGL;
+
+uniform float time;
+uniform vec2 inputSize;
+uniform float prismCopies;
+uniform float prismSpread;
+uniform float chroma;
+uniform float hexRadius;
+uniform float hexFeather;
+uniform float gradientAngle;
+uniform float gradientContrast;
+uniform float ringSpeed;
+
+const vec2 prismCenter = vec2(0.5);
+
+float sdHexagon(vec2 p, float r) {
+  vec3 k = vec3(-0.866025404, 0.5, 0.577350269);
+  p = abs(p);
+  p -= 2.0 * min(dot(k.xy, p), 0.0) * k.xy;
+  p -= vec2(clamp(p.x, -k.z * r, k.z * r), r);
+  return length(p) * sign(p.y);
+}
+
+vec3 sampleChromaHelper(vec2 uv, vec2 chromaOffset) {
+  vec2 safeInputSize = max(inputSize, vec2(1.0));
+  vec2 uvOffset = chromaOffset / safeInputSize;
+
+  if (uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0) {
+    return vec3(0.0);
+  }
+
+  if (inputSize.x <= 0.0 || inputSize.y <= 0.0) {
+    return sampleInput(uv).rgb;
+  }
+
+  vec2 uvR = clamp(uv - uvOffset, 0.0, 1.0);
+  vec2 uvG = clamp(uv, 0.0, 1.0);
+  vec2 uvB = clamp(uv + uvOffset, 0.0, 1.0);
+
+  return vec3(sampleInput(uvR).r,
+  sampleInput(uvG).g,
+  sampleInput(uvB).b);
+}
+
+void main() {
+  vec2 uv = sourceTextureCoordinate;
+  vec2 center = prismCenter;
+
+  vec2 safeInputSize = max(inputSize, vec2(1.0, 1.0));
+  float safeSizeScale = min(safeInputSize.x, safeInputSize.y) / 1080.0;
+
+  if (inputSize.x <= 0.0 || inputSize.y <= 0.0) {
+    gl_FragColor = toOutputFormat(vec4(0.0));
+    return;
+  }
+
+  vec3 result = vec3(0.0);
+  float totalAlpha = 0.0;
+
+  float stepA = 6.28318530718 / prismCopies;
+
+  for (int i = 0; i < 12; i++) {
+    if (float(i) >= prismCopies) break;
+
+    float a = (ringSpeed * time) + stepA * float(i);
+    vec2 dir = vec2(sin(a), cos(a));
+
+    vec2 offUV = dir * prismSpread * 0.5;
+
+    vec2 cloneCenter = center - offUV;
+    vec2 p = (uv - cloneCenter) * vec2(safeInputSize.x / safeInputSize.y, 1.0);
+    float d = sdHexagon(p, hexRadius);
+    float mask = 1.0 - smoothstep(-hexFeather, 0.0, d);
+    float rawOpacity = (cos(a - gradientAngle) + 1.0) * 0.5;
+    float alpha = pow(rawOpacity, gradientContrast);
+    mask *= alpha;
+
+    // The three chroma taps are only consumed inside this branch, so gating the
+    // fetches on the hexagon mask keeps the result identical while skipping the
+    // sampling entirely for pixels this clone does not cover.
+    if (mask > 0.0) {
+      float subRot = 0.02 * float(i) * prismSpread;
+      float ca = cos(subRot);
+      float sa = sin(subRot);
+      mat2 rot = mat2(ca, -sa, sa, ca);
+
+      vec2 sampUV = rot * (uv - center) + center + offUV;
+      vec2 cOff = dir * chroma * safeSizeScale;
+      vec3 col = sampleChromaHelper(sampUV, cOff);
+
+      result = result * (1.0 - mask) + col * mask;
+      totalAlpha = totalAlpha * (1.0 - mask) + mask;
+    }
+  }
+
+  gl_FragColor = toOutputFormat(vec4(result, totalAlpha));
+}
+";
+
+# ==========================================================================
+# Prism compose — composite blurred clones over original input
+# ==========================================================================
+string prismComposeGlsl = "
+precision highp float;
+
+varying vec2 sourceTextureCoordinate;
+BaseUniformsOpenGL;
+
+uniform float cloneOpacity;
+uniform sampler2D auxSampler1;
+
+void main() {
+  vec2 uv = sourceTextureCoordinate;
+  vec3 original = sampleInput(uv).rgb;
+  vec4 clones = texture2D(auxSampler1, uv);
+  float a = clones.a * cloneOpacity;
+  vec3 result = original * (1.0 - a) + clones.rgb * cloneOpacity;
+  gl_FragColor = toOutputFormat(vec4(result, 1.0));
+}
+";
+
+# ==========================================================================
+# Lens blur — disc sampling with concentric rings for bokeh character
+# ==========================================================================
+string lensBlurGlsl = "
+precision highp float;
+
+varying vec2 sourceTextureCoordinate;
+BaseUniformsOpenGL;
+
+uniform vec2 outputSize;
+
+const float TAU = 6.28318530718;
+const float RADIUS = 27.2;
+const int NUM_RINGS = 4;
+const int MAX_PER_RING = 30;
+
+void main() {
+  vec2 uv = sourceTextureCoordinate;
+
+  vec2 pixelSize = 1.0 / max(outputSize, vec2(1.0));
+
+  vec4 sum = sampleInput(uv);
+  float count = 1.0;
+
+  for (int r = 1; r <= NUM_RINGS; r++) {
+    float ringDist = float(r) / float(NUM_RINGS) * RADIUS;
+    int samplesInRing = 6 * r;
+    float invSamples = 1.0 / float(samplesInRing);
+
+    for (int s = 0; s < MAX_PER_RING; s++) {
+      if (s >= samplesInRing) break;
+      float angle = TAU * float(s) * invSamples;
+      vec2 ringOffset = ringDist * vec2(cos(angle), sin(angle)) * pixelSize;
+      sum += sampleInput(uv + ringOffset);
+      count += 1.0;
+    }
+  }
+
+  gl_FragColor = toOutputFormat(sum / count);
+}
+";
+
+# ==========================================================================
+# Final chromatic aberration — radial RGB split increasing from center to edges
+# ==========================================================================
+string chromaFinalGlsl = "
+precision highp float;
+varying vec2 sourceTextureCoordinate;
+BaseUniformsOpenGL;
+
+uniform vec2 outputSize;
+uniform sampler2D overlay;       // caustics video, bound by name
+uniform float overlayIntensity;  // 0..2 — follows video_dreamcatcher.iglu convention
+
+void main() {
+  // uniform float chromaAmount;
+  float chromaAmount = 0.05;
+  vec2 uv = sourceTextureCoordinate;
+  float aspect = outputSize.x / outputSize.y;
+  // Radial vector from center, aspect-corrected
+  vec2 dir = uv - 0.5;
+  dir.x *= aspect;
+  float dist = length(dir);
+  // Offset in UV space (normalize direction back to UV)
+  vec2 chromaShift = (uv - 0.5) * chromaAmount * dist;
+  float r = sampleInput(uv + chromaShift).r;
+  float g = sampleInput(uv).g;
+  float b = sampleInput(uv - chromaShift).b;
+  vec3 base = vec3(r, g, b);
+
+  // Screen-blend the caustics overlay on top (matches demo_video_overlay.iglu)
+  vec3 vid = texture2D(overlay, uv).rgb;
+  vec3 result = 1.0 - (1.0 - base) * (1.0 - vid * overlayIntensity);
+
+  gl_FragColor = toOutputFormat(vec4(result, 1.0));
+}
+";
+
+# ==========================================================================
+# Orton compose — screen-blend lens-blurred glow onto sharp prism
+# ==========================================================================
+string ortonGlsl = "
+precision highp float;
+
+varying vec2 sourceTextureCoordinate;
+BaseUniformsOpenGL;
+
+uniform sampler2D auxSampler1;
+uniform sampler2D auxSampler2;
+uniform float ortonStrength;
+uniform float progress;
+
+float screenBlend(float base, float blend) {
+  return 1.0 - (1.0 - base) * (1.0 - blend);
+}
+
+void main() {
+  vec2 uv = sourceTextureCoordinate;
+  // Pass inputs: {'default, 'prismCompose, 'ortonBlur} — 'default unused, present
+  // only to honor the IGLUScript first-input-must-be-'default convention on Metal.
+  // auxSampler1 -> 'prismCompose (sharp), auxSampler2 -> 'ortonBlur (blurred).
+  vec3 sharp = texture2D(auxSampler1, uv).rgb;
+  vec3 blurred = texture2D(auxSampler2, uv).rgb;
+
+  vec3 glow = vec3(
+    screenBlend(sharp.r, blurred.r),
+    screenBlend(sharp.g, blurred.g),
+    screenBlend(sharp.b, blurred.b)
+  );
+
+  vec3 result = mix(blurred, sharp, progress);
+  result = mix(result, glow, ortonStrength);
+  gl_FragColor = toOutputFormat(vec4(result, 1.0));
+}
+";

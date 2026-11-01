@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "color_debugger",
+  "displayName": "Color Debugger",
+  "description": "[IG Edits] Video effect name. With \"Color Debugger\", the creator can run a 2-pass debug filter that zeroes individual RGB channels or substitutes solid task colors to inspect pipeline output.",
+  "iglu": {}
+}

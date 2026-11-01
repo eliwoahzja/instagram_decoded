@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "3eb489a5-0c2f-43b7-869e-5a9cabdaa2e5",
+  "displayName": "Doodle Pixelate Media",
+  "description": "[IG Edits] Drawing brush effect name. With \"Doodle Pixelate Media\", the creator can sample the media into pixel blocks inside the stroke region, with per-cell brightness jitter for grain.",
+  "iglu": {}
+}

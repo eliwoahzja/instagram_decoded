@@ -1,0 +1,89 @@
+# IGLUSCRIPTCOLLISION_BYPASS: Intentional replacement of C++ native effect - IGLUScript takes precedence on Android/iOS; C++ filter retained as fallback for direct C++ callers (sample app, server tools).
+[Filter VideoColorPulse]
+
+# Color Pulse: RGB channel separation along a smoothly-rotating direction
+# Single-pass effect - UV offset drives the separation.
+#
+# Carries both behaviors:
+#   useBeats false -> clock-driven layered sines (unchanged original behavior)
+#   useBeats true  -> beat-driven envelope, beatProgress supplied per beat
+#
+# useBeats is set by BeatReactiveController when a manifest declares beatReactive;
+# with no such manifest nothing writes it and the false default selects the clock.
+
+[Init]
+fun init(Filter filter) {
+  filter.parameters = {
+    {intensity = 0.5, min = 0.0, max = 1.0, description = "Effect intensity"},
+    {useBeats = false, description = "True while the beat system is driving this effect"},
+    {beatProgress = 0.0, min = 0.0, max = 2.0, description = "Beat-driven separation amount"},
+  };
+
+  filter.passes = {{
+    name = 'color_pulse,
+    inputs = {'default},
+    uniforms = {
+      pulseAmount = 0.0,
+      pulseDir = {0.0, 0.0},
+      intensity = 0.5,
+    },
+    glslShader = glslColorPulse,
+  }};
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  f32 time = getParameterFloat('time_sec);
+  f32 intensity = getParameterFloat('intensity);
+
+  # Smooth pulse amplitude using layered sine waves
+  f32 pulse1 = sin(time * 6.2831 * 3.0);
+  f32 pulse2 = sin(time * 6.2831 * 1.7);
+  f32 clockAmount = max((pulse1 + pulse2) * 0.5, 0.0);
+
+  # Beat mode substitutes the envelope for the clock; the rotating direction is
+  # kept in both so the separation axis still travels.
+  boolean useBeats = getParameterBoolean('useBeats);
+  f32 pulseAmount = clockAmount;
+  if (useBeats) {
+    pulseAmount = getParameterFloat('beatProgress);
+  }
+
+  # Smoothly rotating direction using incommensurate frequencies
+  f32 angle = sin(time * 1.3) * 3.14159 + cos(time * 0.7) * 1.5708;
+  f32 dx = cos(angle);
+  f32 dy = sin(angle);
+  vec2 dir = {dx, dy};
+
+  setShaderUniform('color_pulse, 'pulseAmount, pulseAmount);
+  setShaderUniform('color_pulse, 'pulseDir, dir);
+  setShaderUniform('color_pulse, 'intensity, intensity);
+}
+
+string glslColorPulse = "
+  varying vec2 sourceTextureCoordinate;
+  BaseUniformsOpenGL;
+
+  uniform float pulseAmount;
+  uniform vec2 pulseDir;
+  uniform float intensity;
+  uniform vec2 outputSize;
+
+  void main() {
+    vec2 uv = sourceTextureCoordinate;
+    vec4 baseColor = sampleInput(uv);
+
+    // Offset UVs along the pulse direction for each channel
+    float spread = pulseAmount * 0.05 * intensity;
+    vec2 offsetA = pulseDir * spread * 0.5;
+    vec2 offsetB = pulseDir * spread;
+
+    vec4 colorA = sampleInput(uv + offsetA);
+    vec4 colorB = sampleInput(uv + offsetB);
+
+    // R from current, G from offset A, B from offset B
+    vec4 color = vec4(baseColor.r, colorA.g, colorB.b, 1.0);
+
+    gl_FragColor = toOutputFormat(mix(baseColor, color, intensity));
+  }
+";

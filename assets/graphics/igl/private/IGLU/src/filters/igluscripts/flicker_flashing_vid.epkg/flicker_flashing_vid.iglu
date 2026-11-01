@@ -1,0 +1,123 @@
+[Filter FlickerFlashingVid]
+# "Flicker Flashing Vid" — pure time shader, no LUT, no external assets.
+#
+# Effect: hard dark overlay that flickers on and off with hard cuts (no
+# easing, no fade). When ON, the source is darkened by `flicker_darkness`;
+# when OFF, the source passes through at full brightness.
+#
+# Timing model:
+#   - Time is divided into per-frame slots of duration
+#     `0.02 / flicker_speed` seconds (default 0.02s = 1 frame at 50fps).
+#   - Each frame gets a fresh pseudo-random hash from its frame index.
+#     The raw threshold of 0.5 means a frame would be ON ~50% of the time
+#     before the no-consecutive-ON rule is applied.
+#   - We then apply a hard rule: if the PREVIOUS frame was ON, this frame
+#     is forced OFF. This guarantees ON events are exactly 1 frame long.
+#   - With raw_p = 0.5 + the suppression rule, steady-state ON-time =
+#     p/(1+p) = 1/3, giving an average cycle of 1 ON + 2 OFF frames.
+#     Gap distribution between ON events:
+#       * 50% of gaps are 1 OFF frame
+#       * 25% are 2 OFF frames
+#       * 12.5% are 3 OFF frames
+#       * 12.5% are 4 or more OFF frames (rare)
+#     Matches the spec of 1-3 OFF frames between single-frame flashes,
+#     with the occasional longer pause for natural variation.
+#
+# Time source:
+#   We read `time_sec` as a parameter for production (host-driven). For
+#   sample-app local testing, uncomment the `getLocalTime()` line in
+#   [PreRender] (matches color_leak / grainy / toxic_glitch convention).
+#
+# No external assets. Manifest carries no `assets` field (matches
+# cutout_slide and other asset-free filters in the catalog).
+
+[Init]
+fun init(Filter filter)
+{
+    # Host-tunable parameters. Wired unconditionally in [PreRender] per CRA
+    # finding on black_and_white (filter.parameters declares min=0.0, so
+    # host-set zeros are valid input and must propagate).
+    filter.parameters = {
+        {flicker_darkness = 0.35, min = 0.0, max = 1.0, description = "Dark overlay opacity when ON; 0 disables, 1 is full black"},
+        {flicker_speed = 0.4, min = 0.1, max = 5.0, description = "Multiplier on frame rate; higher means faster flicker"},
+    };
+
+    filter.passes = {{
+      name = 'pass0,
+      inputs = {'default},
+      uniforms = {
+        flicker_darkness = 0.35,
+        flicker_speed = 0.4,
+        time = 0.0,
+      },
+      glslShader = glslFlicker,
+    }};
+}
+
+[PreRender]
+fun preRender(Filter filter){
+    # All three uniforms wired unconditionally per CRA convention.
+
+    f32 fd = getParameterFloat('flicker_darkness);
+    setShaderUniform('pass0, 'flicker_darkness, fd);
+
+    f32 fs = getParameterFloat('flicker_speed);
+    setShaderUniform('pass0, 'flicker_speed, fs);
+
+    # Time drives the per-slot pseudo-random on/off state. Production reads
+    # the host-supplied `time_sec` parameter; uncomment getLocalTime() for
+    # sample-app dev testing (matches color_leak / grainy / toxic_glitch).
+    f32 time = getParameterFloat('time_sec);
+    # time = getLocalTime(); # uncomment for sample-app testing
+    setShaderUniform('pass0, 'time, time);
+}
+
+#### GLSL shader ####
+
+string glslFlicker = "
+    varying vec2 sourceTextureCoordinate;
+    BaseUniformsOpenGL;
+
+    uniform sampler2D auxSampler0;
+    uniform sampler2D auxSampler1;
+    uniform sampler2D auxSampler2;
+
+    uniform float flicker_darkness;
+    uniform float flicker_speed;
+    uniform float time;
+
+    // Cheap 1D pseudo-random hash. Returns a value in roughly [0, 1).
+    float hash11(float x) {
+      return fract(sin(x * 12.9898) * 43758.5453);
+    }
+
+    void main() {
+      vec2 uv = sourceTextureCoordinate;
+      vec4 base = sampleInput(uv);
+
+      // Per-frame slot. Default 0.02s = 1 frame at 50fps.
+      float frame_size = 0.02 / max(flicker_speed, 0.001);
+      float frame_index = floor(time / frame_size);
+
+      // Pseudo-random hashes for current and previous frame.
+      float h_curr = hash11(frame_index);
+      float h_prev = hash11(frame_index - 1.0);
+
+      // Raw 50/50 ON candidate, then suppress if previous frame was ON.
+      // This guarantees ON events are exactly 1 frame long. Steady-state
+      // ON fraction is p/(1+p) = 1/3, giving an average cycle of
+      // 1 ON + 2 OFF frames. Gaps between ONs distribute as:
+      //   50% gap=1, 25% gap=2, 12.5% gap=3, 12.5% gap=4 or more.
+      float threshold = 0.5;
+      float would_be_on = step(threshold, h_curr);
+      float prev_was_on = step(threshold, h_prev);
+      float is_on = would_be_on * (1.0 - prev_was_on);
+
+      // When ON: rgb *= (1 - flicker_darkness). At default 0.35 the frame
+      // is darkened by 35%. When OFF: rgb *= 1.0 (full brightness).
+      float darkness = 1.0 - is_on * flicker_darkness;
+      base.rgb *= darkness;
+
+      gl_FragColor = toOutputFormat(base);
+    }
+    ";

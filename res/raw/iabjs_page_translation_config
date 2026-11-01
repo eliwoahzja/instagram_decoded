@@ -1,0 +1,1 @@
+(function(configJson){window.__PAGE_TRANSLATION_CONFIG__=JSON.parse(configJson)})

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector android:variablePadding="false"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="true">
+        <shape>
+            <solid android:color="?fds_usage_non_media_pressed" />
+            <stroke android:width="1.0dp" android:color="?fds_usage_non_media_pressed" />
+            <corners android:radius="@dimen/abc_action_bar_elevation_material" />
+            <padding android:left="@dimen/account_discovery_bottom_gap" android:top="@dimen/abc_edit_text_inset_top_material" android:right="@dimen/account_discovery_bottom_gap" android:bottom="@dimen/abc_edit_text_inset_top_material" />
+        </shape>
+    </item>
+    <item>
+        <shape>
+            <solid android:color="?fds_usage_surface_background" />
+            <stroke android:width="1.0dp" android:color="?fds_usage_secondary_button_background" />
+            <corners android:radius="@dimen/abc_action_bar_elevation_material" />
+            <padding android:left="@dimen/account_discovery_bottom_gap" android:top="@dimen/abc_edit_text_inset_top_material" android:right="@dimen/account_discovery_bottom_gap" android:bottom="@dimen/abc_edit_text_inset_top_material" />
+        </shape>
+    </item>
+</selector>

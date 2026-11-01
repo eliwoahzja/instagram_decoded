@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "assets": [
+    {
+      "name": "webcam_v2_lut.png",
+      "assetHash": "06658f7ed2aea4c9f6940c408437c51023f901d90f74aa9df38d165fa0fa0c6d",
+      "hubAssetId": "1065913972558518"
+    }
+  ],
+  "description": "[IG Edits] Color filter name. With \"Webcam V2\", the creator gets an 8x8 LUT color grade with a horizontal directional blur.",
+  "displayName": "Webcam V2",
+  "identifier": "dfe94840-7ec0-4a73-ae75-52a2b0cc249e",
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAD6dvJxgah"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "34a882a7",
+      "handle": "AQAIiviY_EkV",
+      "md5": "f1cb5339fe0d4b87abe478cf80529209"
+    }
+  },
+  "iglu": {
+    "legacyId": 3216
+  }
+}

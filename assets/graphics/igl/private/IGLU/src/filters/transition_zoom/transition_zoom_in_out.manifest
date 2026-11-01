@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "transition_zoom_in_out",
+  "displayName": "Zoom In Out",
+  "description": "[IG Edits] Transition name. With \"Zoom In Out\", the creator can transition by zooming in on clip A and zooming back out on clip B with crossfade, box blur, and zoom blur.",
+  "iglu": {}
+}

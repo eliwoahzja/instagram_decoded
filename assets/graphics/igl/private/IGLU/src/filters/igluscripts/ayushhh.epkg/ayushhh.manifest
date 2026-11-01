@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "identifier": "BEFA4512-8FB5-4CED-B5D4-A072974385CD",
+  "displayName": "Ayushhh",
+  "description": "[IG Edits] Color filter name. With \"Ayushhh\", the creator gets a pure 8x8 LUT color grade applied to the camera image at full strength.",
+  "android": {
+    "previewAsset": {
+      "key": "240215a4",
+      "handle": "AQADvcJoqJ9o",
+      "md5": "01ce3d659c69c632e87f972dc7bf03e4"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAGMOcMYvZ9"
+    }
+  },
+  "iglu": {
+    "legacyId": 3093
+  },
+  "assets": [
+    {
+      "name": "ayushhh_lut.png",
+      "assetHash": "dab60712d44b606ab131e8833dffc75b119831e6e9acb7ebe791b341fd08f169",
+      "hubAssetId": "1751545639622159"
+    }
+  ]
+}

@@ -1,0 +1,77 @@
+76
+log
+GLESv2
+EGL
+dl
+OpenSLES
+android
+z
+jnigraphics
+GLESv3
+m
+c
+stdc++
+c++_shared 10 3 ; 0 13 14 1 : 29 1 52 1 99 1
+mozjpegturbo 10 9 ; 0 2
+bsdiff 10
+androidx.graphics.path 10 9 3
+arcore_sdk_c 10 9 5 3 0
+art_tooling 10 9 6 3 0 ; 0 79 : 0 1
+dextricks-early 10
+graphics-core 10 9 5 3 2 1 0
+image_processing_util_jni 10 9 7 5 3 0
+superpack-jni 10 5 3 0
+surface_util_jni 10 9 5 3
+breakpad_cpp_helper 11 10 3
+breakpad 12 0
+fb_mboost-lite 12 0
+hardwarebuffer_converter 12 0
+fbunwindstack 12 0
+commonpatchjni 14 0
+arcore_sdk_jni 16
+earlystartup 24 6 ; 0 13 : 62 1 85 1
+dextricks-jit 24
+fb_mboost 24
+superattic 24
+unwindstack_binary 27
+startup 30 9 7 5 1 ; 0 128 : 584 11 605 18 635 5 1497 3 1832 1 1916 1 2000 1 2498 1
+devtools-crashnownative 30
+file_fadvise_preheat_jni 30
+graphqllivequeriessdklazy 30
+memorypurge 30
+sonic-native 30
+scrollmerged 35 27 13 8 2 ; 0 170 : 1280 48 1412 1 1662 2 1676 9 2155 1 2179 1 3458 1 4828 3 4858 10 4901 6 4953 1 5770 1 , 169 1108
+rtc 41 4 ; 0 139 : 677 26 717 1 729 1 739 1 774 1 823 1 889 7 908 5 1223 1 1381 1 1678 1 1802 1 1924 17 2397 1 2998 1 3870 1 3887 6 3930 1 3981 1 4008 1 4156 1 4288 3 4319 1 4345 1
+bloks_gpu_query 41
+coremerged 41 ; 0 8 9 3 : 34 16 65 1 78 1 108 2
+magimerged 41 ; 0 6 9 2
+oacr_utils_jni 41
+onecamera-lib-libanim 41
+onsetlatency-native 41
+static-webp 41
+vesta_client_jni 41 ; 0 10 14 2
+webpdecoder-native 41
+ardmerged 42 ; 0 30 34 5 : 102 1 305 2
+streamingmerged 42 ; 0 24 34 6 : 136 18 169 1 185 1 209 9 235 1 294 1 346 1 399 1 457 1 480 1 501 6
+mediamerged 42 ; 0 11 18 3 : 376 5 454 1 473 1 706 2 817 7 847 2
+arfxmerged 42 ; 0 23 33 5 : 151 2 192 1 206 17 244 2 269 11 309 36 356 10 379 2 394 1 418 2 444 1 549 7 673 5 781 1 792 4
+pytorchlitejnimerged 42
+voicemerged 42
+kaleidoscope 45 ; 0 9 12 3
+iglu-filter-debug 54
+iglu-langpack-loader 54 ; 0 4
+mediapipeline-iglufilter-detection 54
+mediapipeline-iglufilter-gpuimageloader 54
+mediapipeline-iglufilter-textureloader 54
+onecamera-iglufilter-graph 54
+shaderfetcher 54
+effectsmerged 55 52 ; 0 68 119 11 : 823 81 932 33 976 12 997 67 1076 3 1120 5 1145 2 1173 1 1194 1 1232 1 1260 1 1319 8 1368 8 1395 1 1407 6 1437 6 1676 1 1856 1 1974 1 2494 6 2647 11 2930 1 3090 9
+arlink 55
+heramerged 55 ; 0 14 17 3 : 50 1 65 3 84 26 123 9 144 2
+torchmerged 55 52 ; 0 37 49 8 : 420 17 446 1 530 1 609 16 647 1 816 3 972 1 1068 2 1200 6
+ctmerged 66 ; 0 17 20 5 : 100 19 153 1 223 1 304 4
+papayamerged 69 ; 0 13 15 4 : 47 3 63 1 453 7
+pytorchjnimerged 69 56 ; 0 15 23 4 : 188 32 229 17 335 1 409 10 529 1 577 1 752 1 807 4
+amlftmerged 70 54 53 ; 0 10 12 3 : 40 1 52 2 103 1 134 6 190 3
+compphotomerged 70
+onecamera-autoenhance-native-android 74

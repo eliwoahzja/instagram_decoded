@@ -1,0 +1,234 @@
+[Filter IgluscriptVideoDriftInFilter]
+[MaskBehavior alpha]
+
+# Soft drift from above with rocking -- exact AE bezier curves from POSITION_DRIFT_IN
+# Rotation scaled 1.2x per design feedback
+
+fun mix(f32 a, f32 b, f32 t) f32 {
+  return a * (1.0 - t) + b * t;
+}
+
+fun cssBezier(f32 time, f32 x1, f32 y1, f32 x2, f32 y2) f32 {
+  f32 t = time;
+  f32 i = 0.0;
+  while (i < 8.0) {
+    f32 u = 1.0 - t;
+    f32 xt = 3.0 * u * u * t * x1 + 3.0 * u * t * t * x2 + t * t * t;
+    f32 dxdt = 3.0 * u * u * x1 + 6.0 * u * t * (x2 - x1) + 3.0 * t * t * (1.0 - x2);
+    t = t - (xt - time) / max(dxdt, 0.0001);
+    t = clamp(t, 0.0, 1.0);
+    i = i + 1.0;
+  }
+  f32 u = 1.0 - t;
+  return 3.0 * u * u * t * y1 + 3.0 * u * t * t * y2 + t * t * t;
+}
+
+[Init]
+fun init(Filter filter) {
+  filter.parameters = {
+    {amount = 0.5, min = 0.0, max = 1.0, description = "Drift intensity"},
+  };
+
+  filter.passes = {
+    {
+      name = 'driftFx,
+      inputs = {'default},
+      uniforms = {
+        offsetY = 0.0,
+        rotation = 0.0,
+        opacity = 0.0,
+        inputSize = {720.0, 1280.0},
+      },
+      glslShader = glsl,
+    },
+    {
+      name = 'dirBlur,
+      inputs = {'driftFx},
+      uniforms = {
+        ghostSpread = 0.0,
+      },
+      glslShader = blurGlsl,
+    },
+  };
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  f32 p = getParameterFloat('progress);
+  f32 amount = getParameterFloat('amount);
+
+  f32 pi = 3.14159;
+
+  # --- Y Position (5 keyframes, exact AE bezier) ---
+  f32 YPT0 = 0.0;
+  f32 YPT1 = 0.222205;
+  f32 YPT2 = 0.469671;
+  f32 YPT3 = 0.752534;
+  f32 YPT4 = 1.0;
+  f32 YPK0 = -0.219601;
+  f32 YPK1 = -0.120709;
+  f32 YPK2 = -0.047929;
+  f32 YPK3 = 0.033255;
+  f32 YPK4 = 0.06418;
+
+  f32 posY = YPK4;
+  f32 f = 0.0;
+  f32 t = 0.0;
+
+  if (p < YPT1) {
+    f = p / YPT1;
+    t = cssBezier(f, 0.144848, 0.094276, 0.645125, 0.89544);
+    posY = mix(YPK0, YPK1, t);
+  } else if (p < YPT2) {
+    f = (p - YPT1) / (YPT2 - YPT1);
+    t = cssBezier(f, 0.364578, 0.18384, 0.66121, 0.768808);
+    posY = mix(YPK1, YPK2, t);
+  } else if (p < YPT3) {
+    f = (p - YPT2) / (YPT3 - YPT2);
+    t = cssBezier(f, 0.347476, 0.22233, 0.65484, 0.878476);
+    posY = mix(YPK2, YPK3, t);
+  } else if (p < YPT4) {
+    f = (p - YPT3) / (YPT4 - YPT3);
+    t = cssBezier(f, 0.372975, 0.369042, 0.666667, 1.0);
+    posY = mix(YPK3, YPK4, t);
+  }
+
+  # Offset from final rest position (positive = above, drifting down)
+  f32 offsetY = YPK4 - posY;
+
+  # --- Rotation (5 keyframes, exact AE bezier, 1.2x scale, degrees -> radians) ---
+  f32 RT0 = 0.0;
+  f32 RT1 = 0.222205;
+  f32 RT2 = 0.469671;
+  f32 RT3 = 0.752534;
+  f32 RT4 = 1.0;
+  # AE values x 1.2 per design feedback
+  f32 RK0 = 22.8;
+  f32 RK1 = -30.0;
+  f32 RK2 = 22.8;
+  f32 RK3 = -20.4;
+  f32 RK4 = 0.0;
+
+  f32 rotDeg = RK4;
+  f = 0.0;
+  t = 0.0;
+
+  if (p < RT1) {
+    f = p / RT1;
+    t = cssBezier(f, 0.333333, 0.0, 0.666667, 1.0);
+    rotDeg = mix(RK0, RK1, t);
+  } else if (p < RT2) {
+    f = (p - RT1) / (RT2 - RT1);
+    t = cssBezier(f, 0.333333, 0.0, 0.666667, 1.0);
+    rotDeg = mix(RK1, RK2, t);
+  } else if (p < RT3) {
+    f = (p - RT2) / (RT3 - RT2);
+    t = cssBezier(f, 0.333333, 0.0, 0.666667, 1.0);
+    rotDeg = mix(RK2, RK3, t);
+  } else if (p < RT4) {
+    f = (p - RT3) / (RT4 - RT3);
+    t = cssBezier(f, 0.333333, 0.0, 0.833333, 1.0);
+    rotDeg = mix(RK3, RK4, t);
+  }
+
+  # Apply amount as rotation multiplier and convert to radians
+  f32 rotation = rotDeg * amount * 2.0 * pi / 180.0;
+
+  # Subtle motion blur from vertical drift velocity
+  vec2 size = getTextureSize('default);
+  f32 texelSize = 1.0 / size.y;
+  f32 ghostSpread = abs(offsetY) * 8.0 * texelSize;
+
+  # Opacity: invisible at p=0, visible once animation starts
+  f32 opacity = 1.0;
+  if (p < 0.001) { opacity = 0.0; }
+
+  setShaderUniform('driftFx, 'offsetY, offsetY);
+  setShaderUniform('driftFx, 'rotation, rotation);
+  setShaderUniform('driftFx, 'opacity, opacity);
+  setShaderUniform('driftFx, 'inputSize, size);
+  setShaderUniform('dirBlur, 'ghostSpread, ghostSpread);
+}
+
+string blurGlsl = "varying vec2 sourceTextureCoordinate;
+
+BaseUniformsOpenGL;
+
+uniform float ghostSpread;
+
+float clipAlpha(vec2 uv) {
+  float e = 0.005;
+  return smoothstep(0.0, e, uv.x) * smoothstep(0.0, e, 1.0 - uv.x)
+       * smoothstep(0.0, e, uv.y) * smoothstep(0.0, e, 1.0 - uv.y);
+}
+
+void main() {
+  vec2 uv = sourceTextureCoordinate;
+  vec4 color = vec4(0.0);
+  float totalWeight = 0.0;
+
+  // Vertical blur along drift axis. Weighting each ghost by clipAlpha drops
+  // samples that land outside the frame instead of letting them wrap to the
+  // opposite edge, and renormalizing by totalWeight keeps the edge from darkening.
+  for (int i = -4; i <= 4; i++) {
+    float fi = float(i);
+    vec2 gUV = uv + vec2(0.0, ghostSpread * fi);
+    float k = 2.0;
+    float weight = (1.0 / (1.0 + k * abs(fi))) * clipAlpha(gUV);
+    color += sampleInput(gUV) * weight;
+    totalWeight += weight;
+  }
+
+  gl_FragColor = toOutputFormat(color / max(totalWeight, 0.001));
+}
+";
+
+string glsl = "varying vec2 sourceTextureCoordinate;
+
+BaseUniformsOpenGL;
+
+uniform float offsetY;
+uniform float rotation;
+uniform float opacity;
+uniform vec2 inputSize;
+
+// One-pixel antialiased frame edge. The +0.5 bias puts the ramp entirely outside the
+// first interior pixel, so an untransformed frame stays fully opaque. A fixed uv
+// epsilon instead fades a fraction of the frame regardless of resolution, which shows
+// up as a permanent margin once the animation settles.
+float clipAlpha(vec2 uv) {
+  vec2 texel = 1.0 / max(inputSize, vec2(1.0));
+  vec2 d = min(uv, 1.0 - uv);
+  vec2 a = clamp(d / texel + 0.5, 0.0, 1.0);
+  return a.x * a.y;
+}
+
+void main() {
+  vec2 uv = sourceTextureCoordinate;
+
+  // Translate -- shift vertically (drift down from above).
+  // UP is +1.0 on OpenGL and -1.0 on Metal, so this leaves the Android/GL path
+  // as authored and flips the iOS/Metal path to match it. Swap to DOWN to flip
+  // Android instead. Whichever is used must also apply to the rotation below,
+  // since mirroring the y axis reverses the sense of a rotation.
+  uv.y -= UP * offsetY;
+
+  // Rotate around center with aspect ratio correction
+  float aspect = inputSize.x / inputSize.y;
+  vec2 center = vec2(0.5);
+  uv -= center;
+  uv.x *= aspect;
+  float rot = UP * rotation;
+  float c = cos(rot);
+  float s = sin(rot);
+  uv = vec2(c * uv.x - s * uv.y, s * uv.x + c * uv.y);
+  uv.x /= aspect;
+  uv += center;
+
+  // Clip rather than repeat: without this the sampler wraps and tiles the frame
+  // once the drift/rotation pushes uv outside [0,1].
+  float ca = clipAlpha(uv);
+  vec4 color = sampleInput(uv) * ca * opacity;
+  gl_FragColor = toOutputFormat(color);
+}
+";

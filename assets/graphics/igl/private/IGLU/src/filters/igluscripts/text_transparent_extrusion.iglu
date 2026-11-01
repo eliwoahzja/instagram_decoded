@@ -1,0 +1,250 @@
+[Filter IgluscriptTextExtrusionTransparentFilter]
+
+# Four-pass filter matching original flig-text "Knockout 3D" (Transparent Extrusion)
+# Pass 1: DilateHorizontal - separable 1D max in X on default input
+# Pass 2: DilateVertical   - separable 1D max in Y on horizontal output
+# Pass 3: Edges            - Prewitt edge detection on default input
+# Pass 4: Compose          - multi-layer extrusion with transparent fill and edge outlines
+
+# ============================================================================
+# Font scaling constants
+# ============================================================================
+
+f32 BASE_FONT_SIZE = 24.0;
+f32 BASE_FONT_WEIGHT = 0.5;
+f32 MAX_DILATE_RADIUS = 6.0;
+f32 MAX_DEPTH_LAYERS = 25.0;
+
+[Init]
+fun init(Filter filter) {
+  filter.passes = {{
+      name = 'dilateHorizontal, inputs = {'default},
+      uniforms = {
+        outputSize = {1024.0, 1024.0},
+        radius = 0.5
+      },
+      glslShader = dilateHorizontalGlsl
+    },{
+      name = 'dilateVertical, inputs = {'dilateHorizontal},
+      uniforms = {
+        outputSize = {1024.0, 1024.0},
+        radius = 0.5
+      },
+      glslShader = dilateVerticalGlsl
+    },{
+      name = 'edges, inputs = {'default},
+      uniforms = {
+        inputSize = {1024.0, 1024.0},
+        edgeWidth = 0.5
+      },
+      glslShader = edgesGlsl
+    },{
+      name = 'compose, inputs = {'default, 'dilateVertical, 'edges},
+      uniforms = {
+        outputSize = {1024.0, 1024.0},
+        direction = {0.4, -0.6},
+        depth = 12.0,
+        depthStart = 0.0,
+        depthDist = 1.0,
+        textColor = {1.0, 1.0, 1.0, 1.0}
+      },
+      glslShader = composeGlsl
+    }};
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  vec2 inputSize = getTextureSize('default);
+  setShaderUniform('dilateHorizontal, 'outputSize, inputSize);
+  setShaderUniform('dilateVertical, 'outputSize, inputSize);
+  setShaderUniform('edges, 'inputSize, inputSize);
+  setShaderUniform('compose, 'outputSize, inputSize);
+
+  # Get font scaling parameters (passed from host application)
+  f32 fontSize = getParameterFloat('fontSize);
+  f32 fontSizeScale = fontSize / BASE_FONT_SIZE;
+
+  f32 fontThickness = getParameterFloat('fontThickness);
+  f32 fontThicknessScale = fontThickness / BASE_FONT_WEIGHT;
+  f32 fontWeightFactor = (0.25 * fontThicknessScale) + 0.75;
+
+  # radius: scalesWithFontSize only (no fontWeight); both separable passes use the same radius.
+  f32 radius = min(floor(0.5 * fontSizeScale), MAX_DILATE_RADIUS);
+  setShaderUniform('dilateHorizontal, 'radius, radius);
+  setShaderUniform('dilateVertical, 'radius, radius);
+
+  # edgeWidth: scalesWithFontSize only
+  f32 edgeWidth = 0.5 * fontSizeScale;
+  setShaderUniform('edges, 'edgeWidth, edgeWidth);
+
+  # depth: scalesWithFontSize=true, fontWeightScale
+  f32 depth = min(floor(12.0 * fontWeightFactor * fontSizeScale), MAX_DEPTH_LAYERS);
+  setShaderUniform('compose, 'depth, depth);
+
+  # Non-scaled parameters
+  vec2 direction = {0.4, -0.6};
+  setShaderUniform('compose, 'direction, direction);
+
+  setShaderUniform('compose, 'depthStart, 0.0);
+
+  setShaderUniform('compose, 'depthDist, 1.0);
+
+  vec4 textColor = getParameterVec4('textColor);
+  setShaderUniform('compose, 'textColor, textColor);
+}
+
+# ============================================================================
+# Dilate Horizontal Pass - separable 1D max in X direction
+# Mirrors C++ common_shaders/DilationShader.cpp::dilationHorizontalFragmentShaderStr.
+# Constant max loop bound (MAX_RADIUS=6, matching C++ MAX_DILATE_RADIUS) with a
+# dynamic-radius guard keeps the shader GLES2-safe while preserving stride 2.
+# ============================================================================
+
+string dilateHorizontalGlsl = "
+  precision highp float;
+  varying vec2 sourceTextureCoordinate;
+
+  uniform vec2 outputSize;
+  uniform float radius;
+
+  #define MAX_RADIUS 6
+
+  void main() {
+    vec2 uv = sourceTextureCoordinate;
+    vec2 duv = 1.0 / outputSize;
+    vec4 c = vec4(0.0);
+    int r = int(radius);
+    for (int x = -MAX_RADIUS; x <= MAX_RADIUS; x += 2) {
+      if (x >= -r && x <= r) {
+        vec2 offset = vec2(duv.x * float(x), 0.0);
+        vec4 v = sampleInput(uv + offset);
+        c = max(c, v);
+      }
+    }
+    gl_FragColor = c;
+  }
+";
+
+
+# ============================================================================
+# Dilate Vertical Pass - separable 1D max in Y direction on horizontal output
+# Mirrors C++ common_shaders/DilationShader.cpp::dilationVerticalFragmentShaderStr.
+# ============================================================================
+
+string dilateVerticalGlsl = "
+  precision highp float;
+  varying vec2 sourceTextureCoordinate;
+
+  uniform vec2 outputSize;
+  uniform float radius;
+
+  #define MAX_RADIUS 6
+
+  void main() {
+    vec2 uv = sourceTextureCoordinate;
+    vec2 duv = 1.0 / outputSize;
+    vec4 c = vec4(0.0);
+    int r = int(radius);
+    for (int y = -MAX_RADIUS; y <= MAX_RADIUS; y += 2) {
+      if (y >= -r && y <= r) {
+        vec2 offset = vec2(0.0, duv.y * float(y));
+        vec4 v = sampleInput(uv + offset);
+        c = max(c, v);
+      }
+    }
+    gl_FragColor = c;
+  }
+";
+
+
+# ============================================================================
+# Edge Detection Pass - Prewitt edge detection
+# ============================================================================
+
+string edgesGlsl = "
+  precision highp float;
+  varying vec2 sourceTextureCoordinate;
+
+  uniform vec2 inputSize;
+  uniform float edgeWidth;
+
+  vec4 edgePrewitt(vec2 st, vec2 offset) {
+    vec4 tleft  = sampleInput(st + vec2(-offset.x,  offset.y));
+    vec4 left   = sampleInput(st + vec2(-offset.x,  0.0));
+    vec4 bleft  = sampleInput(st + vec2(-offset.x, -offset.y));
+    vec4 top    = sampleInput(st + vec2( 0.0,        offset.y));
+    vec4 bottom = sampleInput(st + vec2( 0.0,       -offset.y));
+    vec4 tright = sampleInput(st + offset);
+    vec4 right  = sampleInput(st + vec2( offset.x,   0.0));
+    vec4 bright = sampleInput(st + vec2( offset.x,  -offset.y));
+    vec4 x = ((((-tleft - top) - tright) + bleft) + bottom) + bright;
+    vec4 y = ((((-bleft - left) - tleft) + bright) + right) + tright;
+    return sqrt((x * x) + (y * y));
+  }
+
+  void main() {
+    vec2 uv = sourceTextureCoordinate;
+    vec2 pixel = edgeWidth / inputSize;
+    vec4 edges = edgePrewitt(uv, pixel);
+    gl_FragColor = edges;
+  }
+";
+
+
+# ============================================================================
+# Compose Pass - multi-layer extrusion with transparent fill and edge outlines
+# Multi-input: s_texture = default, auxSampler1 = dilateVertical, auxSampler2 = edges
+# ============================================================================
+
+string composeGlsl = "
+  precision highp float;
+  varying vec2 sourceTextureCoordinate;
+
+  uniform sampler2D auxSampler1;  // dilated shape
+  uniform sampler2D auxSampler2;  // edge detection
+
+  uniform vec2 outputSize;
+  uniform vec2 direction;
+  uniform float depth;
+  uniform float depthStart;
+  uniform float depthDist;
+  uniform vec4 textColor;
+
+  vec4 blendAlpha(vec4 base, vec4 blend) {
+    return vec4(mix(base.rgb, blend.rgb, blend.a), mix(base.a, 1.0, blend.a));
+  }
+
+  void main() {
+    vec2 uv = sourceTextureCoordinate;
+    vec4 base = sampleInput(uv);
+    vec4 edges = texture2D(auxSampler2, uv);
+
+    vec2 dir = normalize(direction);
+    vec2 duv = depthDist / outputSize;
+    vec4 color = vec4(0.0);
+
+    vec3 extrusionColor = textColor.rgb;
+
+    // Multi-layer extrusion, back to front
+    const int maxLayers = 25;
+    int numLayers = int(depth);
+
+    for(int i = 0; i < maxLayers; i++) {
+      if (i >= numLayers) break;
+
+      float l = float(numLayers - i - 1);
+      vec2 offset = (l + depthStart) * dir * duv;
+      vec2 st = uv + offset;
+      vec4 offsetShape = texture2D(auxSampler1, st);
+
+      color = blendAlpha(color, vec4(extrusionColor, offsetShape.a));
+    }
+
+    // Transparent fill: blend edges instead of base text
+    float edgeAlpha = max(max(max(edges.r, edges.b), edges.g), edges.a);
+    color *= 1.0 - base.a;
+    color = blendAlpha(color, vec4(extrusionColor, edgeAlpha));
+
+    gl_FragColor = toOutputFormat(color);
+  }
+";

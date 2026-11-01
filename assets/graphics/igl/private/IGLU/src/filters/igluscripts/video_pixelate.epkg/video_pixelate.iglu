@@ -1,0 +1,56 @@
+# IGLUSCRIPTCOLLISION_BYPASS: Intentional replacement of C++ native effect
+[Filter IgluscriptVideoPixelateFilter]
+
+[Init]
+fun init(Filter filter) {
+  filter.parameters = {
+    {amount = 0.24, min = 0.0, max = 1.0, description = "Amount"},
+  };
+
+  filter.passes = {{
+    name = 'pixelate, inputs = {'default},
+    uniforms = {
+      inputSize = {1024.0, 1024.0},
+      blockSize = 29.0,
+    },
+    glslShader = glsl
+  }};
+}
+
+fun getSizeScale() f32 {
+  vec2 inputSize = getTextureSize('default);
+  return min(inputSize.x, inputSize.y) / 1080.0;
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  vec2 inputSize = getTextureSize('default);
+  setShaderUniform('pixelate, 'inputSize, inputSize);
+
+  f32 sizeScale = getSizeScale();
+  f32 amount = getParameterFloat('amount);
+  # amount in [0, 1] -> blockSize in [5, 105] px (Easel-prototyped range), scaled
+  # by sizeScale = min(width, height) / 1080. Default amount = 0.24 yields ~29 px,
+  # which matches the legacy fbsource pixelScale=0.015 default look.
+  f32 blockSize = (5.0 + amount * 100.0) * sizeScale;
+  setShaderUniform('pixelate, 'blockSize, blockSize);
+}
+
+string glsl = "
+  varying vec2 sourceTextureCoordinate;
+
+  BaseUniformsOpenGL;
+
+  uniform float blockSize;
+  uniform vec2 inputSize;
+
+  void main() {
+    vec2 uv = sourceTextureCoordinate;
+
+    vec2 st = (uv - 0.5) * inputSize;
+    vec2 pixelatedST = floor(st / blockSize) * blockSize + blockSize * 0.5;
+    vec2 pixelatedUV = pixelatedST / inputSize + 0.5;
+
+    gl_FragColor = toOutputFormat(sampleInput(pixelatedUV));
+  }
+";

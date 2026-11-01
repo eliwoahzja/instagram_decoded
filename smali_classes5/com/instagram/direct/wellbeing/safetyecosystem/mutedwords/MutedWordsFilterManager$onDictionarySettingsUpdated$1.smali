@@ -1,0 +1,392 @@
+.class public final Lcom/instagram/direct/wellbeing/safetyecosystem/mutedwords/MutedWordsFilterManager$onDictionarySettingsUpdated$1;
+.super LX/5As;
+.source ""
+
+# interfaces
+.implements LX/snk;
+
+
+# annotations
+.annotation runtime Lkotlin/coroutines/jvm/internal/DebugMetadata;
+    c = "com.instagram.direct.wellbeing.safetyecosystem.mutedwords.MutedWordsFilterManager$onDictionarySettingsUpdated$1"
+    f = "MutedWordsFilterManager.kt"
+    l = {
+        0x284,
+        0x28c,
+        0x187
+    }
+    m = "invokeSuspend"
+.end annotation
+
+
+# instance fields
+.field public A00:I
+
+.field public A01:I
+
+.field public A02:I
+
+.field public A03:Ljava/lang/Object;
+
+.field public A04:Ljava/lang/Object;
+
+.field public A05:Ljava/lang/Object;
+
+.field public A06:Ljava/lang/Object;
+
+.field public final synthetic A07:Lcom/instagram/direct/wellbeing/safetyecosystem/mutedwords/MutedWordsFilterManager;
+
+
+# direct methods
+.method public constructor <init>(Lcom/instagram/direct/wellbeing/safetyecosystem/mutedwords/MutedWordsFilterManager;LX/HAU;)V
+    .locals 1
+
+    iput-object p1, p0, Lcom/instagram/direct/wellbeing/safetyecosystem/mutedwords/MutedWordsFilterManager$onDictionarySettingsUpdated$1;->A07:Lcom/instagram/direct/wellbeing/safetyecosystem/mutedwords/MutedWordsFilterManager;
+
+    const/4 v0, 0x2
+
+    invoke-direct {p0, v0, p2}, LX/5As;-><init>(ILX/HAU;)V
+
+    return-void
+.end method
+
+
+# virtual methods
+.method public final create(Ljava/lang/Object;LX/HAU;)LX/HAU;
+    .locals 2
+
+    iget-object v1, p0, Lcom/instagram/direct/wellbeing/safetyecosystem/mutedwords/MutedWordsFilterManager$onDictionarySettingsUpdated$1;->A07:Lcom/instagram/direct/wellbeing/safetyecosystem/mutedwords/MutedWordsFilterManager;
+
+    new-instance v0, Lcom/instagram/direct/wellbeing/safetyecosystem/mutedwords/MutedWordsFilterManager$onDictionarySettingsUpdated$1;
+
+    invoke-direct {v0, v1, p2}, Lcom/instagram/direct/wellbeing/safetyecosystem/mutedwords/MutedWordsFilterManager$onDictionarySettingsUpdated$1;-><init>(Lcom/instagram/direct/wellbeing/safetyecosystem/mutedwords/MutedWordsFilterManager;LX/HAU;)V
+
+    return-object v0
+.end method
+
+.method public final bridge synthetic invoke(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+    .locals 2
+
+    check-cast p2, LX/HAU;
+
+    iget-object v0, p0, Lcom/instagram/direct/wellbeing/safetyecosystem/mutedwords/MutedWordsFilterManager$onDictionarySettingsUpdated$1;->A07:Lcom/instagram/direct/wellbeing/safetyecosystem/mutedwords/MutedWordsFilterManager;
+
+    new-instance v1, Lcom/instagram/direct/wellbeing/safetyecosystem/mutedwords/MutedWordsFilterManager$onDictionarySettingsUpdated$1;
+
+    invoke-direct {v1, v0, p2}, Lcom/instagram/direct/wellbeing/safetyecosystem/mutedwords/MutedWordsFilterManager$onDictionarySettingsUpdated$1;-><init>(Lcom/instagram/direct/wellbeing/safetyecosystem/mutedwords/MutedWordsFilterManager;LX/HAU;)V
+
+    sget-object v0, LX/4z7;->A00:LX/4z7;
+
+    invoke-virtual {v1, v0}, Lcom/instagram/direct/wellbeing/safetyecosystem/mutedwords/MutedWordsFilterManager$onDictionarySettingsUpdated$1;->invokeSuspend(Ljava/lang/Object;)Ljava/lang/Object;
+
+    move-result-object v0
+
+    return-object v0
+.end method
+
+.method public final invokeSuspend(Ljava/lang/Object;)Ljava/lang/Object;
+    .locals 12
+
+    sget-object v8, LX/1wh;->A02:LX/1wh;
+
+    iget v1, p0, Lcom/instagram/direct/wellbeing/safetyecosystem/mutedwords/MutedWordsFilterManager$onDictionarySettingsUpdated$1;->A02:I
+
+    const/4 v9, 0x3
+
+    const/4 v11, 0x2
+
+    const/4 v0, 0x1
+
+    const-string v3, "failed to update dictionaries"
+
+    const/4 v6, 0x0
+
+    const/4 v5, 0x0
+
+    if-eqz v1, :cond_2
+
+    if-eq v1, v0, :cond_1
+
+    if-eq v1, v11, :cond_0
+
+    iget-object v4, p0, Lcom/instagram/direct/wellbeing/safetyecosystem/mutedwords/MutedWordsFilterManager$onDictionarySettingsUpdated$1;->A03:Ljava/lang/Object;
+
+    check-cast v4, LX/rlm;
+
+    :try_start_0
+    invoke-static {p1}, LX/2hr;->A01(Ljava/lang/Object;)V
+
+    goto/16 :goto_2
+    :try_end_0
+    .catchall {:try_start_0 .. :try_end_0} :catchall_0
+
+    :catchall_0
+    move-exception v0
+
+    goto/16 :goto_3
+
+    :cond_0
+    iget v11, p0, Lcom/instagram/direct/wellbeing/safetyecosystem/mutedwords/MutedWordsFilterManager$onDictionarySettingsUpdated$1;->A01:I
+
+    iget v2, p0, Lcom/instagram/direct/wellbeing/safetyecosystem/mutedwords/MutedWordsFilterManager$onDictionarySettingsUpdated$1;->A00:I
+
+    iget-object v10, p0, Lcom/instagram/direct/wellbeing/safetyecosystem/mutedwords/MutedWordsFilterManager$onDictionarySettingsUpdated$1;->A06:Ljava/lang/Object;
+
+    check-cast v10, LX/rlm;
+
+    iget-object v7, p0, Lcom/instagram/direct/wellbeing/safetyecosystem/mutedwords/MutedWordsFilterManager$onDictionarySettingsUpdated$1;->A05:Ljava/lang/Object;
+
+    check-cast v7, Ljava/util/Set;
+
+    iget-object v1, p0, Lcom/instagram/direct/wellbeing/safetyecosystem/mutedwords/MutedWordsFilterManager$onDictionarySettingsUpdated$1;->A04:Ljava/lang/Object;
+
+    check-cast v1, Lcom/instagram/direct/wellbeing/safetyecosystem/mutedwords/MutedWordsFilterManager;
+
+    iget-object v4, p0, Lcom/instagram/direct/wellbeing/safetyecosystem/mutedwords/MutedWordsFilterManager$onDictionarySettingsUpdated$1;->A03:Ljava/lang/Object;
+
+    check-cast v4, LX/rlm;
+
+    :try_start_1
+    invoke-static {p1}, LX/2hr;->A01(Ljava/lang/Object;)V
+
+    goto :goto_1
+    :try_end_1
+    .catchall {:try_start_1 .. :try_end_1} :catchall_1
+
+    :catchall_1
+    move-exception v0
+
+    goto :goto_3
+
+    :cond_1
+    iget v2, p0, Lcom/instagram/direct/wellbeing/safetyecosystem/mutedwords/MutedWordsFilterManager$onDictionarySettingsUpdated$1;->A00:I
+
+    iget-object v1, p0, Lcom/instagram/direct/wellbeing/safetyecosystem/mutedwords/MutedWordsFilterManager$onDictionarySettingsUpdated$1;->A04:Ljava/lang/Object;
+
+    check-cast v1, Lcom/instagram/direct/wellbeing/safetyecosystem/mutedwords/MutedWordsFilterManager;
+
+    iget-object v4, p0, Lcom/instagram/direct/wellbeing/safetyecosystem/mutedwords/MutedWordsFilterManager$onDictionarySettingsUpdated$1;->A03:Ljava/lang/Object;
+
+    check-cast v4, LX/rlm;
+
+    :try_start_2
+    invoke-static {p1}, LX/2hr;->A01(Ljava/lang/Object;)V
+
+    goto :goto_0
+    :try_end_2
+    .catch Landroid/database/sqlite/SQLiteDatabaseLockedException; {:try_start_2 .. :try_end_2} :catch_1
+    .catch Landroid/database/sqlite/SQLiteDiskIOException; {:try_start_2 .. :try_end_2} :catch_1
+    .catch Landroid/database/sqlite/SQLiteFullException; {:try_start_2 .. :try_end_2} :catch_0
+
+    :cond_2
+    invoke-static {p1}, LX/2hr;->A01(Ljava/lang/Object;)V
+
+    :try_start_3
+    iget-object v1, p0, Lcom/instagram/direct/wellbeing/safetyecosystem/mutedwords/MutedWordsFilterManager$onDictionarySettingsUpdated$1;->A07:Lcom/instagram/direct/wellbeing/safetyecosystem/mutedwords/MutedWordsFilterManager;
+
+    iget-object v4, v1, Lcom/instagram/direct/wellbeing/safetyecosystem/mutedwords/MutedWordsFilterManager;->A0F:LX/rlm;
+
+    iput-object v4, p0, Lcom/instagram/direct/wellbeing/safetyecosystem/mutedwords/MutedWordsFilterManager$onDictionarySettingsUpdated$1;->A03:Ljava/lang/Object;
+
+    iput-object v1, p0, Lcom/instagram/direct/wellbeing/safetyecosystem/mutedwords/MutedWordsFilterManager$onDictionarySettingsUpdated$1;->A04:Ljava/lang/Object;
+
+    iput v6, p0, Lcom/instagram/direct/wellbeing/safetyecosystem/mutedwords/MutedWordsFilterManager$onDictionarySettingsUpdated$1;->A00:I
+
+    iput v0, p0, Lcom/instagram/direct/wellbeing/safetyecosystem/mutedwords/MutedWordsFilterManager$onDictionarySettingsUpdated$1;->A02:I
+
+    invoke-interface {v4, p0}, LX/rlm;->EYm(LX/HAU;)Ljava/lang/Object;
+
+    move-result-object v0
+
+    if-eq v0, v8, :cond_7
+
+    const/4 v2, 0x0
+    :try_end_3
+    .catch Landroid/database/sqlite/SQLiteDatabaseLockedException; {:try_start_3 .. :try_end_3} :catch_1
+    .catch Landroid/database/sqlite/SQLiteDiskIOException; {:try_start_3 .. :try_end_3} :catch_1
+    .catch Landroid/database/sqlite/SQLiteFullException; {:try_start_3 .. :try_end_3} :catch_0
+
+    :goto_0
+    :try_start_4
+    new-instance v7, Ljava/util/LinkedHashSet;
+
+    invoke-direct {v7}, Ljava/util/LinkedHashSet;-><init>()V
+
+    iget-object v0, v1, Lcom/instagram/direct/wellbeing/safetyecosystem/mutedwords/MutedWordsFilterManager;->A07:LX/1CO;
+
+    if-eqz v0, :cond_3
+
+    invoke-virtual {v7, v0}, Ljava/util/AbstractCollection;->add(Ljava/lang/Object;)Z
+
+    :cond_3
+    iget-object v10, v1, Lcom/instagram/direct/wellbeing/safetyecosystem/mutedwords/MutedWordsFilterManager;->A0G:LX/rlm;
+
+    iput-object v4, p0, Lcom/instagram/direct/wellbeing/safetyecosystem/mutedwords/MutedWordsFilterManager$onDictionarySettingsUpdated$1;->A03:Ljava/lang/Object;
+
+    iput-object v1, p0, Lcom/instagram/direct/wellbeing/safetyecosystem/mutedwords/MutedWordsFilterManager$onDictionarySettingsUpdated$1;->A04:Ljava/lang/Object;
+
+    iput-object v7, p0, Lcom/instagram/direct/wellbeing/safetyecosystem/mutedwords/MutedWordsFilterManager$onDictionarySettingsUpdated$1;->A05:Ljava/lang/Object;
+
+    iput-object v10, p0, Lcom/instagram/direct/wellbeing/safetyecosystem/mutedwords/MutedWordsFilterManager$onDictionarySettingsUpdated$1;->A06:Ljava/lang/Object;
+
+    iput v2, p0, Lcom/instagram/direct/wellbeing/safetyecosystem/mutedwords/MutedWordsFilterManager$onDictionarySettingsUpdated$1;->A00:I
+
+    iput v6, p0, Lcom/instagram/direct/wellbeing/safetyecosystem/mutedwords/MutedWordsFilterManager$onDictionarySettingsUpdated$1;->A01:I
+
+    iput v11, p0, Lcom/instagram/direct/wellbeing/safetyecosystem/mutedwords/MutedWordsFilterManager$onDictionarySettingsUpdated$1;->A02:I
+
+    invoke-interface {v10, p0}, LX/rlm;->EYm(LX/HAU;)Ljava/lang/Object;
+
+    move-result-object v0
+
+    if-eq v0, v8, :cond_7
+
+    const/4 v11, 0x0
+    :try_end_4
+    .catchall {:try_start_4 .. :try_end_4} :catchall_3
+
+    :goto_1
+    :try_start_5
+    iget-object v0, v1, Lcom/instagram/direct/wellbeing/safetyecosystem/mutedwords/MutedWordsFilterManager;->A0B:Ljava/util/Set;
+
+    invoke-interface {v7, v0}, Ljava/util/Set;->addAll(Ljava/util/Collection;)Z
+    :try_end_5
+    .catchall {:try_start_5 .. :try_end_5} :catchall_2
+
+    :try_start_6
+    invoke-interface {v10, v5}, LX/rlm;->HTh(Ljava/lang/Object;)V
+
+    iput-object v4, p0, Lcom/instagram/direct/wellbeing/safetyecosystem/mutedwords/MutedWordsFilterManager$onDictionarySettingsUpdated$1;->A03:Ljava/lang/Object;
+
+    iput-object v5, p0, Lcom/instagram/direct/wellbeing/safetyecosystem/mutedwords/MutedWordsFilterManager$onDictionarySettingsUpdated$1;->A04:Ljava/lang/Object;
+
+    iput-object v5, p0, Lcom/instagram/direct/wellbeing/safetyecosystem/mutedwords/MutedWordsFilterManager$onDictionarySettingsUpdated$1;->A05:Ljava/lang/Object;
+
+    iput-object v5, p0, Lcom/instagram/direct/wellbeing/safetyecosystem/mutedwords/MutedWordsFilterManager$onDictionarySettingsUpdated$1;->A06:Ljava/lang/Object;
+
+    iput v2, p0, Lcom/instagram/direct/wellbeing/safetyecosystem/mutedwords/MutedWordsFilterManager$onDictionarySettingsUpdated$1;->A00:I
+
+    iput v11, p0, Lcom/instagram/direct/wellbeing/safetyecosystem/mutedwords/MutedWordsFilterManager$onDictionarySettingsUpdated$1;->A01:I
+
+    iput v9, p0, Lcom/instagram/direct/wellbeing/safetyecosystem/mutedwords/MutedWordsFilterManager$onDictionarySettingsUpdated$1;->A02:I
+
+    invoke-static {v1, v7, p0}, Lcom/instagram/direct/wellbeing/safetyecosystem/mutedwords/MutedWordsFilterManager;->A02(Lcom/instagram/direct/wellbeing/safetyecosystem/mutedwords/MutedWordsFilterManager;Ljava/util/Set;LX/HAU;)Ljava/lang/Object;
+
+    move-result-object v0
+
+    if-ne v0, v8, :cond_4
+
+    return-object v8
+    :try_end_6
+    .catchall {:try_start_6 .. :try_end_6} :catchall_3
+
+    :cond_4
+    :goto_2
+    :try_start_7
+    invoke-interface {v4, v5}, LX/rlm;->HTh(Ljava/lang/Object;)V
+
+    goto :goto_4
+    :try_end_7
+    .catch Landroid/database/sqlite/SQLiteDatabaseLockedException; {:try_start_7 .. :try_end_7} :catch_1
+    .catch Landroid/database/sqlite/SQLiteDiskIOException; {:try_start_7 .. :try_end_7} :catch_1
+    .catch Landroid/database/sqlite/SQLiteFullException; {:try_start_7 .. :try_end_7} :catch_0
+
+    :catchall_2
+    move-exception v0
+
+    :try_start_8
+    invoke-interface {v10, v5}, LX/rlm;->HTh(Ljava/lang/Object;)V
+
+    throw v0
+    :try_end_8
+    .catchall {:try_start_8 .. :try_end_8} :catchall_3
+
+    :catchall_3
+    move-exception v0
+
+    :goto_3
+    :try_start_9
+    invoke-interface {v4, v5}, LX/rlm;->HTh(Ljava/lang/Object;)V
+
+    throw v0
+    :try_end_9
+    .catch Landroid/database/sqlite/SQLiteDatabaseLockedException; {:try_start_9 .. :try_end_9} :catch_1
+    .catch Landroid/database/sqlite/SQLiteDiskIOException; {:try_start_9 .. :try_end_9} :catch_1
+    .catch Landroid/database/sqlite/SQLiteFullException; {:try_start_9 .. :try_end_9} :catch_0
+
+    :catch_0
+    move-exception v5
+
+    sget-object v2, LX/4y2;->A00:LX/4y2;
+
+    sget-object v1, LX/4xT;->A1K:LX/4xT;
+
+    iget-object v0, p0, Lcom/instagram/direct/wellbeing/safetyecosystem/mutedwords/MutedWordsFilterManager$onDictionarySettingsUpdated$1;->A07:Lcom/instagram/direct/wellbeing/safetyecosystem/mutedwords/MutedWordsFilterManager;
+
+    iget-object v0, v0, Lcom/instagram/direct/wellbeing/safetyecosystem/mutedwords/MutedWordsFilterManager;->A03:Lcom/instagram/common/session/UserSession;
+
+    invoke-virtual {v2, v1, v0}, LX/4y2;->A01(LX/4xT;Ljava/lang/Object;)Z
+
+    move-result v0
+
+    if-eqz v0, :cond_5
+
+    const-string v4, "MutedWordsFilterManager"
+
+    sget-object v3, LX/008;->A0C:Ljava/lang/Integer;
+
+    sget-object v2, LX/2mw;->A00:LX/rvk;
+
+    invoke-static {v6}, Ljava/lang/Boolean;->valueOf(Z)Ljava/lang/Boolean;
+
+    move-result-object v1
+
+    const v0, 0xea51995
+
+    invoke-interface {v2, v1, v4, v0, v6}, LX/rvk;->AWr(Ljava/lang/Boolean;Ljava/lang/String;II)LX/Ndx;
+
+    move-result-object v2
+
+    if-eqz v2, :cond_6
+
+    invoke-interface {v2}, LX/Ndx;->isSampled()Z
+
+    move-result v0
+
+    if-eqz v0, :cond_6
+
+    invoke-interface {v2, v5}, LX/Ndx;->Gmv(Ljava/lang/Throwable;)V
+
+    const-string v1, "message"
+
+    const-string v0, "SQLiteFullException in onDictionarySettingsUpdated"
+
+    invoke-interface {v2, v1, v0}, LX/Ndx;->AS2(Ljava/lang/String;Ljava/lang/String;)V
+
+    invoke-static {v2, v3}, LX/2mw;->A00(LX/Ndx;Ljava/lang/Integer;)V
+
+    invoke-interface {v2}, LX/Ndx;->report()V
+
+    goto :goto_4
+
+    :cond_5
+    const-string v0, "MutedWordsFilterManager"
+
+    invoke-static {v0, v3, v5}, LX/0lj;->A0F(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)V
+
+    goto :goto_4
+
+    :catch_1
+    move-exception v1
+
+    const-string v0, "MutedWordsFilterManager"
+
+    invoke-static {v0, v3, v1}, LX/0lj;->A0F(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)V
+
+    :cond_6
+    :goto_4
+    sget-object v8, LX/4z7;->A00:LX/4z7;
+
+    :cond_7
+    return-object v8
+.end method

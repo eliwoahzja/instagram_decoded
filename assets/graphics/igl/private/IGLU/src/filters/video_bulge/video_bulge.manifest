@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_bulge",
+  "displayName": "Bulge",
+  "description": "[IG Edits] Video effect name shared across full-frame and subject-cutout surfaces. With \"Bulge\", the creator distorts the image with a convex spherical bulge.",
+  "iglu": {
+    "legacyId": 2062,
+    "customization": [
+      {
+        "name": "intensity",
+        "default": 0.26,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Intensity",
+        "displayNameDescription": "[IG Edits] Slider label controlling the strength of a video effect. Generic across many effects (glow, blur, color, distortion, etc.); exact range varies per effect."
+      },
+      {
+        "name": "size",
+        "default": 0.55,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Size",
+        "displayNameDescription": "[IG Edits] Slider label controlling the size or scale of an element produced by a video effect; exact units and range vary per effect."
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "a245b609",
+      "handle": "AQADrQYA29Os",
+      "md5": "3b50198e067ee220802fea55c0286698"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQADwYlW8UsM",
+      "isImageFormat": true
+    }
+  }
+}

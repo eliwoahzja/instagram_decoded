@@ -1,0 +1,106 @@
+.class public final Lcom/instagram/direct/ui/DirectShareShimmerView;
+.super Landroidx/appcompat/widget/AppCompatImageView;
+.source ""
+
+
+# direct methods
+.method public constructor <init>(Landroid/content/Context;)V
+    .locals 2
+
+    .line 536870912
+    invoke-static {p1}, LX/5B5;->A0Q(Ljava/lang/Object;)V
+
+    .line 536870913
+    .line 536870914
+    .line 536870915
+    const/4 v0, 0x0
+
+    .line 536870916
+    invoke-direct {p0, p1, v0}, Landroidx/appcompat/widget/AppCompatImageView;-><init>(Landroid/content/Context;Landroid/util/AttributeSet;)V
+
+    .line 536870917
+    .line 536870918
+    .line 536870919
+    invoke-static {p0}, LX/BRg;->A04(Landroid/view/View;)Landroid/content/res/Resources;
+
+    .line 536870920
+    .line 536870921
+    .line 536870922
+    move-result-object v1
+
+    .line 536870923
+    new-instance v0, LX/TsH;
+
+    .line 536870924
+    .line 536870925
+    invoke-direct {v0, v1, p0}, LX/TsH;-><init>(Landroid/content/res/Resources;Lcom/instagram/direct/ui/DirectShareShimmerView;)V
+
+    .line 536870926
+    .line 536870927
+    .line 536870928
+    invoke-virtual {p0, v0}, Landroid/widget/ImageView;->setImageDrawable(Landroid/graphics/drawable/Drawable;)V
+
+    .line 536870929
+    .line 536870930
+    .line 536870931
+    return-void
+.end method
+
+.method public constructor <init>(Landroid/content/Context;Landroid/util/AttributeSet;)V
+    .locals 2
+
+    .line 268435456
+    invoke-static {p1}, LX/5B5;->A0Q(Ljava/lang/Object;)V
+
+    .line 268435457
+    .line 268435458
+    .line 268435459
+    invoke-direct {p0, p1, p2}, Landroidx/appcompat/widget/AppCompatImageView;-><init>(Landroid/content/Context;Landroid/util/AttributeSet;)V
+
+    .line 268435460
+    .line 268435461
+    .line 268435462
+    invoke-static {p0}, LX/BRg;->A04(Landroid/view/View;)Landroid/content/res/Resources;
+
+    .line 268435463
+    .line 268435464
+    .line 268435465
+    move-result-object v1
+
+    .line 268435466
+    new-instance v0, LX/TsH;
+
+    .line 268435467
+    .line 268435468
+    invoke-direct {v0, v1, p0}, LX/TsH;-><init>(Landroid/content/res/Resources;Lcom/instagram/direct/ui/DirectShareShimmerView;)V
+
+    .line 268435469
+    .line 268435470
+    .line 268435471
+    invoke-virtual {p0, v0}, Landroid/widget/ImageView;->setImageDrawable(Landroid/graphics/drawable/Drawable;)V
+
+    .line 268435472
+    .line 268435473
+    .line 268435474
+    return-void
+.end method
+
+.method public constructor <init>(Landroid/content/Context;Landroid/util/AttributeSet;I)V
+    .locals 2
+
+    invoke-static {p1}, LX/5B5;->A0Q(Ljava/lang/Object;)V
+
+    invoke-direct {p0, p1, p2, p3}, Landroidx/appcompat/widget/AppCompatImageView;-><init>(Landroid/content/Context;Landroid/util/AttributeSet;I)V
+
+    invoke-static {p0}, LX/BRg;->A04(Landroid/view/View;)Landroid/content/res/Resources;
+
+    move-result-object v1
+
+    new-instance v0, LX/TsH;
+
+    invoke-direct {v0, v1, p0}, LX/TsH;-><init>(Landroid/content/res/Resources;Lcom/instagram/direct/ui/DirectShareShimmerView;)V
+
+    invoke-virtual {p0, v0}, Landroid/widget/ImageView;->setImageDrawable(Landroid/graphics/drawable/Drawable;)V
+
+    return-void
+.end method

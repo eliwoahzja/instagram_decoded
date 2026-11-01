@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "identifier": "aden",
+  "displayName": "Aden",
+  "description": "[IG Edits] Color filter name. With \"Aden\", the creator can apply the Aden Instagram-style look via the aden_map 33-slice 3D LUT, yielding pastel desaturation with a green-yellow cast.",
+  "assets": [
+    {
+      "name": "aden_map.png",
+      "assetHash": "9cfcf4cc9a449fd025ebb6afdd290de61957c5c9a92e94a9ca33cbe38a9c2d45",
+      "hubAssetId": "1296409279208728"
+    }
+  ],
+  "iglu": {}
+}

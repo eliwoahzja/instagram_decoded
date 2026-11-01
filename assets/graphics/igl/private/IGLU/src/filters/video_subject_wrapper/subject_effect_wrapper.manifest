@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "subject_effect_wrapper",
+  "displayName": "Subject Effect Wrapper",
+  "description": "[IG Edits] Video effect name. With \"Subject Effect Wrapper\", the creator can run a single VFX filter only on the masked subject region by chaining pre-apply, the wrapped VFX, then alpha composite.",
+  "iglu": {}
+}

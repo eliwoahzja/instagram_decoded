@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "text_distortion_angle",
+  "displayName": "Angle",
+  "description": "[IG Edits] Text effect name. A text effect is a creative style that can be applied to a text layer in a video. With Angle, the creator can add an angled center corner effect to their text.",
+  "iglu": {}
+}

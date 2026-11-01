@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_zoom_in",
+  "displayName": "Zoom",
+  "description": "[IG Edits] Video effect name shared across full-frame and subject-cutout surfaces. With \"Zoom\", the image scales in toward the subject over time.",
+  "iglu": {
+    "legacyId": 2013,
+    "behavior": {
+      "type": "fixedIntro",
+      "durationMs": 3000,
+      "curve": "linear"
+    },
+    "customization": [
+      {
+        "name": "zoom",
+        "default": 2.0,
+        "min": 1.5,
+        "max": 4.0,
+        "displayName": "Zoom",
+        "displayNameDescription": "[IG Edits] Slider label controlling the zoom factor (scale toward/away from the subject) of a video effect; exact range varies per effect.",
+        "displayMethod": "percent"
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "c2607a7d",
+      "handle": "AQBiU2bUvuBC",
+      "md5": "55a7cd235678d8bd0fb83b7f6eb19856"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQADKiTXJy6A"
+    }
+  }
+}

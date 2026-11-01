@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "identifier": "5E5A615A-AF42-48E7-9BA2-FFE53C790798",
+  "displayName": "Oh My Face",
+  "description": "[IG Edits] Video effect name. With \"Oh My Face\", the creator's eyes and mouth are enlarged and overlaid on the face.",
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAPaZsQlVli"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "3b04d451",
+      "handle": "AQADq39f_cpi",
+      "md5": "2ee46eb015137b2827766db1d79537fc"
+    }
+  },
+  "iglu": {
+    "legacyId": 3195
+  },
+  "assets": []
+}

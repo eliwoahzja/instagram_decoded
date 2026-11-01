@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="?igds_color_reels_afi_button_white_background" />
+            <size android:height="@dimen/action_button_min_width" android:width="@dimen/action_button_min_width" />
+        </shape>
+    </item>
+    <item android:gravity="center" android:height="@dimen/abc_dropdownitem_icon_width" android:width="@dimen/abc_dropdownitem_icon_width" android:drawable="@drawable/reel_selfie_reply_button_drawable_larger__app_bitmap_0" />
+</layer-list>

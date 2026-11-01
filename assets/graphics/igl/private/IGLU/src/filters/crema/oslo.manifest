@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "identifier": "oslo",
+  "displayName": "Oslo",
+  "description": "Oslo city style filter",
+  "assets": [
+    {
+      "name": "subtlecolor_map.png",
+      "assetHash": "ae683222cf3aeb4b5b6883ea493afcbdf4d8720fe79e4f82aaaee87e2cef71a9",
+      "hubAssetId": "1640625533636395"
+    }
+  ],
+  "iglu": {}
+}

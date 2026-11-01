@@ -1,0 +1,1 @@
+(function(variant){try{const origin=window.location.origin,isMain=window===window.top,isShopify=undefined;if(!isMain&&!("https://pay.shopify.com"===origin||"https://shop.app"===origin))return;window.__meta_shopify_domain_landed=!0,window.__meta_shopify_variant=variant}catch{}})

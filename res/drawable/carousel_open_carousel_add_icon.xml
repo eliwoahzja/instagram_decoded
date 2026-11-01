@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="oval">
+            <stroke android:width="@dimen/base_user_row_username_drawable_padding" android:color="@color/bottom_sheet_undo_redo_color" />
+            <solid android:color="@color/basel_stacked_trimmer_handle" />
+            <size android:height="@dimen/action_bar_immersive_gradient_height" android:width="@dimen/action_bar_immersive_gradient_height" />
+        </shape>
+    </item>
+    <item android:gravity="center" android:drawable="@drawable/carousel_open_carousel_add_icon__app_bitmap_0" android:left="15.0dp" android:top="15.0dp" android:right="15.0dp" android:bottom="15.0dp" />
+</layer-list>

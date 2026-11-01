@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "identifier": "B927AA27-0C22-4B5A-BA67-880A30934C22",
+  "displayName": "Gameboy 1995",
+  "description": "[IG Edits] Subject effect name. Gives an isolated subject a pixelated, Game Boy-inspired look with a contrasting outline.",
+  "android": {
+    "previewAsset": {
+      "key": "540178e4",
+      "handle": "AQAE8f0NVU2N",
+      "md5": "c107d2676e6035c4addf08c0080fcd8e"
+    }
+  },
+  "iglu": {
+    "legacyId": 3989,
+    "customization": [
+      {
+        "name": "amount",
+        "default": 4.0,
+        "min": 2.0,
+        "max": 6.0,
+        "displayName": "Pixel Size"
+      },
+      {
+        "name": "intensity",
+        "default": 1.0,
+        "min": 0.4,
+        "max": 2.0,
+        "displayName": "Exposure"
+      },
+      {
+        "name": "size",
+        "default": 2.0,
+        "min": 0.0,
+        "max": 4.0,
+        "displayName": "Outline Thickness"
+      }
+    ],
+    "subject": {
+      "enabled": true,
+      "fullFrameEnabled": true,
+      "typeSuggestions": [
+        "person",
+        "head",
+        "clothing"
+      ]
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQADwp90GfQc",
+      "isImageFormat": true
+    }
+  }
+}

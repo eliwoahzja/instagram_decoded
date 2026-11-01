@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "identifier": "teal_and_tangerine",
+  "displayName": "Teal & tangerine",
+  "description": "[IG Edits] Color filter name. With \"Teal & tangerine\", the creator can push shadows to teal and highlights to orange via a 3D color lookup table.",
+  "iglu": {
+    "legacyId": 831
+  },
+  "assets": [
+    {
+      "name": "teal_and_tangerine.png",
+      "assetHash": "90d883fdf7d2bbf73581811dadb97d156dbfbf78bf24fdb8440b6d90be4ed70c",
+      "hubAssetId": "26817624817861661"
+    },
+    {
+      "name": "teal_and_tangerine_compressed.png",
+      "assetHash": "e88b06f5c8b5058d8d91f5c2bbdb675dc938a71d7bcabdb01afb8ebaa6827df0",
+      "hubAssetId": "961324086502449"
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="promo_video_margin">16.0dp</dimen>
+    <dimen name="promo_video_margin_top">40.0dp</dimen>
+    <dimen name="promo_video_thumbnail_height">204.0dp</dimen>
+    <dimen name="promo_video_thumbnail_width">119.0dp</dimen>
+</resources>

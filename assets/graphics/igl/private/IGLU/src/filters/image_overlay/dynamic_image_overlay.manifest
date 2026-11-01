@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "dynamic_image_overlay",
+  "displayName": "Dynamic Image Overlay",
+  "description": "[IG Edits] Video effect name. With \"Dynamic Image Overlay\", the creator can composite a runtime-supplied overlay texture or filter output over the frame with alpha blending and strength fade.",
+  "iglu": {}
+}

@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_color_shift",
+  "displayName": "Color shift",
+  "description": "Video effects selection. Shifts the colors in the video.",
+  "iglu": {
+    "legacyId": 2012,
+    "customization": [
+      {
+        "name": "speed",
+        "default": 0.1053,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Speed",
+        "displayNameDescription": "[IG Edits] Slider label controlling the playback or animation speed of a video effect (noun, not a verb); exact range varies per effect."
+      },
+      {
+        "name": "opacity",
+        "default": 1.0,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Opacity",
+        "displayNameDescription": "[IG Edits] Slider label controlling the opacity (transparency) of an element added by a video effect (low = invisible, high = fully opaque); exact range varies per effect."
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "1c800793",
+      "handle": "AQAE0wdeP_iz",
+      "md5": "f79d7fb945decf15ae0f69e74d3f6bba"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAIZwL5T5fh"
+    }
+  }
+}

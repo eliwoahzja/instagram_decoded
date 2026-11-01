@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "identifier": "vibrant",
+  "displayName": "Vibrant",
+  "description": "[IG Edits] Color filter name. With \"Vibrant\", the creator can apply a punchy saturated color grade by sampling the vibrant.lutpk 3D LUT in the color_wide_lut shader.",
+  "iglu": {
+    "legacyId": 5047
+  },
+  "assets": [
+    {
+      "name": "vibrant.lutpk",
+      "assetHash": "3070637a0a59e7d08bce1ea5b6b06f72f756c2299c2b3a280245ba580b778826",
+      "hubAssetId": "1351281970145828"
+    }
+  ]
+}

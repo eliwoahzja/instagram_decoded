@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "identifier": "D853F1C0-B432-405D-B29C-E0E651C9071B",
+  "displayName": "Dalmatian",
+  "description": "[IG Edits] Video effect name. Face-tracked dalmatian dog look — glitter and makeup face textures plus flat ear and nose decals anchored to the face.",
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAFoLLRhfJO"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "58ef9304",
+      "handle": "AQADRT0IdBH3",
+      "md5": "10198d9369d4d7dd3f9bfffe8631b5f3"
+    }
+  },
+  "iglu": {
+    "legacyId": 3223
+  },
+  "assets": [
+    {
+      "name": "dalmatian_face_texture.png",
+      "assetHash": "6aa2c14314b70a429cdb06237876df58c33e77278ca8778d0c499231ac7eed33",
+      "hubAssetId": "1046074831546284"
+    },
+    {
+      "name": "dalmatian_ears.png",
+      "assetHash": "378c895d683167ba0a631e10b75b0128ced429170409c7ff46dbfbc828e34e11",
+      "hubAssetId": "1569719098186734"
+    },
+    {
+      "name": "dalmatian_lut.png",
+      "assetHash": "bd653db5e3b59aee9274d9c95f5e875c115ba577fbe104b609d0b51480f3a30a",
+      "hubAssetId": "2994784354187430"
+    },
+    {
+      "name": "dalmatian_glitter.png",
+      "assetHash": "e4e01e77c496cf8fef5cee658b2ea0770d0cb487084646e55cd055cea76a2de9",
+      "hubAssetId": "1592437755574867"
+    },
+    {
+      "name": "dalmatian_nose.png",
+      "assetHash": "ad3fc171ef02a4e0f276c2ac9010356125653ecc2c9abd259668799c62af1c09",
+      "hubAssetId": "999895863016504"
+    }
+  ]
+}

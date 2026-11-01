@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "identifier": "rio_de_janeiro",
+  "displayName": "Rio De Janeiro",
+  "description": "City-name color filter",
+  "assets": [
+    {
+      "name": "crazycolor_map.png",
+      "assetHash": "782d793cef7ad006d91e7a48fd282cd535b0fb38a1f9b4853dc21354d248c024",
+      "hubAssetId": "1664326171413657"
+    },
+    {
+      "name": "crazycolor_overlay.png",
+      "assetHash": "296338840b449677b6b81d360f097d3564e30644eb77289a3003ad5664786220",
+      "hubAssetId": "1916268372326813"
+    }
+  ],
+  "iglu": {}
+}

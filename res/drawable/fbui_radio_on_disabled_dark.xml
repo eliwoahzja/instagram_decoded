@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape>
+            <solid android:color="@android:color/transparent" />
+            <size android:height="@dimen/abc_dropdownitem_icon_width" android:width="@dimen/abc_dropdownitem_icon_width" />
+        </shape>
+    </item>
+    <item android:left="@dimen/abc_button_inset_vertical_material" android:top="@dimen/abc_button_inset_vertical_material" android:right="@dimen/abc_button_inset_vertical_material" android:bottom="@dimen/abc_button_inset_vertical_material">
+        <shape android:shape="oval">
+            <solid android:color="@android:color/transparent" />
+            <stroke android:width="@dimen/abc_control_corner_material" android:color="@color/fbui_check_disabled_dark" />
+        </shape>
+    </item>
+    <item android:left="@dimen/abc_edit_text_inset_top_material" android:top="@dimen/abc_edit_text_inset_top_material" android:right="@dimen/abc_edit_text_inset_top_material" android:bottom="@dimen/abc_edit_text_inset_top_material">
+        <shape android:shape="oval">
+            <solid android:color="@color/fbui_check_disabled_dark" />
+        </shape>
+    </item>
+</layer-list>

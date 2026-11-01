@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape android:shape="rectangle"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@color/bds_white" />
+    <corners android:topLeftRadius="@dimen/ad4ad_button_bottom_margin" android:topRightRadius="0.0dp" android:bottomLeftRadius="@dimen/ad4ad_button_bottom_margin" android:bottomRightRadius="0.0dp" />
+</shape>

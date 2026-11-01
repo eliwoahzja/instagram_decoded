@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="string_0x7f130002">ویلایەت</string>
+    <string name="string_0x7f130004">ناونیشان</string>
+    <string name="string_0x7f13002c">داخستنی وێبگەڕ</string>
+    <string name="string_0x7f130030">%1$s دەیەوێت شوێنی ئامێرەکەت بەکار بهێنێت.</string>
+    <string name="string_0x7f130033">ڕێگەپێدان</string>
+    <string name="string_0x7f130034">بلۆککردن</string>
+    <string name="string_0x7f130039">گه‌ڕانه‌وه‌</string>
+    <string name="string_0x7f13008d">کێشەیەک ڕووی دا</string>
+    <string name="string_0x7f13008e">پشتگوێخستن</string>
+    <string name="string_0x7f13008f">پەیامی ئەلیکترۆنی</string>
+    <string name="string_0x7f130091">ئەو ماڵپەڕەی تۆ سەیری دەکەیت هەوڵ دەدات ئەپێکی دەرەکی بکاتەوە. ئایا دەتەوێت بەردەوام بیت؟</string>
+    <string name="string_0x7f130092">گه‌ڕانه‌وه‌</string>
+    <string name="string_0x7f130093">بەردەوامبوون</string>
+    <string name="string_0x7f130094">تۆ ئەپەکەمان بەجێ دەهێڵیت</string>
+    <string name="string_0x7f130095">ڕەنگە هۆکاری ئەمە هەڵەیەکی تەکنیکی بێت کە ئێمە کار بۆ چاککردنی دەکەین. دووبارە ئەم پەڕەیە بار بکەرەوە.</string>
+    <string name="string_0x7f130096">نوێکردنەوە</string>
+    <string name="string_0x7f130097">پەڕەکە لە ئێستادا بەردەست نییە</string>
+    <string name="string_0x7f130098">پاشناو</string>
+    <string name="string_0x7f130099">پەڕەکە ناتوانرێت بار بکرێت</string>
+    <string name="string_0x7f13009b">کردنەوە لە %1$s</string>
+    <string name="string_0x7f13009c">بژاردەی زیاتر</string>
+    <string name="string_0x7f1300aa">ناو</string>
+    <string name="string_0x7f1300af">ئێستا تۆ پڕ بە شاشە دەیبینیت. بۆ لای چەپ لای بدە یاخود پەنجە بە دوگمەی گەڕانەوەدا بنێ بۆ دەرچوون.</string>
+    <string name="string_0x7f1300cb">لە ئێستادا کێشەمان هەیە لە دامەزراندنی %2$s بە %1$s. دەتوانیت دووبارە هەوڵ بدەیتەوە، یان جارێ %2$s بە ئینگلیزی (ئەمریکا) بەکار بهێنە.</string>
+    <string name="string_0x7f1300cc">چرکەیەک تا %1$s دادەمەزرێنین...</string>
+    <string name="string_0x7f1300cd">هەوڵ بدەرەوە</string>
+    <string name="string_0x7f1300ce">بەردەوامبوون بە زمانی ئینگلیزی (ویلایەتە یەکگرتووەکانی ئەمەریکا)</string>
+    <string name="string_0x7f13010b">زیپکۆد</string>
+</resources>

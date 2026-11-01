@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_scale_overshoot_out",
+  "displayName": "Scale pop out",
+  "description": "[IG Edits] Video effect name. With \"Scale Overshoot Out\", the creator can animate the layer scaling out with a reversed back ease that briefly grows before shrinking away.",
+  "iglu": {
+    "legacyId": 3060,
+    "behavior": {
+      "type": "fixedOutro",
+      "durationMs": 1000,
+      "curve": "linear"
+    },
+    "customization": [
+      {
+        "name": "duration",
+        "default": 1.0,
+        "min": 0.1,
+        "max": 5.0,
+        "displayName": "Duration",
+        "displayMethod": "time"
+      },
+      {
+        "name": "size",
+        "default": 0.45,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Size"
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "2347a40",
+      "handle": "AQAFcF7v8y--",
+      "md5": "8c3c0d9d5ffa14e2d9ae800fdaae9516"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQADiZFAxOCI"
+    }
+  },
+  "dependencies": [
+    "video_scale_overshoot"
+  ]
+}

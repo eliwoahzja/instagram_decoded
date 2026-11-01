@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "identifier": "649DB440-8058-49A4-94AC-9D57627D4A71",
+  "displayName": "glamy ❤️",
+  "description": "[IG Edits] Color filter name. With \"glamy ❤️\", the creator can apply a warm glamorous LUT color grade with a subtle global brightness dim.",
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAG13Aa6dgo"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "a07128c9",
+      "handle": "AQAE8ULHmmF-",
+      "md5": "337b7d490faef19604346b1c5a6858f6"
+    }
+  },
+  "iglu": {
+    "legacyId": 3074
+  },
+  "assets": [
+    {
+      "name": "glamy_lut.png",
+      "assetHash": "389e05514254673a14b17283db49d1431974b9ea6d5692668ab817b0b7a2836e",
+      "hubAssetId": "2522966781456761"
+    }
+  ]
+}

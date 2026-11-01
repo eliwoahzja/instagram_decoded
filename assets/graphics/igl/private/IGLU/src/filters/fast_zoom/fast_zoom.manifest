@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "fast_zoom",
+  "displayName": "Fast Zoom",
+  "description": "[IG Edits] Video effect name. With \"Fast Zoom\", the creator can apply a time-driven punch-in zoom that smoothsteps in, holds, then zooms back out around the frame center.",
+  "iglu": {}
+}

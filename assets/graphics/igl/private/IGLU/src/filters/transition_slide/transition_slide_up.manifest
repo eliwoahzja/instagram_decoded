@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "transition_slide_up",
+  "displayName": "Slide Up",
+  "description": "[IG Edits] Video transition name. With \"Slide Up\", the outgoing scene slides upward off-screen as the incoming scene slides in from below.",
+  "iglu": {}
+}

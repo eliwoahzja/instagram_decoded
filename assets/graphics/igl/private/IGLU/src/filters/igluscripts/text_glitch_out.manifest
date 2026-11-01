@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "text_glitch_out",
+  "displayName": "Glitch Out",
+  "description": "[IG Edits] Text effect name. With \"Glitch Out\", the creator can play an outro that shatters text into RGB chromatic-shift slices that increasingly offset over discrete time steps before fading.",
+  "iglu": {}
+}

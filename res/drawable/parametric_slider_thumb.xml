@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="ring" android:useLevel="false" android:innerRadius="18.0dp" android:thickness="4.0dp">
+            <size android:height="56.0dp" android:width="56.0dp" />
+            <solid android:color="#26000000" />
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="ring" android:useLevel="false" android:innerRadius="18.0dp" android:thickness="3.7999878dp">
+            <solid android:color="@android:color/white" />
+            <size android:height="56.0dp" android:width="56.0dp" />
+        </shape>
+    </item>
+</layer-list>

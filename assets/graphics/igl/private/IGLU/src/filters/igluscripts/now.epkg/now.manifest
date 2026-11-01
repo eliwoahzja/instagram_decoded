@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "identifier": "B4D514C7-AC79-484E-A38F-9FE31D992F63",
+  "displayName": "Now",
+  "description": "Subtitle to indicate the current time",
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAFjKB9IoNi"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "3c7a8983",
+      "handle": "AQAFpthkTAjP",
+      "md5": "cdd5652307d9653754f06375aec09519"
+    }
+  },
+  "iglu": {
+    "legacyId": 3080
+  },
+  "assets": [
+    {
+      "name": "now_time_lut.png",
+      "assetHash": "f07b0a82705780eb93f2d2fa9a8f3800fd143624ae800be0a0c17b467341d4bb",
+      "hubAssetId": "1419014716890172"
+    },
+    {
+      "name": "now_frame.png",
+      "assetHash": "553cd2ab67f7b29655b7b74bfc366d33f3a83b5e9d7d2bc7f113e056ec4aa55f",
+      "hubAssetId": "1287966740193650"
+    },
+    {
+      "name": "now_bronze_lut.png",
+      "assetHash": "68c2a1e3dee91918cfe2fbcccd711e9be7bec46cbba1d8043509388844f2d306",
+      "hubAssetId": "1640762547141912"
+    }
+  ]
+}

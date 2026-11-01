@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "mask_edge",
+  "displayName": "Mask Edge",
+  "description": "[IG Edits] Video effect. With \"Mask Edge\", the creator can extract a mask from alpha/red/color, then tint its interior and draw a colored Sobel-like contour outline at a configurable width.",
+  "iglu": {}
+}

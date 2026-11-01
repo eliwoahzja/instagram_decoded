@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "alpha_mask",
+  "displayName": "Alpha Mask",
+  "description": "[IG Edits] Video effect name. With \"Alpha Mask\", the creator can multiply pixels by a sampled mask texture's red or alpha channel, with optional invert, threshold, color-key, and edge contour.",
+  "iglu": {}
+}

@@ -1,0 +1,31 @@
+# IGLUSCRIPTCOLLISION_BYPASS: IGLUScript port of transition_dissolve, QE-selectable for A/B vs TransitionDissolveFilter.
+[Filter TransitionDissolve]
+
+[Init]
+fun init(Filter filter) {
+  makeTexture('transition);
+  filter.passes = {{
+    name = 'dissolve,
+    inputs = {'default, 'transition},
+    shaderInputNames = {'default, 's_texture1},
+    uniforms = { progress = 0.0 },
+    glslShader = glsl,
+  }};
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  setShaderUniform('dissolve, 'progress, max(getParameterFloat('progress), getParameterFloat('transition_progress)));
+}
+
+string glsl = "
+  varying vec2 sourceTextureCoordinate;
+  BaseUniformsOpenGL;
+  uniform sampler2D s_texture1;
+  uniform float progress;
+  void main() {
+    vec4 a = sampleInput(sourceTextureCoordinate);
+    vec4 b = texture2D(s_texture1, sourceTextureCoordinate);
+    gl_FragColor = toOutputFormat(mix(a, b, progress));
+  }
+";

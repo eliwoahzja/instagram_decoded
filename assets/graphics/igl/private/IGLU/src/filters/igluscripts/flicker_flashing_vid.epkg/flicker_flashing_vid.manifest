@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "identifier": "4A2F1930-2083-400C-8620-75A1722878D2",
+  "displayName": "Flicker Flashing Vid",
+  "description": "[IG Edits] Video effect name. With \"Flicker Flashing Vid\", the creator can apply hard single-frame darkening flashes at pseudo-random intervals, simulating a flickering bulb or stutter cut.",
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAQAzJAgEbJ"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "6c911e68",
+      "handle": "AQADqDapKbcZ",
+      "md5": "6d184bca7e6ef0e4eeb114629cb5272b"
+    }
+  },
+  "iglu": {
+    "legacyId": 3078
+  }
+}

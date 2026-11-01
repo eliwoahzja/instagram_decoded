@@ -1,0 +1,128 @@
+[Filter ZoomPulse]
+# "Zoom Pulse" — pure procedural zoom animation, no LUT, no external assets.
+#
+# Effect: continuous ping-pong scale animation centered on the canvas
+# midpoint. UV scale ramps linearly from 1.0 → zoom_max over 3 seconds,
+# then back from zoom_max → 1.0 over 3 seconds, looping forever.
+# Renamed from "zoom" — too generic, would have been ambiguous in catalog.
+#
+# Cloned from `flicker_flashing_vid.iglu` (proven pure-time-shader
+# pattern). Single-line conceptual delta: replaced the flicker on/off
+# state machine with a sin-free ping-pong scale ramp + UV remap.
+#
+# Animation math (smoothstep-eased linear ping-pong):
+#   period = 10.0 seconds (5s in + 5s out)
+#   p = mod(time * zoom_speed, period) / period   (0..1 linear ramp)
+#   linear_t = 1.0 - abs(2.0 * p - 1.0)            (triangle wave 0..1..0)
+#   t = smoothstep(0, 1, linear_t)                 (gentle ease at endpoints)
+#   scale = mix(1.0, zoom_max, t)                  (1.0 .. zoom_max .. 1.0)
+#   zoomed_uv = (uv - 0.5) / scale + 0.5           (zoom centered on 0.5, 0.5)
+#
+# Easing choice (smoothstep on linear triangle):
+# Pure linear ping-pong has a kink at the trough that reads as a snap.
+# Full sinusoidal cosine `0.5 - 0.5*cos(phase)` is smooth but the heavy
+# ease throughout makes the motion linger noticeably at the peak and
+# trough. Smoothstep applied to a linear triangle wave is the middle
+# ground: motion feels mostly constant-velocity through the bulk of
+# the cycle, with just a gentle softening at the turnarounds. Best
+# match for the user's request "just a little easing instead of linear."
+#
+# Zoom semantics: when scale > 1, the sample UV range narrows around the
+# center, so the camera content APPEARS larger (we see less of it = zoomed
+# in). At scale=1.0 the filter is a pass-through. At scale=1.5 we sample
+# the central 66% of the camera and stretch it across the full canvas.
+#
+# Time source: uses `getLocalTime()` (monotonic wall-clock since shader
+# start) so the cycle never wraps mid-animation. The earlier draft used
+# `getParameterFloat('time_sec)` which is the catalog convention but in
+# the sample app it's tied to video-playback time, which loops every
+# ~10s on the bundled female_sample_raw_video.mp4. With our 6s cycle on
+# a 10s video the parameter wrap caused a visible scale skip at the
+# same point every loop. `getLocalTime()` sidesteps that entirely and
+# is the right choice for continuous looping animations regardless of
+# whether the underlying media loops. Production hosts can override by
+# pushing `time_sec` via `setFloat` if they need a deterministic time
+# source synced to media playback — swap the two lines in [PreRender]
+# to switch back.
+#
+# No external assets. Manifest carries no `assets` field (matches
+# flicker_flashing_vid / cutout_slide and other asset-free filters).
+
+[Init]
+fun init(Filter filter)
+{
+    # Host-tunable parameters wired unconditionally per CRA convention.
+    filter.parameters = {
+        {zoom_speed = 1.0, min = 0.1, max = 5.0, description = "Multiplier on time; 1.0 = 10s ping-pong cycle (5s in, 5s out)"},
+        {zoom_max = 1.5, min = 1.0, max = 3.0, description = "Max scale at the peak of the ping-pong; 1.0 = no zoom, 1.5 = 50% closer"},
+    };
+
+    filter.passes = {{
+      name = 'pass0,
+      inputs = {'default},
+      uniforms = {
+        zoom_speed = 1.0,
+        zoom_max = 1.5,
+        time = 0.0,
+      },
+      glslShader = glslZoomPulse,
+    }};
+}
+
+[PreRender]
+fun preRender(Filter filter){
+    # All three uniforms wired unconditionally per CRA convention.
+
+    f32 zs = getParameterFloat('zoom_speed);
+    setShaderUniform('pass0, 'zoom_speed, zs);
+
+    f32 zm = getParameterFloat('zoom_max);
+    setShaderUniform('pass0, 'zoom_max, zm);
+
+    # Time drives the ping-pong cycle. Use getLocalTime() (monotonic
+    # wall-clock since shader start) instead of getParameterFloat('time_sec)
+    # because the host's time_sec is tied to media playback in the sample
+    # app and wraps with the video loop, causing visible animation skips.
+    # If a production host needs to drive time deterministically (e.g.,
+    # synced to media playback for a frame-perfect handoff), swap to:
+    #   f32 time = getParameterFloat('time_sec);
+    f32 time = getLocalTime();
+    setShaderUniform('pass0, 'time, time);
+}
+
+#### GLSL shader ####
+
+string glslZoomPulse = "
+    varying vec2 sourceTextureCoordinate;
+    BaseUniformsOpenGL;
+
+    uniform sampler2D auxSampler0;
+    uniform sampler2D auxSampler1;
+    uniform sampler2D auxSampler2;
+
+    uniform float zoom_speed;
+    uniform float zoom_max;
+    uniform float time;
+
+    void main() {
+      vec2 uv = sourceTextureCoordinate;
+
+      // 10s ping-pong cycle (5s in + 5s out). Linear triangle wave with
+      // smoothstep applied for gentle easing at the endpoints. Mostly
+      // constant-velocity motion through the bulk of the cycle, with
+      // soft turnarounds at the peak and trough.
+      float period = 10.0;
+      float p = mod(time * zoom_speed, period) / period;   // 0..1 linear
+      float linear_t = 1.0 - abs(2.0 * p - 1.0);            // triangle 0..1..0
+      float t = linear_t * linear_t * (3.0 - 2.0 * linear_t);  // smoothstep(0,1,linear_t)
+      float scale = mix(1.0, zoom_max, t);
+
+      // Zoom centered on (0.5, 0.5). At scale=1.0 this is a pure pass-through.
+      // At scale > 1.0 the sample UV range tightens around center -> zoom in.
+      vec2 zoomed_uv = (uv - 0.5) / scale + 0.5;
+
+      vec4 base = sampleInput(zoomed_uv);
+
+      gl_FragColor = toOutputFormat(base);
+    }
+    ";

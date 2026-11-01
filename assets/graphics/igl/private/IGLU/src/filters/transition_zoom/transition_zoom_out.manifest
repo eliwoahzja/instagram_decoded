@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "transition_zoom_out",
+  "displayName": "Zoom Out",
+  "description": "Video effects selection. Video zooms out.",
+  "iglu": {}
+}

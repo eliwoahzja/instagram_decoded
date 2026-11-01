@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "text_debug",
+  "displayName": "Debug",
+  "description": "[IG Edits] Text effect name. With \"Debug\", the creator can overlay a developer grid showing padding, line height, font size, time sweep, text/emphasis swatches and resolution digits.",
+  "iglu": {}
+}

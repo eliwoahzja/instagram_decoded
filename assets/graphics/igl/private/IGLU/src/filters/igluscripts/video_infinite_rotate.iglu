@@ -1,0 +1,89 @@
+[Filter IgluscriptVideoInfiniteRotateFilter]
+
+[Init]
+fun init(Filter filter) {
+  filter.parameters = {
+    {speed = 0.2, min = 0.0, max = 1.0, description = "Speed"},
+    {amount = 0.4286, min = 0.0, max = 1.0, description = "Amount"}
+  };
+
+  filter.passes = {{
+      name = 'infinite_rotate, inputs = {'default},
+      uniforms = {
+        inputSize = {1080.0, 1920.0},
+        zoomSpeed = 0.3,
+        rotSpeed = 0.85,
+        time = 0.0,
+      },
+      glslShader = glsl
+    }};
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  f32 time = getParameterFloat('time_sec);
+  f32 speedNorm = getParameterFloat('speed);
+  f32 amountNorm = getParameterFloat('amount);
+  # Map normalized [0, 1] sliders to original raw ranges:
+  #   speed:  [0.25, 4.0],  default actual 1.0 at slider 0.2
+  #   amount: [0.25, 2.0],  default actual 1.0 at slider 0.4286
+  f32 speed = 0.25 + speedNorm * 3.75;
+  f32 amount = 0.25 + amountNorm * 1.75;
+  setShaderUniform('infinite_rotate, 'time, time * speed);
+  setShaderUniform('infinite_rotate, 'rotSpeed, 0.85 * amount);
+}
+
+string glsl = "
+
+varying vec2 sourceTextureCoordinate;
+
+BaseUniformsOpenGL;
+
+uniform float time;
+uniform vec2 inputSize;
+uniform float zoomSpeed;
+uniform float rotSpeed;
+
+void main() {
+
+  vec2 uv = sourceTextureCoordinate;
+  vec2 ratio = inputSize.xy / inputSize.y;
+  vec2 center = vec2(0.5, 0.5);
+  vec4 color = vec4(0.0);
+
+  float t = time * zoomSpeed;
+  float cycle = floor(t / 0.5);
+
+  for (int i = 3; i >= 0; --i){
+    float spawnIndex = cycle - float(i);
+    float age = t - spawnIndex * 0.5;
+    vec2 c = center;
+    float alive = step(0.0, age) * step(age, 2.0);
+
+    float scale = 2.25 * age + 1e-3;
+    float invScale = 1.0/scale;
+
+    // start angle (scales with amount) is cancelled out at age 0.5, so each
+    // instance is upright by the time the next instance appears
+    float angle = (0.5 - age) * rotSpeed * 3.14159265 * UP;
+    float cs = cos(angle);
+    float sn = sin(angle);
+
+    vec2 dUV = (uv - c) * ratio;
+    vec2 scaled = dUV / scale;
+    vec2 rotUV = vec2(scaled.x * cs - scaled.y * sn, scaled.x * sn + scaled.y * cs);
+
+    vec2 zUV = rotUV / ratio + c;
+
+    float inX = step(0.0, zUV.x) * step(zUV.x, 1.0);
+    float inY = step(0.0, zUV.y) * step(zUV.y, 1.0);
+    float mask = alive * inX * inY;
+
+    vec4 sampleCol = sampleInput(zUV);
+    mask *= sampleCol.a;
+    color = color * (1.0 - mask) + sampleCol * mask;
+  }
+
+  gl_FragColor = toOutputFormat(color);
+}
+";

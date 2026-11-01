@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "anti_lux",
+  "displayName": "Anti Lux",
+  "description": "[IG Edits] Color filter name. With \"Anti Lux\", the creator can boost shadows and highlights guided by a blurred luminance mask, desaturate 0.825x, and flatten brightness toward a per-tile CDF center.",
+  "iglu": {}
+}

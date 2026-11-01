@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "identifier": "cutout_slide_horizontal_in",
+  "displayName": "Cutout Slide Horizontal In",
+  "description": "[IG Edits] Transition name. With \"Cutout Slide Horizontal In\", the creator can slide the segmented subject horizontally into frame with motion-blur ghosting as a 1-second intro.",
+  "iglu": {
+    "legacyId": 3064,
+    "behavior": {
+      "type": "fixedIntro",
+      "durationMs": 1000,
+      "curve": "linear"
+    }
+  },
+  "dependencies": [
+    "cutout_slide"
+  ]
+}

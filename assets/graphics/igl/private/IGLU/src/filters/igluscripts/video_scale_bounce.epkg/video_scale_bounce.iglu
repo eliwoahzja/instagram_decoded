@@ -1,0 +1,65 @@
+[Filter IgluscriptVideoScaleBounceFilter]
+[MaskBehavior alpha]
+
+# Elastic ease-out with decaying frequency and amplitude
+fun easeOutElastic(f32 t) f32 {
+  if (t <= 0.0) { return 0.0; }
+  if (t >= 1.0) { return 1.0; }
+  f32 p = 0.1 + t * 0.2;
+  f32 s = p / 4.0;
+  return pow(2.0, -15.0 * t) * sin((t - s) * 2.0 * 3.14159265 / p) + 1.0;
+}
+
+# Gentler elastic for OUT — slower decay so oscillation is visible when reversed
+fun easeOutElasticSoft(f32 t) f32 {
+  if (t <= 0.0) { return 0.0; }
+  if (t >= 1.0) { return 1.0; }
+  f32 p = 0.1 + t * 0.2;
+  f32 s = p / 4.0;
+  return pow(2.0, -8.0 * t) * sin((t - s) * 2.0 * 3.14159265 / p) + 1.0;
+}
+
+[Init]
+fun init(Filter filter) {
+  filter.parameters = {
+    {center = {0.5, 0.5}, min = {0.0, 0.0}, max = {1.0, 1.0}},
+    {outro = 0.0, min = 0.0, max = 1.0, description = "0 = In, 1 = Out"},
+    {size = 0.45, min = 0.0, max = 1.0, description = "Bounce Overshoot"},
+  };
+
+  filter.passes = {{
+      name = 'scaleFx,
+      igid = 'video_scale_opacity,
+      inputs = {'default},
+      uniforms = {
+        progress = 0.0,
+        scale = 0.001,
+        opacity = 0.0,
+        center = {0.5, 0.5},
+      }
+    }};
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  f32 p = getParameterFloat('progress);
+  f32 outro = getParameterFloat('outro);
+  if (outro > 0.5) { p = 1.0 - p; }
+
+  f32 t = 0.0;
+  if (outro > 0.5) {
+    t = easeOutElasticSoft(p);
+  } else {
+    t = easeOutElastic(p);
+  }
+
+  f32 size = mix(0.2, 2.0, getParameterFloat('size));
+  f32 t_scaled = 1.0 + (t - 1.0) * size;
+  f32 scale = mix(0.0, 1.0, t_scaled);
+  f32 opacity = clamp(p * 60.0, 0.0, 1.0);
+
+  setShaderUniform('scaleFx, 'progress, p);
+  setShaderUniform('scaleFx, 'scale, scale);
+  setShaderUniform('scaleFx, 'opacity, opacity);
+  setShaderUniform('scaleFx, 'center, getParameterVec2('center));
+}

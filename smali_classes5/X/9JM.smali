@@ -1,0 +1,23 @@
+.class public final LX/9JM;
+.super Ljava/lang/Object;
+.source ""
+
+
+# instance fields
+.field public final A00:LX/5JS;
+
+
+# direct methods
+.method public constructor <init>(LX/5JS;)V
+    .locals 1
+
+    const/4 v0, 0x0
+
+    invoke-static {p1, v0}, LX/5B5;->A0U(Ljava/lang/Object;I)V
+
+    invoke-direct {p0}, Ljava/lang/Object;-><init>()V
+
+    iput-object p1, p0, LX/9JM;->A00:LX/5JS;
+
+    return-void
+.end method

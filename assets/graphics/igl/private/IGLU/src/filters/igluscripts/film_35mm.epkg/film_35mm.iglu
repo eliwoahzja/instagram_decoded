@@ -1,0 +1,152 @@
+[Filter Film_35mm]
+# "35mm" — pure-IGLUScript film-look filter: LUT color grade + subtle
+# vignette + procedural film grain, with a small pre-boost on the
+# camera to offset the LUT + grain darkening.
+#
+# Ports Spark "35mm" (which stacked LUT + procedural vignette + a
+# static grain texture at 0.75 opacity subtract-blend). Reproduced
+# procedurally here — no grain texture bundled, only the LUT is
+# delivered via ARD.
+#
+# Structure: single pass, single asset (film_35mm_lut.png). Shader
+# order:
+#   1. Pre-boost camera (+0.05 brightness, +0.01 lightness)
+#      — matches Spark's pre-LUT brightness boost that offsets the
+#      LUT + grain darkening.
+#   2. LUT color grade (drammatico pattern)
+#   3. Vignette (soft radial darkening — subtle, exposed as slider)
+#   4. Procedural grain (subtract blend at ~0.75 opacity default,
+#      bounded-time-seed animated per feel_with_reel D113810349
+#      gotcha)
+
+[Init]
+fun init(Filter filter)
+{
+    makeTexture('lut);
+
+    filter.parameters = {
+        {strength = 1.0, min = 0.0, max = 1.0, description = "LUT mix strength"},
+        {vignette_amount = 0.301, min = 0.0, max = 1.0, description = "Vignette darkness"},
+        {grain_opacity = 0.768, min = 0.0, max = 1.0, description = "Grain intensity"},
+    };
+
+    filter.passes = {{
+      name = 'pass0,
+      inputs = {'default, 'lut},
+      uniforms = {
+        strength = 1.0,
+        vignette_amount = 0.301,
+        grain_opacity = 0.768,
+        time = 0.0,
+      },
+      glslShader = glslFilm35mm,
+    }};
+}
+
+string lut_path = "lut_path";
+string lut_filename = "";
+
+[PreRender]
+fun preRender(Filter filter){
+    string lut_filename_parameter = getParameterString(lut_path);
+    if (lut_filename_parameter != "") {
+        string new_lut_filename = stringAppend("textureFilePath://", lut_filename_parameter);
+        if (new_lut_filename != lut_filename) {
+            lut_filename = new_lut_filename;
+            loadTexture('lut, lut_filename);
+        }
+    }
+
+    f32 s = getParameterFloat('strength);
+    setShaderUniform('pass0, 'strength, s);
+
+    f32 v = getParameterFloat('vignette_amount);
+    setShaderUniform('pass0, 'vignette_amount, v);
+
+    f32 g = getParameterFloat('grain_opacity);
+    setShaderUniform('pass0, 'grain_opacity, g);
+
+    # Use getLocalTime() for monotonic continuous animation.
+    f32 time = getLocalTime();
+    setShaderUniform('pass0, 'time, time);
+}
+
+#### GLSL shader ####
+
+string glslFilm35mm = "
+    varying vec2 sourceTextureCoordinate;
+    BaseUniformsOpenGL;
+
+    uniform sampler2D auxSampler0;
+    uniform sampler2D auxSampler1;
+    uniform sampler2D auxSampler2;
+
+    uniform float vignette_amount;
+    uniform float grain_opacity;
+    uniform float time;
+
+    // Iñigo Quílez-style hash12 (2-in 1-out) with 3-tap mixing.
+    // Immune to the diagonal-band artifacts of naive sin() hashes at
+    // high uv scale — critical for uniform-looking film grain.
+    // Explicit vec3() constructors and no vec2 swizzles-past-length,
+    // for strict Metal compilation via shaderc.
+    float hash12(vec2 p) {
+      vec3 p3 = fract(vec3(p.x, p.y, p.x) * 0.1031);
+      p3 = p3 + vec3(dot(p3, vec3(p3.y, p3.z, p3.x) + vec3(33.33)));
+      return fract((p3.x + p3.y) * p3.z);
+    }
+
+    void main() {
+      vec4 texel = sampleInput(sourceTextureCoordinate);
+      vec2 uv = sourceTextureCoordinate;
+
+      // ============================================================
+      // Stage 1 — Pre-boost camera (offsets LUT + grain darkening)
+      // Spark uses a +0.05 brightness + +0.01 lightness bump on the
+      // camera texture before the LUT/grain layers.
+      // ============================================================
+      texel.rgb = texel.rgb + 0.05;
+      texel.rgb = texel.rgb + 0.01;
+      texel.rgb = clamp(texel.rgb, 0.0, 1.0);
+
+      // ============================================================
+      // Stage 2 — LUT color grade (drammatico pattern)
+      // ============================================================
+      vec3 lutInput = clamp(texel.rgb, 0.00781, 0.98438);
+      float x = lutInput.r / 8.0;
+      float y = lutInput.g / 8.0;
+      float z = lutInput.b;
+      float blueY = floor(z * 8.0) / 8.0;
+      float blueX = floor((z - blueY) * 64.0) / 8.0;
+      x += blueX;
+      y += blueY;
+      vec3 lutColor = texture2D(auxSampler1, vec2(x, y)).xyz;
+      vec3 result = mix(texel.rgb, lutColor, strength);
+
+      // ============================================================
+      // Stage 3 — Vignette (subtle radial edge darkening)
+      // d: 0 at center, ~0.707 at corners. Envelope kicks in beyond
+      // 0.35 and reaches max darkness at 0.707.
+      // ============================================================
+      float d = distance(uv, vec2(0.5));
+      float vignEnv = smoothstep(0.35, 0.707, d);
+      result = result * (1.0 - vignEnv * vignette_amount);
+
+      // ============================================================
+      // Stage 4 — Procedural grain (subtract blend)
+      // Bounded time seed (feel_with_reel gotcha): grain flickers at
+      // ~20fps with 8-frame cycle to keep sin() precision stable.
+      // Quantized to integer pixel coords + hash12 for clean dispersion
+      // (no diagonal bands). Intensity 0.15 keeps grain subtle to match
+      // reference texture, then user-controlled grain_opacity scales.
+      // ============================================================
+      float grainSeed = mod(floor(time * 20.0), 8.0);
+      vec2 grainCoord = floor(uv * vec2(1200.0, 1200.0)) + grainSeed * 71.3;
+      float grainNoise = hash12(grainCoord);
+      float grain = grainNoise * 0.15;
+      result = result - vec3(grain) * grain_opacity;
+      result = clamp(result, 0.0, 1.0);
+
+      gl_FragColor = toOutputFormat(vec4(result, texel.a));
+    }
+    ";

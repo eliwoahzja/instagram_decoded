@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_stretch",
+  "displayName": "Stretch",
+  "description": "[IG Edits] Shared video/transition effect name. With \"Stretch\", the image is non-uniformly stretched along an axis (in-clip or clip-to-clip transition).",
+  "iglu": {
+    "legacyId": 2039,
+    "customization": [
+      {
+        "name": "intensity",
+        "default": 0.7959,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Intensity",
+        "displayNameDescription": "[IG Edits] Slider label controlling the strength of a video effect. Generic across many effects (glow, blur, color, distortion, etc.); exact range varies per effect."
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "c131b8f1",
+      "handle": "AQAFmn5uGo5f",
+      "md5": "d12d2a00dd464fb14fb8cd8b68245a12"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAGETgOkRaM",
+      "isImageFormat": true
+    }
+  }
+}

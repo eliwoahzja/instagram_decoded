@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "gaussian",
+  "displayName": "Gaussian",
+  "description": "[IG Edits] Video effect name. With \"Gaussian\", the creator can blur the frame with a separable Gaussian kernel (vertical then horizontal) with adjustable sigma and kernel size.",
+  "iglu": {}
+}

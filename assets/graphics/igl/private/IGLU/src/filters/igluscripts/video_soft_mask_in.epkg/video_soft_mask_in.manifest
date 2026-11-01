@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_soft_mask_in",
+  "displayName": "Soft mask in",
+  "description": "[IG Edits] Video effect name. With \"Soft mask in\", the creator can reveal the frame with a horizontal soft-edged wipe whose feather width is controlled by Softness.",
+  "iglu": {
+    "legacyId": 3031,
+    "behavior": {
+      "type": "fixedIntro",
+      "durationMs": 2000,
+      "curve": "quadraticInOut"
+    },
+    "customization": [
+      {
+        "name": "duration",
+        "default": 2.0,
+        "min": 1.0,
+        "max": 5.0,
+        "displayName": "Duration",
+        "displayNameDescription": "[IG Edits] Slider label controlling how long a video effect's animation lasts; exact units and range vary per effect (seconds or normalized).",
+        "displayMethod": "time"
+      },
+      {
+        "name": "intensity",
+        "default": 0.3,
+        "min": 0.01,
+        "max": 1.0,
+        "displayName": "Softness",
+        "displayNameDescription": "[IG Edits] Slider label controlling the softness (feather, edge blur) of a video effect's transition or mask; exact range varies per effect.",
+        "displayMethod": "percent"
+      }
+    ]
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAP2-0UdupL"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "3fabe98e",
+      "handle": "AQADR2WVz--r",
+      "md5": "4307b9a6e9d6192bbfa9ecc5eb75cc74"
+    }
+  }
+}

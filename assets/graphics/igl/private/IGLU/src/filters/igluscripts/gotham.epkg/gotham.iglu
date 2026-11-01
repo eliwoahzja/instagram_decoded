@@ -1,0 +1,155 @@
+[Filter Gotham]
+# "Gotham" — LUT + flat ambient/directional lift + radial center brightening.
+#
+# Defaults (post visual A/B vs Spark editor reference):
+#   strength             = 1.0   (LUT at full mix)
+#   ambient_strength     = 0.0   (off; let the LUT carry brightness)
+#   directional_strength = 0.0   (off)
+#   spot_radius/softness/strength = 0.0 (spot light off entirely)
+#   point_radius         = 0.4   (tighter falloff than Spark)
+#   point_strength       = 0.09  (subtle center boost)
+#
+# Author A/B note: in Spark, ambient=0.2 + directional=0.8 sum to 1.0
+# (a no-op multiplier, since each light is white). Our shader uses
+# `color *= 1.0 + ambient + directional`, so leaving both at 0.0 is
+# equivalent to that Spark scene-light no-op multiplier and matches
+# the reference look without doubling brightness. The visible Gotham
+# look comes from the LUT plus a small point-light center boost.
+#
+# LUT delivered via ARD (effectId / assetHash filled in once provided —
+# TODO placeholders in the manifest until then).
+
+[Init]
+fun init(Filter filter)
+{
+    makeTexture('lut);
+
+    # Host-tunable parameters. Wired unconditionally in [PreRender] per
+    # CRA finding on black_and_white (filter.parameters declares min=0.0,
+    # so host-set zeros are valid input and must propagate).
+    filter.parameters = {
+        {strength = 1.0, min = 0.0, max = 1.0, description = "LUT mix strength"},
+        {ambient_strength = 0.0, min = 0.0, max = 2.0, description = "Flat ambient lift"},
+        {directional_strength = 0.0, min = 0.0, max = 2.0, description = "Flat directional lift"},
+        {spot_radius = 0.0, min = 0.0, max = 1.0, description = "Spot light inner radius"},
+        {spot_softness = 0.0, min = 0.0, max = 1.0, description = "Spot light edge softness"},
+        {spot_strength = 0.0, min = 0.0, max = 2.0, description = "Spot light intensity"},
+        {point_radius = 0.4, min = 0.0, max = 1.0, description = "Point light falloff radius"},
+        {point_strength = 0.09, min = 0.0, max = 2.0, description = "Point light intensity"},
+    };
+
+    filter.passes = {{
+      name = 'pass0,
+      inputs = {'default, 'lut},
+      uniforms = {
+        strength = 1.0,
+        ambient_strength = 0.0,
+        directional_strength = 0.0,
+        spot_radius = 0.0,
+        spot_softness = 0.0,
+        spot_strength = 0.0,
+        point_radius = 0.4,
+        point_strength = 0.09,
+      },
+      glslShader = glslGotham,
+    }};
+}
+
+string lut_path = "lut_path";
+string lut_filename = "";
+
+[PreRender]
+fun preRender(Filter filter){
+    string lut_filename_parameter = getParameterString(lut_path);
+    if (lut_filename_parameter != "") {
+        string new_lut_filename = stringAppend("textureFilePath://", lut_filename_parameter);
+        if (new_lut_filename != lut_filename) {
+            lut_filename = new_lut_filename;
+            loadTexture('lut, lut_filename);
+        }
+    }
+
+    # All eight parameters wired unconditionally per CRA convention.
+    f32 s = getParameterFloat('strength);
+    setShaderUniform('pass0, 'strength, s);
+
+    f32 amb = getParameterFloat('ambient_strength);
+    setShaderUniform('pass0, 'ambient_strength, amb);
+
+    f32 dir = getParameterFloat('directional_strength);
+    setShaderUniform('pass0, 'directional_strength, dir);
+
+    f32 sr = getParameterFloat('spot_radius);
+    setShaderUniform('pass0, 'spot_radius, sr);
+
+    f32 sf = getParameterFloat('spot_softness);
+    setShaderUniform('pass0, 'spot_softness, sf);
+
+    f32 ss = getParameterFloat('spot_strength);
+    setShaderUniform('pass0, 'spot_strength, ss);
+
+    f32 pr = getParameterFloat('point_radius);
+    setShaderUniform('pass0, 'point_radius, pr);
+
+    f32 ps = getParameterFloat('point_strength);
+    setShaderUniform('pass0, 'point_strength, ps);
+}
+
+#### GLSL shader ####
+
+string glslGotham = "
+    varying vec2 sourceTextureCoordinate;
+    BaseUniformsOpenGL;
+
+    uniform sampler2D auxSampler0;
+    uniform sampler2D auxSampler1;
+    uniform sampler2D auxSampler2;
+
+    uniform float ambient_strength;
+    uniform float directional_strength;
+    uniform float spot_radius;
+    uniform float spot_softness;
+    uniform float spot_strength;
+    uniform float point_radius;
+    uniform float point_strength;
+
+    void main() {
+      vec2 uv = sourceTextureCoordinate;
+      vec4 base = sampleInput(uv);
+
+      // Stage 1: 8x8 grid LUT trilinear sampling.
+      vec3 c = clamp(base.rgb, 0.00781, 0.98438);
+      float x = c.r / 8.0;
+      float y = c.g / 8.0;
+      float z = c.b;
+      float blueY = floor(z * 8.0) / 8.0;
+      float blueX = floor((z - blueY) * 64.0) / 8.0;
+      x += blueX;
+      y += blueY;
+      vec3 lutColor = texture2D(auxSampler1, vec2(x, y)).xyz;
+      base.rgb = mix(base.rgb, lutColor, strength);
+
+      // Stage 2: flat lighting (Low Light pattern).
+      // Sum of ambient + directional applied as a multiplier on top of 1.0.
+      base.rgb *= 1.0 + ambient_strength + directional_strength;
+
+      // Stage 3: radial center brightening (inverted vignette).
+      // dist normalized so center=0; corners ~ sqrt(2)/2 = 0.707.
+      float d = distance(uv, vec2(0.5));
+
+      // Spot light: wide soft center with smoothstep falloff at edge.
+      float spot = (1.0 - smoothstep(spot_radius, spot_radius + spot_softness, d))
+                   * spot_strength;
+
+      // Point light: tighter linear falloff from center.
+      float point = max(0.0, 1.0 - d / max(point_radius, 0.001))
+                    * point_strength;
+
+      base.rgb += vec3(spot + point);
+
+      // Clamp to LDR range so additive lights don't push past 1.0.
+      base.rgb = clamp(base.rgb, 0.0, 1.0);
+
+      gl_FragColor = toOutputFormat(base);
+    }
+    ";

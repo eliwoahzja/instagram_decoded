@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "identifier": "D9F23BA1-70EA-4D1E-B39A-FF1AF2B6A6E1",
+  "displayName": "Scroll in",
+  "description": "[IG Edits] Effect name shown in the video effects picker. This is the user-facing label for a video effect.",
+  "iglu": {
+    "legacyId": 3992,
+    "behavior": {
+      "type": "fixedIntro",
+      "durationMs": 1040,
+      "curve": "linear"
+    },
+    "customization": [
+      {
+        "name": "direction",
+        "defaultSelection": "up",
+        "available": [
+          "up",
+          "down"
+        ],
+        "displayName": "Direction"
+      },
+      {
+        "name": "duration",
+        "default": 1.04,
+        "min": 0.1,
+        "max": 5.0,
+        "displayName": "Duration",
+        "displayMethod": "time"
+      }
+    ]
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAFOJ-Wa31p"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "3ddc6740",
+      "handle": "AQAEwjmUJjC-",
+      "md5": "9c469e31a9d103a2a77c51c10a3da834"
+    }
+  }
+}

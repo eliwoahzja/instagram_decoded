@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "identifier": "cutout_slide_horizontal_out",
+  "displayName": "Cutout Slide Horizontal Out",
+  "description": "[IG Edits] Transition name. With \"Cutout Slide Horizontal Out\", the creator can slide the segmented subject horizontally out of frame with motion-blur ghosting as a 1-second outro.",
+  "iglu": {
+    "legacyId": 3065,
+    "behavior": {
+      "type": "fixedOutro",
+      "durationMs": 1000,
+      "curve": "linear"
+    }
+  },
+  "dependencies": [
+    "cutout_slide"
+  ]
+}

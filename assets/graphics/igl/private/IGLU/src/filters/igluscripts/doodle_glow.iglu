@@ -1,0 +1,249 @@
+[Filter DoodleGlow]
+[MaskBehavior alpha]
+
+# Post-processing filter for the Glow brush preset.
+#
+# The halo colour comes from the 'glowStroke texture, a copy of each stroke drawn in its own
+# secondary colour, so each stroke on the layer has its own halo colour. copyGlow launders that
+# texture into a pass output; an input list cannot mix a preceding pass with a makeTexture() texture.
+#
+# copyGlow -> dilateH -> dilateV -> blurH -> blurV, then compose({'default, 'blurV}), which draws
+# the crisp stroke over the halo.
+
+[Init]
+fun init(Filter filter) {
+  makeTexture('glowStroke);
+
+  filter.parameters = {
+    {radius = 16.5, min = 1.0, max = 24.0, description = "Radius"},
+    {glowStrength = 1.26, min = 0.0, max = 4.0, description = "Glow Strength"},
+    {blurSamples = 19.5, min = 1.0, max = 64.0, description = "Blur Samples"},
+    {blurStep = 2.2, min = 0.5, max = 20.0, description = "Blur Step"},
+    {falloffCurve = 0.4, min = 0.1, max = 40.0, description = "Falloff Curve"},
+  };
+
+  filter.passes = {
+  {
+    name = 'copyGlow,
+    inputs = {'default, 'glowStroke},
+    glslShader = copyGlowGlsl,
+  },
+  {
+    name = 'dilateH,
+    inputs = {'copyGlow},
+    uniforms = {
+      outputSize = {1080.0, 1920.0},
+      axis = {1.0, 0.0},
+      radius = 16.5,
+      contentScale = {1.0, 1.0},
+    },
+    glslShader = dilateGlsl,
+  },
+  {
+    name = 'dilateV,
+    inputs = {'dilateH},
+    uniforms = {
+      outputSize = {1080.0, 1920.0},
+      axis = {0.0, 1.0},
+      radius = 16.5,
+      contentScale = {1.0, 1.0},
+    },
+    glslShader = dilateGlsl,
+  },
+  {
+    name = 'blurH,
+    inputs = {'dilateV},
+    uniforms = {
+      inputSize = {1080.0, 1920.0},
+      axis = {1.0, 0.0},
+      numSamples = 19.5,
+      blurStep = 2.2,
+      falloffCurve = 0.4,
+      contentScale = {1.0, 1.0},
+    },
+    glslShader = blurGlsl,
+  },
+  {
+    name = 'blurV,
+    inputs = {'blurH},
+    uniforms = {
+      inputSize = {1080.0, 1920.0},
+      axis = {0.0, 1.0},
+      numSamples = 19.5,
+      blurStep = 2.2,
+      falloffCurve = 0.4,
+      contentScale = {1.0, 1.0},
+    },
+    glslShader = blurGlsl,
+  },
+  {
+    name = 'compose,
+    inputs = {'default, 'blurV},
+    uniforms = {
+      glowStrength = 1.26,
+    },
+    glslShader = composeGlsl,
+  }
+  };
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  vec2 size = getTextureSize('default);
+  vec2 contentScale = getParameterVec2('contentScale);
+  if (contentScale.x < 0.001) { contentScale = {1.0, 1.0}; }
+
+  f32 radius = getParameterFloat('radius);
+  f32 blurSamples = getParameterFloat('blurSamples);
+  f32 blurStep = getParameterFloat('blurStep);
+  f32 falloffCurve = getParameterFloat('falloffCurve);
+  f32 glowStrength = getParameterFloat('glowStrength);
+
+  # Dilate and blur reach are in pixels, so scale them by render height to keep the halo the same
+  # fraction of the frame at any resolution. 1920 is the height the default params are tuned for.
+  f32 resScale = size.y / 1920.0;
+  f32 scaledRadius = radius * resScale;
+  f32 scaledBlurStep = blurStep * resScale;
+
+  # Dilate passes
+  setShaderUniform('dilateH, 'outputSize, size);
+  setShaderUniform('dilateH, 'radius, scaledRadius);
+  setShaderUniform('dilateH, 'contentScale, contentScale);
+  setShaderUniform('dilateV, 'outputSize, size);
+  setShaderUniform('dilateV, 'radius, scaledRadius);
+  setShaderUniform('dilateV, 'contentScale, contentScale);
+
+  # Blur passes
+  setShaderUniform('blurH, 'inputSize, size);
+  setShaderUniform('blurH, 'numSamples, blurSamples);
+  setShaderUniform('blurH, 'blurStep, scaledBlurStep);
+  setShaderUniform('blurH, 'falloffCurve, falloffCurve);
+  setShaderUniform('blurH, 'contentScale, contentScale);
+  setShaderUniform('blurV, 'inputSize, size);
+  setShaderUniform('blurV, 'numSamples, blurSamples);
+  setShaderUniform('blurV, 'blurStep, scaledBlurStep);
+  setShaderUniform('blurV, 'falloffCurve, falloffCurve);
+  setShaderUniform('blurV, 'contentScale, contentScale);
+
+  # Compose pass
+  setShaderUniform('compose, 'glowStrength, glowStrength);
+}
+
+# ==========================================================================
+# Pass 1: Copies the bound glow-stroke texture into a pass output for the dilate
+# chain. 'default is unused; it only holds index 0, which a declared texture
+# cannot occupy. The glow stroke is full-canvas, so UVs map 1:1.
+# ==========================================================================
+string copyGlowGlsl = "
+precision highp float;
+
+varying vec2 sourceTextureCoordinate;
+BaseUniformsOpenGL;
+
+uniform sampler2D auxSampler1; // 'glowStroke -- secondary-coloured stroke copy, bound by name
+
+void main() {
+  gl_FragColor = toOutputFormat(texture2D(auxSampler1, sourceTextureCoordinate));
+}
+";
+
+# ==========================================================================
+# Pass 2-3: Horizontal/Vertical 1D dilation (ported from Dilate1DPassInfo.ts)
+# ==========================================================================
+string dilateGlsl = "
+precision highp float;
+
+varying vec2 sourceTextureCoordinate;
+BaseUniformsOpenGL;
+
+uniform vec2 outputSize;
+uniform vec2 axis;
+uniform float radius;
+uniform vec2 contentScale;
+
+#define MAX_RADIUS 8
+
+vec4 dilate(vec2 uv, vec2 pixel) {
+  vec4 c = vec4(0.0);
+
+  for (int i = -MAX_RADIUS; i <= MAX_RADIUS; ++i) {
+    vec4 v = sampleInput(uv + pixel * float(i));
+    c = max(c, v);
+  }
+  return c;
+}
+
+void main() {
+  vec2 uv = sourceTextureCoordinate;
+  vec2 duv = axis / (outputSize * contentScale);
+  vec4 color = dilate(uv, radius * duv / float(MAX_RADIUS));
+
+  gl_FragColor = toOutputFormat(color);
+}
+";
+
+# ==========================================================================
+# Pass 3-4: Horizontal/Vertical Gaussian blur (ported from GaussianBlur1DPassInfo.ts)
+# ==========================================================================
+string blurGlsl = "
+precision highp float;
+
+varying vec2 sourceTextureCoordinate;
+BaseUniformsOpenGL;
+
+uniform vec2 inputSize;
+uniform vec2 axis;
+uniform float numSamples;
+uniform float blurStep;
+uniform float falloffCurve;
+uniform vec2 contentScale;
+
+void main() {
+  vec4 texel = vec4(0.0);
+  float totalWeight = 0.0;
+
+  vec2 dir = axis / (inputSize * contentScale);
+
+  for (float i = 0.0; i < 64.0; i++) {
+    if (i >= numSamples) break;
+
+    float offset = (i - (numSamples - 1.0) / 2.0) * blurStep;
+    float weight = exp(-abs(offset) * falloffCurve / numSamples);
+
+    vec2 sampleCoord = sourceTextureCoordinate + dir * offset;
+    texel += sampleInput(sampleCoord) * weight;
+    totalWeight += weight;
+  }
+
+  gl_FragColor = toOutputFormat(texel / totalWeight);
+}
+";
+
+# ==========================================================================
+# Pass 5: Glow compositing (ported from DoodleGlow.ts)
+# ==========================================================================
+string composeGlsl = "
+precision highp float;
+
+varying vec2 sourceTextureCoordinate;
+BaseUniformsOpenGL;
+
+uniform sampler2D auxSampler1;
+uniform float glowStrength;
+
+void main() {
+  vec2 uv = sourceTextureCoordinate;
+  vec4 base = sampleInput(uv);
+  vec4 blur = texture2D(auxSampler1, uv);
+
+  // Halo colour is the blurred glow stroke, unpremultiplied. blur.a carries both its shape and the
+  // glow stroke's own alpha.
+  vec3 haloRGB = blur.rgb / max(blur.a, 0.001);
+  vec4 glow = vec4(haloRGB, 1.0) * blur.a * glowStrength;
+
+  // Premultiplied alpha composite: base OVER glow halo
+  vec4 color = base + glow * (1.0 - base.a);
+
+  gl_FragColor = toOutputFormat(color);
+}
+";

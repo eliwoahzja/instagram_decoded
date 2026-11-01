@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="string_0x7f130002">Igihugu</string>
+    <string name="string_0x7f130004">Aderesi</string>
+    <string name="string_0x7f130008">Kwiyuzuza hakoreshejwe ikarita yo kuri konti y’ibyamamaza yawe?</string>
+    <string name="string_0x7f13002c">Gufunga mushakisha</string>
+    <string name="string_0x7f13002e">%1$s irashaka gukoresha kamera na mikoro by’igikoresho cyawe.</string>
+    <string name="string_0x7f13002f">"%1$s irashaka gukoresha kamera y'igikoresho cyawe."</string>
+    <string name="string_0x7f130030">"%1$s irashaka gukoresha ahantu y'igikoresho cyawe."</string>
+    <string name="string_0x7f130031">%1$s irashaka gukoresha mikoro by’igikoresho cyawe.</string>
+    <string name="string_0x7f130032">Emerera mediya zose gukoresha mutoranyadosiye</string>
+    <string name="string_0x7f130033">Kwemerera</string>
+    <string name="string_0x7f130034">Guhagarika</string>
+    <string name="string_0x7f130035">Gutubya mushakisha</string>
+    <string name="string_0x7f130036">Gusubira inyuma</string>
+    <string name="string_0x7f130037">Gukomeza imbere</string>
+    <string name="string_0x7f130038">"Icyemezo cy'umutekano cy'uru rubuga gifite ibibazo"</string>
+    <string name="string_0x7f130039">Gusubira inyuma</string>
+    <string name="string_0x7f13003a">"Ikosa ry'umutekano"</string>
+    <string name="string_0x7f13003b">Umutwengaruka</string>
+    <string name="string_0x7f13008e">Kureka</string>
+    <string name="string_0x7f13008f">Imeyiri</string>
+    <string name="string_0x7f130091">Urubuga uri kureba ruri kugerageza gufungura porogaramu yo hanze. Urifuza gukomeza?</string>
+    <string name="string_0x7f130092">Gusubira inyuma</string>
+    <string name="string_0x7f130093">Gukomeza</string>
+    <string name="string_0x7f130094">Uri kuva kuri porogaramu yacu</string>
+    <string name="string_0x7f130095">Ibi bishobora kuba biterwa n’ikosa rya tekiniki turimo kugerageza gukosora. Gerageza kongera gufungura iyi paji.</string>
+    <string name="string_0x7f130096">Kugaruraho</string>
+    <string name="string_0x7f130097">Paji ntiboneka ubu</string>
+    <string name="string_0x7f130098">"Izina ry'ababyeyi"</string>
+    <string name="string_0x7f130099">Paji ntishobora gufunguka</string>
+    <string name="string_0x7f13009a">Gufunguza …</string>
+    <string name="string_0x7f13009b">Gufungira muri %1$s</string>
+    <string name="string_0x7f13009c">Andi mahitamo</string>
+    <string name="string_0x7f1300aa">Izina ry’idini</string>
+    <string name="string_0x7f1300af">Ubu uri kureba mugaragaza yuzuye. Nyatura ugana ibumoso cyangwa ukande buto yo gusubira inyuma kugira ngo usohoke.</string>
+    <string name="string_0x7f1300cf">Amateka y’amahuza. Kanda kabiri kugira ngo ubone urutonde rw’amahuza yo ku mbuga wari wasuye mbere.</string>
+    <string name="string_0x7f1300d0">Kureka</string>
+    <string name="string_0x7f1300da">Gufunga</string>
+    <string name="string_0x7f1300dd">Kanda kugira ngo wongereho ikarita</string>
+    <string name="string_0x7f13010b">"Agasanduku k'iposita"</string>
+    <string name="string_0x7f130119">Kwemeza aderesi yo kwishyuzwa imeze kimwe no kohereza</string>
+    <string name="string_0x7f13011a">"[card brand or issuer] ishusho y'ikarita"</string>
+    <string name="string_0x7f13011b">"Kwagura amakuru n'utugenzura byo kwiyuzuza"</string>
+    <string name="string_0x7f130126">Menya ibindi</string>
+    <string name="string_0x7f1301d3">Telefoni</string>
+</resources>

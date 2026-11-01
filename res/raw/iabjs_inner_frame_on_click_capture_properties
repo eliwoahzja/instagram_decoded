@@ -1,0 +1,1 @@
+(function(locatorJSON,handlerId,capturePropertiesJSON){window._META.IABInnerFrame.onClick(JSON.parse(locatorJSON),handlerId,{captureProperties:JSON.parse(capturePropertiesJSON)})})

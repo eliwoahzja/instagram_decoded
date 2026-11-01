@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "linear_gradient_transition",
+  "displayName": "Linear Gradient Transition",
+  "description": "[IG Edits] Transition name. With \"Linear Gradient Transition\", the creator can blend the frame toward a two-color linear gradient (color_a to color_b along point_a-point_b) controlled by mix_amount.",
+  "iglu": {}
+}

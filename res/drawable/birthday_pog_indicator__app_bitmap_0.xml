@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.facebook.fbui.drawable.custom.AppBitmapDrawable fbui:fbui_gravity="fill" fbui:fbui_src="@drawable/instagram_cake_pano_filled_24" fbui:fbui_tint="@color/bds_white"
+  xmlns:fbui="http://schemas.android.com/apk/res-auto" />

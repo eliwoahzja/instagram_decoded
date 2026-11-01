@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_dust",
+  "displayName": "Dust",
+  "description": "[IG Edits] Video effect name. A video effect is a creative visual element that can be applied to a video. With \"Dust\", the creator can add a textured effect similar to dust on the screen.",
+  "iglu": {
+    "legacyId": 2080,
+    "customization": [
+      {
+        "name": "intensity",
+        "default": 1.0,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Intensity",
+        "displayNameDescription": "[IG Edits] Slider label controlling the strength of a video effect. Generic across many effects (glow, blur, color, distortion, etc.); exact range varies per effect."
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "701f570c",
+      "handle": "AQBi5V78DENF",
+      "md5": "81acd7ed0e998740fbe049ff2587017b"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAFYxS0WaSb"
+    }
+  }
+}

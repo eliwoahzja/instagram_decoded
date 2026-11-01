@@ -1,0 +1,231 @@
+[Filter IgluscriptTextColorOffsetFilter]
+
+# Three-pass filter matching original flig-text "Color Offset"
+# Pass 1: DilateHorizontal - separable 1D max in X on default input (radius=0 passthrough)
+# Pass 2: DilateVertical   - separable 1D max in Y on horizontal output (radius=0 passthrough)
+# Pass 3: Compose          - single-layer offset with hue-shifted complementary color
+
+# ============================================================================
+# Font scaling constants
+# ============================================================================
+
+f32 BASE_FONT_SIZE = 24.0;
+f32 BASE_FONT_WEIGHT = 0.5;
+
+[Init]
+fun init(Filter filter) {
+  filter.passes = {{
+      name = 'dilateHorizontal, inputs = {'default},
+      uniforms = {
+        outputSize = {1024.0, 1024.0},
+        radius = 0.0
+      },
+      glslShader = dilateHorizontalGlsl
+    },{
+      name = 'dilateVertical, inputs = {'dilateHorizontal},
+      uniforms = {
+        outputSize = {1024.0, 1024.0},
+        radius = 0.0
+      },
+      glslShader = dilateVerticalGlsl
+    },{
+      name = 'compose, inputs = {'default, 'dilateVertical},
+      uniforms = {
+        outputSize = {1024.0, 1024.0},
+        direction = {0.5, -0.5},
+        depth = 1.0,
+        depthStart = 0.0,
+        depthDist = 1.0,
+        textColor = {1.0, 1.0, 1.0, 1.0}
+      },
+      glslShader = composeGlsl
+    }};
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  vec2 inputSize = getTextureSize('default);
+  setShaderUniform('dilateHorizontal, 'outputSize, inputSize);
+  setShaderUniform('dilateVertical, 'outputSize, inputSize);
+  setShaderUniform('compose, 'outputSize, inputSize);
+
+  # Get font scaling parameters (passed from host application)
+  f32 fontSize = getParameterFloat('fontSize);
+  f32 fontSizeScale = fontSize / BASE_FONT_SIZE;
+
+  f32 fontThickness = getParameterFloat('fontThickness);
+  f32 fontThicknessScale = fontThickness / BASE_FONT_WEIGHT;
+  f32 fontWeightFactor = (0.5 * fontThicknessScale) + 0.5;
+
+  # radius = 0 (no dilation for color offset); both separable passes use the same radius.
+  setShaderUniform('dilateHorizontal, 'radius, 0.0);
+  setShaderUniform('dilateVertical, 'radius, 0.0);
+
+  # depthStart: scalesWithFontSize=true, fontWeightScale
+  f32 depthStart = 4.0 * fontWeightFactor * fontSizeScale;
+  setShaderUniform('compose, 'depthStart, depthStart);
+
+  # Non-scaled parameters
+  vec2 direction = {0.5, -0.5};
+  setShaderUniform('compose, 'direction, direction);
+
+  setShaderUniform('compose, 'depth, 1.0);
+
+  setShaderUniform('compose, 'depthDist, 1.0);
+
+  vec4 textColor = getParameterVec4('textColor);
+  setShaderUniform('compose, 'textColor, textColor);
+}
+
+# ============================================================================
+# Dilate Horizontal Pass - separable 1D max in X direction
+# Mirrors C++ common_shaders/DilationShader.cpp::dilationHorizontalFragmentShaderStr.
+# Constant max loop bound (MAX_RADIUS=6, matching C++ MAX_DILATE_RADIUS) with a
+# dynamic-radius guard keeps the shader GLES2-safe while preserving stride 2.
+# ============================================================================
+
+string dilateHorizontalGlsl = "
+  precision highp float;
+  varying vec2 sourceTextureCoordinate;
+
+  uniform vec2 outputSize;
+  uniform float radius;
+
+  #define MAX_RADIUS 6
+
+  void main() {
+    vec2 uv = sourceTextureCoordinate;
+    vec2 duv = 1.0 / outputSize;
+    vec4 c = vec4(0.0);
+    int r = int(radius);
+    for (int x = -MAX_RADIUS; x <= MAX_RADIUS; x += 2) {
+      if (x >= -r && x <= r) {
+        vec2 offset = vec2(duv.x * float(x), 0.0);
+        vec4 v = sampleInput(uv + offset);
+        c = max(c, v);
+      }
+    }
+    gl_FragColor = c;
+  }
+";
+
+
+# ============================================================================
+# Dilate Vertical Pass - separable 1D max in Y direction on horizontal output
+# Mirrors C++ common_shaders/DilationShader.cpp::dilationVerticalFragmentShaderStr.
+# ============================================================================
+
+string dilateVerticalGlsl = "
+  precision highp float;
+  varying vec2 sourceTextureCoordinate;
+
+  uniform vec2 outputSize;
+  uniform float radius;
+
+  #define MAX_RADIUS 6
+
+  void main() {
+    vec2 uv = sourceTextureCoordinate;
+    vec2 duv = 1.0 / outputSize;
+    vec4 c = vec4(0.0);
+    int r = int(radius);
+    for (int y = -MAX_RADIUS; y <= MAX_RADIUS; y += 2) {
+      if (y >= -r && y <= r) {
+        vec2 offset = vec2(0.0, duv.y * float(y));
+        vec4 v = sampleInput(uv + offset);
+        c = max(c, v);
+      }
+    }
+    gl_FragColor = c;
+  }
+";
+
+
+# ============================================================================
+# Compose Pass - single-layer offset with complementary color
+# Multi-input: s_texture = default (original), auxSampler1 = dilateVertical
+# ============================================================================
+
+string composeGlsl = "
+  precision highp float;
+  varying vec2 sourceTextureCoordinate;
+
+  uniform sampler2D auxSampler1;  // dilated shape - tex1
+
+  uniform vec2 outputSize;
+  uniform vec2 direction;
+  uniform float depth;
+  uniform float depthStart;
+  uniform float depthDist;
+  uniform vec4 textColor;
+
+  vec4 blendAlpha(vec4 base, vec4 blend) {
+    return vec4(mix(base.rgb, blend.rgb, blend.a), mix(base.a, 1.0, blend.a));
+  }
+
+  vec4 blendAlphaPremult(vec4 base, vec4 blend) {
+    return blend + base * (1.0 - blend.a);
+  }
+
+  // HSV color space conversion
+  vec3 rgb2hsv(vec3 c) {
+    vec4 k = vec4(0.0, -1.0 / 3.0, 2.0 / 3.0, -1.0);
+    vec4 p = c.g < c.b ? vec4(c.bg, k.wz) : vec4(c.gb, k.xy);
+    vec4 q = c.r < p.x ? vec4(p.xyw, c.r) : vec4(c.r, p.yzx);
+    float d = q.x - min(q.w, q.y);
+    float e = 1.0e-10;
+    return vec3(abs(q.z + (q.w - q.y) / (6.0 * d + e)), d / (q.x + e), q.x);
+  }
+
+  vec3 hsv2rgb(vec3 c) {
+    vec4 k = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
+    vec3 p = abs(fract(c.xxx + k.xyz) * 6.0 - k.www);
+    return c.z * mix(k.xxx, clamp(p - k.xxx, 0.0, 1.0), c.y);
+  }
+
+  void main() {
+    vec2 uv = sourceTextureCoordinate;
+    vec4 base = sampleInput(uv);
+
+    vec2 dir = normalize(direction);
+    vec2 duv = depthDist / outputSize;
+    vec4 color = vec4(0.0);
+
+    // Compute complementary extrusion color via HSV manipulation
+    vec3 rgb = textColor.rgb;
+    vec3 hsv = rgb2hsv(rgb);
+
+    // hue shift
+    hsv.x += (hsv.x > 0.3 && hsv.x < 0.8) ? 0.25 : -0.21;
+
+    // contrasting brightness and saturation
+    if (hsv.z > 0.5) {
+      hsv.y = 1.0;
+      hsv.z *= 0.6;
+    } else {
+      hsv.y *= 0.35;
+      hsv.z = 1.0;
+    }
+    vec3 extrusionColor = hsv2rgb(hsv);
+
+    // Single-layer extrusion
+    const int maxLayers = 50;
+    int numLayers = int(depth);
+
+    for(int i = 0; i < maxLayers; i++) {
+      if (i >= numLayers) break;
+
+      float l = float(numLayers - i - 1);
+      vec2 offset = (l + depthStart) * dir * duv;
+      vec2 st = uv + offset;
+      vec4 offsetShape = texture2D(auxSampler1, st);
+
+      color = blendAlpha(color, vec4(extrusionColor, offsetShape.a));
+    }
+
+    // Blend base text on top
+    color = blendAlphaPremult(color, base);
+
+    gl_FragColor = toOutputFormat(color);
+  }
+";

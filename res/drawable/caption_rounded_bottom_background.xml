@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape android:shape="rectangle"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <corners android:bottomLeftRadius="@dimen/abc_select_dialog_padding_start_material" android:bottomRightRadius="@dimen/abc_select_dialog_padding_start_material" />
+    <solid android:color="?igds_color_secondary_background" />
+</shape>

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "identifier": "dcb13d4c-8d47-4c12-8881-dc1b6e82f6bf",
+  "displayName": "Mask Wipe Heart",
+  "description": "[IG Edits] Effect name shown in the video effects picker. This is the user-facing label for a video effect.",
+  "iglu": {
+    "legacyId": 3145,
+    "behavior": {
+      "type": "fixedIntro",
+      "durationMs": 1500,
+      "curve": "quadraticInOut"
+    },
+    "customization": [
+      {
+        "name": "duration",
+        "default": 1.5,
+        "min": 0.5,
+        "max": 5.0,
+        "displayName": "Duration",
+        "displayMethod": "time"
+      },
+      {
+        "name": "amount",
+        "displayName": "Amount",
+        "default": 0.1,
+        "min": 0.0,
+        "max": 0.2
+      }
+    ]
+  }
+}

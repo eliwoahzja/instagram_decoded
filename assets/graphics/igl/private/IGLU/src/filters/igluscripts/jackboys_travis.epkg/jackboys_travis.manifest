@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "identifier": "49360554-F3E4-4D93-AF61-8565F08DA064",
+  "displayName": "Jackboys Travis",
+  "description": "[IG Edits] Video effect name. A stylized color grade with animated film grain — a LUT color transform applied to the camera plus procedural grain.",
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAFcBm3SAzX"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "206d8d1b",
+      "handle": "AQAIOdLLzeMs",
+      "md5": "0b14016c969c2ea83e21fe3416486009"
+    }
+  },
+  "iglu": {
+    "legacyId": 3228
+  },
+  "assets": [
+    {
+      "name": "jackboys_travis_lut.png",
+      "assetHash": "17037ccdc11662bb83286d3a71f24634d32e5e04a451bb5a80cd3e8351f63a40",
+      "hubAssetId": "3661180044035292"
+    }
+  ]
+}

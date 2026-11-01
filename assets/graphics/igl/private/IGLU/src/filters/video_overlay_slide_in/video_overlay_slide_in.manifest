@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_cutout_slide",
+  "displayName": "Slide In",
+  "description": "[IG Edits] Video effect name. With \"Slide In\", the creator can overlay a sprite that slides into the frame from an edge and rests on top of the subject.",
+  "iglu": {
+    "legacyId": 5063,
+    "subject": {
+      "overlay": true
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "85a75acf",
+      "handle": "AQAD76mCgTqV",
+      "md5": "7745a4fc451760089d3e0172589dc1ba"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAFCkDasEp9"
+    }
+  }
+}

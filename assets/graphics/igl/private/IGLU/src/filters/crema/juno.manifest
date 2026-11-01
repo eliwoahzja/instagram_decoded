@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "identifier": "juno",
+  "displayName": "Juno",
+  "description": "[IG Edits] Color filter name. With \"Juno\", the creator can apply the Juno Instagram-style look via the juno_map 33-slice 3D LUT, boosting warm reds and yellows while cooling the blues.",
+  "assets": [
+    {
+      "name": "juno_map.png",
+      "assetHash": "3b471b51e3df1fc4ab5ec490299a0370b06030fe1baad3398a09a01f1d1840aa",
+      "hubAssetId": "762924179853583"
+    }
+  ],
+  "iglu": {}
+}

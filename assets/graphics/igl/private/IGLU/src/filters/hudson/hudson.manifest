@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "identifier": "hudson",
+  "displayName": "Hudson",
+  "description": "[IG Edits] Color filter name. With \"Hudson\", the creator can apply the Hudson Instagram look via a blowout texture, per-channel overlay curves, and a 3-row map LUT for cool icy tinting.",
+  "assets": [
+    {
+      "name": "blowout.android.png",
+      "assetHash": "ad7940ccd185321bc0ba8ee5c38627b13cdc4ee579c6ef1cc9bc89fbfb214e71",
+      "hubAssetId": "2268508210305701"
+    },
+    {
+      "name": "blowout.ios.pvr",
+      "assetHash": "6f5140a0732061ee7f381016d5e77f2fbc140ce6da90cfdf612e3d151974e07f",
+      "hubAssetId": "1417924313130774"
+    },
+    {
+      "name": "map_hudson.png",
+      "assetHash": "68607b118835f44af8c5177509ec76f07bcf5204d0dffab9f47ea308a8f5e6e3",
+      "hubAssetId": "2312157292595425"
+    },
+    {
+      "name": "overlay.png",
+      "assetHash": "84b56063e8efd2fa742bd5a62235c378606dc3406613606f99f3c4044b20e31a",
+      "hubAssetId": "1236494364700999"
+    }
+  ],
+  "iglu": {}
+}

@@ -1,0 +1,59 @@
+[Filter FourSplitScreen]
+# "Four Split Screen" — pure UV-manipulation filter. No LUT, no assets,
+# no procedural overlays. Divides the canvas into 4 equal quadrants
+# (top-left, top-right, bottom-left, bottom-right) and renders a
+# half-scale copy of the camera source in each quadrant.
+#
+# Implementation:
+#   vec2 tiledUV = fract(uv * tile_scale);
+#   gl_FragColor = sampleInput(tiledUV);
+#
+# `fract(uv * 2.0)` naturally tiles the camera source 4x in a 2x2 grid
+# — each tile is exactly 0.5 of the canvas in pixel space, no borders
+# or gaps, clean quadrant split.
+#
+# Full-frame UV tile approximation — no multi-viewport / multi-pass
+# rendering needed. Simplest filter in the stack.
+
+[Init]
+fun init(Filter filter)
+{
+    filter.parameters = {
+        {tile_scale = 2.0, min = 1.0, max = 8.0, description = "UV tile factor (2.0 = 2x2 = 4 quadrants; 3.0 = 3x3 = 9 tiles; etc.)"},
+    };
+
+    filter.passes = {{
+      name = 'pass0,
+      inputs = {'default},
+      uniforms = {
+        tile_scale = 2.0,
+      },
+      glslShader = glslFourSplitScreen,
+    }};
+}
+
+[PreRender]
+fun preRender(Filter filter){
+    f32 ts = getParameterFloat('tile_scale);
+    setShaderUniform('pass0, 'tile_scale, ts);
+}
+
+#### GLSL shader ####
+
+string glslFourSplitScreen = "
+    varying vec2 sourceTextureCoordinate;
+    BaseUniformsOpenGL;
+
+    uniform sampler2D auxSampler0;  // 'default (camera)
+
+    uniform float tile_scale;
+
+    void main() {
+      vec2 uv = sourceTextureCoordinate;
+      // fract(uv * 2.0) tiles the source 2x2 — each tile fills exactly
+      // 0.5 of the canvas. tile_scale = 3.0 -> 3x3 grid, etc.
+      vec2 tiledUV = fract(uv * tile_scale);
+      vec4 texel = sampleInput(tiledUV);
+      gl_FragColor = toOutputFormat(texel);
+    }
+    ";

@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "identifier": "multi_color_gradient_v2",
+  "displayName": "Multi Color Gradient V2",
+  "description": "[IG Edits] Video effect. With \"Multi Color Gradient V2\", the creator can pick from five preset gradient textures (orange, pink, purple, blue, or rainbow) rendered as a full-screen sampled image.",
+  "assets": [
+    {
+      "name": "gradient_blue.png",
+      "assetHash": "a7a61fa29c43bf1bccb75e7a68d4444e90ab427e469e52b958df7aa5232de962",
+      "hubAssetId": "25941471735480653"
+    },
+    {
+      "name": "gradient_orange.png",
+      "assetHash": "32edfea62f355125f02c7bdb00eca706f06850c52d7f9fdfe38f8dbed4b1622b",
+      "hubAssetId": "919213973916839"
+    },
+    {
+      "name": "gradient_pink.png",
+      "assetHash": "fb892dba754f50e08e6fbbe20ac51a0cf5231be919c5530030e423707600e5de",
+      "hubAssetId": "4293575507556975"
+    },
+    {
+      "name": "gradient_purple.png",
+      "assetHash": "cd63f4779b83d1655deeddede6b99421cd93852afd8384ad715b1f216e649510",
+      "hubAssetId": "1591050322203793"
+    },
+    {
+      "name": "gradient_rainbow.png",
+      "assetHash": "8cda6c8ab612a3a1d1852698fa38570d28e9374a4ddf11fd011619d42e2b5150",
+      "hubAssetId": "1628252791691606"
+    }
+  ],
+  "iglu": {}
+}

@@ -1,0 +1,39 @@
+.class public abstract Lcom/facebook/rsys/filelogging/gen/FileLogUploadProxy;
+.super Ljava/lang/Object;
+.source ""
+
+
+# static fields
+.field public static CONVERTER:LX/raC;
+
+
+# direct methods
+.method public static constructor <clinit>()V
+    .locals 1
+
+    const/16 v0, 0x3d
+
+    invoke-static {v0}, LX/iQy;->A00(I)LX/iQy;
+
+    move-result-object v0
+
+    sput-object v0, Lcom/facebook/rsys/filelogging/gen/FileLogUploadProxy;->CONVERTER:LX/raC;
+
+    return-void
+.end method
+
+.method public constructor <init>()V
+    .locals 0
+
+    invoke-direct {p0}, Ljava/lang/Object;-><init>()V
+
+    return-void
+.end method
+
+
+# virtual methods
+.method public abstract getUploaderName()Ljava/lang/String;
+.end method
+
+.method public abstract upload([BLjava/lang/String;Lcom/facebook/rsys/filelogging/gen/FileLogUploadCallbacks;)V
+.end method

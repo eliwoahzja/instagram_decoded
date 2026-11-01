@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@android:color/black" />
+            <padding android:left="2.0dp" android:top="2.0dp" android:right="2.0dp" android:bottom="2.0dp" />
+        </shape>
+    </item>
+    <item android:drawable="@drawable/gallery_invalid_media" android:left="4.0dp" android:top="4.0dp" android:right="4.0dp" android:bottom="4.0dp" />
+</layer-list>

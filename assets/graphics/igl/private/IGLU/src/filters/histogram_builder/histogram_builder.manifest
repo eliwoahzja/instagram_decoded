@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "histogram_builder",
+  "displayName": "Histogram Builder",
+  "description": "[IG Edits] Video effect name. With \"Histogram Builder\", the creator can compute a 256-bin per-channel R/G/B/brightness histogram of the frame for downstream auto-tone analysis.",
+  "iglu": {}
+}

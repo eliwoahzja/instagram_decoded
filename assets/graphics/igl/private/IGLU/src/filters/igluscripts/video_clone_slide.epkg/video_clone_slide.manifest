@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "identifier": "51054aeb-fb90-4441-a369-f3c6fa6b5d2f",
+  "displayName": "Clone Slide",
+  "description": "[IG Edits] Video effect name. \"Clone Slide\" repeats the subject in sliding clone passes with motion-blur ghosting before settling into place.",
+  "iglu": {
+    "behavior": {
+      "type": "fixedIntro",
+      "durationMs": 1000,
+      "curve": "linear"
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "identifier": "621D6007-BD3C-4421-9F96-1B069A8BC82A",
+  "displayName": "Blue Jeans",
+  "description": "[IG Edits] Overlay effect name. Applies denim-blue ink hatching as an overlay layer composited over the clip.",
+  "iglu": {
+    "legacyId": 5089,
+    "subject": {
+      "overlay": true
+    }
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "identifier": "FABAAA73-B1CA-4B64-A17F-2B131EC0E85D",
+  "displayName": "Mountain",
+  "description": "[IG Edits] Color preset filter name. Applies a mountain color grade with skin smoothing.",
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAD2e6maNcE"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "b66bff84",
+      "handle": "AQAF3vSmeqOQ",
+      "md5": "8fe916b063459e86f6f7ffc1be1e7ec0"
+    }
+  },
+  "iglu": {
+    "legacyId": 3180
+  },
+  "assets": [
+    {
+      "name": "mountain_lut.png",
+      "assetHash": "b5d5825bcc5658c4852ee283ca84c507df63ece59512faa3f6b7301d4e728b0f",
+      "hubAssetId": "2283256329152596"
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "assets": [
+    {
+      "name": "fairy_grunge_lut.png",
+      "assetHash": "878dd4f52aeed2ca60e3df1bf008fd8b2040f09f5f788832bbbb63b34c6ea968",
+      "hubAssetId": "1029726840061338"
+    }
+  ],
+  "description": "[IG Edits] Color filter name. With \"Fairy Grunge\", the creator gets an 8x8 LUT color grade with a soft-focus blur.",
+  "displayName": "Fairy Grunge",
+  "identifier": "8a27f40b-0642-4648-9640-b08c02899080",
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAGO2SS-Kp-"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "8373ee3b",
+      "handle": "AQAFCgun1Mn1",
+      "md5": "564264ea137d80c4c6485717a72f4189"
+    }
+  },
+  "iglu": {
+    "legacyId": 3218
+  }
+}

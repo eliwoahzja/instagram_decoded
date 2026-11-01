@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "identifier": "208E0D8C-BA0D-44D1-98E0-D2951499F42F",
+  "displayName": "Loading",
+  "description": "[IG Edits] Color filter name. Blurred + LUT-graded look with a procedural 12-bar loading spinner overlay centered on screen.",
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAIE_oJhl92"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "44269399",
+      "handle": "AQAG7hgU__27",
+      "md5": "7b2585d0e047be5e5dabd2d49b5ef675"
+    }
+  },
+  "iglu": {
+    "legacyId": 3189
+  },
+  "assets": [
+    {
+      "name": "loading_lut.png"
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "text_film_school",
+  "displayName": "Film School",
+  "description": "Label for the Film School text effect style.",
+  "iglu": {}
+}

@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_cutout_clone_slide",
+  "displayName": "Clone Slide",
+  "description": "[Instagram Edits] Effect browser - Label for an effect that creates multiples of a video or subjects within the video that slide vertically. Character count for labels is 14 characters max.",
+  "iglu": {
+    "legacyId": 2094,
+    "customization": [
+      {
+        "name": "speed",
+        "default": 0.55,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Speed",
+        "displayNameDescription": "[IG Edits] Slider label controlling the playback or animation speed of a video effect (noun, not a verb); exact range varies per effect."
+      }
+    ],
+    "subject": {
+      "enabled": true,
+      "fullFrameEnabled": false,
+      "typeSuggestions": [
+        "head",
+        "person",
+        "clothing"
+      ]
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "1127c57d",
+      "handle": "AQACpBsOWkkn",
+      "md5": "286490f477e419585791f2f674611f3e"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQBe4YG03fRg"
+    }
+  }
+}

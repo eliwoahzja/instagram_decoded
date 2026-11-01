@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_cutout_pixel",
+  "displayName": "Pixel",
+  "description": "Video effect name. A video effect is a creative visual element that can be applied to a video. With \"Pixel\", the creator can add a pixelated effect to the video.",
+  "iglu": {
+    "legacyId": 2089,
+    "customization": [
+      {
+        "name": "amount",
+        "default": 0.7,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Amount",
+        "displayNameDescription": "[IG Edits] Slider label controlling the magnitude or quantity of a video effect. Generic across many effects; exact range varies per effect."
+      }
+    ],
+    "subject": {
+      "enabled": true,
+      "fullFrameEnabled": true,
+      "typeSuggestions": [
+        "head",
+        "person",
+        "clothing"
+      ]
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "2cf0cb97",
+      "handle": "AQAEmFLQeZNT",
+      "md5": "dbb9bf2e398ff0e923e171bf96114ef4"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "isImageFormat": true,
+      "handle": "AQACfaVYzVcA"
+    }
+  }
+}

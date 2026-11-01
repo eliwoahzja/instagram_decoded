@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_motion_blur",
+  "displayName": "Motion blur",
+  "description": "[IG Edits] Effect name shown in the video effects picker. With \"Motion blur\", the creator can add a directional blur that simulates camera or subject movement.",
+  "iglu": {
+    "legacyId": 2123,
+    "customization": [
+      {
+        "name": "intensity",
+        "default": 0.4,
+        "min": 0.01,
+        "max": 0.99,
+        "displayName": "Intensity"
+      }
+    ]
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAH8yl9aqJW"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "d7f52ce2",
+      "handle": "AQAEt9KDOYvu",
+      "md5": "30ec7bd814bd48edf7981755c2f2f565"
+    }
+  }
+}

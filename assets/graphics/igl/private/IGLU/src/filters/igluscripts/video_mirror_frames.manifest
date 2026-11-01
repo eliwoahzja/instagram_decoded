@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_mirror_frames",
+  "displayName": "Mirror frames",
+  "description": "[IG Edits] Video effect name. With \"Mirror frames\", the creator can intro the clip by stacking N concentric scaled-down copies that converge from frame edges into the full image.",
+  "iglu": {
+    "legacyId": 3003,
+    "behavior": {
+      "type": "fixedIntro",
+      "durationMs": 500,
+      "curve": "circularInOut"
+    },
+    "customization": [
+      {
+        "name": "duration",
+        "default": 0.5,
+        "min": 0.25,
+        "max": 2.0,
+        "displayName": "Duration",
+        "displayNameDescription": "[IG Edits] Slider label controlling how long a video effect's animation lasts; exact units and range vary per effect (seconds or normalized).",
+        "displayMethod": "time"
+      },
+      {
+        "name": "amount",
+        "default": 3.0,
+        "min": 2.0,
+        "max": 10.0,
+        "displayName": "Amount",
+        "displayNameDescription": "[IG Edits] Slider label controlling the magnitude or quantity of a video effect. Generic across many effects; exact range varies per effect.",
+        "displayMethod": "number"
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "1be964ac",
+      "handle": "AQADwapBpDEe",
+      "md5": "5a63724988c55ccf444e89f791918684"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAFc4M03V9a"
+    }
+  }
+}

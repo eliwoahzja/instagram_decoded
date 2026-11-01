@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_blur_fade_out",
+  "displayName": "Blur fade out",
+  "description": "Video effects selection. Starts sharp, ends blurry with a fade.",
+  "iglu": {
+    "legacyId": 5087,
+    "behavior": {
+      "type": "fixedOutro",
+      "durationMs": 1000,
+      "curve": "linear"
+    },
+    "subject": {
+      "overlay": true
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAEkdLRdPOM"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "4bfb6e1a",
+      "handle": "AQBd843G-Dy2",
+      "md5": "a2413f7fe68102a9fafd224ac709c069"
+    }
+  }
+}

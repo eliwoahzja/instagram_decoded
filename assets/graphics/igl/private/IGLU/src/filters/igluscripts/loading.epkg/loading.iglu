@@ -1,0 +1,218 @@
+[Filter Loading]
+# "Loading" -- Spark AR port. Previously "Blocked" in tracker.
+# Unblocked 2026-07-05 by rebuilding the icon overlay as a
+# procedural 12-bar spinner (no sprite atlas / no PVRTC decoding
+# needed).
+#
+# Filter shape (per exported bin, adapted):
+#   Layer 1 (full-frame): camera -> 9-tap 3x3 Gaussian blur -> LUT
+#   Layer 2 (centered): procedural 12-bar loading spinner drawn via
+#     SDF capsules, rotating at spinner_spin_rate revolutions/sec,
+#     bars fade linearly from active (bright) to trailing (dark),
+#     screen-blended over base image.
+#
+# The Spark original used a 16-frame KTX sprite atlas for the icon.
+# Since the animation is a generic spinner (see attached user
+# reference), a procedural version is visually equivalent, cleaner,
+# and infinitely tunable without asset rebuilds.
+#
+# LUT delivered via ARD; local sample-app testing loads from
+# assets/loading/loading_lut.png (extracted from the Spark
+# 211479563683a76b0205cf48a8ec90b3.jpg -- the only wired LUT texture
+# in the bin's patch graph).
+
+[Init]
+fun init(Filter filter)
+{
+    makeTexture('lut);
+
+    filter.parameters = {
+        {strength           = 1.0,   min = 0.0, max = 1.0,  description = "LUT mix strength (1.0 = full LUT, 0.0 = camera passthrough)"},
+        {blur_strength      = 0.454,   min = 0.0, max = 1.0,  description = "Gaussian blur mix (1.0 = full blur, matches Spark)"},
+        {blur_radius        = 0.002, min = 0.0, max = 0.05, description = "Gaussian blur kernel radius in normalized UV"},
+        {brightness         = 1.0,   min = 0.0, max = 2.0,  description = "Output brightness multiplier (1.0 = no-op)"},
+        {spinner_opacity    = 1.0,   min = 0.0, max = 1.0,  description = "Loading spinner overlay opacity (screen-blend strength)"},
+        {spinner_scale      = 0.091,  min = 0.03, max = 0.5, description = "Spinner size as fraction of screen (0.15 matches Spark plane scale ~0.25/frame)"},
+        {spinner_spin_rate  = 12.167,  min = 1.0, max = 30.0, description = "Spinner advance rate in bars/sec (12 bars = 1 full rotation/sec)"},
+    };
+
+    filter.passes = {{
+      name = 'pass0,
+      inputs = {'default, 'lut},
+      uniforms = {
+        strength          = 1.0,
+        blur_strength     = 0.454,
+        blur_radius       = 0.002,
+        brightness        = 1.0,
+        spinner_opacity   = 1.0,
+        spinner_scale     = 0.091,
+        spinner_spin_rate = 12.167,
+        aspect            = 1.0,
+        time              = 0.0,
+      },
+      glslShader = glslLoading,
+    }};
+}
+
+string lut_path = "lut_path";
+string lut_filename = "";
+
+[PreRender]
+fun preRender(Filter filter){
+    string lut_filename_parameter = getParameterString(lut_path);
+    if (lut_filename_parameter != "") {
+        string new_lut_filename = stringAppend("textureFilePath://", lut_filename_parameter);
+        if (new_lut_filename != lut_filename) {
+            lut_filename = new_lut_filename;
+            loadTexture('lut, lut_filename);
+        }
+    }
+
+    f32 s = getParameterFloat('strength);
+    setShaderUniform('pass0, 'strength, s);
+    f32 blr = getParameterFloat('blur_strength);
+    setShaderUniform('pass0, 'blur_strength, blr);
+    f32 blrad = getParameterFloat('blur_radius);
+    setShaderUniform('pass0, 'blur_radius, blrad);
+    f32 b = getParameterFloat('brightness);
+    setShaderUniform('pass0, 'brightness, b);
+    f32 sop = getParameterFloat('spinner_opacity);
+    setShaderUniform('pass0, 'spinner_opacity, sop);
+    f32 ssc = getParameterFloat('spinner_scale);
+    setShaderUniform('pass0, 'spinner_scale, ssc);
+    f32 ssr = getParameterFloat('spinner_spin_rate);
+    setShaderUniform('pass0, 'spinner_spin_rate, ssr);
+
+    # Aspect ratio so the spinner draws as a real circle regardless of
+    # the framebuffer's aspect (portrait, landscape, square). Passing
+    # width/height so we can correct iconLocal.x in the shader.
+    vec2 srcSize = getTextureSize('default);
+    f32 asp = 1.0;
+    if (srcSize.y > 0.0) {
+        asp = srcSize.x / srcSize.y;
+    }
+    setShaderUniform('pass0, 'aspect, asp);
+
+    f32 t = getLocalTime();
+    setShaderUniform('pass0, 'time, t);
+}
+
+#### GLSL shader ####
+
+string glslLoading = "
+    varying vec2 sourceTextureCoordinate;
+    BaseUniformsOpenGL;
+
+    uniform sampler2D auxSampler0;  // 'default (camera)
+    uniform sampler2D auxSampler1;  // 'lut
+
+    uniform float blur_strength;
+    uniform float blur_radius;
+    uniform float brightness;
+    uniform float spinner_opacity;
+    uniform float spinner_scale;
+    uniform float spinner_spin_rate;
+    uniform float aspect;
+    uniform float time;
+
+    // 8x8 grid LUT lookup, catalog convention.
+    vec3 applyLut(vec3 inRgb) {
+      vec3 c = clamp(inRgb, 0.00781, 0.98438);
+      float x = c.r / 8.0;
+      float y = c.g / 8.0;
+      float z = c.b;
+      float blueY = floor(z * 8.0) / 8.0;
+      float blueX = floor((z - blueY) * 64.0) / 8.0;
+      x += blueX;
+      y += blueY;
+      return texture2D(auxSampler1, vec2(x, y)).xyz;
+    }
+
+    // 2D capsule signed distance function.
+    // p = query point, a/b = capsule end points, r = capsule half-width.
+    // Returns negative inside, positive outside.
+    float sdCapsule(vec2 p, vec2 a, vec2 b, float r) {
+      vec2 pa = p - a;
+      vec2 ba = b - a;
+      float h = clamp(dot(pa, ba) / dot(ba, ba), 0.0, 1.0);
+      return length(pa - ba * h) - r;
+    }
+
+    void main() {
+      vec2 uv = sourceTextureCoordinate;
+
+      // ============================================================
+      // Layer 1: 9-tap 3x3 Gaussian blur then LUT.
+      // ============================================================
+      float r = blur_radius;
+      vec3 center = sampleInput(uv).rgb;
+      vec3 blurred = center * (4.0 / 16.0);
+      blurred += sampleInput(uv + vec2( r, 0.0)).rgb * (2.0 / 16.0);
+      blurred += sampleInput(uv + vec2(-r, 0.0)).rgb * (2.0 / 16.0);
+      blurred += sampleInput(uv + vec2(0.0,  r)).rgb * (2.0 / 16.0);
+      blurred += sampleInput(uv + vec2(0.0, -r)).rgb * (2.0 / 16.0);
+      blurred += sampleInput(uv + vec2( r,  r)).rgb * (1.0 / 16.0);
+      blurred += sampleInput(uv + vec2( r, -r)).rgb * (1.0 / 16.0);
+      blurred += sampleInput(uv + vec2(-r,  r)).rgb * (1.0 / 16.0);
+      blurred += sampleInput(uv + vec2(-r, -r)).rgb * (1.0 / 16.0);
+      vec3 softened = mix(center, blurred, blur_strength);
+      vec3 graded = applyLut(softened);
+      vec3 base = mix(softened, graded, strength);
+      base *= brightness;
+
+      // ============================================================
+      // Layer 2: procedural 12-bar loading spinner.
+      //   - 12 bars arranged around a circle
+      //   - Each bar is a rounded capsule at radial position
+      //   - Active bar (brightest) advances at spinner_spin_rate bars/sec
+      //   - Trailing bars fade linearly to dark
+      //   - Screen-blended over base
+      // ============================================================
+      vec2 iconLocal = (uv - vec2(0.5));
+      iconLocal.x *= aspect;
+      iconLocal /= spinner_scale;
+
+      // Capsule geometry (in icon-local space, [-1,+1] roughly):
+      const float R_inner = 0.40;       // bar starts at 40% radius
+      const float R_outer = 0.70;       // bar ends at 70% radius
+      const float bar_half_width = 0.06; // capsule half-thickness
+
+      float active_bar = mod(floor(time * spinner_spin_rate), 12.0);
+
+      float spinner_alpha = 0.0;
+      float spinner_shade = 0.0;
+
+      for (int i = 0; i < 12; i++) {
+        float fi = float(i);
+        // Angle for bar i. Rotate so bar 0 is at top (12 o'clock).
+        // Negative y so bar 0 points up in standard image coords.
+        float ang = fi * (6.2831853 / 12.0) - 1.5707963;
+        vec2 dir = vec2(cos(ang), -sin(ang));
+        vec2 a = dir * R_inner;
+        vec2 b = dir * R_outer;
+
+        float d = sdCapsule(iconLocal, a, b, bar_half_width);
+        // Soft edge at 0.008 units.
+        float in_bar = 1.0 - smoothstep(0.0, 0.008, d);
+
+        // Age = ticks behind the active bar (0 = brightest, 11 = darkest).
+        float age = mod(active_bar - fi + 12.0, 12.0);
+        float bar_shade = (11.0 - age) / 11.0;
+
+        // Composite: max-blend per bar (higher shade wins for overlap).
+        float this_alpha = in_bar;
+        if (this_alpha > 0.0 && bar_shade > spinner_shade) {
+          spinner_shade = bar_shade;
+          spinner_alpha = this_alpha;
+        }
+      }
+
+      // Screen blend spinner over base.
+      // Spinner color is grayscale (bar_shade determines brightness).
+      vec3 spinner_contribution = vec3(spinner_shade) * spinner_alpha * spinner_opacity;
+      vec3 result = 1.0 - (1.0 - base) * (1.0 - spinner_contribution);
+      result = clamp(result, 0.0, 1.0);
+
+      gl_FragColor = toOutputFormat(vec4(result, 1.0));
+    }
+    ";

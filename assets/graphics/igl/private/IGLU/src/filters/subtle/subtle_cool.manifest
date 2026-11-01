@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "identifier": "subtle_cool",
+  "displayName": "Subtle Cool",
+  "description": "Filter name for a subtle, cool-toned color adjustment",
+  "iglu": {
+    "legacyId": 1005
+  },
+  "assets": [
+    {
+      "name": "lut_subtle_cool.png",
+      "assetHash": "017bb3f3bac1af220830c010e02bdc1aea76713df836f9d3a5902066fb0b7b38",
+      "hubAssetId": "1406340590539363"
+    }
+  ]
+}

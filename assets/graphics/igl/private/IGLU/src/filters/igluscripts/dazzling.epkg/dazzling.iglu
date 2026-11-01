@@ -1,0 +1,91 @@
+[Filter Dazzling]
+# "Dazzling" LUT color grading filter.
+# Spark AR port — Effect ID 211897864714650 (225M DAP, Lighting category).
+# 8x8 grid LUT color grade with strength + brightness knobs, same
+# trilinear-grid sampling shader as glamy / black_and_white /
+# spark_soft_nature. Pure LUT (no skin smoothing / no BRCOSA / no
+# overlay) per user spec.
+#
+# LUT delivered via ARD (effectId / assetHash filled in once provided —
+# omitted from manifest assets[] entry until upload completes).
+
+[Init]
+fun init(Filter filter)
+{
+    makeTexture('lut);
+
+    filter.parameters = {
+        {strength = 1.0, min = 0.0, max = 1.0, description = "LUT mix strength (1.0 = full LUT, 0.0 = camera passthrough)"},
+        {brightness = 1.0, min = 0.0, max = 2.0, description = "Output brightness multiplier (Spark scene-light emulation, 1.0 = no-op)"},
+    };
+
+    filter.passes = {{
+      name = 'pass0,
+      inputs = {'default, 'lut},
+      uniforms = {
+        strength = 1.0,
+        brightness = 1.0,
+      },
+      glslShader = glslLut,
+    }};
+}
+
+string lut_path = "lut_path";
+string lut_filename = "";
+
+[PreRender]
+fun preRender(Filter filter){
+    string lut_filename_parameter = getParameterString(lut_path);
+    if (lut_filename_parameter != "") {
+        string new_lut_filename = stringAppend("textureFilePath://", lut_filename_parameter);
+        if (new_lut_filename != lut_filename) {
+            lut_filename = new_lut_filename;
+            loadTexture('lut, lut_filename);
+        }
+    }
+
+    f32 s = getParameterFloat('strength);
+    setShaderUniform('pass0, 'strength, s);
+
+    f32 b = getParameterFloat('brightness);
+    setShaderUniform('pass0, 'brightness, b);
+}
+
+#### GLSL shader ####
+
+string glslLut = "
+    varying vec2 sourceTextureCoordinate;
+    BaseUniformsOpenGL;
+
+    uniform sampler2D auxSampler0;
+    uniform sampler2D auxSampler1;
+    uniform sampler2D auxSampler2;
+
+    uniform float brightness;
+
+    void main() {
+      vec4 texel = sampleInput(sourceTextureCoordinate);
+
+      texel.rgb = clamp(texel.rgb, 0.00781, 0.98438);
+
+      float x = texel.r / 8.0;
+      float y = texel.g / 8.0;
+      float z = texel.b;
+
+      float blueY = floor(z * 8.0) / 8.0;
+      float blueX = floor((z - blueY) * 64.0) / 8.0;
+
+      x += blueX;
+      y += blueY;
+
+      vec3 color = texture2D(auxSampler1, vec2(x, y)).xyz;
+
+      texel = mix(texel, vec4(color, texel.a), strength);
+
+      // Spark scene-light emulation: ambient(0.2) + directional(0.8) white,
+      // collapsed to a single brightness multiplier on a flat plane. Default 1.0 = no-op.
+      texel.rgb *= brightness;
+
+      gl_FragColor = toOutputFormat(texel);
+    }
+    ";

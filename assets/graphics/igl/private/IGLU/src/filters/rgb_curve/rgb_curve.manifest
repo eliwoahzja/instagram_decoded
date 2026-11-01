@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "rgb_curve",
+  "displayName": "RGB Curve",
+  "description": "[IG Edits] Color filter name. With \"RGB Curve\", the creator can shape tone with 4 spline curves (R, G, B, master) defined by 5 control points each, sampled from a 256x4 LUT.",
+  "iglu": {}
+}

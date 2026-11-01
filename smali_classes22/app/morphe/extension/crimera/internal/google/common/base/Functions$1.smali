@@ -1,0 +1,14 @@
+.class synthetic Lapp/morphe/extension/crimera/internal/google/common/base/Functions$1;
+.super Ljava/lang/Object;
+.source "Functions.java"
+
+
+# annotations
+.annotation system Ldalvik/annotation/EnclosingClass;
+    value = Lapp/morphe/extension/crimera/internal/google/common/base/Functions;
+.end annotation
+
+.annotation system Ldalvik/annotation/InnerClass;
+    accessFlags = 0x1009
+    name = null
+.end annotation

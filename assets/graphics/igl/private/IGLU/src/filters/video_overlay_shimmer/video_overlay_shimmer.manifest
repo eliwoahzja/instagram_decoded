@@ -1,0 +1,69 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_cutout_shimmer",
+  "displayName": "Shimmer",
+  "description": "[Instagram Edits] Effect browser - Label for an effect that creates a glistening, shimmering light across the video or subjects within the video. Character count for labels is 14 characters max.",
+  "iglu": {
+    "legacyId": 5072,
+    "customization": [
+      {
+        "name": "color",
+        "defaultSelection": "#FFFFFF",
+        "available": [
+          "#FFFFFF",
+          "#FFD600",
+          "#FF7A00",
+          "#FE1D37",
+          "#FF0169",
+          "#D300C5",
+          "#7638FA",
+          "#37038B",
+          "#1CD164",
+          "#0095F6",
+          "#AD88FC",
+          "#FDD5FD",
+          "#FFABE1",
+          "#FFC584",
+          "#FFF8C2",
+          "#09FF00",
+          "#FFFF00",
+          "#5AFAC7",
+          "#0000FF"
+        ],
+        "displayName": "Color",
+        "displayNameDescription": "[IG Edits] Color picker label. The user selects a color used by the video effect (e.g., glow tint, outline color, sparkle color); available palette varies per effect."
+      },
+      {
+        "name": "speed",
+        "default": 0.4,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Speed",
+        "displayNameDescription": "[IG Edits] Slider label controlling the playback or animation speed of a video effect (noun, not a verb); exact range varies per effect."
+      },
+      {
+        "name": "opacity",
+        "default": 1.0,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Opacity",
+        "displayNameDescription": "[IG Edits] Slider label controlling the opacity (transparency) of an element added by a video effect (low = invisible, high = fully opaque); exact range varies per effect."
+      }
+    ],
+    "subject": {
+      "overlay": true
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "45fc83e4",
+      "handle": "AQACdVcIOIMv",
+      "md5": "b3fcc782defdb80631e0d4aa8f4ea987"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAOQmrGIwAB"
+    }
+  }
+}

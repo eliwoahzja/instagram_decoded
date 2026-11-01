@@ -1,0 +1,242 @@
+[Filter Old_Film_II]
+# "Old Film" (variant II) — pure-IGLUScript vintage-film filter:
+# warm B&W LUT color grade + 10Hz camera shake + procedural bright
+# dust specks + procedural bright vertical scratches.
+#
+# Ports Spark "old film" filter. Spark source stacked: warm B&W LUT
+# on cameraTexture (with a 2% zoom-in offset), plus a 48-frame image
+# sequence at 9fps of scratches+dust composited additively on top,
+# plus a 10Hz ping-pong scene-transform shake on the filter
+# rectangle. Reproduced procedurally here — no PNG sequence bundled,
+# only the LUT is delivered via ARD.
+#
+# Structure: single pass, single asset (old_film_ii_lut.png). Shader
+# stages:
+#   1. Camera shake — UV offset by low-amplitude sin() at ~10Hz X /
+#      ~7.5Hz Y (decorrelated), time wrapped to 100s to protect
+#      sin() precision (same gotcha as feel_with_reel D113810349).
+#   2. Warm B&W LUT color grade (drammatico pattern).
+#   3. Dust specks — cell-grid pseudo-random bright specks (screen
+#      blend for bright-on-camera effect matching the reference
+#      overlay). Bounded time seed at ~9fps to match Spark source.
+#   4. Vertical scratches — per-frame thin bright vertical stripes
+#      with dashed break-up + occasional curved hair strands, screen
+#      blended. Same bounded frame seed as dust.
+
+[Init]
+fun init(Filter filter)
+{
+    makeTexture('lut);
+
+    filter.parameters = {
+        {strength = 1.000, min = 0.0, max = 1.0, description = "LUT mix strength"},
+        {shake_amount = 0.112, min = 0.0, max = 1.0, description = "Camera shake amount"},
+        {dust_opacity = 0.568, min = 0.0, max = 1.0, description = "Dust speck brightness"},
+        {scratch_opacity = 0.488, min = 0.0, max = 1.0, description = "Scratch line brightness"},
+        {flicker_amount = 1.000, min = 0.0, max = 1.0, description = "Projector brightness flicker"},
+    };
+
+    filter.passes = {{
+      name = 'pass0,
+      inputs = {'default, 'lut},
+      uniforms = {
+        strength = 1.000,
+        shake_amount = 0.112,
+        dust_opacity = 0.568,
+        scratch_opacity = 0.488,
+        flicker_amount = 1.000,
+        time = 0.0,
+      },
+      glslShader = glslOldFilmII,
+    }};
+}
+
+string lut_path = "lut_path";
+string lut_filename = "";
+
+[PreRender]
+fun preRender(Filter filter){
+    string lut_filename_parameter = getParameterString(lut_path);
+    if (lut_filename_parameter != "") {
+        string new_lut_filename = stringAppend("textureFilePath://", lut_filename_parameter);
+        if (new_lut_filename != lut_filename) {
+            lut_filename = new_lut_filename;
+            loadTexture('lut, lut_filename);
+        }
+    }
+
+    f32 s = getParameterFloat('strength);
+    setShaderUniform('pass0, 'strength, s);
+
+    f32 sh = getParameterFloat('shake_amount);
+    setShaderUniform('pass0, 'shake_amount, sh);
+
+    f32 dop = getParameterFloat('dust_opacity);
+    setShaderUniform('pass0, 'dust_opacity, dop);
+
+    f32 sop = getParameterFloat('scratch_opacity);
+    setShaderUniform('pass0, 'scratch_opacity, sop);
+
+    f32 fl = getParameterFloat('flicker_amount);
+    setShaderUniform('pass0, 'flicker_amount, fl);
+
+    # Use getLocalTime() for monotonic continuous animation.
+    f32 time = getLocalTime();
+    setShaderUniform('pass0, 'time, time);
+}
+
+#### GLSL shader ####
+
+string glslOldFilmII = "
+    varying vec2 sourceTextureCoordinate;
+    BaseUniformsOpenGL;
+
+    uniform sampler2D auxSampler0;
+    uniform sampler2D auxSampler1;
+    uniform sampler2D auxSampler2;
+
+    uniform float shake_amount;
+    uniform float dust_opacity;
+    uniform float scratch_opacity;
+    uniform float flicker_amount;
+    uniform float time;
+
+    // 1D / 2D pseudo-random hashes (feel_with_reel pattern).
+    float hash11(float x) {
+      return fract(sin(x * 12.9898) * 43758.5453);
+    }
+    float hash21(vec2 p) {
+      return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
+    }
+    vec2 hash22(vec2 p) {
+      return fract(sin(vec2(dot(p, vec2(127.1, 311.7)),
+                            dot(p, vec2(269.5, 183.3)))) * 43758.5453);
+    }
+
+    // 8x8 grid LUT lookup on auxSampler1 (drammatico pattern).
+    vec3 lutLookup(vec3 inRgb) {
+      vec3 c = clamp(inRgb, 0.00781, 0.98438);
+      float x = c.r / 8.0;
+      float y = c.g / 8.0;
+      float z = c.b;
+      float blueY = floor(z * 8.0) / 8.0;
+      float blueX = floor((z - blueY) * 64.0) / 8.0;
+      x = x + blueX;
+      y = y + blueY;
+      return texture2D(auxSampler1, vec2(x, y)).xyz;
+    }
+
+    // Cell-grid pseudo-random bright dust specks. Returns coverage [0,1].
+    float dustSpecks(vec2 uv, float frame_seed) {
+      float grid_scale = 45.0;
+      vec2 off = vec2(frame_seed * 13.7, frame_seed * 7.3);
+      vec2 g = floor(uv * grid_scale + off);
+      vec2 cell = fract(uv * grid_scale + off);
+      vec2 rp = hash22(g);
+      // Sparse: only ~30% of cells have a speck.
+      float has = step(0.7, hash21(g + frame_seed));
+      float d = distance(cell, rp);
+      float sz = 0.05 + hash21(g + vec2(1.7)) * 0.10;
+      return clamp(has * smoothstep(sz, 0.0, d), 0.0, 1.0);
+    }
+
+    // Distance-based thin curved strand (film hair). Returns coverage.
+    float hairAt(vec2 uv, vec2 anchor, float ang, float len,
+                 float freq, float amp, float th) {
+      vec2 local = uv - anchor;
+      float c = cos(ang);
+      float s = sin(ang);
+      vec2 rot = vec2(local.x * c + local.y * s,
+                      -local.x * s + local.y * c);
+      if (rot.x < 0.0 || rot.x > len) return 0.0;
+      float cy = sin(rot.x * freq) * amp;
+      return smoothstep(th, 0.0, abs(rot.y - cy));
+    }
+
+    // Per-frame vertical scratches (some dashed) + occasional hairs.
+    float scratchField(vec2 uv, float frame_idx) {
+      float a = 0.0;
+      float fseed = frame_idx * 7.31 + 0.137;
+
+      // 0-4 thin vertical stripes. Threshold 0.75 → ~25% chance per
+      // slot (halved from 0.5 = 50% per user tuning) so expected count
+      // is ~1 stripe per frame instead of ~2.
+      for (int i = 0; i < 4; i++) {
+        float fi = float(i);
+        float exists = step(0.75, hash11(fseed * 11.7 + fi * 3.13));
+        float xpos = hash11(fseed * 13.31 + fi * 19.71);
+        float w = 0.0012 + 0.0016 * hash11(fseed * 19.7 + fi * 13.13);
+        float dx = abs(uv.x - xpos);
+        float dash = step(0.35, fract(uv.y * 40.0 + hash11(fseed + fi) * 10.0));
+        a = a + 0.55 * exists * step(dx, w) * mix(1.0, dash, 0.4);
+      }
+
+      // 0-2 low-probability hair strands.
+      for (int j = 0; j < 2; j++) {
+        float fj = float(j);
+        vec2 anchor = hash22(vec2(fseed * 3.1 + fj * 7.3, fj * 11.7));
+        float ang = hash11(fseed * 5.0 + fj) * 6.2831853;
+        float len = 0.06 + hash11(fseed * 7.0 + fj) * 0.14;
+        float freq = 25.0 + hash11(fseed * 9.0 + fj) * 80.0;
+        float amp = 0.004 + hash11(fseed * 11.0 + fj) * 0.010;
+        float vis = step(0.75, hash11(fseed * 13.0 + fj));
+        a = a + vis * hairAt(uv, anchor, ang, len, freq, amp, 0.0012);
+      }
+
+      return clamp(a, 0.0, 1.0);
+    }
+
+    void main() {
+      vec2 uv = sourceTextureCoordinate;
+
+      // ============================================================
+      // Stage 1 — Camera shake (10Hz X, 7.5Hz Y decorrelated)
+      // Time wrapped to 100s to protect sin() precision over long
+      // sessions (feel_with_reel gotcha).
+      // ============================================================
+      float tw = mod(time, 100.0);
+      float sx = sin(tw * 62.8) * 0.02;
+      float sy = sin(tw * 47.1) * 0.015;
+      vec2 shakeOff = vec2(sx, sy) * shake_amount;
+      vec2 sampleUv = clamp(uv + shakeOff, 0.0, 1.0);
+
+      vec4 texel = sampleInput(sampleUv);
+
+      // ============================================================
+      // Stage 2 — Warm B&W LUT color grade
+      // ============================================================
+      vec3 lutColor = lutLookup(texel.rgb);
+      vec3 result = mix(texel.rgb, lutColor, strength);
+
+      // ============================================================
+      // Stage 3 — Dust specks (screen blend for bright specks)
+      // Bounded frame seed at ~9fps to match Spark source's 9fps
+      // sequence rate. 16 frames = cycle every ~1.8s.
+      // ============================================================
+      float dframe = mod(floor(time * 9.0), 16.0);
+      float dust = dustSpecks(uv, dframe);
+      vec3 dustCol = vec3(dust * dust_opacity);
+      result = vec3(1.0) - (vec3(1.0) - result) * (vec3(1.0) - dustCol);
+
+      // ============================================================
+      // Stage 4 — Vertical scratches (screen blend for bright lines)
+      // Same 9fps frame cycle.
+      // ============================================================
+      float scr = scratchField(uv, dframe);
+      vec3 scratchCol = vec3(scr * scratch_opacity);
+      result = vec3(1.0) - (vec3(1.0) - result) * (vec3(1.0) - scratchCol);
+
+      // ============================================================
+      // Stage 5 — Projector brightness flicker
+      // Combined slow (~2.4Hz) + fast (~7.5Hz) sines give the uneven
+      // brightness pulse of an old projector. Slider caps at ±10%
+      // brightness swing.
+      // ============================================================
+      float flickerLo = sin(tw * 15.0);
+      float flickerHi = sin(tw * 47.0);
+      float flicker = (flickerLo * 0.7 + flickerHi * 0.3) * 0.10 * flicker_amount;
+      result = clamp(result * (1.0 + flicker), 0.0, 1.0);
+
+      gl_FragColor = toOutputFormat(vec4(result, texel.a));
+    }
+    ";

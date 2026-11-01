@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="@color/bds_grey_7" />
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="oval">
+            <gradient android:startColor="@color/igvr_modal_stroke_gradient_stop_one" android:endColor="@color/bds_white_10_transparent" android:angle="270.0" android:type="linear" android:centerColor="@color/transparent_white" />
+            <stroke android:width="@dimen/abc_control_corner_material" android:color="@color/igvr_modal_stroke_gradient_stop_one" />
+        </shape>
+    </item>
+</layer-list>

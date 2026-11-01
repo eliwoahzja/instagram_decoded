@@ -1,0 +1,107 @@
+.class Lapp/morphe/extension/crimera/internal/google/common/util/concurrent/ExecutionSequencer$1;
+.super Ljava/lang/Object;
+.source "ExecutionSequencer.java"
+
+# interfaces
+.implements Lapp/morphe/extension/crimera/internal/google/common/util/concurrent/AsyncCallable;
+
+
+# annotations
+.annotation system Ldalvik/annotation/EnclosingMethod;
+    value = Lapp/morphe/extension/crimera/internal/google/common/util/concurrent/ExecutionSequencer;->submit(Ljava/util/concurrent/Callable;Ljava/util/concurrent/Executor;)Lapp/morphe/extension/crimera/internal/google/common/util/concurrent/ListenableFuture;
+.end annotation
+
+.annotation system Ldalvik/annotation/InnerClass;
+    accessFlags = 0x1
+    name = null
+.end annotation
+
+.annotation system Ldalvik/annotation/Signature;
+    value = {
+        "Ljava/lang/Object;",
+        "Lapp/morphe/extension/crimera/internal/google/common/util/concurrent/AsyncCallable<",
+        "TT;>;"
+    }
+.end annotation
+
+
+# instance fields
+.field final synthetic this$0:Lapp/morphe/extension/crimera/internal/google/common/util/concurrent/ExecutionSequencer;
+
+.field final synthetic val$callable:Ljava/util/concurrent/Callable;
+
+
+# direct methods
+.method public constructor <init>(Lapp/morphe/extension/crimera/internal/google/common/util/concurrent/ExecutionSequencer;Ljava/util/concurrent/Callable;)V
+    .locals 0
+    .annotation system Ldalvik/annotation/MethodParameters;
+        accessFlags = {
+            0x8010,
+            0x1010
+        }
+        names = {
+            "this$0",
+            "val$callable"
+        }
+    .end annotation
+
+    .annotation system Ldalvik/annotation/Signature;
+        value = {
+            "()V"
+        }
+    .end annotation
+
+    .line 155
+    iput-object p2, p0, Lapp/morphe/extension/crimera/internal/google/common/util/concurrent/ExecutionSequencer$1;->val$callable:Ljava/util/concurrent/Callable;
+
+    iput-object p1, p0, Lapp/morphe/extension/crimera/internal/google/common/util/concurrent/ExecutionSequencer$1;->this$0:Lapp/morphe/extension/crimera/internal/google/common/util/concurrent/ExecutionSequencer;
+
+    invoke-direct {p0}, Ljava/lang/Object;-><init>()V
+
+    return-void
+.end method
+
+
+# virtual methods
+.method public call()Lapp/morphe/extension/crimera/internal/google/common/util/concurrent/ListenableFuture;
+    .locals 0
+    .annotation system Ldalvik/annotation/Signature;
+        value = {
+            "()",
+            "Lapp/morphe/extension/crimera/internal/google/common/util/concurrent/ListenableFuture<",
+            "TT;>;"
+        }
+    .end annotation
+
+    .annotation system Ldalvik/annotation/Throws;
+        value = {
+            Ljava/lang/Exception;
+        }
+    .end annotation
+
+    .line 158
+    iget-object p0, p0, Lapp/morphe/extension/crimera/internal/google/common/util/concurrent/ExecutionSequencer$1;->val$callable:Ljava/util/concurrent/Callable;
+
+    invoke-interface {p0}, Ljava/util/concurrent/Callable;->call()Ljava/lang/Object;
+
+    move-result-object p0
+
+    invoke-static {p0}, Lapp/morphe/extension/crimera/internal/google/common/util/concurrent/Futures;->immediateFuture(Ljava/lang/Object;)Lapp/morphe/extension/crimera/internal/google/common/util/concurrent/ListenableFuture;
+
+    move-result-object p0
+
+    return-object p0
+.end method
+
+.method public toString()Ljava/lang/String;
+    .locals 0
+
+    .line 163
+    iget-object p0, p0, Lapp/morphe/extension/crimera/internal/google/common/util/concurrent/ExecutionSequencer$1;->val$callable:Ljava/util/concurrent/Callable;
+
+    invoke-virtual {p0}, Ljava/lang/Object;->toString()Ljava/lang/String;
+
+    move-result-object p0
+
+    return-object p0
+.end method

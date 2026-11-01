@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_cutout_flicker",
+  "displayName": "Flicker",
+  "description": "Video effects selection. Makes the video flicker.",
+  "iglu": {
+    "legacyId": 5064,
+    "customization": [
+      {
+        "name": "speed",
+        "default": 0.7,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Speed",
+        "displayNameDescription": "[IG Edits] Slider label controlling the playback or animation speed of a video effect (noun, not a verb); exact range varies per effect."
+      }
+    ],
+    "subject": {
+      "overlay": true
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "6f33b89f",
+      "handle": "AQADS9mvaoDd",
+      "md5": "7342ebc0f7b0800e9df935a195a44149"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAHhd-j9VqX"
+    }
+  }
+}

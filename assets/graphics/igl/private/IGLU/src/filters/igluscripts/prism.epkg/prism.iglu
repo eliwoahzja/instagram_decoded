@@ -1,0 +1,264 @@
+[Filter Prism]
+# "Prism" — multi-layer composite: LUT-graded background + dual masked-and-
+# transformed camera copies + screen-blend overlay (prism / rainbow light).
+#
+# Four ARD-delivered named inputs (extends bas_a_droite's multi-asset pattern,
+# follows the LEGACY (generic-symbol) convention used by every shipping LUT
+# filter — the iglu symbol is the role (`'lut`, `'overlay`, etc.) and the
+# manifest asset filename is filter-prefixed (`prism_lut.png`, etc.). Prism is
+# explicitly listed in the asset-stem exception set per matching-rule skill
+# doc; coordinate with iOS infra (Neetika Mittal) before considering a future
+# migration to per-filter prefixed symbols):
+#   * 'lut         — color LUT, 8x8 grid (prism_lut.png, 512×512)
+#   * 'overlay     — prism / rainbow-light overlay (prism_overlay.png)
+#   * 'mask_left   — alpha mask gating the left transformed copy
+#   * 'mask_right  — alpha mask gating the right transformed copy
+#
+# Pipeline (single fragment pass, 4 logical layers bottom -> top). The
+# critical architecture point is that **each transformed layer's mask AND
+# camera content are sampled at the LAYER's UV space**, not at the output UV.
+# That means the mask moves WITH the layer when translated/scaled — they are
+# one masked-image unit. Sampling the mask at output UV (the original buggy
+# version) makes the mask appear stationary while the camera content slides
+# beneath it, which is wrong.
+#
+#   Layer 1 — Background:
+#     Camera + 8x8 grid LUT at base UV. Full canvas, no transform.
+#
+#   Layer 2 — Left transformed copy:
+#     Source = (camera + LUT) gated by mask_left.alpha. The whole masked
+#     image is then translated so its top-left corner sits at (left_tl_x,
+#     left_tl_y) in canvas UV, and scaled by `copy_scale` (>1 = layer
+#     bigger than canvas, content zoomed in).
+#     Defaults dialed in via the sample app to match the Spark goal image:
+#       left_tl_x = -0.392, left_tl_y = -0.135, copy_scale = 1.15
+#     The Spark spec was "pin top-left, position (-130, -94), scale 115%"
+#     which on 1080×1920 would have given (-0.1204, -0.04896). Working
+#     defaults diverged — likely the actual Spark canvas was a different
+#     size, or position semantics differ from the literal px-on-canvas
+#     interpretation. Either way these are validated against the goal image.
+#
+#   Layer 3 — Right transformed copy:
+#     Same shape as layer 2, with mask_right. Defaults dialed in:
+#       right_tl_x = 0.275, right_tl_y = -0.014, copy_scale = 1.15
+#     The Spark spec was "pin top-right, position (94, 7), scale 115%";
+#     converted naively to TL gave (-0.0630, 0.00365) which didn't match
+#     visually. Working defaults diverged similarly to layer 2.
+#
+#   Layer 4 — Prism overlay:
+#     Static prism_overlay.png. Full canvas, no transform. Spark blend =
+#     Screen at 65% opacity.
+#       screened = 1 - (1 - dst) * (1 - src)
+#       result   = mix(result, screened, overlay_opacity * overlay.a)
+#
+# Inverse transform per layer:
+#   layer_uv = (output_uv - layer_tl) / copy_scale
+# Out-of-bounds (layer_uv outside [0,1]) is gated by an inBounds factor so
+# texture clamp-to-edge sampling can't smear the layer outside its rectangle.
+#
+# LUT 8x8 grid sampling uses the [0.05, 0.9] clamp pattern (matches soft_white
+# / catalog convention).
+#
+# Host-tunable parameters (all wired unconditionally per CRA convention):
+#   * `overlay_opacity`                          — 0.65 default
+#   * `left_tl_x`, `left_tl_y`                   — left layer top-left corner
+#   * `right_tl_x`, `right_tl_y`                 — right layer top-left corner
+#   * `copy_scale`                               — both copies' zoom (1.15)
+#   * `lut_path`, `overlay_path`,
+#     `mask_left_path`, `mask_right_path`        — Custom Param strings for
+#                                                  sample-app local-loading
+#
+# All 4 asset IDs received from Neetika and baked into the manifest
+# (effectId + assetHash for prism_lut.png, prism_overlay.png,
+# prism_mask_left.png, prism_mask_right.png). Ready for review.
+
+[Init]
+fun init(Filter filter)
+{
+    makeTexture('lut);
+    makeTexture('overlay);
+    makeTexture('mask_left);
+    makeTexture('mask_right);
+
+    # Host-tunable parameters wired unconditionally in [PreRender] per CRA
+    # convention (filter.parameters declares min=0.0 (or negative for the
+    # signed offsets), so host-set zeros are valid input and must propagate).
+    filter.parameters = {
+        {overlay_opacity = 0.65, min = 0.0, max = 1.0, description = "Prism overlay screen-blend opacity"},
+        {left_tl_x = -0.392, min = -0.5, max = 0.5, description = "Left layer top-left X (normalized canvas UV; dialed-in default for goal-image match)"},
+        {left_tl_y = -0.135, min = -0.5, max = 0.5, description = "Left layer top-left Y (normalized canvas UV; dialed-in default for goal-image match)"},
+        {right_tl_x = 0.275, min = -0.5, max = 0.5, description = "Right layer top-left X (normalized canvas UV; dialed-in default for goal-image match)"},
+        {right_tl_y = -0.014, min = -0.5, max = 0.5, description = "Right layer top-left Y (normalized canvas UV; dialed-in default for goal-image match)"},
+        {copy_scale = 1.15, min = 0.5, max = 3.0, description = "Zoom scale applied to both transformed copies (>1 = layer bigger than canvas)"},
+    };
+
+    filter.passes = {{
+      name = 'pass0,
+      inputs = {'default, 'lut, 'overlay, 'mask_left, 'mask_right},
+      uniforms = {
+        overlay_opacity = 0.65,
+        left_tl_x = -0.392,
+        left_tl_y = -0.135,
+        right_tl_x = 0.275,
+        right_tl_y = -0.014,
+        copy_scale = 1.15,
+      },
+      glslShader = glslPrism,
+    }};
+}
+
+# Local-development asset paths.
+string lut_path = "lut_path";
+string lut_filename = "";
+string overlay_path = "overlay_path";
+string overlay_filename = "";
+string mask_left_path = "mask_left_path";
+string mask_left_filename = "";
+string mask_right_path = "mask_right_path";
+string mask_right_filename = "";
+
+[PreRender]
+fun preRender(Filter filter){
+    string lut_filename_parameter = getParameterString(lut_path);
+    if (lut_filename_parameter != "") {
+        string new_lut_filename = stringAppend("textureFilePath://", lut_filename_parameter);
+        if (new_lut_filename != lut_filename) {
+            lut_filename = new_lut_filename;
+            loadTexture('lut, lut_filename);
+        }
+    }
+
+    string overlay_filename_parameter = getParameterString(overlay_path);
+    if (overlay_filename_parameter != "") {
+        string new_overlay_filename = stringAppend("textureFilePath://", overlay_filename_parameter);
+        if (new_overlay_filename != overlay_filename) {
+            overlay_filename = new_overlay_filename;
+            loadTexture('overlay, new_overlay_filename);
+        }
+    }
+
+    string mask_left_filename_parameter = getParameterString(mask_left_path);
+    if (mask_left_filename_parameter != "") {
+        string new_mask_left_filename = stringAppend("textureFilePath://", mask_left_filename_parameter);
+        if (new_mask_left_filename != mask_left_filename) {
+            mask_left_filename = new_mask_left_filename;
+            loadTexture('mask_left, new_mask_left_filename);
+        }
+    }
+
+    string mask_right_filename_parameter = getParameterString(mask_right_path);
+    if (mask_right_filename_parameter != "") {
+        string new_mask_right_filename = stringAppend("textureFilePath://", mask_right_filename_parameter);
+        if (new_mask_right_filename != mask_right_filename) {
+            mask_right_filename = new_mask_right_filename;
+            loadTexture('mask_right, new_mask_right_filename);
+        }
+    }
+
+    # Wired unconditionally per CRA convention.
+    f32 oo = getParameterFloat('overlay_opacity);
+    setShaderUniform('pass0, 'overlay_opacity, oo);
+
+    f32 ltx = getParameterFloat('left_tl_x);
+    setShaderUniform('pass0, 'left_tl_x, ltx);
+
+    f32 lty = getParameterFloat('left_tl_y);
+    setShaderUniform('pass0, 'left_tl_y, lty);
+
+    f32 rtx = getParameterFloat('right_tl_x);
+    setShaderUniform('pass0, 'right_tl_x, rtx);
+
+    f32 rty = getParameterFloat('right_tl_y);
+    setShaderUniform('pass0, 'right_tl_y, rty);
+
+    f32 cs = getParameterFloat('copy_scale);
+    setShaderUniform('pass0, 'copy_scale, cs);
+}
+
+#### GLSL shader ####
+
+string glslPrism = "
+    varying vec2 sourceTextureCoordinate;
+    BaseUniformsOpenGL;
+
+    uniform sampler2D auxSampler0;  // 'default (camera)
+    uniform sampler2D auxSampler1;  // 'lut
+    uniform sampler2D auxSampler2;  // 'overlay
+    uniform sampler2D auxSampler3;  // 'mask_left
+    uniform sampler2D auxSampler4;  // 'mask_right
+
+    uniform float overlay_opacity;
+    uniform float left_tl_x;
+    uniform float left_tl_y;
+    uniform float right_tl_x;
+    uniform float right_tl_y;
+    uniform float copy_scale;
+
+    // 8x8 grid LUT sample (same pattern as soft_white).
+    vec3 applyLut(vec3 inRgb) {
+      vec3 c = clamp(inRgb, 0.05, 0.9);
+      float x = c.r / 8.0;
+      float y = c.g / 8.0;
+      float z = c.b;
+      float blueY = floor(z * 8.0) / 8.0;
+      float blueX = floor((z - blueY) * 64.0) / 8.0;
+      x += blueX;
+      y += blueY;
+      return texture2D(auxSampler1, vec2(x, y)).xyz;
+    }
+
+    // Inverse transform: given output UV and a layer's top-left canvas
+    // position + scale, compute the layer-space UV. The layer covers
+    // canvas region [tl, tl + scale] (since scale = layer_size / canvas_size).
+    vec2 layerSampleUv(vec2 outputUv, vec2 layer_tl, float scale) {
+      return (outputUv - layer_tl) / scale;
+    }
+
+    // Returns 1.0 if uv is in [0,1] for both x and y, else 0.0.
+    float inBounds01(vec2 uv) {
+      return step(0.0, uv.x) * step(uv.x, 1.0)
+           * step(0.0, uv.y) * step(uv.y, 1.0);
+    }
+
+    // Read mask alpha, robust to RGB-grayscale OR RGBA-with-alpha conventions.
+    float maskAlpha(vec4 maskTex) {
+      return max(maskTex.r, maskTex.a);
+    }
+
+    void main() {
+      vec2 uv = sourceTextureCoordinate;
+
+      // --- Layer 1: Background (camera + LUT, no transform) ---
+      vec3 result = applyLut(sampleInput(uv).rgb);
+
+      // --- Layer 2: Left transformed copy ---
+      // Mask AND camera content are sampled at the SAME (layer) UV so they
+      // move together as one masked image when the layer is translated.
+      vec2 leftLayerUv = layerSampleUv(uv, vec2(left_tl_x, left_tl_y), copy_scale);
+      float leftIn = inBounds01(leftLayerUv);
+      vec4 leftMaskTex = texture2D(auxSampler3, leftLayerUv);
+      float leftAlpha = maskAlpha(leftMaskTex) * leftIn;
+      vec3 leftColor = applyLut(sampleInput(leftLayerUv).rgb);
+      result = mix(result, leftColor, leftAlpha);
+
+      // --- Layer 3: Right transformed copy ---
+      vec2 rightLayerUv = layerSampleUv(uv, vec2(right_tl_x, right_tl_y), copy_scale);
+      float rightIn = inBounds01(rightLayerUv);
+      vec4 rightMaskTex = texture2D(auxSampler4, rightLayerUv);
+      float rightAlpha = maskAlpha(rightMaskTex) * rightIn;
+      vec3 rightColor = applyLut(sampleInput(rightLayerUv).rgb);
+      result = mix(result, rightColor, rightAlpha);
+
+      // --- Layer 4: Prism overlay (Screen blend at 65% opacity) ---
+      // Screen: 1 - (1 - dst) * (1 - src). Brightening blend.
+      vec4 overlayTex = texture2D(auxSampler2, uv);
+      vec3 screened = 1.0 - (1.0 - result) * (1.0 - overlayTex.rgb);
+      float overlayAmt = overlay_opacity * overlayTex.a;
+      result = mix(result, screened, overlayAmt);
+
+      // Clamp to LDR display range.
+      result = clamp(result, 0.0, 1.0);
+
+      gl_FragColor = toOutputFormat(vec4(result, 1.0));
+    }
+    ";

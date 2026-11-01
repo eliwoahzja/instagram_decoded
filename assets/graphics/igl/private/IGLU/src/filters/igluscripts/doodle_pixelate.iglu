@@ -1,0 +1,95 @@
+[Filter DoodlePixelate]
+[MaskBehavior alpha]
+
+[Init]
+fun init(Filter filter) {
+  filter.passes = {{
+    name = 'pass0, inputs = {'default},
+    uniforms = {
+      pixelSize = 20.0,
+      pixelSizeScale = 1.0,
+      inputSize = {1080.0, 1920.0},
+      contentScale = {1.0, 1.0},
+    },
+    glslShader = glsl, metalShader = metal
+  }};
+
+  filter.parameters = {
+    {pixelSize = 20.0, min = 5.0, max = 80.0, description = "Pixel Size"},
+    {pixelSizeScale = 1.0},
+  };
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  vec2 inputSize = getTextureSize('default);
+  # Per-axis scale of the host content transform. A doodle sticker in the timeline is composited
+  # anisotropically, so square blocks in texture space would land non-square on screen.
+  vec2 contentScale = getParameterVec2('contentScale);
+  if (contentScale.x < 0.001 or contentScale.y < 0.001) { contentScale = {1.0, 1.0}; }
+  setShaderUniform('pass0, 'inputSize, inputSize);
+  setShaderUniform('pass0, 'contentScale, contentScale);
+  setShaderUniform('pass0, 'pixelSize, getParameterFloat('pixelSize));
+  setShaderUniform('pass0, 'pixelSizeScale, getParameterFloat('pixelSizeScale));
+}
+
+string glsl = "
+  varying vec2 sourceTextureCoordinate;
+  BaseUniformsOpenGL;
+
+  uniform float pixelSize;
+  uniform float pixelSizeScale;
+  uniform vec2 inputSize;
+  uniform vec2 contentScale;
+
+  void main() {
+    vec2 uv = sourceTextureCoordinate;
+    vec2 st = uv * inputSize;
+
+    // Keep pixelate block density stable across preview/export resolutions, and keep blocks square
+    // after the sticker's (possibly anisotropic) content transform - the same per-axis correction
+    // tessellateStroke folds into its aspectRatio to keep stamps circular.
+    vec2 blockSize = vec2(pixelSize * pixelSizeScale) / contentScale;
+    vec2 pixelatedST = floor(st / blockSize) * blockSize + blockSize * 0.5;
+    vec2 pixelatedUV = pixelatedST / inputSize;
+
+    vec4 color = sampleInput(pixelatedUV);
+
+    if (color.a < 0.01) {
+      gl_FragColor = toOutputFormat(vec4(0.0));
+    } else {
+      gl_FragColor = toOutputFormat(vec4(color.rgb / color.a, 1.0));
+    }
+  }
+";
+
+string metal = "
+  typedef struct { float2 sourceTextureCoordinate [[user(locn1)]]; } RasterizerData;
+
+  typedef struct {
+    BaseUniformsMetal;
+    float pixelSize;
+    float pixelSizeScale;
+    float2 inputSize;
+    float2 contentScale;
+  } Uniforms;
+
+  fragment float4 fragmentShader(RasterizerData fragmentIn [[stage_in]],
+                                  constant Uniforms & uniforms [[buffer(1)]],
+                                  DefaultInputs defaultInputs) {
+    float2 uv = fragmentIn.sourceTextureCoordinate;
+    float2 st = uv * uniforms.inputSize;
+
+    float2 blockSize = float2(uniforms.pixelSize * uniforms.pixelSizeScale) / uniforms.contentScale;
+    float2 pixelatedST = floor(st / blockSize) * blockSize + blockSize * 0.5;
+    float2 pixelatedUV = pixelatedST / uniforms.inputSize;
+
+    float4 color = sampleInput(defaultInputs, pixelatedUV);
+
+    if (color.a < 0.01) {
+      return toOutputFormat(float4(0.0));
+    } else {
+      return toOutputFormat(float4(color.rgb / color.a, 1.0));
+    }
+  }
+";

@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "identifier": "inkwell",
+  "displayName": "Inkwell",
+  "description": "[IG Edits] Color filter name. With \"Inkwell\", the creator can apply the Inkwell black-and-white look by desaturating to luma (0.3R+0.6G+0.1B) and remapping through a high-contrast monochrome LUT.",
+  "iglu": {
+    "legacyId": 10
+  },
+  "assets": [
+    {
+      "name": "map_inkwell.png",
+      "assetHash": "55f4c45a5d505f13aab140c0714eb515ba573db02a77eabf913a7aee4e17626d",
+      "hubAssetId": "1458145019136553"
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_shake",
+  "displayName": "Shake",
+  "description": "[IG Edits] Effect or transition name shared across video, cutout, overlay, and transition surfaces. With \"Shake\", the image jitters or shakes as if the camera is unsteady.",
+  "iglu": {
+    "legacyId": 2044,
+    "customization": [
+      {
+        "name": "speed",
+        "default": 1.0,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Speed",
+        "displayNameDescription": "[IG Edits] Slider label controlling the playback or animation speed of a video effect (noun, not a verb); exact range varies per effect."
+      },
+      {
+        "name": "intensity",
+        "default": 1.0,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Intensity",
+        "displayNameDescription": "[IG Edits] Slider label controlling the strength of a video effect. Generic across many effects (glow, blur, color, distortion, etc.); exact range varies per effect."
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "6b03865c",
+      "handle": "AQAF3kbRNZTs",
+      "md5": "4422569518859fe33020c357f7df6c84"
+    }
+  },
+  "assets": [
+    {
+      "name": "perlin_noise.png",
+      "assetHash": "42393e620664a372495800bfcf40ca960aa0ab3e2ddfe42fbfe2b86098d33000",
+      "hubAssetId": "1259354255546062"
+    }
+  ],
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAH_Hdkaqyw"
+    }
+  }
+}

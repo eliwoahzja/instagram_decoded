@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "identifier": "66A30607-DFB0-4F68-A511-E2D23E255DEA",
+  "displayName": "35mm",
+  "description": "[IG Edits] Video effect name. With \"35mm\", the creator gets a film-look color grade with a subtle vignette and film grain.",
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAFndamlzwt"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "995761c5",
+      "handle": "AQAI1Tapq2ju",
+      "md5": "a72c7662555b8b24dc45fde569bc6de8"
+    }
+  },
+  "iglu": {
+    "legacyId": 3207
+  },
+  "assets": [
+    {
+      "name": "film_35mm_lut.png",
+      "assetHash": "b143f7037834fdccf9b1502b06a6088a6840ab7948c975673ce96f36685acaac",
+      "hubAssetId": "1399909318650284"
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "mesh",
+  "displayName": "Mesh",
+  "description": "[IG Edits] Video effect. With \"Mesh\", the creator can render a textured 3D mesh with Lambertian directional lighting plus a flat ambient term, useful as a base for AR/3D object overlays.",
+  "iglu": {}
+}

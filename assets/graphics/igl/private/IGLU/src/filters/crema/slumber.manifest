@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "identifier": "slumber",
+  "displayName": "Slumber",
+  "description": "[IG Edits] Color filter name. With \"Slumber\", the creator can apply the Slumber 3D LUT plus a top-to-bottom dark gradient overlay blended in via overlay-mode at 0.3 opacity.",
+  "assets": [
+    {
+      "name": "slumber_map.png",
+      "assetHash": "7fc8ae00e91266768588414d1e19468380f235b57f4b2d7575ed00faf0ea3c0d",
+      "hubAssetId": "2139573176816371"
+    }
+  ],
+  "iglu": {}
+}

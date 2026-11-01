@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "frame_blend",
+  "displayName": "Frame Blend",
+  "description": "[IG Edits] Video effect name. With \"Frame Blend\", the creator can mix the current frame with a second input frame using a blend_factor for cross-fade or motion-trail looks.",
+  "iglu": {}
+}

@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "simple",
+  "displayName": "Simple",
+  "description": "Simple text style with minimal effects",
+  "iglu": {}
+}

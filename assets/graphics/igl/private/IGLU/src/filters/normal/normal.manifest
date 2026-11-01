@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "normal",
+  "displayName": "Normal",
+  "description": "[IG Edits] Video effects selection. With \"None\", the creator can clear any applied effect and show the original video unchanged.",
+  "iglu": {}
+}

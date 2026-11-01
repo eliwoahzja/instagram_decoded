@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "identifier": "hefe",
+  "displayName": "Hefe",
+  "description": "[IG Edits] Video effect name. With \"Hefe\", the creator can apply the Hefe vintage look via an edge-burn vignette, per-channel LUT remap, gradient-map tint and metal soft-light overlay.",
+  "assets": [
+    {
+      "name": "edge_burn.android.png",
+      "assetHash": "dbffb9ecc88126f1adb73499b31fbfb74eff9c85f38a0cff7f722075162ecbfe",
+      "hubAssetId": "1623430319005326"
+    },
+    {
+      "name": "edge_burn.ios.pvr",
+      "assetHash": "08f44fa507b88347a08e41ca36b6e8d9630dc35274d77e54b4e3ffc1a6032434",
+      "hubAssetId": "912301888330042"
+    },
+    {
+      "name": "gradient_map.png",
+      "assetHash": "d2004557c8065f28e464839bc0f7978f8fa351548f436a0b4b2450ccfded317e",
+      "hubAssetId": "1607455830398107"
+    },
+    {
+      "name": "map_hefe.png",
+      "assetHash": "6a6037b1740083ce4b98fc4120153700e99f51cfaf6e19826c8bc516a4ca86cd",
+      "hubAssetId": "2127036894781421"
+    },
+    {
+      "name": "metal.android.png",
+      "assetHash": "13b727e1ea6c8b8c189e1f99e4958cab1b93f5dd0967ed0b9f0c5acf92c0cf42",
+      "hubAssetId": "26564652646473468"
+    },
+    {
+      "name": "metal.ios.pvr",
+      "assetHash": "afeb9a1181c111e1b76401eb3a957b82b6bd3274adc529d43f36d1ef6070d99d",
+      "hubAssetId": "1460317245492190"
+    },
+    {
+      "name": "soft_light.png",
+      "assetHash": "9d84300cf9f2d065ad4bbcefa26499a740bb89dd9e4e56a0e2f966a6008b9aef",
+      "hubAssetId": "1730954247870868"
+    }
+  ],
+  "iglu": {}
+}

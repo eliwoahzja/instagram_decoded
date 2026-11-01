@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_washed_out",
+  "displayName": "Washed out",
+  "description": "[IG Edits] Video effect name. With \"Washed out\", the creator can sharpen the frame then crush blacks and lift mid-tones with a warm-tinted curve for a faded film look.",
+  "iglu": {
+    "legacyId": 3012,
+    "customization": [
+      {
+        "name": "intensity",
+        "default": 1.0,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Intensity",
+        "displayNameDescription": "[IG Edits] Slider label controlling the strength of a video effect. Generic across many effects (glow, blur, color, distortion, etc.); exact range varies per effect."
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "c44e57f2",
+      "handle": "AQARD75XSIiu",
+      "md5": "2a59d8c36dcdc9306c7ac8970f6ea696"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAKWL011uLJ"
+    }
+  }
+}

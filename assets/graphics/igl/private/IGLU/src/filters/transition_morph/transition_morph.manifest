@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "transition_morph",
+  "displayName": "Morph",
+  "description": "Video transition selection. Chooses to apply morph transition.",
+  "iglu": {}
+}

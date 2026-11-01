@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape android:shape="rectangle"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <stroke android:width="0.5dp" android:color="@color/bds_grey_2" />
+    <gradient android:startColor="@color/igds_prism_black_alpha_00" android:endColor="@color/igds_prism_black_alpha_20" android:angle="270.0" android:type="linear" />
+    <corners android:radius="@dimen/abc_button_padding_horizontal_material" />
+</shape>

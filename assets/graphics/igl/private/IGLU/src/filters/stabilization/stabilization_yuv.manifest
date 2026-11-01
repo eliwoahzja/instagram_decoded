@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "stabilization_yuv",
+  "displayName": "Stabilization YUV",
+  "description": "[IG Edits] Video effect name. With \"Stabilization YUV\", the creator can run the per-row gyro/quaternion mesh-warp stabilization on YUV video inputs.",
+  "iglu": {}
+}

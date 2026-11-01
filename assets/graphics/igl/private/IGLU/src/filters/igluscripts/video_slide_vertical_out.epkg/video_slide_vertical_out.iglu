@@ -1,0 +1,28 @@
+[Filter SlideVerticalOut]
+[MaskBehavior alpha]
+
+# OUT wrapper — composes slide_vertical_in with outro=1.0
+
+[Init]
+fun init(Filter filter) {
+  filter.passes = {{
+      name = 'slideVOut,
+      igid = 'video_slide_vertical_in,
+      inputs = {'default},
+      uniforms = {},
+    }};
+
+  filter.parameters = {
+    {direction = 0.0, min = 0.0, max = 1.0, description = "0 = Center-to-up, 1 = Center-to-down"},
+    {positionScale = 2.0, min = 0.0, max = 5.0, description = "Scale position offset"},
+  };
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  setShaderUniform('slideVOut, 'progress, getParameterFloat('progress));
+  setShaderUniform('slideVOut, 'direction, getParameterFloat('direction));
+
+  setShaderUniform('slideVOut, 'scale, 1.0);
+  setShaderUniform('slideVOut, 'outro, 1.0);
+}

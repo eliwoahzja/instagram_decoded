@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "subject_effect_multi_wrapper",
+  "displayName": "Subject Effect Multi Wrapper",
+  "description": "[IG Edits] Video effect name. With \"Subject Effect Multi Wrapper\", the creator can run a VFX filter once per detected subject using per-instance mask colors and bboxes, then back-to-front composite.",
+  "iglu": {}
+}

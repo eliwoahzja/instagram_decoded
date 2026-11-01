@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "multi_input",
+  "displayName": "Multi Input",
+  "description": "[IG Edits] Video effect. With \"Multi Input\", the creator can composite many texture layers in one draw call, each with independent content/texture transforms and per-input format conversion.",
+  "iglu": {}
+}

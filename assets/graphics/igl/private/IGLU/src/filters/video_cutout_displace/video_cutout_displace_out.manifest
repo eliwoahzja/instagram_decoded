@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "identifier": "4g9b2c3f-d5e6-5f7g-9b0c-1d2e3f4g5h6i",
+  "displayName": "Displace out",
+  "description": "[Instagram Edits] Effect browser - Label for a displace/zoom distortion outro effect applied to subjects. Character count for labels is 14 characters max.",
+  "iglu": {
+    "behavior": {
+      "type": "fixedOutro",
+      "durationMs": 1000,
+      "curve": "linear"
+    },
+    "subject": {
+      "enabled": true,
+      "fullFrameEnabled": false
+    }
+  }
+}

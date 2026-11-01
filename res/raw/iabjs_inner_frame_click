@@ -1,0 +1,1 @@
+(function(locatorJSON){return window._META.IABInnerFrame.click(JSON.parse(locatorJSON))})

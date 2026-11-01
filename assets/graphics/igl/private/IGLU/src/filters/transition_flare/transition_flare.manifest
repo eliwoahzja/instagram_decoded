@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "transition_flare",
+  "displayName": "Flare",
+  "description": "[IG Edits] Video effect name. With \"Lens flare\", the creator can imitate the effect of a camera lens interacting with bright light to create light streaks and starbursts.",
+  "iglu": {}
+}

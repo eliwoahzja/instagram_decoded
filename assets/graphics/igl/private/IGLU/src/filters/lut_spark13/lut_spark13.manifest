@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "identifier": "sunset",
+  "displayName": "Sunset",
+  "description": "[IG Edits] Color filter name. With \"Sunset\", the creator can apply a warm orange-pink sunset glow by remapping each pixel's RGB through a 3D color lookup table.",
+  "iglu": {
+    "legacyId": 830
+  },
+  "assets": [
+    {
+      "name": "sunset.png",
+      "assetHash": "5a72fd52b2c3f2ee907359ec44b565ff64d0b9b8294b9f6f26913896d882bb16",
+      "hubAssetId": "1467637435085476"
+    },
+    {
+      "name": "sunset_compressed.png",
+      "assetHash": "0b4b17d958e8f75b74d9196315960587ae7ed71c4a07641418983811408ad48e",
+      "hubAssetId": "1130505325902845"
+    }
+  ]
+}

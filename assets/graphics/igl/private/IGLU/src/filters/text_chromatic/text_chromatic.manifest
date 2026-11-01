@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "text_chromatic",
+  "displayName": "Chromatic",
+  "description": "Label for the Chromatic text effect style.",
+  "iglu": {}
+}

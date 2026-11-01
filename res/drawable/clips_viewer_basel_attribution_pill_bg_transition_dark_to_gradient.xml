@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<transition
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/clips_viewer_basel_attribution_pill_bg_shape_dark" />
+    <item android:drawable="@drawable/clips_viewer_basel_attribution_pill_bg_shape_gradient" />
+</transition>

@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_overlay",
+  "displayName": "Video Overlay",
+  "description": "[IG Edits] Video effect name. With \"Video Overlay\", the creator can additively overlay an aspect-fitted video texture (videoTexture.mp4) on the source with adjustable alignment.",
+  "iglu": {
+    "legacyId": 2201
+  },
+  "assets": [
+    {
+      "name": "videoTexture.mp4",
+      "assetHash": "6fc75992fc4296379cc5b4863175ab8f6e782afa3f298809b3c9a28b8406876c",
+      "hubAssetId": "1341900244512860"
+    }
+  ]
+}

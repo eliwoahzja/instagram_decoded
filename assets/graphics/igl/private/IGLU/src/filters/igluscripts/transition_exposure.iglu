@@ -1,0 +1,39 @@
+# IGLUSCRIPTCOLLISION_BYPASS: IGLUScript port of transition_exposure, QE-selectable for A/B vs TransitionExposureFilter.
+[Filter TransitionExposure]
+
+[Init]
+fun init(Filter filter) {
+  makeTexture('transition);
+  filter.passes = {{
+    name = 'exposure,
+    inputs = {'default, 'transition},
+    shaderInputNames = {'default, 's_texture1},
+    uniforms = { progress = 0.0 },
+    glslShader = glsl,
+  }};
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  setShaderUniform('exposure, 'progress, getParameterFloat('progress));
+}
+
+string glsl = "
+  varying vec2 sourceTextureCoordinate;
+  BaseUniformsOpenGL;
+  uniform sampler2D s_texture1;
+  uniform float progress;
+  vec4 crossfade(vec4 a, vec4 b, float ratio, float p) {
+    float halfRatio = ratio * 0.5;
+    float alpha = smoothstep(0.5 - halfRatio, 0.5 + halfRatio, p);
+    return mix(a, b, alpha);
+  }
+  void main() {
+    vec2 uv = sourceTextureCoordinate;
+    vec4 a = sampleInput(uv);
+    vec4 b = texture2D(s_texture1, uv);
+    vec3 color = crossfade(a, b, 0.4, progress).rgb;
+    float exposureAmt = (1.0 - abs(0.5 - progress) * 2.0) * 3.6;
+    gl_FragColor = toOutputFormat(vec4(color * pow(2.0, exposureAmt), 1.0));
+  }
+";

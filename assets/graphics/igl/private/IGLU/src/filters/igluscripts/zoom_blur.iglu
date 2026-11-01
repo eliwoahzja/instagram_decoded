@@ -1,0 +1,139 @@
+# IGLUSCRIPTCOLLISION_BYPASS: Intentional replacement of C++ native effect
+[Filter IgluscriptZoomBlurFilter]
+
+
+
+[Init]
+fun init(Filter filter) {
+  filter.passes = {{
+      name = 'focus0, inputs = {'default},
+      uniforms = {
+            strength = 1.0,
+            samples = 1.0,
+            abberation = 0.02,
+            innerRadius = 0.60,
+            sampleDistance = 0.125,
+            uInputImageSize = {1.0,1.0}
+      },
+      glslShader = glsl
+    },{
+      name = 'focus1, inputs = {'focus0},
+      uniforms = {
+            strength = 1.0,
+            samples = 15.0,
+            abberation = 0.0,
+            innerRadius = 0.7,
+            sampleDistance = 0.04,
+            uInputImageSize = {1.0,1.0}
+      },
+      glslShader = glsl
+    }};
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+    vec2 textureSize = getTextureSize('default);
+
+    setShaderUniform('focus0, 'uInputImageSize, textureSize);
+    setShaderUniform('focus1, 'uInputImageSize, textureSize);
+
+
+    f32 strength = getParameterFloat('strength);
+
+    setShaderUniform('focus0, 'strength, strength);
+    setShaderUniform('focus1, 'strength, strength);
+
+    setShaderUniform('focus0, 'abberation, 0.02*strength);
+    setShaderUniform('focus1, 'abberation, 0.0*strength);
+
+    setShaderUniform('focus0, 'sampleDistance, 0.125*strength);
+    setShaderUniform('focus1, 'sampleDistance, 0.04*strength);
+
+}
+
+string glsl = "
+      uniform float innerRadius; uniform float samples; uniform float abberation;
+      uniform float sampleDistance;
+
+      varying vec2 sourceTextureCoordinate;
+      uniform vec2 uInputImageSize;
+
+      BaseUniformsOpenGL;
+
+      varying vec2 vTexCoord;
+
+      vec4 zoomBlurAbberate(
+          vec2 uv, float innerRadius, float samples, float abberation, float sampleDistance) {
+        vec2 newUV = uv;
+
+        vec2 res = uInputImageSize;
+        float aspect = res.x / res.y;
+
+        vec3 dir;
+        dir.xy = uv * 2.0 * vec2(aspect, 1.0) - vec2(aspect, 1.0);
+        dir.z = dot(dir.xy, dir.xy);
+        dir *= inversesqrt(dir.z);
+
+        vec4 colorR = vec4(0.0);
+        vec4 colorG = vec4(0.0);
+        vec4 colorB = vec4(0.0);
+
+        const float maxSamples = 30.0;
+        vec4 color = vec4(0.0);
+        if (abberation > 0.0) {
+          for (float i = 0.0; i < maxSamples; i++) {
+            if (i >= samples)
+              break;
+            float pct = i / samples;
+            float d = mix(1.0, sampleDistance, pct);
+
+            vec2 duv = uv * 2.0 - 1.0;
+            duv *= d;
+
+            vec2 uvR = duv * (1.0 - abberation);
+            uvR = uvR * 0.5 + 0.5;
+
+            vec2 uvG = duv * 0.5 + 0.5;
+
+            vec2 uvB = duv * (1.0 + abberation);
+            uvB = uvB * 0.5 + 0.5;
+
+            colorR += sampleInput(uvR);
+            colorG += sampleInput(uvG);
+            colorB += sampleInput(uvB);
+          }
+
+          colorR /= samples;
+          colorG /= samples;
+          colorB /= samples;
+          float alpha = sampleInput(uv).a;
+
+          color = vec4(colorR.r, colorG.g, colorB.b, alpha);
+        } else {
+          for (float i = 0.0; i < maxSamples; i++) {
+            if (i >= samples)
+              break;
+
+            float pct = i / samples;
+            newUV = uv * 2.0 - 1.0;
+            newUV *= mix(1.0, sampleDistance, pct);
+            newUV = newUV * 0.5 + 0.5;
+
+            color += sampleInput(newUV);
+          }
+          color /= samples;
+        }
+
+        color = mix(sampleInput(uv), color, smoothstep(0.0, innerRadius, clamp(dir.z, 0.0, 1.0)));
+
+        return color;
+      }
+
+      void main() {
+        vec2 uv = sourceTextureCoordinate;
+
+        vec4 color =
+            zoomBlurAbberate(uv, innerRadius, floor(samples), abberation, 1.0 - sampleDistance);
+        gl_FragColor = toOutputFormat(color);
+      }
+      ";

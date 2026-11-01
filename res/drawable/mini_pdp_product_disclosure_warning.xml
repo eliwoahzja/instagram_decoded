@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/mini_pdp_product_disclosure_warning_fill" />
+    <item>
+        <bitmap android:src="@drawable/instagram_warning_outline_16" android:tint="@color/bds_black" />
+    </item>
+</layer-list>

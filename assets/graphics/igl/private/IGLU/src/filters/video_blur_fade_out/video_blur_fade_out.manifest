@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_blur_fade_out",
+  "displayName": "Blur fade out",
+  "description": "Video effects selection. Starts sharp, ends blurry with a fade.",
+  "iglu": {
+    "legacyId": 3042,
+    "behavior": {
+      "type": "fixedOutro",
+      "durationMs": 1000,
+      "curve": "linear"
+    },
+    "customization": [
+      {
+        "name": "duration",
+        "default": 1.0,
+        "min": 1.0,
+        "max": 5.0,
+        "displayName": "Duration",
+        "displayNameDescription": "[IG Edits] Slider label controlling how long a video effect's animation lasts; exact units and range vary per effect (seconds or normalized).",
+        "displayMethod": "time"
+      }
+    ]
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAFH5J6Gdlz"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "ab15c3b4",
+      "handle": "AQAFms6j5mJb",
+      "md5": "c3a972c372188ad8bf042a4e4d97e250"
+    }
+  }
+}

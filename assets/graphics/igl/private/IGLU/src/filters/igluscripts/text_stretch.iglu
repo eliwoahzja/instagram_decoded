@@ -1,0 +1,142 @@
+[Filter TextStretch]
+#
+# Port of C++ text_stretch/TextStretchFilter.cpp — continuous looping non-uniform scale driven by a
+# baked scale-x/scale-y animation curve (Stretch LUT). LOOP family: shader `time` is driven from the
+# host `renderFrameTimeSeconds` param (the continuous value the C++ filter reads on Android), NOT
+# `time_sec`. LUT is the shared TextEffectsSharedAssets/Stretch (same "stretch" PNG the C++ filter's
+# TextStretchAssets::Stretch points at; only the shared bundle is registered for igluscript). Shaderc-
+# safe: overloaded map() split into map()/mapSimple(). No behavior header (Static). Metal auto-generated.
+
+[Init]
+fun init(Filter filter) {
+    filter.parameters = {
+        {renderFrameTimeSeconds = 0.0, description = "Continuous media time (seconds), host-driven"},
+        {speed = 0.3},
+        {loop = 1.0},
+        {scale_xChannel = 0.5},
+        {scale_xMin = 0.5},
+        {scale_xMax = 1.5},
+        {scale_yChannel = 0.7},
+        {scale_yMin = 0.5},
+        {scale_yMax = 1.5},
+        {phase = 0.0},
+        {tiling = 0.0},
+    };
+
+    loadTexture('animation, 'texture://TextEffectsSharedAssets/Stretch);
+
+    filter.passes = {{
+        name = 'stretch,
+        inputs = {'default, 'animation},
+        uniforms = {
+            outputSize = {100.0, 100.0},
+            time = 0.0,
+            speed = 0.3,
+            loop = 1.0,
+            scale_xChannel = 0.5,
+            scale_xMin = 0.5,
+            scale_xMax = 1.5,
+            scale_yChannel = 0.7,
+            scale_yMin = 0.5,
+            scale_yMax = 1.5,
+            phase = 0.0,
+            tiling = 0.0,
+        },
+        glslShader = glsl,
+    }};
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+    vec2 defaultSize = getTextureSize('default);
+    setShaderUniform('stretch, 'outputSize, defaultSize);
+    setShaderUniform('stretch, 'time, getParameterFloat('renderFrameTimeSeconds));
+    setShaderUniform('stretch, 'speed, getParameterFloat('speed));
+    setShaderUniform('stretch, 'loop, getParameterFloat('loop));
+    setShaderUniform('stretch, 'scale_xChannel, getParameterFloat('scale_xChannel));
+    setShaderUniform('stretch, 'scale_xMin, getParameterFloat('scale_xMin));
+    setShaderUniform('stretch, 'scale_xMax, getParameterFloat('scale_xMax));
+    setShaderUniform('stretch, 'scale_yChannel, getParameterFloat('scale_yChannel));
+    setShaderUniform('stretch, 'scale_yMin, getParameterFloat('scale_yMin));
+    setShaderUniform('stretch, 'scale_yMax, getParameterFloat('scale_yMax));
+    setShaderUniform('stretch, 'phase, getParameterFloat('phase));
+    setShaderUniform('stretch, 'tiling, getParameterFloat('tiling));
+}
+
+
+# --- GLSL Shader (faithful port of TextStretchFilter.cpp stretchFragmentShaderStr) ---
+
+string glsl = "
+    precision highp float;
+    varying vec2 sourceTextureCoordinate;
+
+    BaseUniformsOpenGL;
+    uniform vec2 outputSize;
+    uniform float time;
+    uniform float speed;
+    uniform float loop;
+    uniform float scale_xChannel;
+    uniform float scale_xMin;
+    uniform float scale_xMax;
+    uniform float scale_yChannel;
+    uniform float scale_yMin;
+    uniform float scale_yMax;
+    uniform float phase;
+    uniform float tiling;
+    uniform sampler2D auxSampler1;
+
+    vec4 sampleAnimation(sampler2D tex, float t, float channel) {
+        vec2 uv1 = vec2(t, channel);
+        vec4 samp1 = texture2D(tex, uv1);
+        return samp1;
+    }
+
+    float map(float x, float lowIn, float highIn, float lowOut, float highOut) {
+        if (highIn == lowIn)
+            return highIn;
+        float w = highIn - lowIn;
+        x = x - lowIn;
+        x /= w;
+        float ow = highOut - lowOut;
+        x *= ow;
+        x += lowOut;
+        return x;
+    }
+
+    float mapSimple(float x, float lowOut, float highOut) {
+        return map(x, 0.0, 1.0, lowOut, highOut);
+    }
+
+    float byteCombine(vec2 v) {
+        float highByte = v.r * 255.0;
+        float lowByte = v.g * 255.0;
+        float scaled = highByte * 256.0 + lowByte;
+        float normalized = scaled / 65535.0;
+        return normalized;
+    }
+
+    void main() {
+        float t = time * speed;
+        t += phase;
+        float lt = fract(t);
+        t = mix(t, lt, loop);
+
+        vec4 scalex_sample = sampleAnimation(auxSampler1, t, scale_xChannel);
+        vec4 scaley_sample = sampleAnimation(auxSampler1, t, scale_yChannel);
+        float s_x = byteCombine(scalex_sample.rg);
+        s_x = mapSimple(s_x, scale_xMin, scale_xMax);
+        float s_y = byteCombine(scaley_sample.rg);
+        s_y = mapSimple(s_y, scale_yMin, scale_yMax);
+
+        vec2 aspect = vec2(1.0, outputSize.x / outputSize.y);
+        vec2 uv = sourceTextureCoordinate;
+        uv -= 0.5;
+        uv *= 1.0 / vec2(s_x, s_y);
+        uv += 0.5;
+        vec2 tileUV = fract(uv);
+
+        uv = mix(uv, tileUV, tiling);
+        vec4 color = sampleInput(uv);
+        gl_FragColor = toOutputFormat(color);
+    }
+";

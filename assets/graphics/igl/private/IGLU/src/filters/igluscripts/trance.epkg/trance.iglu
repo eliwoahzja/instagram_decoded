@@ -1,0 +1,238 @@
+[Filter Trance]
+# "Trance" — B&W LUT + animated brightness flicker / blur pulse + film
+# grain. Three logical layers in a single fragment pass.
+#
+#   Layer 1 — Base LUT (full canvas):
+#     8x8 grid LUT lookup on trance_lut.png. The LUT is authored as
+#     a B&W desaturate / tone grade (no chroma). Mixed against camera
+#     by `lut_strength`.
+#
+#   Layer 2 — Looped flicker + blur (animated):
+#     Two coupled animations driven by a single sin-of-time wave so
+#     they feel like one organic pulse:
+#       2a) Brightness flicker: at the trough, the LUT-graded image
+#           dims to `1.0 - flicker_depth`; at the peak, it returns to
+#           full brightness. Speed is `flicker_speed` (Hz).
+#       2b) Spatial blur: 8-tap radial blur on the camera before the
+#           LUT lookup. Radius is wave-driven and slightly phase-
+#           offset behind brightness (`time*speed - 0.3`) so the blur
+#           hits its max as the image dims, giving an organic
+#           hypnotic pulse rather than a hard strobe.
+#
+#     Note: the Spark reference uses temporal motion blur via a delay
+#     frame mixed at alpha 0.3. IGLUScript single-pass shaders cannot
+#     read prior frames, so we approximate with a multi-tap spatial
+#     blur per the spec. Visually similar at the dial-in target.
+#
+#   Layer 3 — Film grain (procedural, on top):
+#     Hash-noise grain pattern, animated via time. Bipolar additive
+#     at `grain_strength` so canvas brightness stays centered (no
+#     drift). Same primitive as tiffy's grain layer.
+#
+# Composite order (bottom -> top):
+#   blur(camera, t) -> LUT -> brightness flicker(t) -> grain(t)
+#
+# Time source: getLocalTime() (monotonic wall-clock since shader
+# start) per the Time Source skill-doc rule for continuous animations.
+
+[Init]
+fun init(Filter filter)
+{
+    makeTexture('lut);
+
+    filter.parameters = {
+        # Layer 1 LUT.
+        {lut_strength = 1.0, min = 0.0, max = 1.0, description = "LUT mix strength (1.0 = full LUT, 0.0 = camera passthrough)"},
+
+        # Layer 2 flicker + blur. Each pulse cycle has randomized
+        # depth (0.4-1.0 of flicker_depth), width (occupies 40-100%
+        # of the cycle), and center position so the rhythm reads as
+        # irregular flicker rather than a strict metronome.
+        {flicker_speed = 2.406, min = 0.1, max = 15.0, description = "Pulse rate in Hz (cycle period = 1/speed; pulses are randomized within each cycle)"},
+        {flicker_depth = 0.502, min = 0.0, max = 1.0, description = "Max brightness drop at pulse trough (per-cycle depth is randomized 40-100% of this)"},
+        {blur_max = 0.017, min = 0.0, max = 0.060, description = "Max blur radius in UV at pulse trough (sharp at peak)"},
+
+        # Layer 3 grain.
+        {grain_strength = 0.064, min = 0.0, max = 0.5, description = "Animated film grain bipolar amplitude"},
+    };
+
+    filter.passes = {{
+      name = 'pass0,
+      inputs = {'default, 'lut},
+      uniforms = {
+        lut_strength = 1.0,
+        flicker_speed = 2.406,
+        flicker_depth = 0.502,
+        blur_max = 0.017,
+        grain_strength = 0.064,
+        time = 0.0,
+      },
+      glslShader = glslTrance,
+    }};
+}
+
+# Custom Parameter strings for sample-app local-loading.
+string lut_path = "lut_path";
+string lut_filename = "";
+
+[PreRender]
+fun preRender(Filter filter){
+    string lut_filename_parameter = getParameterString(lut_path);
+    if (lut_filename_parameter != "") {
+        string new_lut_filename = stringAppend("textureFilePath://", lut_filename_parameter);
+        if (new_lut_filename != lut_filename) {
+            lut_filename = new_lut_filename;
+            loadTexture('lut, lut_filename);
+        }
+    }
+
+    f32 ls = getParameterFloat('lut_strength);
+    setShaderUniform('pass0, 'lut_strength, ls);
+
+    f32 fs = getParameterFloat('flicker_speed);
+    setShaderUniform('pass0, 'flicker_speed, fs);
+
+    f32 fd = getParameterFloat('flicker_depth);
+    setShaderUniform('pass0, 'flicker_depth, fd);
+
+    f32 bm = getParameterFloat('blur_max);
+    setShaderUniform('pass0, 'blur_max, bm);
+
+    f32 gs = getParameterFloat('grain_strength);
+    setShaderUniform('pass0, 'grain_strength, gs);
+
+    # Use getLocalTime() for monotonic continuous animation.
+    f32 time = getLocalTime();
+    setShaderUniform('pass0, 'time, time);
+}
+
+#### GLSL shader ####
+
+string glslTrance = "
+    varying vec2 sourceTextureCoordinate;
+    BaseUniformsOpenGL;
+
+    uniform sampler2D auxSampler0;  // 'default (camera)
+    uniform sampler2D auxSampler1;  // 'lut
+
+    uniform float lut_strength;
+    uniform float flicker_speed;
+    uniform float flicker_depth;
+    uniform float blur_max;
+    uniform float grain_strength;
+    uniform float time;
+
+    // 1D pseudo-random hash (used for per-cycle randomization).
+    float hash11(float x) {
+      return fract(sin(x * 12.9898) * 43758.5453);
+    }
+
+    // 8x8 grid LUT lookup on auxSampler1.
+    vec3 lutLookup(vec3 inRgb) {
+      vec3 c = clamp(inRgb, 0.00781, 0.98438);
+      float x = c.r / 8.0;
+      float y = c.g / 8.0;
+      float z = c.b;
+      float blueY = floor(z * 8.0) / 8.0;
+      float blueX = floor((z - blueY) * 64.0) / 8.0;
+      x += blueX;
+      y += blueY;
+      return texture2D(auxSampler1, vec2(x, y)).xyz;
+    }
+
+    void main() {
+      vec2 uv = sourceTextureCoordinate;
+
+      // ============================================================
+      // Per-cycle randomized pulse. Time is sliced into cycles of
+      // duration 1/flicker_speed. Each cycle is assigned independent
+      // random values for:
+      //   depth_factor:  0.4..1.0 of flicker_depth (some pulses go
+      //                  less dark than others)
+      //   pulse_width:   0.4..1.0 of the cycle (some cycles have a
+      //                  brief pulse + long gap, some are pulse-
+      //                  dominated)
+      //   pulse_center:  0.3..0.7 within the cycle (the trough
+      //                  doesn't always land mid-cycle)
+      // The cycle phase is also slightly perturbed by sin-of-time
+      // to vary the effective cycle duration -> irregular intervals.
+      // ============================================================
+      float cycle_period = 1.0 / max(flicker_speed, 0.01);
+      float perturb_t   = sin(time * flicker_speed * 1.37) * 0.10;
+      float cycle_idx   = floor(time / cycle_period + perturb_t);
+      float cycle_phase = fract(time / cycle_period + perturb_t);
+
+      float depth_factor =
+          0.4 + 0.6 * hash11(cycle_idx * 13.31);
+      float pulse_width  =
+          0.4 + 0.6 * hash11(cycle_idx * 17.71);
+      float pulse_center =
+          0.3 + 0.4 * hash11(cycle_idx * 23.31);
+
+      // Brightness pulse bump (1.0 at center, 0.0 outside the pulse).
+      float bright_dist = abs(cycle_phase - pulse_center);
+      float bright_bump = 1.0 -
+          smoothstep(0.0, pulse_width * 0.5, bright_dist);
+
+      // Blur pulse bump (slightly phase-lagged behind brightness so
+      // blur peaks just after the image dims).
+      float blur_dist = abs(
+          cycle_phase - clamp(pulse_center + 0.04, 0.0, 1.0));
+      float blur_bump = 1.0 -
+          smoothstep(0.0, pulse_width * 0.5, blur_dist);
+
+      // ============================================================
+      // Layer 2b: 8-tap radial blur on the CAMERA (pre-LUT). Radius
+      // is bump-driven, scaled by the per-cycle depth_factor so
+      // shallow pulses also have a milder blur. The LUT is applied
+      // once to the blurred-mixed camera so we don't pay 8 LUT taps.
+      // ============================================================
+      float blur_amount = blur_bump * depth_factor;     // [0, 1]
+      float blur_radius = blur_max * blur_amount;
+      vec3  blurred_cam = vec3(0.0);
+      for (int i = 0; i < 8; i++) {
+        float angle = float(i) * 0.78539816;
+        vec2  offset = vec2(cos(angle), sin(angle)) * blur_radius;
+        blurred_cam += sampleInput(uv + offset).rgb;
+      }
+      blurred_cam /= 8.0;
+      vec4  cam_full = sampleInput(uv);
+      vec3  cam_mixed = mix(cam_full.rgb, blurred_cam, blur_amount);
+
+      // ============================================================
+      // Layer 1: LUT lookup on the (possibly blurred) camera. Mixed
+      // against passthrough by lut_strength via the standard mix()
+      // pattern. Includes a graceful fallback for WIP / not-yet-
+      // uploaded LUTs (probe LUT center, skip grade if empty).
+      // ============================================================
+      vec3 lut_rgb = lutLookup(cam_mixed);
+      vec3 lut_probe = texture2D(auxSampler1, vec2(0.5, 0.5)).rgb;
+      float lut_loaded = step(0.05,
+          max(max(lut_probe.r, lut_probe.g), lut_probe.b));
+      vec3 graded = mix(cam_mixed, lut_rgb, lut_strength * lut_loaded);
+
+      // ============================================================
+      // Layer 2a: brightness flicker. Effective per-pulse depth =
+      // flicker_depth * depth_factor * bright_bump. At the pulse
+      // center the image dims to (1 - effective_depth); outside the
+      // pulse, full brightness 1.0 (the gap between pulses).
+      // ============================================================
+      float effective_depth =
+          flicker_depth * depth_factor * bright_bump;
+      float bright_mul = 1.0 - effective_depth;
+      vec3 result = graded * bright_mul;
+
+      // ============================================================
+      // Layer 3: animated film grain (bipolar additive over result).
+      // ============================================================
+      float grain = fract(
+          sin(dot(uv + time * 0.1, vec2(127.1, 311.7))) * 43758.5453);
+      float grain_signed = (grain - 0.5) * 2.0;
+      result += vec3(grain_signed * grain_strength);
+
+      // Final clamp to LDR display range.
+      result = clamp(result, 0.0, 1.0);
+
+      gl_FragColor = toOutputFormat(vec4(result, cam_full.a));
+    }
+    ";

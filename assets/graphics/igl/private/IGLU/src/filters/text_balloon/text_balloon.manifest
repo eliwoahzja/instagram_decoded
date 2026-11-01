@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "text_balloon",
+  "displayName": "Balloon",
+  "description": "Label for the Balloon text effect style.",
+  "iglu": {}
+}

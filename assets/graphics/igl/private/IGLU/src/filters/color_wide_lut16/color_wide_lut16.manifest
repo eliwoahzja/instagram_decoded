@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "identifier": "ink",
+  "displayName": "Ink",
+  "description": "[IG Edits] Color filter name. With \"Ink\", the creator can remap pixel RGB through the Ink 3D LUT for a dark inky high-contrast tone with crushed shadows.",
+  "iglu": {
+    "legacyId": 5039
+  },
+  "assets": [
+    {
+      "name": "ink.lutpk",
+      "assetHash": "ed50a90cb621195dec00b7cb439261803a5dc7458375b5aadf672ae05de00fc8",
+      "hubAssetId": "1290245769718756"
+    }
+  ]
+}

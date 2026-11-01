@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "transition_wipe_timeline",
+  "displayName": "Wipe Timeline",
+  "description": "[IG Edits] Transition name. With \"Wipe Timeline\", the creator can sweep the next clip in behind a thin moving white bar driven by a cubic-bezier eased progress.",
+  "iglu": {}
+}

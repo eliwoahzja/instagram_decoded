@@ -1,0 +1,2497 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="accounts_selected">
+        <item quantity="one">%d account</item>
+        <item quantity="other">%d accounts</item>
+    </plurals>
+    <plurals name="add_collaborator_row_title_text">
+        <item quantity="one">You and %1$d other</item>
+        <item quantity="other">You and %1$d others</item>
+    </plurals>
+    <plurals name="add_mentioned_users_success_message">
+        <item quantity="one">Added mention.</item>
+        <item quantity="other">Added mentions.</item>
+    </plurals>
+    <plurals name="ai_character_memory_settings_delete_confirmation_body">
+        <item quantity="one">Your original message will remain in the chat, which the AI may still reference.</item>
+        <item quantity="other">Your original messages will remain in the chat, which the AI may still reference.</item>
+    </plurals>
+    <plurals name="ai_chat_messages_count_text">
+        <item quantity="one">1 Message</item>
+        <item quantity="other">%1$s Messages</item>
+    </plurals>
+    <plurals name="ai_faceswap_facepile_text_with_others">
+        <item quantity="one">%1$s + %2$d other swapped this media</item>
+        <item quantity="other">%1$s + %2$d others swapped this media</item>
+    </plurals>
+    <plurals name="ai_home_chats_count">
+        <item quantity="one">%s message</item>
+        <item quantity="other">%s messages</item>
+    </plurals>
+    <plurals name="ai_memory_settings_delete_confirmation_body">
+        <item quantity="one">Your original message will remain in the chat, which Meta AI may still reference.</item>
+        <item quantity="other">Your original messages will remain in the chat, which Meta AI may still reference.</item>
+    </plurals>
+    <plurals name="ai_subscription_multiple_delete_popup_title">
+        <item quantity="one">Delete 1 update?</item>
+        <item quantity="other">Delete %1$d updates?</item>
+    </plurals>
+    <plurals name="airwave_cowatch_session_full_body">
+        <item quantity="one">Watch sessions can have up to %d person at a time.</item>
+        <item quantity="other">Watch sessions can have up to %d people at a time.</item>
+    </plurals>
+    <plurals name="alt_text_popup_description">
+        <item quantity="one">Describe your photo for people with visual impairments.</item>
+        <item quantity="other">Describe your photos for people with visual impairments.</item>
+    </plurals>
+    <plurals name="anonymous_comments_message">
+        <item quantity="one">See 1 comment on {original_post}.</item>
+        <item quantity="other">See %d comments on {original_post}.</item>
+    </plurals>
+    <plurals name="anonymous_likers_message">
+        <item quantity="one">See 1 like on {original_post}.</item>
+        <item quantity="other">See %d likes on {original_post}.</item>
+    </plurals>
+    <plurals name="appreciation_buy_and_send_explanation_with_no_remaining_stars">
+        <item quantity="one">%1$s Star will automatically be spent on this gift.</item>
+        <item quantity="other">%1$s Stars will automatically be spent on this gift.</item>
+    </plurals>
+    <plurals name="appreciation_buy_and_send_explanation_with_remaining_stars">
+        <item quantity="one">"%1$s Star will automatically be spent on this gift to %2$s. You'll have %3$s Stars left to send your next gift."</item>
+        <item quantity="other">"%1$s Stars will automatically be spent on this gift to %2$s. You'll have %3$s Stars left to send your next gift."</item>
+    </plurals>
+    <plurals name="appreciation_buy_and_send_explanation_without_remaining_stars">
+        <item quantity="one">%1$s Star will automatically be spent on this gift to %2$s.</item>
+        <item quantity="other">%1$s Stars will automatically be spent on this gift to %2$s.</item>
+    </plurals>
+    <plurals name="appreciation_funding_a11y_star_balance">
+        <item quantity="one">Your balance is 1 star</item>
+        <item quantity="other">Your balance is %1$d stars</item>
+    </plurals>
+    <plurals name="appreciation_funding_bonus_amount">
+        <item quantity="one">+ 1 free</item>
+        <item quantity="other">+ %1$d free</item>
+    </plurals>
+    <plurals name="appreciation_funding_buy_and_send_banner_amount">
+        <item quantity="one">Free stars on us. Get 1 extra stars on your first purchase.</item>
+        <item quantity="other">Free stars on us. Get %1$d extra stars on your first purchase.</item>
+    </plurals>
+    <plurals name="appreciation_gift_feed_fb_banner_body_text">
+        <item quantity="one">This reel also received %d gift from Facebook.</item>
+        <item quantity="other">This reel also received %d gifts from Facebook.</item>
+    </plurals>
+    <plurals name="appreciation_refill_balance_buy_stars_button">
+        <item quantity="one">Buy 1 star</item>
+        <item quantity="other">Buy %1$d stars</item>
+    </plurals>
+    <plurals name="appreciation_refill_balance_pack_subtitle">
+        <item quantity="one">1 star</item>
+        <item quantity="other">%1$d stars</item>
+    </plurals>
+    <plurals name="appreciation_refill_balance_premium_reactions_subtitle">
+        <item quantity="one">Premium reactions cost 1 star per pack</item>
+        <item quantity="other">Premium reactions cost %1$d stars per pack</item>
+    </plurals>
+    <plurals name="appreciation_refill_balance_shortfall_subtitle">
+        <item quantity="one">You need 1 more star to send %2$s.</item>
+        <item quantity="other">You need %1$d more stars to send %2$s.</item>
+    </plurals>
+    <plurals name="appreciation_refill_success_title">
+        <item quantity="one">You purchased 1 star</item>
+        <item quantity="other">You purchased %1$d stars</item>
+    </plurals>
+    <plurals name="approve_x_comments_dialog_body">
+        <item quantity="one">You selected 1 comment. If you approve a reply, the original comment will also be approved.</item>
+        <item quantity="other">You selected %1$d comments. If you approve a reply, the original comment will also be approved.</item>
+    </plurals>
+    <plurals name="approve_x_comments_dialog_primary_button">
+        <item quantity="one">Approve comment</item>
+        <item quantity="other">Approve comments</item>
+    </plurals>
+    <plurals name="approve_x_comments_dialog_title">
+        <item quantity="one">Approve 1 comment?</item>
+        <item quantity="other">Approve %1$d comments?</item>
+    </plurals>
+    <plurals name="approve_x_replies_dialog_title">
+        <item quantity="one">Approve this reply?</item>
+        <item quantity="other">Approve these replies?</item>
+    </plurals>
+    <plurals name="attachment_card_hosted_by">
+        <item quantity="one">Hosted by %s</item>
+        <item quantity="other">Hosted by %s</item>
+    </plurals>
+    <plurals name="attachment_card_hosted_by_x_y_and_n_others">
+        <item quantity="one">Hosted by %1$s, %2$s and 1 other</item>
+        <item quantity="other">Hosted by %1$s, %2$s and %3$d others</item>
+    </plurals>
+    <plurals name="attribution_story_template_plural_label">
+        <item quantity="one">%1$s story</item>
+        <item quantity="other">%1$s stories</item>
+    </plurals>
+    <plurals name="audience_picker_members_section_title">
+        <item quantity="one">1 person</item>
+        <item quantity="other">%1$d people</item>
+    </plurals>
+    <plurals name="audio_mix_attribution_abbreviated">
+        <item quantity="one">%1$s and %2$d other</item>
+        <item quantity="other">%1$s and %2$d others</item>
+    </plurals>
+    <plurals name="audio_replace_sheet_headline">
+        <item quantity="one">An audio track in your reel is no longer available.</item>
+        <item quantity="other">Audio tracks in your reel are no longer available.</item>
+    </plurals>
+    <plurals name="aura_story_peek_freemium_education_subtitle_per_day">
+        <item quantity="one">Watch without showing up on the viewers list. Preview %d story per day.</item>
+        <item quantity="other">Watch without showing up on the viewers list. Preview %d stories per day.</item>
+    </plurals>
+    <plurals name="aura_story_peek_freemium_education_subtitle_per_week">
+        <item quantity="one">Watch without showing up on the viewers list. Preview %d story per week.</item>
+        <item quantity="other">Watch without showing up on the viewers list. Preview %d stories per week.</item>
+    </plurals>
+    <plurals name="average_time_spent_hours">
+        <item quantity="one">%d hour</item>
+        <item quantity="other">%d hours</item>
+    </plurals>
+    <plurals name="average_time_spent_minutes">
+        <item quantity="one">%d minute</item>
+        <item quantity="other">%d minutes</item>
+    </plurals>
+    <plurals name="ayt_clips_gallery_max_selection_header">
+        <item quantity="one">Select 1 photo or video</item>
+        <item quantity="other">Select %1$d photos or videos</item>
+    </plurals>
+    <plurals name="barcelona_expand_replies">
+        <item quantity="one">%1$s reply</item>
+        <item quantity="other">%1$s replies</item>
+    </plurals>
+    <plurals name="barcelona_looking_for_recs_summary">
+        <item quantity="one">%1$d location recommended in replies:</item>
+        <item quantity="other">%1$d locations recommended in replies:</item>
+    </plurals>
+    <plurals name="barcelona_poll_vote_row_text">
+        <item quantity="one">%1$d vote</item>
+        <item quantity="other">%1$d votes</item>
+    </plurals>
+    <plurals name="barcelona_post_like_count">
+        <item quantity="one">%1$s like</item>
+        <item quantity="other">%1$s likes</item>
+    </plurals>
+    <plurals name="barcelona_search_topic_recent_post_count_label">
+        <item quantity="one">%1$s recent post</item>
+        <item quantity="other">%1$s recent posts</item>
+    </plurals>
+    <plurals name="barcelona_serp_topic_members_label">
+        <item quantity="one">%1$s member</item>
+        <item quantity="other">%1$s members</item>
+    </plurals>
+    <plurals name="barcelona_viral_badge_mention_tooltip">
+        <item quantity="one">1 new mention</item>
+        <item quantity="other">%1$d new mentions</item>
+    </plurals>
+    <plurals name="barcelona_viral_badge_mention_tooltip_no_new">
+        <item quantity="one">1 mention</item>
+        <item quantity="other">%1$d mentions</item>
+    </plurals>
+    <plurals name="barcelona_viral_badge_message_tooltip">
+        <item quantity="one">1 new message</item>
+        <item quantity="other">%1$d new messages</item>
+    </plurals>
+    <plurals name="barcelona_viral_badge_message_tooltip_no_new">
+        <item quantity="one">1 message</item>
+        <item quantity="other">%1$d messages</item>
+    </plurals>
+    <plurals name="barcelona_viral_badge_quote_tooltip">
+        <item quantity="one">1 new quote</item>
+        <item quantity="other">%1$d new quotes</item>
+    </plurals>
+    <plurals name="barcelona_viral_badge_quote_tooltip_no_new">
+        <item quantity="one">1 quote</item>
+        <item quantity="other">%1$d quotes</item>
+    </plurals>
+    <plurals name="barcelona_viral_badge_reply_tooltip">
+        <item quantity="one">1 new reply</item>
+        <item quantity="other">%1$d new replies</item>
+    </plurals>
+    <plurals name="barcelona_viral_badge_reply_tooltip_no_new">
+        <item quantity="one">1 reply</item>
+        <item quantity="other">%1$d replies</item>
+    </plurals>
+    <plurals name="basel_bottom_sheet_social_context_text_multiple_users">
+        <item quantity="one">&lt;b>%1$s&lt;/b> and %2$s other are on Edits</item>
+        <item quantity="other">&lt;b>%1$s&lt;/b> and %2$s others are on Edits</item>
+    </plurals>
+    <plurals name="basel_trimming_screen_time_ruler_second_label">
+        <item quantity="one">%ds</item>
+        <item quantity="other">%ds</item>
+    </plurals>
+    <plurals name="basketball_score_card_points">
+        <item quantity="one">Point</item>
+        <item quantity="other">Points</item>
+    </plurals>
+    <plurals name="batch_follow_request_confirmation">
+        <item quantity="one">%1$s follow request confirmed.</item>
+        <item quantity="other">%1$s follow requests confirmed.</item>
+    </plurals>
+    <plurals name="batch_follow_request_deleted_confirmation">
+        <item quantity="one">%1$s follow request deleted.</item>
+        <item quantity="other">%1$s follow requests deleted.</item>
+    </plurals>
+    <plurals name="batch_fr_confirmation_failed">
+        <item quantity="one">Your follow request could not be confirmed right now. Try again later.</item>
+        <item quantity="other">Your follow requests could not be confirmed right now. Try again later.</item>
+    </plurals>
+    <plurals name="batch_fr_deletion_completed">
+        <item quantity="one">Deleted 1 follow request.</item>
+        <item quantity="other">Deleted %1$s follow requests.</item>
+    </plurals>
+    <plurals name="batch_fr_deletion_failed">
+        <item quantity="one">Your follow request could not be deleted right now. Try again later.</item>
+        <item quantity="other">Your follow requests could not be deleted right now. Try again later.</item>
+    </plurals>
+    <plurals name="batch_fr_deletion_in_progress">
+        <item quantity="one">1 follow request is being deleted. This may take a while.</item>
+        <item quantity="other">%1$s follow requests are being deleted. This may take a while.</item>
+    </plurals>
+    <plurals name="batch_non_recip_follow_failed">
+        <item quantity="one">Your request to follow back this user has failed. Try again later.</item>
+        <item quantity="other">Your request to follow back these users has failed. Try again later.</item>
+    </plurals>
+    <plurals name="batch_non_recip_remove_failed">
+        <item quantity="one">Your request to remove this follower has failed. Try again later.</item>
+        <item quantity="other">Your request to remove these followers has failed. Try again later.</item>
+    </plurals>
+    <plurals name="batch_non_recip_remove_success">
+        <item quantity="one">Removed 1 follower</item>
+        <item quantity="other">Removed %1$s followers</item>
+    </plurals>
+    <plurals name="bio_character_limit_reached">
+        <item quantity="one">Bio must be 1 character or fewer</item>
+        <item quantity="other">Bio must be %1$d characters or fewer</item>
+    </plurals>
+    <plurals name="birthday_effect_audience_picker_close_friends_count">
+        <item quantity="one">1 person</item>
+        <item quantity="other">%s people</item>
+    </plurals>
+    <plurals name="blend_midcard_recommended_for_x_and_n_others">
+        <item quantity="one">for %1$s and &lt;font face=sans-serif-medium>1 other&lt;/font></item>
+        <item quantity="other">for %1$s and &lt;font face=sans-serif-medium>%2$s others&lt;/font></item>
+    </plurals>
+    <plurals name="blend_participants_x_y_z_and_n_others">
+        <item quantity="one">&lt;b>%1$s, %2$s, %3$s&lt;/b> and &lt;b>1 other&lt;/b> joined this blend.</item>
+        <item quantity="other">&lt;b>%1$s, %2$s, %3$s&lt;/b> and &lt;b>%4$s other&lt;/b> joined this blend.</item>
+    </plurals>
+    <plurals name="blend_recommended_for_x_and_n_others">
+        <item quantity="one">Suggested for %1$s and &lt;font face=sans-serif-medium>1 other&lt;/font></item>
+        <item quantity="other">Suggested for %1$s and &lt;font face=sans-serif-medium>%2$s others&lt;/font></item>
+    </plurals>
+    <plurals name="blend_recommended_for_x_y_and_n_others">
+        <item quantity="one">Suggested for %1$s, %2$s and &lt;font face=sans-serif-medium>1 other&lt;/font></item>
+        <item quantity="other">Suggested for %1$s, %2$s and &lt;font face=sans-serif-medium>%3$s others&lt;/font></item>
+    </plurals>
+    <plurals name="blend_recommended_for_x_y_z_and_n_others">
+        <item quantity="one">Suggested for %1$s, %2$s, %3$s and &lt;font face=sans-serif-medium>1 other&lt;/font></item>
+        <item quantity="other">Suggested for %1$s, %2$s, %3$s and &lt;font face=sans-serif-medium>%4$s others&lt;/font></item>
+    </plurals>
+    <plurals name="block_x_accounts_dialog_body">
+        <item quantity="one">"You selected 1 account. They won't be able to find your profile, posts or story on Instagram."</item>
+        <item quantity="other">"You selected %1$d accounts. They won't be able to find your profile, posts or story on Instagram."</item>
+    </plurals>
+    <plurals name="block_x_accounts_dialog_primary_button">
+        <item quantity="one">Block account</item>
+        <item quantity="other">Block accounts</item>
+    </plurals>
+    <plurals name="block_x_accounts_dialog_title">
+        <item quantity="one">Block 1 account?</item>
+        <item quantity="other">Block %1$d accounts?</item>
+    </plurals>
+    <plurals name="blocked_story_photos_delete_button_text">
+        <item quantity="one">Delete 1 photo</item>
+        <item quantity="other">Delete %1$d photos</item>
+    </plurals>
+    <plurals name="blocked_story_videos_delete_button_text">
+        <item quantity="one">Delete 1 video</item>
+        <item quantity="other">Delete %1$d videos</item>
+    </plurals>
+    <plurals name="bloom_saved_reels_count">
+        <item quantity="one">%1$d reel</item>
+        <item quantity="other">%1$d reels</item>
+    </plurals>
+    <plurals name="bonuses_tagging_reels_welcome_bonus_reels_left">
+        <item quantity="one">1 more reel can count towards this bonus</item>
+        <item quantity="other">%1$d more reels can count towards this bonus</item>
+    </plurals>
+    <plurals name="bottom_sheet_music_note_save_count">
+        <item quantity="one">%1$d person added this song to Spotify</item>
+        <item quantity="other">%1$d people added this song to Spotify</item>
+    </plurals>
+    <plurals name="bottom_sheet_spotify_note_save_count">
+        <item quantity="one">%1$d person added songs from your note to Spotify</item>
+        <item quantity="other">%1$d people added songs from your note to Spotify</item>
+    </plurals>
+    <plurals name="broadcast_channel_replies_x_replies_deleted">
+        <item quantity="one">Reply deleted.</item>
+        <item quantity="other">%1$d replies deleted.</item>
+    </plurals>
+    <plurals name="broadcast_chat_see_x_more_replies">
+        <item quantity="one">See %1$d more reply</item>
+        <item quantity="other">See %1$d more replies</item>
+    </plurals>
+    <plurals name="broadcast_chat_see_x_previous_replies">
+        <item quantity="one">See %1$d previous reply</item>
+        <item quantity="other">See %1$d previous replies</item>
+    </plurals>
+    <plurals name="bugreporter_error_not_enough_characters">
+        <item quantity="one">Enter a description with at least %1$d character</item>
+        <item quantity="other">Enter a description with at least %1$d characters</item>
+    </plurals>
+    <plurals name="bugreporter_error_not_enough_words">
+        <item quantity="one">Please enter a description that has at least %1$d word</item>
+        <item quantity="other">Please enter a description that has at least %1$d words</item>
+    </plurals>
+    <plurals name="bulk_block_confirmation_toast">
+        <item quantity="one">Account blocked</item>
+        <item quantity="other">Accounts blocked</item>
+    </plurals>
+    <plurals name="bulk_restrict_confirmation_toast">
+        <item quantity="one">Account restricted</item>
+        <item quantity="other">Accounts restricted</item>
+    </plurals>
+    <plurals name="campfire_members_count_label">
+        <item quantity="one">1 member</item>
+        <item quantity="other">%1$d members</item>
+    </plurals>
+    <plurals name="carrera_review_interests_add_topics_button">
+        <item quantity="one">Add %1$d topic</item>
+        <item quantity="other">Add %1$d topics</item>
+    </plurals>
+    <plurals name="cart_sold_out_and_unavailable_items_status_message">
+        <item quantity="one">An item in your cart is no longer available.</item>
+        <item quantity="other">%1$d items in your cart are no longer available.</item>
+    </plurals>
+    <plurals name="ccp_feed_comments_feedback_for_consumers">
+        <item quantity="one">%1$s comment from Facebook</item>
+        <item quantity="other">%1$s comments from Facebook</item>
+    </plurals>
+    <plurals name="ccp_feed_comments_feedback_for_producers">
+        <item quantity="one">See %1$s comment from Facebook</item>
+        <item quantity="other">See %1$s comments from Facebook</item>
+    </plurals>
+    <plurals name="ccp_feed_likes_and_reaction_feedback_for_consumers">
+        <item quantity="one">%1$s reaction from Facebook</item>
+        <item quantity="other">%1$s reactions from Facebook</item>
+    </plurals>
+    <plurals name="ccp_feed_likes_and_reaction_feedback_for_producers">
+        <item quantity="one">See %1$s reaction from Facebook</item>
+        <item quantity="other">See %1$s reactions from Facebook</item>
+    </plurals>
+    <plurals name="channel_label">
+        <item quantity="one">Channel</item>
+        <item quantity="other">Channels</item>
+    </plurals>
+    <plurals name="channel_performance_recommended_actions_weekly_goal_completed_subtitle">
+        <item quantity="one">You completed everything this week. Come back in %1$s day for new recommended actions.</item>
+        <item quantity="other">You completed everything this week. Come back in %1$s days for new recommended actions.</item>
+    </plurals>
+    <plurals name="channels_context_line">
+        <item quantity="one">%1$s • %2$s member</item>
+        <item quantity="other">%1$s • %2$s members</item>
+    </plurals>
+    <plurals name="channels_context_line_without_type">
+        <item quantity="one">%1$s member</item>
+        <item quantity="other">%1$s members</item>
+    </plurals>
+    <plurals name="chat_badge">
+        <item quantity="one">1 chat</item>
+        <item quantity="other">%1$d chats</item>
+    </plurals>
+    <plurals name="clips_only_preloading_suggested_fix">
+        <item quantity="one">1 suggested fix</item>
+        <item quantity="other">%1$d suggested fixes</item>
+    </plurals>
+    <plurals name="clips_question_sticker_response_count_text">
+        <item quantity="one">%1$d response</item>
+        <item quantity="other">%1$d responses</item>
+    </plurals>
+    <plurals name="clips_snippets_attribution_label">
+        <item quantity="one">Elements from {username1}</item>
+        <item quantity="two">Elements from {username1} and {username2}</item>
+        <item quantity="other">Elements from {username1} and {count} others</item>
+    </plurals>
+    <plurals name="clips_timeline_block_pick_count_msg">
+        <item quantity="one">Pick %1$d item to use this combo</item>
+        <item quantity="other">Pick %1$d items to use this combo</item>
+    </plurals>
+    <plurals name="clips_timeline_bottomsheet_suggested_fix">
+        <item quantity="one">%1$s suggested fix</item>
+        <item quantity="other">%1$s suggested fixes</item>
+    </plurals>
+    <plurals name="collaborators_and_n_others">
+        <item quantity="one">and &lt;b>%1$s %2$sother&lt;/b></item>
+        <item quantity="other">and &lt;b>%1$s %2$sothers&lt;/b></item>
+    </plurals>
+    <plurals name="collaborators_w_and_n_others">
+        <item quantity="one">%1$s and &lt;b>%2$s %3$sother&lt;/b></item>
+        <item quantity="other">%1$s and &lt;b>%2$s %3$sothers&lt;/b></item>
+    </plurals>
+    <plurals name="collection_post_count">
+        <item quantity="one">1 post</item>
+        <item quantity="other">%1$d posts</item>
+    </plurals>
+    <plurals name="comment_badge">
+        <item quantity="one">1 comment</item>
+        <item quantity="other">%1$d comments</item>
+    </plurals>
+    <plurals name="comment_prompt_interactive_cta_reply_count">
+        <item quantity="one">%1$s reply</item>
+        <item quantity="other">%1$s replies</item>
+    </plurals>
+    <plurals name="comment_prompt_reply_count">
+        <item quantity="one">Reply · %1$s reply</item>
+        <item quantity="other">Reply · %1$s replies</item>
+    </plurals>
+    <plurals name="commented_by_x_and_n_others">
+        <item quantity="one">%1$s and &lt;b>1 other&lt;/b> commented</item>
+        <item quantity="other">%1$s and &lt;b>%2$s others&lt;/b> commented</item>
+    </plurals>
+    <plurals name="commented_by_x_y_z_and_n_others">
+        <item quantity="one">%1$s, %2$s, %3$s and &lt;b>1 other&lt;/b> commented</item>
+        <item quantity="other">%1$s, %2$s, %3$s and &lt;b>%4$s others&lt;/b> commented</item>
+    </plurals>
+    <plurals name="commerce_page_free_returns_within_days">
+        <item quantity="one">&lt;b>Free returns&lt;/b> within %1$d day</item>
+        <item quantity="other">&lt;b>Free returns&lt;/b> within %1$d days</item>
+    </plurals>
+    <plurals name="commerce_page_merchant_follower_count">
+        <item quantity="one">· %1$s follower</item>
+        <item quantity="other">· %1$s followers</item>
+    </plurals>
+    <plurals name="commerce_page_promo_ends_in_days">
+        <item quantity="one">Ends in %1$d day</item>
+        <item quantity="other">Ends in %1$d days</item>
+    </plurals>
+    <plurals name="commerce_page_reviews_count">
+        <item quantity="one">%1$d review</item>
+        <item quantity="other">%1$d reviews</item>
+    </plurals>
+    <plurals name="commerce_page_reviews_star_count">
+        <item quantity="one">%1$d star</item>
+        <item quantity="other">%1$d stars</item>
+    </plurals>
+    <plurals name="countdown_sticker_day">
+        <item quantity="one">day</item>
+        <item quantity="other">days</item>
+    </plurals>
+    <plurals name="countdown_sticker_hour">
+        <item quantity="one">hour</item>
+        <item quantity="other">hours</item>
+    </plurals>
+    <plurals name="countdown_sticker_minute">
+        <item quantity="one">minute</item>
+        <item quantity="other">minutes</item>
+    </plurals>
+    <plurals name="countdown_sticker_month">
+        <item quantity="one">month</item>
+        <item quantity="other">months</item>
+    </plurals>
+    <plurals name="countdown_sticker_second">
+        <item quantity="one">second</item>
+        <item quantity="other">seconds</item>
+    </plurals>
+    <plurals name="countdown_timer_days_remaining">
+        <item quantity="one">Ends in %1d day</item>
+        <item quantity="other">Ends in %1d days</item>
+    </plurals>
+    <plurals name="creation_note_subtitle_people_count">
+        <item quantity="one">1 person you follow back</item>
+        <item quantity="other">%s people you follow back</item>
+    </plurals>
+    <plurals name="cutout_anything_sticker_not_saved_due_to_max_saved_limit_description">
+        <item quantity="one">You can only save %1$s custom sticker</item>
+        <item quantity="other">You can only save %1$s custom stickers</item>
+    </plurals>
+    <plurals name="cutouts_multi_attribution_sheet_option">
+        <item quantity="one">View cutout sticker</item>
+        <item quantity="other">View cutout stickers</item>
+    </plurals>
+    <plurals name="delete_videos_dialog_message">
+        <item quantity="one">"You won't be able to see this video anymore."</item>
+        <item quantity="other">"You won't be able to see these videos anymore."</item>
+    </plurals>
+    <plurals name="delete_videos_dialog_title">
+        <item quantity="one">Delete this video?</item>
+        <item quantity="other">Delete %1$d videos?</item>
+    </plurals>
+    <plurals name="dialog_user_bulk_unblocked_title">
+        <item quantity="one">%1$d account is unblocked</item>
+        <item quantity="other">%1$d accounts are unblocked</item>
+    </plurals>
+    <plurals name="direct_activity_indicator_seen_by_count">
+        <item quantity="one">Seen by %1$s</item>
+        <item quantity="other">Seen by %1$s</item>
+    </plurals>
+    <plurals name="direct_add_member_dialog_message_without_all">
+        <item quantity="one">%1$s will see previous messages from this conversation.</item>
+        <item quantity="other">They will see previous messages from this conversation.</item>
+    </plurals>
+    <plurals name="direct_blocked_users_in_channel_title">
+        <item quantity="one">Someone you blocked is in this channel</item>
+        <item quantity="other">%1$d accounts you blocked are in this channel</item>
+    </plurals>
+    <plurals name="direct_blocked_users_in_community_chat_title">
+        <item quantity="one">Someone you blocked is in this chat</item>
+        <item quantity="other">%1$d accounts you blocked are in this chat</item>
+    </plurals>
+    <plurals name="direct_blocked_users_in_group_title">
+        <item quantity="one">Someone you blocked is in this chat</item>
+        <item quantity="other">%1$d accounts you blocked are in this chat</item>
+    </plurals>
+    <plurals name="direct_broadcast_chats_max_collaborators_message">
+        <item quantity="one">You can only have %1$d collaborator in a channel at a time.</item>
+        <item quantity="other">You can only have %1$d collaborators in a channel at a time.</item>
+    </plurals>
+    <plurals name="direct_collaborative_stack_collage_placeholder">
+        <item quantity="one">Add %1$d more to see collage</item>
+        <item quantity="other">Add %1$d more to see collage</item>
+    </plurals>
+    <plurals name="direct_community_chat_join_requests">
+        <item quantity="one">Request to join chat (%1$s)</item>
+        <item quantity="other">Requests to join chat (%1$s)</item>
+    </plurals>
+    <plurals name="direct_community_chat_sticker_subtitle">
+        <item quantity="one">Community chat • %1$s member</item>
+        <item quantity="other">Community chat • %1$s members</item>
+    </plurals>
+    <plurals name="direct_community_chat_waitlist">
+        <item quantity="one">Waitlist (%1$s)</item>
+        <item quantity="other">Waitlist (%1$s)</item>
+    </plurals>
+    <plurals name="direct_delete_message_toast">
+        <item quantity="one">%d message deleted for you.</item>
+        <item quantity="other">%d messages deleted for you.</item>
+    </plurals>
+    <plurals name="direct_digest_is_active_x_hours_ago">
+        <item quantity="one">Active 1h ago</item>
+        <item quantity="other">Active %1$dh ago</item>
+    </plurals>
+    <plurals name="direct_digest_is_active_x_mins_ago">
+        <item quantity="one">Active 1m ago</item>
+        <item quantity="other">Active %1$dm ago</item>
+    </plurals>
+    <plurals name="direct_edit_faq_response_field_character_limit_reached_error_translatable">
+        <item quantity="one">Automated response can only contain 1 character.</item>
+        <item quantity="other">Automated response can only contain %1$d characters.</item>
+    </plurals>
+    <plurals name="direct_faq_import_bottom_button_footer">
+        <item quantity="one">Select up to 1 question</item>
+        <item quantity="other">Select up to %1$d questions</item>
+    </plurals>
+    <plurals name="direct_faq_import_max_limit_reached_message">
+        <item quantity="one">"You can't import more than 1 question"</item>
+        <item quantity="other">"You can't import more than %1$d questions"</item>
+    </plurals>
+    <plurals name="direct_feature_limits_blocked_composer_title_days">
+        <item quantity="one">"You Can't Send Messages for %s Day"</item>
+        <item quantity="other">"You Can't Send Messages for %s Days"</item>
+    </plurals>
+    <plurals name="direct_feature_limits_blocked_composer_title_hours">
+        <item quantity="one">"You Can't Send Messages for %s Hour"</item>
+        <item quantity="other">"You Can't Send Messages for %s Hours"</item>
+    </plurals>
+    <plurals name="direct_fragment_broadcast_chats_members_subtitle">
+        <item quantity="one">%1$s member</item>
+        <item quantity="other">%1$s members</item>
+    </plurals>
+    <plurals name="direct_frequently_asked_questions_headline_in_feed">
+        <item quantity="one">Frequently asked question</item>
+        <item quantity="other">Frequently asked questions</item>
+    </plurals>
+    <plurals name="direct_group_max_size">
+        <item quantity="other">"You can't add more than %1$s people to a group."</item>
+    </plurals>
+    <plurals name="direct_inbox_discovery_channels_custom_snippet_social_context">
+        <item quantity="one">Joined by %1$s + 1 member</item>
+        <item quantity="other">Joined by %1$s + %2$s members</item>
+    </plurals>
+    <plurals name="direct_max_recipients_reached_body">
+        <item quantity="other">The total number of people who can be in a group is %1$s. Please limit the number of people to %1$s, including yourself, to finish creating this group.</item>
+    </plurals>
+    <plurals name="direct_media_composer_send_button_description">
+        <item quantity="one">Send</item>
+        <item quantity="other">Send %1$s</item>
+    </plurals>
+    <plurals name="direct_members_with_count_in_community_chat">
+        <item quantity="one">Member (%1$s)</item>
+        <item quantity="other">Members (%1$s)</item>
+    </plurals>
+    <plurals name="direct_message_pending_secondary_title">
+        <item quantity="one">Expires in %1$s day</item>
+        <item quantity="other">Expires in %1$s days</item>
+    </plurals>
+    <plurals name="direct_messages">
+        <item quantity="one">1 message</item>
+        <item quantity="other">%1$d messages</item>
+    </plurals>
+    <plurals name="direct_notification_stack_photo_plural">
+        <item quantity="one">a photo</item>
+        <item quantity="other">%1$d photos</item>
+    </plurals>
+    <plurals name="direct_notification_stack_video_plural">
+        <item quantity="one">a video</item>
+        <item quantity="other">%1$d videos</item>
+    </plurals>
+    <plurals name="direct_notification_summary_more_messages">
+        <item quantity="one">%d more message</item>
+        <item quantity="other">%d more messages</item>
+    </plurals>
+    <plurals name="direct_pending_group_messages_banner_expired">
+        <item quantity="one">"%1$s was removed because they didn't follow you within 7 days of being added."</item>
+        <item quantity="other">"%1$s were removed because they didn't follow you within 7 days of being added."</item>
+    </plurals>
+    <plurals name="direct_pending_group_messages_banner_pending">
+        <item quantity="one">"%1$s is pending. They'll be removed in 7 days if they don't follow you. It may help to follow them."</item>
+        <item quantity="other">"%1$s are pending. They'll be removed in 7 days if they don't follow you. It may help to follow them."</item>
+    </plurals>
+    <plurals name="direct_pending_requests_action_bar">
+        <item quantity="one">%1$d request</item>
+        <item quantity="other">%1$d requests</item>
+    </plurals>
+    <plurals name="direct_pending_story_replies_row_subtitle_new_requests">
+        <item quantity="one">1 new request</item>
+        <item quantity="other">%1$d new requests</item>
+    </plurals>
+    <plurals name="direct_permissions_choice_accept">
+        <item quantity="one">Accept</item>
+        <item quantity="other">Accept (%1$d)</item>
+    </plurals>
+    <plurals name="direct_permissions_choice_delete">
+        <item quantity="one">Delete</item>
+        <item quantity="other">Delete (%1$d)</item>
+    </plurals>
+    <plurals name="direct_permissions_choice_delete_revamp_bottom_sheet_body">
+        <item quantity="one">You can also hide new messages in this chat by automatically sending them to the hidden requests folder.</item>
+        <item quantity="other">You can also hide new messages in these chats by automatically sending them to the hidden requests folder.</item>
+    </plurals>
+    <plurals name="direct_permissions_choice_delete_revamp_bottom_sheet_body_spam">
+        <item quantity="one">You can also hide new messages in this chat by automatically sending them to the spam folder.</item>
+        <item quantity="other">You can also hide new messages in these chats by automatically sending them to the spam folder.</item>
+    </plurals>
+    <plurals name="direct_permissions_choice_delete_revamp_bottom_sheet_title">
+        <item quantity="one">Delete message request?</item>
+        <item quantity="other">Delete message requests?</item>
+    </plurals>
+    <plurals name="direct_permissions_choice_delete_x_chats">
+        <item quantity="one">Permanently delete chat?</item>
+        <item quantity="other">Permanently delete %1$d chats?</item>
+    </plurals>
+    <plurals name="direct_permissions_inviter_follower_count_with_string_parameter">
+        <item quantity="one">1 follower</item>
+        <item quantity="other">%1$s followers</item>
+    </plurals>
+    <plurals name="direct_poll_message_total_votes_text">
+        <item quantity="one">%1$s vote</item>
+        <item quantity="other">%1$s votes</item>
+    </plurals>
+    <plurals name="direct_scheduled_message_bar_header">
+        <item quantity="one">%d scheduled message</item>
+        <item quantity="other">%d scheduled messages</item>
+    </plurals>
+    <plurals name="direct_thread_deletion_confirmation_dialog_title_with_count">
+        <item quantity="one">Delete chat?</item>
+        <item quantity="other">Delete %1$s chats?</item>
+    </plurals>
+    <plurals name="direct_thread_n_new_messages">
+        <item quantity="one">1 new message</item>
+        <item quantity="other">%1$d new messages</item>
+    </plurals>
+    <plurals name="direct_thread_n_unwatched_reels">
+        <item quantity="one">1 unwatched reel</item>
+        <item quantity="other">%1$d unwatched reels</item>
+    </plurals>
+    <plurals name="direct_thread_summarize_thread_pill">
+        <item quantity="one">Summarize %d unread message</item>
+        <item quantity="other">Summarize %d unread messages</item>
+    </plurals>
+    <plurals name="direct_threads">
+        <item quantity="one">1 chat</item>
+        <item quantity="other">%1$d chats</item>
+    </plurals>
+    <plurals name="direct_welcome_message_edit_character_limit_reached_error">
+        <item quantity="one">The welcome message is limited to 1 character.</item>
+        <item quantity="other">The welcome message is limited to %1$d characters.</item>
+    </plurals>
+    <plurals name="discoverability_selected_apps_text">
+        <item quantity="one">Instagram</item>
+        <item quantity="other">Instagram and %1$d more</item>
+    </plurals>
+    <plurals name="distribution_chart_views_text">
+        <item quantity="one">%s view</item>
+        <item quantity="other">%s views</item>
+    </plurals>
+    <plurals name="dmm_after_viewed_action_log_turn_on_message_expiration_duration_days_for_after_send_messages">
+        <item quantity="one">"New messages will disappear %1$d day after they're sent."</item>
+        <item quantity="other">"New messages will disappear %1$d days after they're sent."</item>
+    </plurals>
+    <plurals name="dmm_after_viewed_action_log_turn_on_message_expiration_duration_days_for_after_viewed_messages">
+        <item quantity="one">New messages and reactions will disappear %1$d day after everyone has seen them.</item>
+        <item quantity="other">New messages and reactions will disappear %1$d days after everyone has seen them.</item>
+    </plurals>
+    <plurals name="dmm_after_viewed_action_log_turn_on_message_expiration_duration_hours_for_after_send_messages">
+        <item quantity="one">"New messages will disappear %1$d hour after they're sent."</item>
+        <item quantity="other">"New messages will disappear %1$d hours after they're sent."</item>
+    </plurals>
+    <plurals name="dmm_after_viewed_action_log_turn_on_message_expiration_duration_hours_for_after_viewed_messages">
+        <item quantity="one">New messages and reactions will disappear %1$d hour after everyone has seen them.</item>
+        <item quantity="other">New messages and reactions will disappear %1$d hours after everyone has seen them.</item>
+    </plurals>
+    <plurals name="dmm_after_viewed_action_log_turn_on_message_expiration_duration_minutes_for_after_send_messages">
+        <item quantity="one">"New messages will disappear %1$d minute after they're sent."</item>
+        <item quantity="other">"New messages will disappear %1$d minutes after they're sent."</item>
+    </plurals>
+    <plurals name="dmm_after_viewed_action_log_turn_on_message_expiration_duration_minutes_for_after_viewed_messages">
+        <item quantity="one">New messages and reactions will disappear %1$d minute after everyone has seen them.</item>
+        <item quantity="other">New messages and reactions will disappear %1$d minutes after everyone has seen them.</item>
+    </plurals>
+    <plurals name="dmm_after_viewed_action_log_turn_on_message_expiration_duration_seconds_for_after_send_messages">
+        <item quantity="one">"New messages will disappear %1$d second after they're sent."</item>
+        <item quantity="other">"New messages will disappear %1$d seconds after they're sent."</item>
+    </plurals>
+    <plurals name="dmm_after_viewed_action_log_turn_on_message_expiration_duration_seconds_for_after_viewed_messages">
+        <item quantity="one">New messages and reactions will disappear %1$d second after everyone has seen them.</item>
+        <item quantity="other">New messages and reactions will disappear %1$d seconds after everyone has seen them.</item>
+    </plurals>
+    <plurals name="emoji_pong_final_score">
+        <item quantity="one">%1$d Hit</item>
+        <item quantity="other">%1$d Hits</item>
+    </plurals>
+    <plurals name="ends_in">
+        <item quantity="one">Ends in %s</item>
+        <item quantity="other">Ends in %s</item>
+    </plurals>
+    <plurals name="ends_in_days">
+        <item quantity="one">Ends in %1$d day</item>
+        <item quantity="other">Ends in %1$d days</item>
+    </plurals>
+    <plurals name="ends_on">
+        <item quantity="one">Ends on %s</item>
+        <item quantity="other">Ends on %s</item>
+    </plurals>
+    <plurals name="event_join_requests_banner_body">
+        <item quantity="one">%1$d request to join this group chat.</item>
+        <item quantity="other">%1$d requests to join this group chat.</item>
+    </plurals>
+    <plurals name="exo_controls_fastforward_by_amount_description">
+        <item quantity="one">Fast forward %d second</item>
+        <item quantity="other">Fast forward %d seconds</item>
+    </plurals>
+    <plurals name="exo_controls_rewind_by_amount_description">
+        <item quantity="one">Rewind %d second</item>
+        <item quantity="other">Rewind %d seconds</item>
+    </plurals>
+    <plurals name="fake_plural">
+        <item quantity="zero">0</item>
+        <item quantity="one">1</item>
+        <item quantity="two">2</item>
+        <item quantity="few">3</item>
+        <item quantity="many">4</item>
+        <item quantity="other">5</item>
+    </plurals>
+    <plurals name="fan_club_content_preview_settings_detail">
+        <item quantity="one">%d post</item>
+        <item quantity="other">%d posts</item>
+    </plurals>
+    <plurals name="fan_club_creator_view_members_list">
+        <item quantity="one">View %1$d subscriber</item>
+        <item quantity="other">View %1$d subscribers</item>
+    </plurals>
+    <plurals name="fan_club_guided_activation_deferral_confirmation_subtitle">
+        <item quantity="one">The Subscribe button is now live on your profile. Your followers will be automatically notified about your subscription in 1 day.</item>
+        <item quantity="other">The Subscribe button is now live on your profile. Your followers will be automatically notified about your subscription in %d days.</item>
+    </plurals>
+    <plurals name="fan_club_guided_activation_deferral_confirmation_title">
+        <item quantity="one">Your followers will be notified in 1 day</item>
+        <item quantity="other">Your followers will be notified in %d days</item>
+    </plurals>
+    <plurals name="fan_club_guided_activation_profile_banner_title">
+        <item quantity="one">Your followers will be notified about your subscription in &lt;b>%d day.&lt;/b></item>
+        <item quantity="other">Your followers will be notified about your subscription in &lt;b>%d days.&lt;/b></item>
+    </plurals>
+    <plurals name="fan_consideration_lives_count">
+        <item quantity="one">%1$s live video</item>
+        <item quantity="other">%1$s live videos</item>
+    </plurals>
+    <plurals name="fan_consideration_posts_count">
+        <item quantity="one">%1$s post</item>
+        <item quantity="other">%1$s posts</item>
+    </plurals>
+    <plurals name="fan_consideration_reels_count">
+        <item quantity="one">%1$s reel</item>
+        <item quantity="other">%1$s reels</item>
+    </plurals>
+    <plurals name="fan_consideration_stories_count">
+        <item quantity="one">%1$s story</item>
+        <item quantity="other">%1$s stories</item>
+    </plurals>
+    <plurals name="fan_onboarding_consideration_subtitle_member_count">
+        <item quantity="one">%1$s subscriber</item>
+        <item quantity="other">%1$s subscribers</item>
+    </plurals>
+    <plurals name="fbpay_hub_transaction_row_content_description_with_items">
+        <item quantity="one">%1$s has %2$d item, is %3$s, %4$s</item>
+        <item quantity="other">%1$s has %2$d items, is %3$s, %4$s</item>
+    </plurals>
+    <plurals name="follow_back_x_non_recip_followers_confirmation">
+        <item quantity="one">Follow back 1 user?</item>
+        <item quantity="other">Follow back %1$s users?</item>
+    </plurals>
+    <plurals name="follow_badge">
+        <item quantity="one">1 follow</item>
+        <item quantity="other">%1$d follows</item>
+    </plurals>
+    <plurals name="follow_count">
+        <item quantity="one">1 follow</item>
+        <item quantity="other">%1$d follows</item>
+    </plurals>
+    <plurals name="followed_by_x_and_n_others">
+        <item quantity="one">Followed by %1$s and &lt;font face=sans-serif-medium>1 other&lt;/font></item>
+        <item quantity="other">Followed by %1$s and &lt;font face=sans-serif-medium>%2$s others&lt;/font></item>
+    </plurals>
+    <plurals name="followed_by_x_plus_n">
+        <item quantity="one">Followed by %1$s +1</item>
+        <item quantity="other">Followed by %1$s +%2$s</item>
+    </plurals>
+    <plurals name="followed_by_x_plus_n_others">
+        <item quantity="one">Followed by %1$s&lt;font face=sans-serif-medium> +1 other&lt;/font></item>
+        <item quantity="other">Followed by %1$s&lt;font face=sans-serif-medium> +%2$s others&lt;/font></item>
+    </plurals>
+    <plurals name="followed_by_x_y_and_n_others">
+        <item quantity="one">Followed by %1$s, %2$s and &lt;font face=sans-serif-medium>1 other&lt;/font></item>
+        <item quantity="other">Followed by %1$s, %2$s and &lt;font face=sans-serif-medium>%3$s others&lt;/font></item>
+    </plurals>
+    <plurals name="followed_by_x_y_z_and_n_others">
+        <item quantity="one">Followed by %1$s, %2$s, %3$s and &lt;font face=sans-serif-medium>1 other&lt;/font></item>
+        <item quantity="other">Followed by %1$s, %2$s, %3$s and &lt;font face=sans-serif-medium>%4$s others&lt;/font></item>
+    </plurals>
+    <plurals name="follower_count_label">
+        <item quantity="one">%1$s Follower</item>
+        <item quantity="other">%1$s Followers</item>
+    </plurals>
+    <plurals name="followers_with_count">
+        <item quantity="one">%1$s follower</item>
+        <item quantity="other">%1$s followers</item>
+    </plurals>
+    <plurals name="following_tab_limited_list_footer_text">
+        <item quantity="one">And &lt;b>%1$s other&lt;/b></item>
+        <item quantity="other">And &lt;b>%1$s others&lt;/b></item>
+    </plurals>
+    <plurals name="friend_map_event_cluster_more">
+        <item quantity="one">+1 more</item>
+        <item quantity="other">+%d more</item>
+    </plurals>
+    <plurals name="friend_map_event_cluster_sheet_event_count">
+        <item quantity="one">%d event</item>
+        <item quantity="other">%d events</item>
+    </plurals>
+    <plurals name="friend_map_event_liked_by_formatted_count">
+        <item quantity="one">Liked by %s</item>
+        <item quantity="other">Liked by %s</item>
+    </plurals>
+    <plurals name="friend_map_event_liked_by_username_and_others">
+        <item quantity="one">Liked by %1$s + %2$s other</item>
+        <item quantity="other">Liked by %1$s + %2$s others</item>
+    </plurals>
+    <plurals name="friend_map_new_updates_bottomsheet_badge">
+        <item quantity="one">1 note</item>
+        <item quantity="other">%1$d notes</item>
+    </plurals>
+    <plurals name="friend_map_settings_choose_x_people_subtitle">
+        <item quantity="one">1 person</item>
+        <item quantity="other">%1$d people</item>
+    </plurals>
+    <plurals name="full_screen_reel_reshare_attribution_others_label">
+        <item quantity="one">%1$s and %2$d other</item>
+        <item quantity="other">%1$s and %2$d others</item>
+    </plurals>
+    <plurals name="gallery_formats_picker_edit_selection_n_photos">
+        <item quantity="one">%1$d photo</item>
+        <item quantity="other">%1$d photos</item>
+    </plurals>
+    <plurals name="gallery_formats_picker_edit_selection_n_photos_one_video">
+        <item quantity="one">%1$d photo and 1 video</item>
+        <item quantity="other">%1$d photos and 1 video</item>
+    </plurals>
+    <plurals name="gallery_formats_picker_edit_selection_n_videos">
+        <item quantity="one">%1$d video</item>
+        <item quantity="other">%1$d videos</item>
+    </plurals>
+    <plurals name="gallery_formats_picker_edit_selection_one_photo_n_videos">
+        <item quantity="one">1 photo and %1$d video</item>
+        <item quantity="other">1 photo and %1$d videos</item>
+    </plurals>
+    <plurals name="game_picker_like_count">
+        <item quantity="one">%1$s like</item>
+        <item quantity="other">%1$s likes</item>
+    </plurals>
+    <plurals name="game_picker_score_pts">
+        <item quantity="one">%1$s pt</item>
+        <item quantity="other">%1$s pts</item>
+    </plurals>
+    <plurals name="granted_extension_time_hours">
+        <item quantity="one">%d more hour</item>
+        <item quantity="other">%d more hours</item>
+    </plurals>
+    <plurals name="granted_extension_time_minutes">
+        <item quantity="one">%d more minute</item>
+        <item quantity="other">%d more minutes</item>
+    </plurals>
+    <plurals name="grid_carousel_n_photos_one_video">
+        <item quantity="one">%1$d photo and 1 video by %2$s at row %3$d, column %4$d</item>
+        <item quantity="other">%1$d photos and 1 video by %2$s at row %3$d, column %4$d</item>
+    </plurals>
+    <plurals name="grid_carousel_one_photo_n_videos">
+        <item quantity="one">1 photo and %1$d video by %2$s at row %3$d, column %4$d</item>
+        <item quantity="other">1 photo and %1$d videos by %2$s at row %3$d, column %4$d</item>
+    </plurals>
+    <plurals name="group_follower_heading">
+        <item quantity="one">1 follower</item>
+        <item quantity="other">%s followers</item>
+    </plurals>
+    <plurals name="group_link_preview_subscribers">
+        <item quantity="one">%1$d subscriber</item>
+        <item quantity="other">%1$d subscribers</item>
+    </plurals>
+    <plurals name="hall_pass_followers_count">
+        <item quantity="one">1 follower</item>
+        <item quantity="other">%1$d followers</item>
+    </plurals>
+    <plurals name="highlight_unseen_count">
+        <item quantity="one">1 new highlight</item>
+        <item quantity="other">%1$d new highlights</item>
+    </plurals>
+    <plurals name="highlight_update_text">
+        <item quantity="one">Added to highlight</item>
+        <item quantity="other">Added to highlights</item>
+    </plurals>
+    <plurals name="horizontal_notification_text">
+        <item quantity="one">%d notification</item>
+        <item quantity="other">%d notifications</item>
+    </plurals>
+    <plurals name="hsm_restore_wrong_pin_attempts_left_error">
+        <item quantity="one">"You have %d more try to enter your PIN before it won't work anymore."</item>
+        <item quantity="other">"You have %d more tries to enter your PIN before it won't work anymore."</item>
+    </plurals>
+    <plurals name="hsm_restore_wrong_pin_backoff_error_hours_popup_title_text">
+        <item quantity="one">1 hour</item>
+        <item quantity="other">%d hours</item>
+    </plurals>
+    <plurals name="hsm_restore_wrong_pin_backoff_error_minutes_popup_title_text">
+        <item quantity="one">1 minute</item>
+        <item quantity="other">%d minutes</item>
+    </plurals>
+    <plurals name="hsm_restore_wrong_pin_backoff_error_seconds_popup_title_text">
+        <item quantity="one">1 second</item>
+        <item quantity="other">%d seconds</item>
+    </plurals>
+    <plurals name="hype_leaderboard_total_fans">
+        <item quantity="one">%1$s fan</item>
+        <item quantity="other">%1$s fans</item>
+    </plurals>
+    <plurals name="ig_profile_publisher_control_blocked_accounts_text">
+        <item quantity="one">%1$s, %2$s, %3$s, %4$s, %5$s and 1 other account</item>
+        <item quantity="other">%1$s, %2$s, %3$s, %4$s, %5$s and %6$d other accounts</item>
+    </plurals>
+    <plurals name="ig_profile_publisher_control_blocked_categories_text">
+        <item quantity="one">%1$s, %2$s, %3$s, %4$s, %5$s and 1 other category</item>
+        <item quantity="other">%1$s, %2$s, %3$s, %4$s, %5$s and %6$d other categories</item>
+    </plurals>
+    <plurals name="ig_profile_publisher_control_non_revshare_blocked_categories_screen_description_text">
+        <item quantity="one">Ads from %1$s like gambling and dating are restricted by default. You can select up to 1 additional ad category that you want to prevent from appearing in your profile feed.</item>
+        <item quantity="other">Ads from %1$s like gambling and dating are restricted by default. You can select up to %2$d additional ad categories that you want to prevent from appearing in your profile feed.</item>
+    </plurals>
+    <plurals name="igd_inbox_thread_batch_deletion_snack_bar_message">
+        <item quantity="one">Chat deleted.</item>
+        <item quantity="other">Chats deleted.</item>
+    </plurals>
+    <plurals name="iglive_audience_mode_close_friends_edit_option_close_friends_added">
+        <item quantity="one">%d person</item>
+        <item quantity="other">%d people</item>
+    </plurals>
+    <plurals name="iglive_chain_preview_main_text_with_guest">
+        <item quantity="one">%1$s and 1 other is Live</item>
+        <item quantity="other">%1$s and %2$d others are Live</item>
+    </plurals>
+    <plurals name="iglive_chain_preview_whos_watching_text">
+        <item quantity="one">%d person is watching</item>
+        <item quantity="other">%d people are watching</item>
+    </plurals>
+    <plurals name="iglive_gift_goal_gift_price">
+        <item quantity="one">%1$d star</item>
+        <item quantity="other">%1$d stars</item>
+    </plurals>
+    <plurals name="iglive_presence_text">
+        <item quantity="one">%1$d follower active now</item>
+        <item quantity="other">%1$d followers active now</item>
+    </plurals>
+    <plurals name="impression_count">
+        <item quantity="one">1 impression</item>
+        <item quantity="other">%1$d impressions</item>
+    </plurals>
+    <plurals name="inbox_campaign_ad_item_message_count">
+        <item quantity="one">%1$d message</item>
+        <item quantity="other">%1$d messages</item>
+    </plurals>
+    <plurals name="inbox_folder_request_thread_move_dialog_title">
+        <item quantity="one">Move messages from %1$s into:</item>
+        <item quantity="other">Move messages from group into:</item>
+    </plurals>
+    <plurals name="lead_ad_otp_screen_code_resend_countdown">
+        <item quantity="one">1 second until a new code can be sent.</item>
+        <item quantity="other">%d seconds until a new code can be sent.</item>
+    </plurals>
+    <plurals name="lead_ad_post_submission_otp_screen_code_resend_countdown">
+        <item quantity="one">"Didn't get a code? You can resend it after 1 second."</item>
+        <item quantity="other">"Didn't get a code? You can resend it after %d seconds."</item>
+    </plurals>
+    <plurals name="lead_ad_whatsapp_otp_screen_code_resend_countdown">
+        <item quantity="one">"Didn't get a code? You can resend it after 1 second or choose another verification method."</item>
+        <item quantity="other">"Didn't get a code? You can resend it after %d seconds or choose another verification method."</item>
+    </plurals>
+    <plurals name="like_badge">
+        <item quantity="one">1 like</item>
+        <item quantity="other">%1$d likes</item>
+    </plurals>
+    <plurals name="like_count">
+        <item quantity="one">1 like</item>
+        <item quantity="other">%1$d likes</item>
+    </plurals>
+    <plurals name="liked_by_x_and_n_others">
+        <item quantity="one">Liked by %1$s and &lt;font face=sans-serif-medium>1 other&lt;/font></item>
+        <item quantity="other">Liked by %1$s and &lt;font face=sans-serif-medium>%2$s others&lt;/font></item>
+    </plurals>
+    <plurals name="liked_by_x_plus_n">
+        <item quantity="one">Liked by %1$s +1</item>
+        <item quantity="other">Liked by %1$s +%2$s</item>
+    </plurals>
+    <plurals name="liked_by_x_y_and_n_others">
+        <item quantity="one">Liked by %1$s, %2$s and &lt;font face=sans-serif-medium>1 other&lt;/font></item>
+        <item quantity="other">Liked by %1$s, %2$s and &lt;font face=sans-serif-medium>%3$s others&lt;/font></item>
+    </plurals>
+    <plurals name="liked_by_x_y_z_and_n_others">
+        <item quantity="one">Liked by %1$s, %2$s, %3$s and &lt;font face=sans-serif-medium>1 other&lt;/font></item>
+        <item quantity="other">Liked by %1$s, %2$s, %3$s and &lt;font face=sans-serif-medium>%4$s others&lt;/font></item>
+    </plurals>
+    <plurals name="likeness_approved_people_count">
+        <item quantity="one">%1$d person</item>
+        <item quantity="other">%1$d people</item>
+    </plurals>
+    <plurals name="limited_interactions_reminder_date_day">
+        <item quantity="one">1 day</item>
+        <item quantity="other">%1$d days</item>
+    </plurals>
+    <plurals name="limited_interactions_reminder_date_week">
+        <item quantity="one">1 week</item>
+        <item quantity="other">%1$d weeks</item>
+    </plurals>
+    <plurals name="limited_interactions_reminder_dialog_title_day">
+        <item quantity="one">You turned on limits for 1 day</item>
+        <item quantity="other">You turned on limits for %1$d days</item>
+    </plurals>
+    <plurals name="limits_plus_reminder_day_unit">
+        <item quantity="one">day</item>
+        <item quantity="other">days</item>
+    </plurals>
+    <plurals name="limits_plus_reminder_week_unit">
+        <item quantity="one">week</item>
+        <item quantity="other">weeks</item>
+    </plurals>
+    <plurals name="limits_plus_when_row_subtext_day">
+        <item quantity="one">In 1 day</item>
+        <item quantity="other">In %1$d days</item>
+    </plurals>
+    <plurals name="limits_plus_when_row_subtext_week">
+        <item quantity="one">In 1 week</item>
+        <item quantity="other">In %1$d weeks</item>
+    </plurals>
+    <plurals name="live_question_like_count">
+        <item quantity="one">1 like</item>
+        <item quantity="other">%1$d likes</item>
+    </plurals>
+    <plurals name="live_user_pay_badges_lowercase">
+        <item quantity="one">1 badge</item>
+        <item quantity="other">%d badges</item>
+    </plurals>
+    <plurals name="live_user_pay_badges_uppercase">
+        <item quantity="one">1 Badge</item>
+        <item quantity="other">%d Badges</item>
+    </plurals>
+    <plurals name="live_with_multiple_join_requests_received_comment">
+        <item quantity="one">%1$s and %2$d other sent a request to be in your live video.</item>
+        <item quantity="other">%1$s and %2$d others sent a request to be in your live video.</item>
+    </plurals>
+    <plurals name="location_list_title">
+        <item quantity="one">%1$d place</item>
+        <item quantity="other">%1$d places</item>
+    </plurals>
+    <plurals name="longform_publish_linked_reels_count">
+        <item quantity="one">%1$d reel</item>
+        <item quantity="other">%1$d reels</item>
+    </plurals>
+    <plurals name="loot_canvas_item_detail_added_by_friends">
+        <item quantity="one">Added by %1$d friend</item>
+        <item quantity="other">Added by %1$d friends</item>
+    </plurals>
+    <plurals name="loot_inventory_added_by_count">
+        <item quantity="one">Added by %1$d person</item>
+        <item quantity="other">Added by %1$d people</item>
+    </plurals>
+    <plurals name="meta_ai_code_lines_hidden">
+        <item quantity="one">%d line hidden</item>
+        <item quantity="other">%d lines hidden</item>
+    </plurals>
+    <plurals name="meta_ai_file_card_page_count">
+        <item quantity="one">%d page</item>
+        <item quantity="other">%d pages</item>
+    </plurals>
+    <plurals name="meta_ai_imagine_video_trim_duration">
+        <item quantity="one">%1$d second</item>
+        <item quantity="other">%1$d seconds</item>
+    </plurals>
+    <plurals name="meta_ai_map_place_review_likes_count">
+        <item quantity="one">%1$d like</item>
+        <item quantity="other">%1$d likes</item>
+    </plurals>
+    <plurals name="meta_ai_voice_attachment_overflow">
+        <item quantity="one">+%1$d more</item>
+        <item quantity="other">+%1$d more</item>
+    </plurals>
+    <plurals name="meta_verified_edit_link_time_remaining">
+        <item quantity="one">%d min left to edit</item>
+        <item quantity="other">%d min left to edit</item>
+    </plurals>
+    <plurals name="msys_add_friend_banner_subtitle">
+        <item quantity="one">%d mutual friend</item>
+        <item quantity="other">%d mutual friends</item>
+    </plurals>
+    <plurals name="msys_ds_4xu0wn">
+        <item quantity="one">Sent a photo</item>
+        <item quantity="other">Sent %d photos</item>
+    </plurals>
+    <plurals name="msys_ds_FqxrU">
+        <item quantity="one">%d new friend</item>
+        <item quantity="other">%d new friends</item>
+    </plurals>
+    <plurals name="msys_ds_Tey2G">
+        <item quantity="one">%s sent a photo</item>
+        <item quantity="other">%1$s sent %2$d photos</item>
+    </plurals>
+    <plurals name="msys_ds_l81ip">
+        <item quantity="one">You sent a photo</item>
+        <item quantity="other">You sent %d photos</item>
+    </plurals>
+    <plurals name="msys_ds_lceem">
+        <item quantity="one">%s sent a photo.</item>
+        <item quantity="other">%1$s sent %2$d photos.</item>
+    </plurals>
+    <plurals name="msys_frx_report_confirmation_title_multiple_participants">
+        <item quantity="one">Report chat with %1$s, %2$s and %3$d other?</item>
+        <item quantity="other">Report chat with %1$s, %2$s and %3$d others?</item>
+    </plurals>
+    <plurals name="msys_gcu_countdown_banner_duration_in_days">
+        <item quantity="one">in %d day</item>
+        <item quantity="other">in %d days</item>
+    </plurals>
+    <plurals name="msys_gcu_countdown_banner_duration_in_hours">
+        <item quantity="one">in %d hour</item>
+        <item quantity="other">in %d hours</item>
+    </plurals>
+    <plurals name="msys_group_invite_unconnected_members_context_line">
+        <item quantity="one">You are not connected to %d member</item>
+        <item quantity="other">You are not connected to %d members</item>
+    </plurals>
+    <plurals name="msys_homebase_authorize_newly_enabled_admin_message">
+        <item quantity="one">%1$s created a Homebase for this chat. The next %2$d message will be shared with AI to create events and tasks.</item>
+        <item quantity="other">%1$s created a Homebase for this chat. The next %2$d messages will be shared with AI to create events and tasks.</item>
+    </plurals>
+    <plurals name="msys_homebase_authorize_reauthorized_admin_message">
+        <item quantity="one">%1$s resumed Homebase AI message sharing for the next %2$d message in this chat.</item>
+        <item quantity="other">%1$s resumed Homebase AI message sharing for the next %2$d messages in this chat.</item>
+    </plurals>
+    <plurals name="msys_homebase_local_authorize_newly_enabled_admin_message">
+        <item quantity="one">You created a Homebase for this chat. The next %d message will be shared with AI to create events and tasks.</item>
+        <item quantity="other">You created a Homebase for this chat. The next %d messages will be shared with AI to create events and tasks.</item>
+    </plurals>
+    <plurals name="msys_homebase_local_authorize_reauthorized_admin_message">
+        <item quantity="one">You resumed Homebase AI message sharing for the next %d message in this chat.</item>
+        <item quantity="other">You resumed Homebase AI message sharing for the next %d messages in this chat.</item>
+    </plurals>
+    <plurals name="msys_jewel_aggregate_message_request_body">
+        <item quantity="one">You have a new message request</item>
+        <item quantity="other">You have %d new message requests</item>
+    </plurals>
+    <plurals name="msys_local_user_added_many_participants_to_group">
+        <item quantity="one">You added %1$s and %2$d other to the group.</item>
+        <item quantity="other">You added %1$s and %2$d others to the group.</item>
+    </plurals>
+    <plurals name="msys_local_user_removed_many_patricipants_from_group">
+        <item quantity="one">You removed %1$s and %2$d other from the group.</item>
+        <item quantity="other">You removed %1$s and %2$d others from the group.</item>
+    </plurals>
+    <plurals name="msys_lsrtc__call__unnamed_raised_hands">
+        <item quantity="one">%d raised hand</item>
+        <item quantity="other">%d raised hands</item>
+    </plurals>
+    <plurals name="msys_lsrtc__rooms__pending_join_requests">
+        <item quantity="one">%d person waiting to join</item>
+        <item quantity="other">%d people waiting to join</item>
+    </plurals>
+    <plurals name="msys_magic_word_changed_by_theme_multiple">
+        <item quantity="one">%1$d word effect from %2$s were added %3$s</item>
+        <item quantity="other">%1$d word effects from %2$s were added %3$s</item>
+    </plurals>
+    <plurals name="msys_magic_word_changed_with_adding_and_removing_by_local_user">
+        <item quantity="one">You changed %d word effect.</item>
+        <item quantity="other">You changed %d word effects.</item>
+    </plurals>
+    <plurals name="msys_magic_word_changed_with_adding_and_removing_by_other_user">
+        <item quantity="one">%1$s changed %2$d word effect.</item>
+        <item quantity="other">%1$s changed %2$d word effects.</item>
+    </plurals>
+    <plurals name="msys_magic_word_changed_with_multiple_adding_by_local_user">
+        <item quantity="one">You set %1$d word effect %2$s</item>
+        <item quantity="other">You set %1$d word effects %2$s</item>
+    </plurals>
+    <plurals name="msys_magic_word_changed_with_multiple_adding_by_other_user">
+        <item quantity="one">%1$s set %2$d word effect %3$s</item>
+        <item quantity="other">%1$s set %2$d word effects %3$s</item>
+    </plurals>
+    <plurals name="msys_magic_word_changed_with_multiple_removing_by_local_user">
+        <item quantity="one">You removed %d word effect.</item>
+        <item quantity="other">You removed %d word effects.</item>
+    </plurals>
+    <plurals name="msys_magic_word_changed_with_multiple_removing_by_other_user">
+        <item quantity="one">%1$s removed %2$d word effect.</item>
+        <item quantity="other">%1$s removed %2$d word effects.</item>
+    </plurals>
+    <plurals name="msys_n_days">
+        <item quantity="one">%d day</item>
+        <item quantity="other">%d days</item>
+    </plurals>
+    <plurals name="msys_n_hours">
+        <item quantity="one">%d hour</item>
+        <item quantity="other">%d hours</item>
+    </plurals>
+    <plurals name="msys_n_minutes">
+        <item quantity="one">%d minute</item>
+        <item quantity="other">%d minutes</item>
+    </plurals>
+    <plurals name="msys_n_seconds">
+        <item quantity="one">%d second</item>
+        <item quantity="other">%d seconds</item>
+    </plurals>
+    <plurals name="msys_notification_n_days_ago">
+        <item quantity="one">%d day ago</item>
+        <item quantity="other">%d days ago</item>
+    </plurals>
+    <plurals name="msys_notification_n_hours_ago">
+        <item quantity="one">%d hour ago</item>
+        <item quantity="other">%d hours ago</item>
+    </plurals>
+    <plurals name="msys_notification_n_minutes_ago">
+        <item quantity="one">%d minute ago</item>
+        <item quantity="other">%d minutes ago</item>
+    </plurals>
+    <plurals name="msys_notification_n_seconds_ago">
+        <item quantity="one">%d second ago</item>
+        <item quantity="other">%d seconds ago</item>
+    </plurals>
+    <plurals name="msys_participant_added_local_user_and_many_participants_to_group">
+        <item quantity="one">%1$s added you and %2$d other to the group.</item>
+        <item quantity="other">%1$s added you and %2$d others to the group.</item>
+    </plurals>
+    <plurals name="msys_participant_added_many_other_participants_to_group">
+        <item quantity="one">%1$s added %2$s and %3$d other to the group.</item>
+        <item quantity="other">%1$s added %2$s and %3$d others to the group.</item>
+    </plurals>
+    <plurals name="msys_participant_removed_local_user_and_many_users_from_group">
+        <item quantity="one">%1$s removed you and %2$d other from the group.</item>
+        <item quantity="other">%1$s removed you and %2$d others from the group.</item>
+    </plurals>
+    <plurals name="msys_participant_removed_many_other_participants_from_group">
+        <item quantity="one">%1$s removed %2$s and %3$d other from the group.</item>
+        <item quantity="other">%1$s removed %2$s and %3$d others from the group.</item>
+    </plurals>
+    <plurals name="msys_people_will_see_chat_history">
+        <item quantity="one">This person will be able to see the chat history</item>
+        <item quantity="other">These people will be able to see the chat history</item>
+    </plurals>
+    <plurals name="msys_pinned_banner_storytelling_prompt_count">
+        <item quantity="one">%d prompt</item>
+        <item quantity="other">%d prompts</item>
+    </plurals>
+    <plurals name="msys_pinned_banner_storytelling_response_count">
+        <item quantity="one">%d response</item>
+        <item quantity="other">%d responses</item>
+    </plurals>
+    <plurals name="msys_shared_album_local_user_added_to_album">
+        <item quantity="one">You added %1$d item to %2$s.</item>
+        <item quantity="other">You added %1$d items to %2$s.</item>
+    </plurals>
+    <plurals name="msys_shared_album_local_user_removed_album_content">
+        <item quantity="one">You removed %1$d item from %2$s.</item>
+        <item quantity="other">You removed %1$d items from %2$s.</item>
+    </plurals>
+    <plurals name="msys_shared_album_participant_added_to_album">
+        <item quantity="one">%1$s added %2$d item to %3$s.</item>
+        <item quantity="other">%1$s added %2$d items to %3$s.</item>
+    </plurals>
+    <plurals name="msys_shared_album_participant_removed_album_content">
+        <item quantity="one">%1$s removed %2$d item from %3$s.</item>
+        <item quantity="other">%1$s removed %2$d items from %3$s.</item>
+    </plurals>
+    <plurals name="msys_unknown_user_add_local_user_and_many_participants_to_group">
+        <item quantity="one">You and %d other were added to the group.</item>
+        <item quantity="other">You and %d others were added to the group.</item>
+    </plurals>
+    <plurals name="msys_unknown_user_added_many_participants_to_group">
+        <item quantity="one">%1$s and %2$d other were added to the group.</item>
+        <item quantity="other">%1$s and %2$d others were added to the group.</item>
+    </plurals>
+    <plurals name="msys_unknown_user_removed_local_user_and_many_participants_from_group">
+        <item quantity="one">You and %d other were removed from the group.</item>
+        <item quantity="other">You and %d others were removed from the group.</item>
+    </plurals>
+    <plurals name="msys_unknown_user_removed_many_participants_from_group">
+        <item quantity="one">%1$s and %2$d other were removed from the group.</item>
+        <item quantity="other">%1$s and %2$d others were removed from the group.</item>
+    </plurals>
+    <plurals name="msys_you_added_people">
+        <item quantity="one">You added %d person</item>
+        <item quantity="other">You added %d people</item>
+    </plurals>
+    <plurals name="msys_you_added_people_with_names">
+        <item quantity="one">You added %1$s, %2$s and another person</item>
+        <item quantity="other">You added %1$s, %2$s and %3$d more people</item>
+    </plurals>
+    <plurals name="msys_you_sent_photos">
+        <item quantity="one">You sent a photo.</item>
+        <item quantity="other">You sent %d photos.</item>
+    </plurals>
+    <plurals name="mtrl_badge_content_description">
+        <item quantity="one">%d new notification</item>
+        <item quantity="other">%d new notifications</item>
+    </plurals>
+    <plurals name="multi_author_story_view_count_nux_photo_title_plural">
+        <item quantity="one">Your photo is in the %1$s story and one other.</item>
+        <item quantity="other">Your photo is in the %1$s story and %2$s others.</item>
+    </plurals>
+    <plurals name="multi_author_story_view_count_nux_video_title_plural">
+        <item quantity="one">Your video is in the %1$s story and one other.</item>
+        <item quantity="other">Your video is in the %1$s story and %2$s others.</item>
+    </plurals>
+    <plurals name="multi_author_story_viewer_list_megaphone_photo_hashtag_title">
+        <item quantity="one">Your Photo Was Added to a Hashtag Story</item>
+        <item quantity="other">Your Photo Was Added to %1$s Hashtag Stories</item>
+    </plurals>
+    <plurals name="multi_author_story_viewer_list_megaphone_photo_location_title">
+        <item quantity="one">Your photo was added to a location story</item>
+        <item quantity="other">Your Photo Was Added to %1$s Location Stories</item>
+    </plurals>
+    <plurals name="multi_author_story_viewer_list_megaphone_video_hashtag_title">
+        <item quantity="one">Your Video Was Added to a Hashtag Story</item>
+        <item quantity="other">Your Video Was Added to %1$s Hashtag Stories</item>
+    </plurals>
+    <plurals name="multi_author_story_viewer_list_megaphone_video_location_title">
+        <item quantity="one">Your video was added to a location story</item>
+        <item quantity="other">Your Video Was Added to %1$s Location Stories</item>
+    </plurals>
+    <plurals name="multi_effects_with_title_styled">
+        <item quantity="one">&lt;b>%1$s&lt;/b> and %3$s other effect</item>
+        <item quantity="other">&lt;b>%1$s&lt;/b> and %3$s other effects</item>
+    </plurals>
+    <plurals name="multi_select_count">
+        <item quantity="one">%1$d selected</item>
+        <item quantity="other">%1$d selected</item>
+    </plurals>
+    <plurals name="multi_select_dialog_delete_channel_title">
+        <item quantity="one">Delete %1$d channel?</item>
+        <item quantity="other">Delete %1$d channels?</item>
+    </plurals>
+    <plurals name="multi_select_dialog_delete_chat_title">
+        <item quantity="one">Delete %1$d chat?</item>
+        <item quantity="other">Delete %1$d chats?</item>
+    </plurals>
+    <plurals name="multi_select_footer_button_accept">
+        <item quantity="one">Accept (%1$d)</item>
+        <item quantity="other">Accept (%1$d)</item>
+    </plurals>
+    <plurals name="multi_select_footer_button_delete">
+        <item quantity="one">Delete (%1$d)</item>
+        <item quantity="other">Delete (%1$d)</item>
+    </plurals>
+    <plurals name="multi_select_footer_button_folder_general">
+        <item quantity="one">General (%1$d)</item>
+        <item quantity="other">General (%1$d)</item>
+    </plurals>
+    <plurals name="multi_select_footer_button_folder_primary">
+        <item quantity="one">Primary (%1$d)</item>
+        <item quantity="other">Primary (%1$d)</item>
+    </plurals>
+    <plurals name="multiple_accounts_logged_in_snackbar_message">
+        <item quantity="one">Now logged into %1$s and 1 more account.</item>
+        <item quantity="other">Now logged into %1$s and %2$s more accounts.</item>
+    </plurals>
+    <plurals name="mutual_followers_count_label">
+        <item quantity="one">%1$s mutual follower</item>
+        <item quantity="other">%1$s mutual followers</item>
+    </plurals>
+    <plurals name="n_characters_over_the_limit">
+        <item quantity="one">1 character over the limit</item>
+        <item quantity="other">%1$d characters over the limit</item>
+    </plurals>
+    <plurals name="n_characters_remaining">
+        <item quantity="one">1 character remaining</item>
+        <item quantity="other">%1$d characters remaining</item>
+    </plurals>
+    <plurals name="n_people_follow_p_feedback_row">
+        <item quantity="one">&lt;font face=sans-serif-medium>1 person&lt;/font> follows %1$s</item>
+        <item quantity="other">&lt;font face=sans-serif-medium>%1$s people&lt;/font> follow %2$s</item>
+    </plurals>
+    <plurals name="name_with_count">
+        <item quantity="one">%1$s</item>
+        <item quantity="other">%1$s +%2$d</item>
+    </plurals>
+    <plurals name="new_leads_count">
+        <item quantity="one">You received 1 new lead.</item>
+        <item quantity="other">You received %1$d new leads.</item>
+    </plurals>
+    <plurals name="new_post_badge">
+        <item quantity="one">1 new post</item>
+        <item quantity="other">New posts</item>
+    </plurals>
+    <plurals name="note_tray_friend_map_entrypoint_nearby_label">
+        <item quantity="one">%1$s + %2$d nearby</item>
+        <item quantity="other">%1$s + %2$d nearby</item>
+    </plurals>
+    <plurals name="note_tray_friend_map_entrypoint_sharing_label">
+        <item quantity="one">%1$s + 1 other</item>
+        <item quantity="other">%1$s + %2$d others</item>
+    </plurals>
+    <plurals name="notes_comments_count_label">
+        <item quantity="one">%d comment</item>
+        <item quantity="other">%d comments</item>
+    </plurals>
+    <plurals name="notes_poll_response_count_label">
+        <item quantity="one">%d response</item>
+        <item quantity="other">%d responses</item>
+    </plurals>
+    <plurals name="notes_view_comments_count_label">
+        <item quantity="one">View %d comment</item>
+        <item quantity="other">View %d comments</item>
+    </plurals>
+    <plurals name="notification_badge">
+        <item quantity="one">1 notification</item>
+        <item quantity="other">%1$d notifications</item>
+    </plurals>
+    <plurals name="notification_badge_description_more_than">
+        <item quantity="other">%1$d or more unread messages</item>
+    </plurals>
+    <plurals name="notification_badge_description_plural">
+        <item quantity="zero">@null</item>
+        <item quantity="one">%1$d unread message</item>
+        <item quantity="other">%1$d unread messages</item>
+    </plurals>
+    <plurals name="num_collections_formatted">
+        <item quantity="one">1 product collection</item>
+        <item quantity="other">%1$d product collections</item>
+    </plurals>
+    <plurals name="num_products_formatted">
+        <item quantity="one">1 product</item>
+        <item quantity="other">%1$d products</item>
+    </plurals>
+    <plurals name="number_of_comments">
+        <item quantity="one">%1$s comment</item>
+        <item quantity="other">%1$s comments</item>
+    </plurals>
+    <plurals name="number_of_likes">
+        <item quantity="one">%1$s like</item>
+        <item quantity="other">%1$s likes</item>
+    </plurals>
+    <plurals name="number_of_plays">
+        <item quantity="one">%1$s play</item>
+        <item quantity="other">%1$s plays</item>
+    </plurals>
+    <plurals name="number_of_posts">
+        <item quantity="one">%1$s post</item>
+        <item quantity="other">%1$s posts</item>
+    </plurals>
+    <plurals name="number_of_public_posts">
+        <item quantity="one">%1$s public post</item>
+        <item quantity="other">%1$s public posts</item>
+    </plurals>
+    <plurals name="number_of_reactions">
+        <item quantity="one">%1$s like or reaction</item>
+        <item quantity="other">%1$s likes and reactions</item>
+    </plurals>
+    <plurals name="number_of_shares">
+        <item quantity="one">%1$s share</item>
+        <item quantity="other">%1$s shares</item>
+    </plurals>
+    <plurals name="number_of_viewers">
+        <item quantity="one">1 viewer</item>
+        <item quantity="other">%1$s viewers</item>
+    </plurals>
+    <plurals name="number_of_views">
+        <item quantity="one">%1$s view</item>
+        <item quantity="other">%1$s views</item>
+    </plurals>
+    <plurals name="on_this_day_subtitle">
+        <item quantity="one">1 year ago today.</item>
+        <item quantity="other">%1$d years ago today.</item>
+    </plurals>
+    <plurals name="on_x_countries">
+        <item quantity="one">On (1 Country)</item>
+        <item quantity="other">On (%1$d Countries)</item>
+    </plurals>
+    <plurals name="onboarding_social_context_others">
+        <item quantity="one">%1$d other</item>
+        <item quantity="other">%1$d others</item>
+    </plurals>
+    <plurals name="onboarding_social_context_students">
+        <item quantity="one">%1$s student</item>
+        <item quantity="other">%1$s students</item>
+    </plurals>
+    <plurals name="partnered_with_x_and_n_others">
+        <item quantity="one">Partnered with %1$s and &lt;font face=sans-serif-medium>1 other&lt;/font></item>
+        <item quantity="other">Partnered with %1$s and &lt;font face=sans-serif-medium>%2$s others&lt;/font></item>
+    </plurals>
+    <plurals name="partnership_ad_content_permission_partners_carousel">
+        <item quantity="other">%d accounts have content permission on this carousel.</item>
+    </plurals>
+    <plurals name="partnership_ad_content_permission_partners_post">
+        <item quantity="other">%d accounts have content permission on this post.</item>
+    </plurals>
+    <plurals name="partnership_ad_content_permission_partners_reel">
+        <item quantity="other">%d accounts have content permission on this reel.</item>
+    </plurals>
+    <plurals name="pending_group_adds_others_not_added_plurals_toast">
+        <item quantity="one">"%1$s and %2$d other weren't added."</item>
+        <item quantity="other">"%1$s and %2$d others weren't added."</item>
+    </plurals>
+    <plurals name="pending_promoted_posts">
+        <item quantity="one">You have 1 pending ad.</item>
+        <item quantity="other">You have %1$d pending ads.</item>
+    </plurals>
+    <plurals name="pending_tag_add_dialog_title">
+        <item quantity="one">Add 1 tagged post?</item>
+        <item quantity="other">Add %d tagged posts?</item>
+    </plurals>
+    <plurals name="pending_tag_hide_dialog_title">
+        <item quantity="one">Hide 1 tagged post?</item>
+        <item quantity="other">Hide %d tagged posts?</item>
+    </plurals>
+    <plurals name="pending_tag_remove_dialog_title">
+        <item quantity="one">Remove 1 tagged post?</item>
+        <item quantity="other">Remove %d tagged post?</item>
+    </plurals>
+    <plurals name="people_tagging_x_people_plurals">
+        <item quantity="one">%1$s</item>
+        <item quantity="other">%2$d People</item>
+    </plurals>
+    <plurals name="pinned_comment_limit_error_toast">
+        <item quantity="one">Limit is 1 comment</item>
+        <item quantity="other">Limit is %1$d comments</item>
+    </plurals>
+    <plurals name="plus_n_followers">
+        <item quantity="one">+%1$s follower</item>
+        <item quantity="other">+%1$s followers</item>
+    </plurals>
+    <plurals name="pocket_install_sheet_social_context_multiple">
+        <item quantity="one">%1$s and %2$d other are on Pocket</item>
+        <item quantity="other">%1$s and %2$d others are on Pocket</item>
+    </plurals>
+    <plurals name="polling_promotion_number_of_voters_from_promotion">
+        <item quantity="one">1 voter from promotion</item>
+        <item quantity="other">%1$s voters from promotion</item>
+    </plurals>
+    <plurals name="post_live_broadcaster_user_pay_summary_info">
+        <item quantity="one">You earned an estimated %1$s from 1 badge.</item>
+        <item quantity="other">You earned an estimated %1$s from %2$s badges.</item>
+    </plurals>
+    <plurals name="post_live_viewer_count">
+        <item quantity="one">%1$s viewed your live video.</item>
+        <item quantity="other">%1$s, %2$s, +%3$d others viewed your live video.</item>
+    </plurals>
+    <plurals name="post_live_viewer_user_pay_summary_info">
+        <item quantity="one">You bought a badge. %1$s will see a list of everyone who bought badges.</item>
+        <item quantity="other">You bought %2$d badges. %1$s will see a list of everyone who bought badges.</item>
+    </plurals>
+    <plurals name="preferred_languages_add_sheet_add_button">
+        <item quantity="one">Add language</item>
+        <item quantity="other">Add languages</item>
+    </plurals>
+    <plurals name="preloads_montage_threads_badge_headline">
+        <item quantity="one">You have %1$d unread notification on Threads</item>
+        <item quantity="other">You have %1$d unread notifications on Threads</item>
+    </plurals>
+    <plurals name="premium_reactions_likes_sheet_header">
+        <item quantity="one">Includes 1 premium reaction.</item>
+        <item quantity="other">Includes %1$s premium reactions.</item>
+    </plurals>
+    <plurals name="premium_reactions_likes_sheet_header_crossposted">
+        <item quantity="one">Includes 1 premium reaction from Instagram, %2$s reactions from Facebook, and %3$s views from both apps.</item>
+        <item quantity="other">Includes %1$s premium reactions from Instagram, %2$s reactions from Facebook, and %3$s views from both apps.</item>
+    </plurals>
+    <plurals name="premium_reactions_setup_subtitle">
+        <item quantity="one">"Make 4 premium reactions out of photos.
+Fans can get the pack for %d star."</item>
+        <item quantity="other">"Make 4 premium reactions out of photos.
+Fans can get the pack for %d stars."</item>
+    </plurals>
+    <plurals name="product_tagging_post_product_limit_reached">
+        <item quantity="one">You can only add up to %1$d product. Remove a product to add a new one.</item>
+        <item quantity="other">You can only add up to %1$d products. Remove a product to add a new one.</item>
+    </plurals>
+    <plurals name="product_tagging_suggested_products">
+        <item quantity="one">Suggestion available</item>
+        <item quantity="other">Suggestions available</item>
+    </plurals>
+    <plurals name="profile_header_followers_lc">
+        <item quantity="one">follower</item>
+        <item quantity="other">followers</item>
+    </plurals>
+    <plurals name="profile_multiple_links_bio_others">
+        <item quantity="one">%1$s and 1 more</item>
+        <item quantity="other">%1$s and %2$d more</item>
+    </plurals>
+    <plurals name="profile_picture_update_text">
+        <item quantity="one">New profile picture</item>
+        <item quantity="other">New profile picture</item>
+    </plurals>
+    <plurals name="profile_user_list_follower_with_count">
+        <item quantity="one">%1$s Follower</item>
+        <item quantity="other">%1$s followers</item>
+    </plurals>
+    <plurals name="profile_user_list_group_profile_admins_with_count">
+        <item quantity="one">%1$s Admin</item>
+        <item quantity="other">%1$s Admins</item>
+    </plurals>
+    <plurals name="profile_user_list_group_profile_blocked_with_count">
+        <item quantity="one">%1$s Blocked</item>
+        <item quantity="other">%1$s Blocked</item>
+    </plurals>
+    <plurals name="profile_user_list_group_profile_members_with_count">
+        <item quantity="one">%1$s Member</item>
+        <item quantity="other">%1$s Members</item>
+    </plurals>
+    <plurals name="promote_ad_tools_n_ads_overlay">
+        <item quantity="one">%d ad</item>
+        <item quantity="other">%d ads</item>
+    </plurals>
+    <plurals name="prompt_used_by_people">
+        <item quantity="one">&lt;b>%1$s&lt;/b> and &lt;b>1 other&lt;/b> added to this</item>
+        <item quantity="other">&lt;b>%1$s&lt;/b> and &lt;b>%2$s others&lt;/b> added to this</item>
+    </plurals>
+    <plurals name="quick_snap_archive_delete_confirmation_title">
+        <item quantity="one">Delete %d instant?</item>
+        <item quantity="other">Delete %d instants?</item>
+    </plurals>
+    <plurals name="quick_snap_archive_multi_select_delete">
+        <item quantity="one">Delete %d photo</item>
+        <item quantity="other">Delete %d photos</item>
+    </plurals>
+    <plurals name="quick_snap_archive_video_duration_seconds">
+        <item quantity="one">%ds</item>
+        <item quantity="other">%ds</item>
+    </plurals>
+    <plurals name="quick_snap_moods_v2_other_participant_content_description">
+        <item quantity="one">Used by %d other person</item>
+        <item quantity="other">Used by %d other people</item>
+    </plurals>
+    <plurals name="quick_snap_preview_audience_count">
+        <item quantity="one">Shared with %d person</item>
+        <item quantity="other">Shared with %d people</item>
+    </plurals>
+    <plurals name="quiz_voter_count_on_surfaces">
+        <item quantity="one">%1$s response · Answer</item>
+        <item quantity="other">%1$s responses · Answer</item>
+    </plurals>
+    <plurals name="quiz_voter_count_on_surfaces_voted_viewer">
+        <item quantity="one">%1$s response · View</item>
+        <item quantity="other">%1$s responses · View</item>
+    </plurals>
+    <plurals name="recipient_picker_close_friends_count">
+        <item quantity="one">1 person</item>
+        <item quantity="other">%s people</item>
+    </plurals>
+    <plurals name="reel_dashboard_anonymous_fb_viewers_content">
+        <item quantity="one">"1 other person viewed this story on Facebook. Since you are sharing it to Public on Facebook, a person you're not friends with saw it."</item>
+        <item quantity="other">"%s other people viewed this story on Facebook. Since you are sharing it to Public on Facebook, people you're not friends with saw it."</item>
+    </plurals>
+    <plurals name="reel_dashboard_poll_result_option_tally_label">
+        <item quantity="one">vote for %1$s</item>
+        <item quantity="other">votes for %1$s</item>
+    </plurals>
+    <plurals name="reel_dashboard_slider_results_summary">
+        <item quantity="one">1 person answered. This is the average answer.</item>
+        <item quantity="other">%1$d people answered. This is the average answer.</item>
+    </plurals>
+    <plurals name="reel_netego_threads_in_stories_likes">
+        <item quantity="one">%1$s like</item>
+        <item quantity="other">%1$s likes</item>
+    </plurals>
+    <plurals name="reel_netego_threads_in_stories_replies">
+        <item quantity="one">%1$s reply</item>
+        <item quantity="other">%1$s replies</item>
+    </plurals>
+    <plurals name="remove_spam_followers_title_plu">
+        <item quantity="one">Remove 1 follower?</item>
+        <item quantity="other">Remove %s followers?</item>
+    </plurals>
+    <plurals name="remove_videos_from_highlight_dialog_message">
+        <item quantity="one">"You're removing 1 video from your highlight."</item>
+        <item quantity="other">"You're removing %1$d videos from your highlight."</item>
+    </plurals>
+    <plurals name="remove_videos_from_highlight_dialog_title">
+        <item quantity="one">Remove video from highlight?</item>
+        <item quantity="other">Remove %1$d videos from highlight?</item>
+    </plurals>
+    <plurals name="remove_x_non_recip_followers_confirmation">
+        <item quantity="one">Remove 1 follower?</item>
+        <item quantity="other">Remove %1$s followers?</item>
+    </plurals>
+    <plurals name="removed_num_products_formatted">
+        <item quantity="one">1 product removed</item>
+        <item quantity="other">%1$d products removed</item>
+    </plurals>
+    <plurals name="removed_spam_followers_async_title">
+        <item quantity="one">%1$s follower is being removed</item>
+        <item quantity="other">%1$s followers are being removed</item>
+    </plurals>
+    <plurals name="removed_spam_followers_sync_title">
+        <item quantity="one">Removed %1$s follower.</item>
+        <item quantity="other">Removed %1$s followers.</item>
+    </plurals>
+    <plurals name="reposted_by_x_and_n_others">
+        <item quantity="one">Reposted by %1$s and &lt;font face=sans-serif-medium>1 other&lt;/font></item>
+        <item quantity="other">Reposted by %1$s and &lt;font face=sans-serif-medium>%2$s others&lt;/font></item>
+    </plurals>
+    <plurals name="reshare_metadata_text">
+        <item quantity="one">%1$s reshare</item>
+        <item quantity="other">%1$s reshares</item>
+    </plurals>
+    <plurals name="restrict_group_chat_warning_message_user_overflow">
+        <item quantity="one">%1$s, %2$s and %3$d other account you restricted</item>
+        <item quantity="other">%1$s, %2$s and %3$d other accounts you restricted</item>
+    </plurals>
+    <plurals name="restrict_x_accounts_dialog_body">
+        <item quantity="one">You selected 1 account. Only you and the person you restrict will see their new comments on your posts.</item>
+        <item quantity="other">You selected %1$d accounts. Only you and the person you restrict will see their new comments on your posts.</item>
+    </plurals>
+    <plurals name="restrict_x_accounts_dialog_primary_button">
+        <item quantity="one">Restrict</item>
+        <item quantity="other">Restrict accounts</item>
+    </plurals>
+    <plurals name="restrict_x_accounts_dialog_title">
+        <item quantity="one">Restrict 1 account?</item>
+        <item quantity="other">Restrict %1$d Accounts?</item>
+    </plurals>
+    <plurals name="rff_message_sender_footer_text">
+        <item quantity="one">You sent 1 recommendation.</item>
+        <item quantity="other">You sent %1$d recommendations.</item>
+    </plurals>
+    <plurals name="rff_message_sent_confirmation">
+        <item quantity="one">%1$d recommendation sent.</item>
+        <item quantity="other">%1$d recommendations sent.</item>
+    </plurals>
+    <plurals name="riff_error_not_saved_due_to_max_saved_limit_description">
+        <item quantity="one">You can only save %1$s custom sticker</item>
+        <item quantity="other">You can only save %1$s custom stickers</item>
+    </plurals>
+    <plurals name="row_comment_combined_crosspost_facebook_only">
+        <item quantity="one">See %1$s comment on Facebook</item>
+        <item quantity="other">See %1$s comments on Facebook</item>
+    </plurals>
+    <plurals name="row_comment_combined_crosspost_threads_and_facebook">
+        <item quantity="one">See %1$s more reply or comment</item>
+        <item quantity="other">See %1$s more replies and comments</item>
+    </plurals>
+    <plurals name="row_comment_combined_crosspost_threads_only">
+        <item quantity="one">See %1$s reply on Threads</item>
+        <item quantity="other">See %1$s replies on Threads</item>
+    </plurals>
+    <plurals name="save_collection_header_saved_posts">
+        <item quantity="one">%1$s saved post</item>
+        <item quantity="other">%1$s saved posts</item>
+    </plurals>
+    <plurals name="save_home_bulk_edit_add_failure_notification">
+        <item quantity="one">Unable to add post</item>
+        <item quantity="other">Unable to add posts</item>
+    </plurals>
+    <plurals name="save_home_bulk_edit_add_success_notification">
+        <item quantity="one">Post added to %1$s</item>
+        <item quantity="other">%2$s posts added to %1$s</item>
+    </plurals>
+    <plurals name="save_home_bulk_edit_move_failure_notification">
+        <item quantity="one">Unable to move post</item>
+        <item quantity="other">Unable to move posts</item>
+    </plurals>
+    <plurals name="save_home_bulk_edit_move_success_notification">
+        <item quantity="one">Post moved to %1$s</item>
+        <item quantity="other">%2$s posts moved to %1$s</item>
+    </plurals>
+    <plurals name="save_home_bulk_edit_move_to_collection_confirmation_message">
+        <item quantity="one">This will remove post from this collection and move it to %1$s. Post will still be saved in All Saved.</item>
+        <item quantity="other">This will remove posts from this collection and move them to %1$s. Posts will still be saved in All Saved.</item>
+    </plurals>
+    <plurals name="save_home_bulk_edit_remove_confirmation_message">
+        <item quantity="one">Unsaving this post will also remove it from any collections.</item>
+        <item quantity="other">Unsaving posts will also remove them from any collections.</item>
+    </plurals>
+    <plurals name="save_home_bulk_edit_remove_confirmation_title">
+        <item quantity="one">Unsave post?</item>
+        <item quantity="other">Unsave posts?</item>
+    </plurals>
+    <plurals name="save_home_bulk_edit_remove_from_collection_failure_notification">
+        <item quantity="one">Unable to remove post</item>
+        <item quantity="other">Unable to remove posts</item>
+    </plurals>
+    <plurals name="save_home_bulk_edit_remove_from_collection_success_notification">
+        <item quantity="one">Post removed from %1$s</item>
+        <item quantity="other">%2$s posts removed from %1$s</item>
+    </plurals>
+    <plurals name="save_home_bulk_edit_unsave_failure_notification">
+        <item quantity="one">Unable to unsave post</item>
+        <item quantity="other">Unable to unsave posts</item>
+    </plurals>
+    <plurals name="save_home_bulk_edit_unsave_success_notification">
+        <item quantity="one">Post unsaved</item>
+        <item quantity="other">%1$s posts unsaved</item>
+    </plurals>
+    <plurals name="save_home_collection_feed_x_selected">
+        <item quantity="one">1 selected</item>
+        <item quantity="other">%1$d Selected</item>
+    </plurals>
+    <plurals name="saved_collection_add_collaborator_dialog_title_more_than_two_users_username_text">
+        <item quantity="one">%1$s, %2$s, and %3$d other</item>
+        <item quantity="other">%1$s, %2$s, and %3$d others</item>
+    </plurals>
+    <plurals name="saved_items">
+        <item quantity="one">1 item</item>
+        <item quantity="other">%1$d items</item>
+    </plurals>
+    <plurals name="saved_public_collections_number_posts_tab">
+        <item quantity="one">%1$s post</item>
+        <item quantity="other">%1$s posts</item>
+    </plurals>
+    <plurals name="school_channels_suggested_subtitle_member_count">
+        <item quantity="one">%s member</item>
+        <item quantity="other">%s members</item>
+    </plurals>
+    <plurals name="search_social_context_new_post">
+        <item quantity="one">New post</item>
+        <item quantity="other">New posts</item>
+    </plurals>
+    <plurals name="search_social_context_x_new_post">
+        <item quantity="one">1 new post</item>
+        <item quantity="other">%1$s new posts</item>
+    </plurals>
+    <plurals name="segmented_video_block_blacklist_subtitle">
+        <item quantity="one">1 video was blocked in some countries.</item>
+        <item quantity="other">%1$d videos were blocked in some countries.</item>
+    </plurals>
+    <plurals name="segmented_video_block_blacklist_title">
+        <item quantity="one">1 video was blocked in some countries</item>
+        <item quantity="other">%1$d videos were blocked in some countries</item>
+    </plurals>
+    <plurals name="segmented_video_block_global_subtitle">
+        <item quantity="one">1 video was blocked.</item>
+        <item quantity="other">%1$d videos were blocked</item>
+    </plurals>
+    <plurals name="segmented_video_block_global_title">
+        <item quantity="one">1 video was blocked</item>
+        <item quantity="other">%1$d videos were blocked</item>
+    </plurals>
+    <plurals name="segmented_video_block_whitelist_subtitle">
+        <item quantity="one">1 video is only available in some countries.</item>
+        <item quantity="other">%1$d videos are only available in some countries.</item>
+    </plurals>
+    <plurals name="segmented_video_block_whitelist_title">
+        <item quantity="one">1 video is only available in some countries</item>
+        <item quantity="other">%1$d videos are only available in some countries</item>
+    </plurals>
+    <plurals name="selection_max_reached">
+        <item quantity="one">You can only choose 1 comment at a time.</item>
+        <item quantity="other">You can only choose %1$d comments at a time.</item>
+    </plurals>
+    <plurals name="series_insights_episode_likes_content_description">
+        <item quantity="one">Episode %1$d, %2$s like</item>
+        <item quantity="other">Episode %1$d, %2$s likes</item>
+    </plurals>
+    <plurals name="series_insights_episode_views_content_description">
+        <item quantity="one">Episode %1$d, %2$s view</item>
+        <item quantity="other">Episode %1$d, %2$s views</item>
+    </plurals>
+    <plurals name="settings_panavision_public_bottom_sheet_follow_request_label">
+        <item quantity="one">All pending follow requests will be automatically approved unless you delete them now. Review %1$s pending follow request.</item>
+        <item quantity="other">All pending follow requests will be automatically approved unless you delete them now. Review %1$s pending follow requests.</item>
+    </plurals>
+    <plurals name="sfd_comment_sheet_more_comments">
+        <item quantity="one">%1$s more comment</item>
+        <item quantity="other">%1$s more comments</item>
+    </plurals>
+    <plurals name="share_count_text">
+        <item quantity="one">%1$s share</item>
+        <item quantity="other">%1$s shares</item>
+    </plurals>
+    <plurals name="sharesheet_creator_guidance_bottomsheet_subtitle">
+        <item quantity="one">We found an opportunity to improve your reel before sharing it to Instagram.</item>
+        <item quantity="other">We found %1$d opportunities to improve your reel before sharing it on Instagram.</item>
+    </plurals>
+    <plurals name="sharesheet_creator_guidance_bottomsheet_title">
+        <item quantity="one">Suggested fix</item>
+        <item quantity="other">Suggested fixes</item>
+    </plurals>
+    <plurals name="shop_selector_product_count_label">
+        <item quantity="one">%s product</item>
+        <item quantity="other">%s products</item>
+    </plurals>
+    <plurals name="shopping_cart_count_content_description">
+        <item quantity="one">1 item in your cart</item>
+        <item quantity="other">%1$d items in your cart</item>
+    </plurals>
+    <plurals name="shopping_cart_num_items">
+        <item quantity="one">1 item</item>
+        <item quantity="other">%1$d items</item>
+    </plurals>
+    <plurals name="shopping_cart_subtotal_title_text">
+        <item quantity="one">Subtotal (1 item)</item>
+        <item quantity="other">Subtotal (%1$d items)</item>
+    </plurals>
+    <plurals name="short_drama_episode_count">
+        <item quantity="one">%1$d episode</item>
+        <item quantity="other">%1$d episodes</item>
+    </plurals>
+    <plurals name="short_drama_feed_series_attribution_from_others">
+        <item quantity="one">From %1$s and %2$d other</item>
+        <item quantity="other">From %1$s and %2$d others</item>
+    </plurals>
+    <plurals name="short_drama_grid_item_content_description">
+        <item quantity="one">Series, %1$s. %2$d episode. Double tap to play.</item>
+        <item quantity="other">Series, %1$s. %2$d episodes. Double tap to play.</item>
+    </plurals>
+    <plurals name="short_drama_select_reels_added_episodes">
+        <item quantity="one">Added %1$d episode to series.</item>
+        <item quantity="other">Added %1$d episodes to series.</item>
+    </plurals>
+    <plurals name="sidechat_summarize_message">
+        <item quantity="one">Summarize my %1$d unread message</item>
+        <item quantity="other">Summarize my %1$d unread messages</item>
+    </plurals>
+    <plurals name="spam_follow_requests_subtitle">
+        <item quantity="one">%1$s follow request</item>
+        <item quantity="other">%1$s follow requests</item>
+    </plurals>
+    <plurals name="standalone_fundraiser_with_cohost_label">
+        <item quantity="one">&lt;b>%1$s&lt;/b> and &lt;b>1 other&lt;/b></item>
+        <item quantity="other">&lt;b>%1$s&lt;/b> and &lt;b>%2$s others&lt;/b></item>
+    </plurals>
+    <plurals name="starts">
+        <item quantity="one">Starts %s</item>
+        <item quantity="other">Starts %s</item>
+    </plurals>
+    <plurals name="starts_in">
+        <item quantity="one">Starts in %s</item>
+        <item quantity="other">Starts in %s</item>
+    </plurals>
+    <plurals name="starts_in_days">
+        <item quantity="one">Starts in %1$d day</item>
+        <item quantity="other">Starts in %1$d days</item>
+    </plurals>
+    <plurals name="starts_on">
+        <item quantity="one">Starts on %s</item>
+        <item quantity="other">Starts on %s</item>
+    </plurals>
+    <plurals name="sticker_category_card_previews_description">
+        <item quantity="one">%1$s, showing %2$d preview</item>
+        <item quantity="other">%1$s, showing %2$d previews</item>
+    </plurals>
+    <plurals name="sticker_count_limit">
+        <item quantity="one">You cannot add this sticker more than once per story</item>
+        <item quantity="other">You cannot add this sticker more than %1$d times per story</item>
+    </plurals>
+    <plurals name="stories_inapp_notification_title_and_others">
+        <item quantity="one">%1$s and %2$d other</item>
+        <item quantity="other">%1$s and %2$d others</item>
+    </plurals>
+    <plurals name="stories_replies_count">
+        <item quantity="one">%1$s reply</item>
+        <item quantity="other">%1$s replies</item>
+    </plurals>
+    <plurals name="story_count_label">
+        <item quantity="one">%1$d story</item>
+        <item quantity="other">%1$d stories</item>
+    </plurals>
+    <plurals name="story_dashboard_rewatch_count_content_description">
+        <item quantity="one">%d rewatch</item>
+        <item quantity="other">%d rewatches</item>
+    </plurals>
+    <plurals name="story_dashboard_rewatch_count_dialog_message">
+        <item quantity="one">&lt;b>1 profile&lt;/b> has rewatched this story at least once.</item>
+        <item quantity="other">&lt;b>%d profiles&lt;/b> have rewatched this story at least once.</item>
+    </plurals>
+    <plurals name="story_dashboard_story_content_description">
+        <item quantity="one">Story thumbnail, %1$d of %2$d, 1 viewer</item>
+        <item quantity="other">Story thumbnail, %1$d of %2$d, %3$d viewers</item>
+    </plurals>
+    <plurals name="story_drafts_confirmation_title">
+        <item quantity="one">Delete draft?</item>
+        <item quantity="other">Delete drafts?</item>
+    </plurals>
+    <plurals name="story_superlike_viewer_text_for_heart_count">
+        <item quantity="one">%1$d super heart</item>
+        <item quantity="other">%1$d super hearts</item>
+    </plurals>
+    <plurals name="suggested_hidden_words_toast_text">
+        <item quantity="one">Added 1 word to the Hidden Words list</item>
+        <item quantity="other">Added %1$d words to the Hidden Words list</item>
+    </plurals>
+    <plurals name="suggested_recipients_with_limit">
+        <item quantity="one">Choose 1 more person</item>
+        <item quantity="other">Choose %1$d more people</item>
+    </plurals>
+    <plurals name="support_unread_messages_count">
+        <item quantity="one">1 unread</item>
+        <item quantity="other">%d unread</item>
+    </plurals>
+    <plurals name="switcher_unpacked_notifs_birthday_reminder_string">
+        <item quantity="one">%d birthday reminder</item>
+        <item quantity="other">%d birthday reminders</item>
+    </plurals>
+    <plurals name="switcher_unpacked_notifs_birthday_reminder_string_with_extras">
+        <item quantity="one">%1$d birthday reminder and %2$d more</item>
+        <item quantity="other">%1$d birthday reminders and %2$d more</item>
+    </plurals>
+    <plurals name="switcher_unpacked_notifs_chat_string">
+        <item quantity="one">%d chat</item>
+        <item quantity="other">%d chats</item>
+    </plurals>
+    <plurals name="switcher_unpacked_notifs_chat_string_with_extras">
+        <item quantity="one">%1$d chat and %2$d more</item>
+        <item quantity="other">%1$d chats and %2$d more</item>
+    </plurals>
+    <plurals name="switcher_unpacked_notifs_comment_string">
+        <item quantity="one">%d comment</item>
+        <item quantity="other">%d comments</item>
+    </plurals>
+    <plurals name="switcher_unpacked_notifs_comment_string_with_extras">
+        <item quantity="one">%1$d comment and %2$d more</item>
+        <item quantity="other">%1$d comments and %2$d more</item>
+    </plurals>
+    <plurals name="switcher_unpacked_notifs_follow_string">
+        <item quantity="one">%d follow</item>
+        <item quantity="other">%d follows</item>
+    </plurals>
+    <plurals name="switcher_unpacked_notifs_follow_string_with_extras">
+        <item quantity="one">%1$d follow and %2$d more</item>
+        <item quantity="other">%1$d follows and %2$d more</item>
+    </plurals>
+    <plurals name="switcher_unpacked_notifs_friend_request_string">
+        <item quantity="one">%d friend request</item>
+        <item quantity="other">%d friend requests</item>
+    </plurals>
+    <plurals name="switcher_unpacked_notifs_friend_request_string_with_extras">
+        <item quantity="one">%1$d friend request and %2$d more</item>
+        <item quantity="other">%1$d friend requests and %2$d more</item>
+    </plurals>
+    <plurals name="switcher_unpacked_notifs_friend_update_string">
+        <item quantity="one">%d friend update</item>
+        <item quantity="other">%d friend updates</item>
+    </plurals>
+    <plurals name="switcher_unpacked_notifs_friend_update_string_with_extras">
+        <item quantity="one">%1$d friend update and %2$d more</item>
+        <item quantity="other">%1$d friend updates and %2$d more</item>
+    </plurals>
+    <plurals name="switcher_unpacked_notifs_group_update_string">
+        <item quantity="one">%d group update</item>
+        <item quantity="other">%d group updates</item>
+    </plurals>
+    <plurals name="switcher_unpacked_notifs_group_update_string_with_extras">
+        <item quantity="one">%1$d group update and %2$d more</item>
+        <item quantity="other">%1$d group updates and %2$d more</item>
+    </plurals>
+    <plurals name="switcher_unpacked_notifs_like_string">
+        <item quantity="one">%d like</item>
+        <item quantity="other">%d likes</item>
+    </plurals>
+    <plurals name="switcher_unpacked_notifs_like_string_with_extras">
+        <item quantity="one">%1$d like and %2$d more</item>
+        <item quantity="other">%1$d likes and %2$d more</item>
+    </plurals>
+    <plurals name="switcher_unpacked_notifs_reaction_string">
+        <item quantity="one">%d reaction</item>
+        <item quantity="other">%d reactions</item>
+    </plurals>
+    <plurals name="switcher_unpacked_notifs_reaction_string_with_extras">
+        <item quantity="one">%1$d reaction and %2$d more</item>
+        <item quantity="other">%1$d reactions and %2$d more</item>
+    </plurals>
+    <plurals name="tagged_accounts_plural">
+        <item quantity="one">tagged account:</item>
+        <item quantity="other">tagged accounts:</item>
+    </plurals>
+    <plurals name="tagging_feed_add_products_button">
+        <item quantity="one">Add %1$d product</item>
+        <item quantity="other">Add %1$d products</item>
+    </plurals>
+    <plurals name="thread_title_suffix_n_others">
+        <item quantity="one">… and 1 other</item>
+        <item quantity="other">… and %1$d others</item>
+    </plurals>
+    <plurals name="thread_title_x_and_n_others">
+        <item quantity="one">%1$s and 1 other</item>
+        <item quantity="other">%1$s and %2$d others</item>
+    </plurals>
+    <plurals name="thread_title_x_y_and_n_others">
+        <item quantity="one">%1$s, %2$s and 1 other</item>
+        <item quantity="other">%1$s, %2$s and %3$s others</item>
+    </plurals>
+    <plurals name="thread_title_x_y_z_and_n_others">
+        <item quantity="one">%1$s, %2$s and 1 other</item>
+        <item quantity="other">%1$s, %2$s, %3$s and %4$s others</item>
+    </plurals>
+    <plurals name="timestamp_date_at_time">
+        <item quantity="one">%1$s at %2$s</item>
+        <item quantity="other">%1$s at %2$s</item>
+    </plurals>
+    <plurals name="timestamp_today_at">
+        <item quantity="one">today at %s</item>
+        <item quantity="other">today at %s</item>
+    </plurals>
+    <plurals name="timestamp_tomorrow_at">
+        <item quantity="one">tomorrow at %s</item>
+        <item quantity="other">tomorrow at %s</item>
+    </plurals>
+    <plurals name="trending_midcard_participant_count">
+        <item quantity="one">+%1$s story</item>
+        <item quantity="other">+%1$s stories</item>
+    </plurals>
+    <plurals name="trending_sheet_story_count">
+        <item quantity="one">%1$s story</item>
+        <item quantity="other">%1$s stories</item>
+    </plurals>
+    <plurals name="tt_daily_limit_near_body_blocking">
+        <item quantity="one">You have %1$d more minute today to use %2$s.</item>
+        <item quantity="other">You have %1$d more minutes today to use %2$s.</item>
+    </plurals>
+    <plurals name="tt_daily_limit_request_more_time_minutes">
+        <item quantity="one">Ask for %d more minute</item>
+        <item quantity="other">Ask for %d more minutes</item>
+    </plurals>
+    <plurals name="tt_duration_hours">
+        <item quantity="one">%d hour</item>
+        <item quantity="other">%d hours</item>
+    </plurals>
+    <plurals name="tt_duration_minutes">
+        <item quantity="one">%d minute</item>
+        <item quantity="other">%d minutes</item>
+    </plurals>
+    <plurals name="twinbox_accept_request_dialog_title">
+        <item quantity="one">Allow message?</item>
+        <item quantity="other">Allow messages?</item>
+    </plurals>
+    <plurals name="unfollow_flagged_accounts_async_title">
+        <item quantity="one">Unfollowing %1$s account</item>
+        <item quantity="other">Unfollowing %1$s accounts</item>
+    </plurals>
+    <plurals name="unfollow_flagged_accounts_sync_title">
+        <item quantity="one">Unfollowed %1$s accounts.</item>
+        <item quantity="other">Unfollowed %1$s accounts.</item>
+    </plurals>
+    <plurals name="unfollow_flagged_accounts_title_plu">
+        <item quantity="one">Unfollow %s flagged account?</item>
+        <item quantity="other">Unfollow %s flagged accounts?</item>
+    </plurals>
+    <plurals name="unfollow_x_following_confirmation_title">
+        <item quantity="one">Unfollow 1 account?</item>
+        <item quantity="other">Unfollow %1$s accounts?</item>
+    </plurals>
+    <plurals name="unfollow_x_following_failed">
+        <item quantity="one">Your request to unfollow this user has failed. Try again later.</item>
+        <item quantity="other">Your request to unfollow these users has failed. Try again later.</item>
+    </plurals>
+    <plurals name="unfollow_x_following_success">
+        <item quantity="one">Unfollowed 1 account</item>
+        <item quantity="other">Unfollowed %1$s accounts</item>
+    </plurals>
+    <plurals name="unified_feedback_comments_from_fb">
+        <item quantity="one">%1$s comment</item>
+        <item quantity="other">%1$s comments</item>
+    </plurals>
+    <plurals name="unified_feedback_plays_from_fb">
+        <item quantity="one">%1$s play</item>
+        <item quantity="other">%1$s plays</item>
+    </plurals>
+    <plurals name="unified_feedback_reactions_from_fb">
+        <item quantity="one">%1$s reaction</item>
+        <item quantity="other">%1$s reactions</item>
+    </plurals>
+    <plurals name="unified_feedback_replies_on_threads">
+        <item quantity="one">See %1$s reply on Threads</item>
+        <item quantity="other">See %1$s replies on Threads</item>
+    </plurals>
+    <plurals name="unified_feedback_views_from_fb">
+        <item quantity="one">%1$s view</item>
+        <item quantity="other">%1$s views</item>
+    </plurals>
+    <plurals name="unseen_like_notification">
+        <item quantity="one">You have 1 new like</item>
+        <item quantity="other">You have %1$d new likes</item>
+    </plurals>
+    <plurals name="updated_days_ago_label">
+        <item quantity="one">Updated %d day ago</item>
+        <item quantity="other">Updated %d days ago</item>
+    </plurals>
+    <plurals name="updated_hours_ago_label">
+        <item quantity="one">Updated %d hour ago</item>
+        <item quantity="other">Updated %d hours ago</item>
+    </plurals>
+    <plurals name="updated_mins_ago_label">
+        <item quantity="one">Updated %d minute ago</item>
+        <item quantity="other">Updated %d minutes ago</item>
+    </plurals>
+    <plurals name="user_pay_badges_thanks_sticker_list_supporters_title">
+        <item quantity="one">1 supporter</item>
+        <item quantity="other">%1$d supporters</item>
+    </plurals>
+    <plurals name="user_pay_badges_thanks_sticker_notification_description">
+        <item quantity="one">1 supporter will receive a notification in Activity</item>
+        <item quantity="other">%1$d supporters will receive a notification in Activity</item>
+    </plurals>
+    <plurals name="user_pay_badges_thanks_sticker_notified_supporters_number">
+        <item quantity="one">1 badges supporter from your most recent live video will be notified when you share this story. View</item>
+        <item quantity="other">%1$d badges supporters from your most recent live video will be notified when you share this story. View</item>
+    </plurals>
+    <plurals name="user_pay_fanclub_all_subscribers_header">
+        <item quantity="one">All subscribers</item>
+        <item quantity="other">All subscribers (%1$d)</item>
+    </plurals>
+    <plurals name="videocall_add_user_to_call_quantity">
+        <item quantity="one">Add %1s + 1 other to call</item>
+        <item quantity="other">Add %1$1s + %2$2d others to call</item>
+    </plurals>
+    <plurals name="videocall_add_user_when_already_in_call_title_quantity">
+        <item quantity="one">"Couldn't call %1s + 1 other"</item>
+        <item quantity="other">"Couldn't call what %1$1s + %2$2d others"</item>
+    </plurals>
+    <plurals name="videocall_join_multiple_blocked_user_message">
+        <item quantity="one">"This call includes %1$s, %2$s and 1 other who you've blocked."</item>
+        <item quantity="other">"This call includes %1$s, %2$s and %3$d others who you've blocked."</item>
+    </plurals>
+    <plurals name="videocall_start_multiple_blocked_user_message">
+        <item quantity="one">"You've blocked %1$s, %2$s and 1 other. Calling this group means that they will be able to join the call."</item>
+        <item quantity="other">"You've blocked %1$s, %2$s and %3$d others. Calling this group means that they will be able to join the call."</item>
+    </plurals>
+    <plurals name="view_count">
+        <item quantity="one">1 view</item>
+        <item quantity="other">%1$d views</item>
+    </plurals>
+    <plurals name="view_x_more_replies">
+        <item quantity="one">View %1$d more reply</item>
+        <item quantity="other">View %1$d more replies</item>
+    </plurals>
+    <plurals name="view_x_previous_replies">
+        <item quantity="one">View %1$d previous reply</item>
+        <item quantity="other">View %1$d previous replies</item>
+    </plurals>
+    <plurals name="voter_count_on_surfaces">
+        <item quantity="one">%1$s response · Vote</item>
+        <item quantity="other">%1$s responses · Vote</item>
+    </plurals>
+    <plurals name="voter_count_on_surfaces_voted_viewer">
+        <item quantity="one">%1$s response · View</item>
+        <item quantity="other">%1$s responses · View</item>
+    </plurals>
+    <plurals name="voters_count">
+        <item quantity="one">%1$s response</item>
+        <item quantity="other">%1$s responses</item>
+    </plurals>
+    <plurals name="x_and_n_others_follow_p">
+        <item quantity="one">%1$s and &lt;font face=sans-serif-medium>1 other&lt;/font> follow %2$s</item>
+        <item quantity="other">%1$s and &lt;font face=sans-serif-medium>%2$s others&lt;/font> follow %3$s</item>
+    </plurals>
+    <plurals name="x_and_n_others_replied">
+        <item quantity="one">%1$s and &lt;b>1 other&lt;/b> replied</item>
+        <item quantity="other">%1$s and &lt;b>%2$s others&lt;/b> replied</item>
+    </plurals>
+    <plurals name="x_and_n_others_replied_with_action">
+        <item quantity="one">%1$s and &lt;b>1 other&lt;/b> replied · &lt;b>Reply&lt;/b></item>
+        <item quantity="other">%1$s and &lt;b>%2$s others&lt;/b> replied · &lt;b>Reply&lt;/b></item>
+    </plurals>
+    <plurals name="x_and_n_others_voted">
+        <item quantity="one">%1$s and &lt;b>1 other&lt;/b> voted</item>
+        <item quantity="other">%1$s and &lt;b>%2$s others&lt;/b> voted</item>
+    </plurals>
+    <plurals name="x_and_n_others_voted_on_surfaces">
+        <item quantity="one">%1$s and &lt;b>1 other&lt;/b> voted · &lt;b>Vote&lt;/b></item>
+        <item quantity="other">%1$s and &lt;b>%2$s others&lt;/b> voted · &lt;b>Vote&lt;/b></item>
+    </plurals>
+    <plurals name="x_and_n_others_voted_on_surfaces_voted_viewer">
+        <item quantity="one">%1$s and &lt;b>1 other&lt;/b> voted · &lt;b>View&lt;/b></item>
+        <item quantity="other">%1$s and &lt;b>%2$s others&lt;/b> voted · &lt;b>View&lt;/b></item>
+    </plurals>
+    <plurals name="x_brand_partners">
+        <item quantity="one">%1$d brand partner</item>
+        <item quantity="other">%1$d brand partners</item>
+    </plurals>
+    <plurals name="x_chats_started">
+        <item quantity="one">1 chat started</item>
+        <item quantity="other">%1$s chats started</item>
+    </plurals>
+    <plurals name="x_comments_deleted">
+        <item quantity="one">Comment deleted.</item>
+        <item quantity="other">%1$d comments deleted.</item>
+    </plurals>
+    <plurals name="x_days">
+        <item quantity="one">%1$s day</item>
+        <item quantity="other">%1$s days</item>
+    </plurals>
+    <plurals name="x_days_ago">
+        <item quantity="one">%1$s day ago</item>
+        <item quantity="other">%1$s days ago</item>
+    </plurals>
+    <plurals name="x_days_left">
+        <item quantity="one">%1$s day left</item>
+        <item quantity="other">%1$s days left</item>
+    </plurals>
+    <plurals name="x_hours">
+        <item quantity="one">%1$s hour</item>
+        <item quantity="other">%1$s hours</item>
+    </plurals>
+    <plurals name="x_hours_ago">
+        <item quantity="one">%1$s hour ago</item>
+        <item quantity="other">%1$s hours ago</item>
+    </plurals>
+    <plurals name="x_hours_left">
+        <item quantity="one">%1$s hour left</item>
+        <item quantity="other">%1$s hours left</item>
+    </plurals>
+    <plurals name="x_locations">
+        <item quantity="one">%1$d location</item>
+        <item quantity="other">%1$d locations</item>
+    </plurals>
+    <plurals name="x_minutes">
+        <item quantity="one">%1$s minute</item>
+        <item quantity="other">%1$s minutes</item>
+    </plurals>
+    <plurals name="x_minutes_ago">
+        <item quantity="one">%1$s minute ago</item>
+        <item quantity="other">%1$s minutes ago</item>
+    </plurals>
+    <plurals name="x_minutes_left">
+        <item quantity="one">%1$s minute left</item>
+        <item quantity="other">%1$s minutes left</item>
+    </plurals>
+    <plurals name="x_new_post">
+        <item quantity="one">1 new post</item>
+        <item quantity="other">%1$d new posts</item>
+    </plurals>
+    <plurals name="x_people">
+        <item quantity="one">1 person</item>
+        <item quantity="other">%1$d people</item>
+    </plurals>
+    <plurals name="x_plus_n_others_follow_p">
+        <item quantity="one">%1$s&lt;font face=sans-serif-medium> +1 other&lt;/font> follow %2$s</item>
+        <item quantity="other">%1$s&lt;font face=sans-serif-medium> +%2$s others&lt;/font> follow %3$s</item>
+    </plurals>
+    <plurals name="x_replies_deleted">
+        <item quantity="one">Reply deleted.</item>
+        <item quantity="other">%1$d replies deleted.</item>
+    </plurals>
+    <plurals name="x_seconds">
+        <item quantity="one">%1$s second</item>
+        <item quantity="other">%1$s seconds</item>
+    </plurals>
+    <plurals name="x_seconds_ago">
+        <item quantity="one">%1$s second ago</item>
+        <item quantity="other">%1$s seconds ago</item>
+    </plurals>
+    <plurals name="x_seconds_left">
+        <item quantity="one">%1$s second left</item>
+        <item quantity="other">%1$s seconds left</item>
+    </plurals>
+    <plurals name="x_selected">
+        <item quantity="one">1 selected</item>
+        <item quantity="other">%1$d selected</item>
+    </plurals>
+    <plurals name="x_survey_question_responders">
+        <item quantity="one">1 person responded.</item>
+        <item quantity="other">%1$d people responded.</item>
+    </plurals>
+    <plurals name="x_weeks">
+        <item quantity="one">%1$s week</item>
+        <item quantity="other">%1$s weeks</item>
+    </plurals>
+    <plurals name="x_weeks_ago">
+        <item quantity="one">%1$s week ago</item>
+        <item quantity="other">%1$s weeks ago</item>
+    </plurals>
+    <plurals name="x_weeks_left">
+        <item quantity="one">%1$s week left</item>
+        <item quantity="other">%1$s weeks left</item>
+    </plurals>
+    <plurals name="x_y_and_n_others_replied">
+        <item quantity="one">%1$s, %2$s and &lt;b>1 other&lt;/b> replied</item>
+        <item quantity="other">%1$s, %2$s and &lt;b>%3$s others&lt;/b> replied</item>
+    </plurals>
+    <plurals name="x_y_and_n_others_replied_with_action">
+        <item quantity="one">%1$s, %2$s and &lt;b>1 other&lt;/b> replied · &lt;b>Reply&lt;/b></item>
+        <item quantity="other">%1$s, %2$s and &lt;b>%3$s others&lt;/b> replied · &lt;b>Reply&lt;/b></item>
+    </plurals>
+    <plurals name="x_y_and_n_others_voted">
+        <item quantity="one">%1$s, %2$s and &lt;b>1 other&lt;/b> voted</item>
+        <item quantity="other">%1$s, %2$s and &lt;b>%3$s others&lt;/b> voted</item>
+    </plurals>
+    <plurals name="x_y_and_n_others_voted_on_surfaces">
+        <item quantity="one">%1$s, %2$s and &lt;b>1 other&lt;/b> voted · &lt;b>Vote&lt;/b></item>
+        <item quantity="other">%1$s, %2$s and &lt;b>%3$s others&lt;/b> voted · &lt;b>Vote&lt;/b></item>
+    </plurals>
+    <plurals name="x_y_and_n_others_voted_on_surfaces_voted_viewer">
+        <item quantity="one">%1$s, %2$s and &lt;b>1 other&lt;/b> voted · &lt;b>View&lt;/b></item>
+        <item quantity="other">%1$s, %2$s and &lt;b>%3$s others&lt;/b> voted · &lt;b>View&lt;/b></item>
+    </plurals>
+    <plurals name="x_y_z_and_n_others_follow_p">
+        <item quantity="one">%1$s, %2$s, %3$s and &lt;font face=sans-serif-medium>1 other&lt;/font> follow %4$s</item>
+        <item quantity="other">%1$s, %2$s, %3$s and &lt;font face=sans-serif-medium>%4$s others&lt;/font> follow %5$s</item>
+    </plurals>
+    <plurals name="xav_compact_social_proof_text">
+        <item quantity="one">%1$s person you follow uses Facebook</item>
+        <item quantity="other">%1$s people you follow use Facebook</item>
+    </plurals>
+    <plurals name="xav_facepile_count_only">
+        <item quantity="one">%1$d person you follow is already on Facebook.</item>
+        <item quantity="other">%1$d people you follow are already on Facebook.</item>
+    </plurals>
+    <plurals name="xav_facepile_names_and_others">
+        <item quantity="one">%1$s and %2$d other you follow are already on Facebook.</item>
+        <item quantity="other">%1$s and %2$d others you follow are already on Facebook.</item>
+    </plurals>
+    <plurals name="xav_profile_half_sheet_friends_label">
+        <item quantity="one">%1$s friend</item>
+        <item quantity="other">%1$s friends</item>
+    </plurals>
+    <plurals name="xmds_bottom_section_f3_header_text">
+        <item quantity="one">Other profile</item>
+        <item quantity="other">Other profiles</item>
+    </plurals>
+    <plurals name="zar_confirm_birthday_label_with_age">
+        <item quantity="one">Birthday (%1$d year old)</item>
+        <item quantity="other">Birthday (%1$d years old)</item>
+    </plurals>
+    <plurals name="zar_facepile_count_only">
+        <item quantity="one">%1$d person you follow is already on Facebook.</item>
+        <item quantity="other">%1$d people you follow are already on Facebook.</item>
+    </plurals>
+    <plurals name="zar_facepile_names_and_others">
+        <item quantity="one">%1$s and %2$d other you follow are already on Facebook.</item>
+        <item quantity="other">%1$s and %2$d others you follow are already on Facebook.</item>
+    </plurals>
+</resources>

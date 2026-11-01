@@ -1,0 +1,27 @@
+.class public final Lcom/instagram/odml/p13n/room/Operator$Companion;
+.super Ljava/lang/Object;
+.source ""
+
+
+# direct methods
+.method public constructor <init>()V
+    .locals 0
+
+    invoke-direct {p0}, Ljava/lang/Object;-><init>()V
+
+    return-void
+.end method
+
+
+# virtual methods
+.method public final serializer()LX/9OW;
+    .locals 1
+
+    sget-object v0, Lcom/instagram/odml/p13n/room/Operator;->A00:LX/Esp;
+
+    invoke-static {v0}, LX/218;->A11(LX/Esp;)LX/9OW;
+
+    move-result-object v0
+
+    return-object v0
+.end method

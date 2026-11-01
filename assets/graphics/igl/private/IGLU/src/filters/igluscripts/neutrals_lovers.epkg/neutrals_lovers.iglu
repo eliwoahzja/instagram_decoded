@@ -1,0 +1,228 @@
+[Filter NeutralsLovers]
+# "Neutrals Lovers" — LUT color grade + skin-tone rouge boost + heart
+# overlay. Three logical layers in a single fragment pass.
+#
+#   Layer 1 — Base LUT (full canvas):
+#     8x8 grid LUT lookup on neutrals_lovers_lut.png. Mixed against the
+#     camera by `lut_strength`. Standard pattern (same shader as glamy /
+#     black_and_white / etc.).
+#
+#   Layer 2 — Rouge boost (hue-targeted, no face tracking):
+#     Approximates skin-tone cheek/lip flush WITHOUT a face tracker.
+#     Builds a per-pixel mask using:
+#       - Hue: warm range only (red/orange/peach, hue ~ -0.08..0.08
+#         relative to pure red, equivalent to 0.92..1.0 ∪ 0.00..0.08)
+#       - Saturation: requires non-trivial saturation so achromatic
+#         midtones are not tinted
+#     Then mixes the masked region toward `rouge_target_rgb`
+#     (default (1.00, 0.75, 0.75) — soft salmon-pink) by
+#     `rouge_strength * skin_mask`. Reads as a subtle natural flush
+#     rather than a global red lift.
+#
+#     Prior precedents (frblair.iglu, now.iglu) apply a UNIFORM
+#     `r *= 1 + rouge_strength` across the whole frame; this is a step
+#     up from that pattern. Note for future migration:
+#     // TODO: replace with face-tracked lips+cheeks rouge when face
+#     //       landmark anchoring is available in IGLUScript host APIs.
+#
+#   Layer 3 — Heart overlay (asset, alpha-blended):
+#     Static neutrals_lovers_overlay.png positioned via
+#     `overlay_offset_x/y` (UV center) and sized via `overlay_scale`
+#     (width fraction of canvas). Height locked to `overlay_aspect`
+#     (h/w ratio, default 1.0 = square) so the heart art never
+#     stretches when canvas aspect changes. Composed via standard
+#     alpha-blend over the rouged result.
+#
+# Composite order (bottom -> top):
+#   camera -> LUT -> skin-tone rouge -> heart overlay
+#
+# Time source: not used. All layers are static.
+
+[Init]
+fun init(Filter filter)
+{
+    makeTexture('lut);
+    makeTexture('overlay);
+
+    filter.parameters = {
+        # Layer 1 LUT.
+        {lut_strength = 0.637, min = 0.0, max = 1.0, description = "LUT mix strength (1.0 = full LUT, 0.0 = camera passthrough)"},
+
+        # Post-LUT saturation boost (luminance-preserving).
+        {saturation = 1.275, min = 0.0, max = 2.0, description = "Global saturation multiplier (1.0 = no change; <1 = mute; >1 = boost)"},
+
+        # Layer 2 rouge.
+        {rouge_strength = 0.12, min = 0.0, max = 1.0, description = "Skin-tone rouge blend strength (mix toward salmon-pink at low opacity)"},
+
+        # Layer 3 heart overlay (full-canvas, additive blend; no positioning).
+        {overlay_strength = 1.0, min = 0.0, max = 1.0, description = "Heart overlay additive blend strength (multiplies the overlay alpha before adding)"},
+    };
+
+    filter.passes = {{
+      name = 'pass0,
+      inputs = {'default, 'lut, 'overlay},
+      uniforms = {
+        lut_strength = 0.637,
+        saturation = 1.275,
+        rouge_strength = 0.12,
+        overlay_strength = 1.0,
+      },
+      glslShader = glslNeutralsLovers,
+    }};
+}
+
+# Custom Parameter strings for sample-app local-loading.
+string lut_path = "lut_path";
+string lut_filename = "";
+string overlay_path = "overlay_path";
+string overlay_filename = "";
+
+[PreRender]
+fun preRender(Filter filter){
+    string lut_filename_parameter = getParameterString(lut_path);
+    if (lut_filename_parameter != "") {
+        string new_lut_filename = stringAppend("textureFilePath://", lut_filename_parameter);
+        if (new_lut_filename != lut_filename) {
+            lut_filename = new_lut_filename;
+            loadTexture('lut, lut_filename);
+        }
+    }
+
+    string overlay_filename_parameter = getParameterString(overlay_path);
+    if (overlay_filename_parameter != "") {
+        string new_overlay_filename = stringAppend("textureFilePath://", overlay_filename_parameter);
+        if (new_overlay_filename != overlay_filename) {
+            overlay_filename = new_overlay_filename;
+            loadTexture('overlay, overlay_filename);
+        }
+    }
+
+    f32 ls = getParameterFloat('lut_strength);
+    setShaderUniform('pass0, 'lut_strength, ls);
+
+    f32 sat = getParameterFloat('saturation);
+    setShaderUniform('pass0, 'saturation, sat);
+
+    f32 rs = getParameterFloat('rouge_strength);
+    setShaderUniform('pass0, 'rouge_strength, rs);
+
+    f32 os = getParameterFloat('overlay_strength);
+    setShaderUniform('pass0, 'overlay_strength, os);
+}
+
+#### GLSL shader ####
+
+string glslNeutralsLovers = "
+    varying vec2 sourceTextureCoordinate;
+    BaseUniformsOpenGL;
+
+    uniform sampler2D auxSampler0;  // 'default (camera)
+    uniform sampler2D auxSampler1;  // 'lut
+    uniform sampler2D auxSampler2;  // 'overlay
+
+    uniform float lut_strength;
+    uniform float saturation;
+    uniform float rouge_strength;
+    uniform float overlay_strength;
+
+    // Soft salmon-pink rouge target. Baked at compile time per spec.
+    const vec3 kRougeTarget = vec3(1.00, 0.75, 0.75);
+
+    // 8x8 grid LUT lookup on auxSampler1.
+    vec3 lutLookup(vec3 inRgb) {
+      vec3 c = clamp(inRgb, 0.00781, 0.98438);
+      float x = c.r / 8.0;
+      float y = c.g / 8.0;
+      float z = c.b;
+      float blueY = floor(z * 8.0) / 8.0;
+      float blueX = floor((z - blueY) * 64.0) / 8.0;
+      x += blueX;
+      y += blueY;
+      return texture2D(auxSampler1, vec2(x, y)).xyz;
+    }
+
+    // Returns 1.0 if uv is in [0,1] for both axes, else 0.0.
+    float inBounds01(vec2 uv) {
+      return step(0.0, uv.x) * step(uv.x, 1.0)
+           * step(0.0, uv.y) * step(uv.y, 1.0);
+    }
+
+    // Approximate skin-tone mask without a face tracker.
+    // Returns ~1.0 for warm-hued, non-achromatic pixels (skin, lips,
+    // peach, salmon) and 0.0 for cool tones / greys.
+    //
+    //   Hue gate:  red is dominant, |hue - 0| < 0.08 in [0..1] hue space
+    //   Sat gate:  saturation > 0.10 so neutral midtones aren't tinted
+    float skinToneMask(vec3 rgb) {
+      float cMax = max(max(rgb.r, rgb.g), rgb.b);
+      float cMin = min(min(rgb.r, rgb.g), rgb.b);
+      float d = cMax - cMin;
+      // Pure-grey early-out: no chroma to derive a hue from.
+      if (d < 0.001) return 0.0;
+      // Only consider pixels where red is the dominant channel.
+      if (cMax != rgb.r) return 0.0;
+      // Standard HSV hue formula for the red sector. Result is in
+      // [-1/6, 1/6] (i.e., [-0.166, 0.166]) before normalization;
+      // we map to [-0.5, 0.5] centered on red by dividing by 6.
+      float h = mod((rgb.g - rgb.b) / d, 6.0) / 6.0;
+      if (h > 0.5) h -= 1.0;
+      // Wrap-corrected hue distance from pure red. Skin-warm range
+      // is ~ +/- 0.08 (0..0.08 and 0.92..1.0 in unwrapped space).
+      float hue_in = 1.0 - smoothstep(0.05, 0.10, abs(h));
+      // Saturation gate.
+      float sat = d / max(cMax, 0.001);
+      float sat_in = smoothstep(0.10, 0.20, sat);
+      return hue_in * sat_in;
+    }
+
+    void main() {
+      vec2 uv = sourceTextureCoordinate;
+      vec4 cam = sampleInput(uv);
+
+      // ============================================================
+      // Layer 1: LUT-graded camera, mixed against passthrough by
+      // lut_strength (standard mix() pattern, same as glamy /
+      // black_and_white / 50+ shipping LUT filters). Includes a
+      // graceful fallback for WIP / not-yet-uploaded LUTs (probe LUT
+      // center and skip the grade if empty).
+      // ============================================================
+      vec3 lut_rgb = lutLookup(cam.rgb);
+      vec3 lut_probe = texture2D(auxSampler1, vec2(0.5, 0.5)).rgb;
+      float lut_loaded = step(0.05,
+          max(max(lut_probe.r, lut_probe.g), lut_probe.b));
+      vec3 graded = mix(cam.rgb, lut_rgb, lut_strength * lut_loaded);
+
+      // ============================================================
+      // Saturation boost (luminance-preserving). Mix between a
+      // grey-of-luminance and the graded RGB by `saturation`. >1.0
+      // pushes saturation up, <1.0 mutes, 1.0 = passthrough.
+      // ============================================================
+      float lum_pre = dot(graded, vec3(0.2126, 0.7152, 0.0722));
+      graded = clamp(
+          mix(vec3(lum_pre), graded, saturation), 0.0, 1.0);
+
+      // ============================================================
+      // Layer 2: Hue-targeted rouge boost. Mask warm-hued pixels and
+      // mix toward kRougeTarget at the dialed strength. Reads as a
+      // soft natural cheek/lip flush; never tints background neutrals.
+      // ============================================================
+      float skin_mask = skinToneMask(graded);
+      vec3 rouged = mix(graded, kRougeTarget,
+                        rouge_strength * skin_mask);
+
+      // ============================================================
+      // Layer 3: Heart overlay (full canvas, ADDITIVE blend).
+      // Sampled directly at the source UV — the overlay PNG is
+      // authored to match the canvas (transparent everywhere except
+      // the heart art), so no positioning is needed. Additive blend
+      // adds the heart's pixel values where alpha is non-zero;
+      // overlay_strength scales the contribution.
+      // ============================================================
+      vec4  overlay_tex = texture2D(auxSampler2, uv);
+      vec3  result = clamp(
+          rouged + overlay_tex.rgb * overlay_tex.a * overlay_strength,
+          0.0, 1.0);
+
+      gl_FragColor = toOutputFormat(vec4(result, cam.a));
+    }
+    ";

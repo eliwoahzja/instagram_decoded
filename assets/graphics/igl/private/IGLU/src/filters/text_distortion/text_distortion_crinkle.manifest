@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "text_distortion_crinkle",
+  "displayName": "Crinkle",
+  "description": "[IG Edits] Text effect name. A text effect is a creative style that can be applied to a text layer in a video. With Crinkle, the creator can add an angular jagged effect to their text.",
+  "iglu": {}
+}

@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "transition_fade",
+  "displayName": "Fade",
+  "description": "[Instagram Edits] Effects browser - Label for a fade effect that transitions subjects. Character count for labels is 14 characters max.",
+  "iglu": {}
+}

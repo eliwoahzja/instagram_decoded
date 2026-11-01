@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "open_up",
+  "displayName": "Open Up",
+  "description": "[IG Edits] Transition name. With \"Open Up\", the creator can animate a vertical scroll-up reveal combined with a horizontal decompression unsqueeze, a box blur, and a glow brightness lift.",
+  "iglu": {}
+}

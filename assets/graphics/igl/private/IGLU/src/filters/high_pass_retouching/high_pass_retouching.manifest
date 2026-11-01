@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "high_pass_retouching",
+  "displayName": "High Pass Retouching",
+  "description": "[IG Edits] Video effect name. With \"High Pass Retouching\", the creator can run a five-pass edge-aware skin smoothing that blurs low-frequency detail while preserving high-frequency texture.",
+  "iglu": {}
+}

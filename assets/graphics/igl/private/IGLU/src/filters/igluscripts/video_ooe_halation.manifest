@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "identifier": "7a0365c2-0ad1-457b-a90c-dd3ac1438686",
+  "displayName": "Halation",
+  "description": "[IG Edits] Effect name shown in the video effects picker. With \"Halation\", the creator can add a warm light-bleed glow around bright areas, simulating film halation.",
+  "iglu": {
+    "legacyId": 3116,
+    "customization": [
+      {
+        "name": "color",
+        "defaultSelection": "#FFFFFF",
+        "available": [
+          "#FFFFFF",
+          "#FFD600",
+          "#FF7A00",
+          "#FE1D37",
+          "#FF0169",
+          "#D300C5",
+          "#7638FA",
+          "#37038B",
+          "#1CD164",
+          "#0095F6",
+          "#AD88FC",
+          "#FDD5FD",
+          "#FFABE1",
+          "#FFC584",
+          "#FFF8C2",
+          "#09FF00",
+          "#FFFF00",
+          "#5AFAC7",
+          "#0000FF"
+        ],
+        "displayName": "Color"
+      },
+      {
+        "name": "size",
+        "default": 0.4,
+        "min": 0.01,
+        "max": 1.0,
+        "displayName": "Radius"
+      },
+      {
+        "name": "intensity",
+        "default": 1.0,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Intensity"
+      },
+      {
+        "name": "amount",
+        "default": 0.35,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Amount"
+      }
+    ]
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAFnQT6ncml",
+      "isImageFormat": true
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "93f5dd73",
+      "handle": "AQAEMI9-5YR6",
+      "md5": "4040792fe0284194956c65342e76afc1"
+    }
+  }
+}

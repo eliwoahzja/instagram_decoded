@@ -1,0 +1,119 @@
+[Filter Glamy]
+# "glamy ❤️" LUT color grading filter.
+# 8x8 grid LUT — same trilinear-grid sampling shader as black_and_white /
+# spark_soft_nature / aesthetic_blur (pass 1).
+#
+# LUT delivered via ARD (effectId / assetHash filled in once provided —
+# TODO placeholders in the manifest until then).
+#
+# Spark patch reference:
+#   cameraTexture0 -> FastColorLUT_f -> material (65% opacity)
+#
+# Defaults (visual-parity tuned vs Spark editor):
+#   strength = 0.80   — Spark's FastColorLUT material runs at 65% opacity;
+#                       we use 0.80 as a starting point. The sample app's
+#                       raw-camera surface renders with a different color
+#                       pipeline than Spark's sRGB-encoded path so an
+#                       exact 0.65 over-darkens slightly in our preview.
+#                       Production camera surfaces will go through normal
+#                       sRGB encoding — host can override at any time.
+#   brightness = 0.95 — small global dim to attenuate the slight upper-
+#                       midtone lift seen when LUT-graded output meets the
+#                       sample-app rendering pipeline. Also matches user
+#                       visual A/B against the Spark reference frames.
+#
+# Lighting emulation:
+#   Spark scene used 20% ambient + 80% directional, both pure white.
+#   On a flat plane facing the directional light, that math reduces to
+#   color * (0.2 + 0.8 * dot(N, L)) = color * (0.2 + 0.8 * 1.0) = color * 1.0
+#   i.e. a no-op at default. The `brightness` uniform below makes that
+#   knob explicit so it can be tuned at runtime via Custom Parameters
+#   without recompiling.
+
+[Init]
+fun init(Filter filter)
+{
+    makeTexture('lut);
+
+    # Declare host-tunable parameters so they appear in the sample app's
+    # Parameters panel and can be set by production callers via setFloat.
+    filter.parameters = {
+        {strength = 0.8, min = 0.0, max = 1.0, description = "LUT mix strength"},
+        {brightness = 0.95, min = 0.0, max = 2.0, description = "Output brightness (Spark scene-light emulation)"},
+    };
+
+    filter.passes = {{
+      name = 'pass0,
+      inputs = {'default, 'lut},
+      uniforms = {
+        strength = 0.8,
+        brightness = 0.95,
+      },
+      glslShader = glslLut,
+    }};
+}
+
+string lut_path = "lut_path";
+string lut_filename = "";
+
+[PreRender]
+fun preRender(Filter filter){
+    string lut_filename_parameter = getParameterString(lut_path);
+    if (lut_filename_parameter != "") {
+        string new_lut_filename = stringAppend("textureFilePath://", lut_filename_parameter);
+        if (new_lut_filename != lut_filename) {
+            lut_filename = new_lut_filename;
+            loadTexture('lut, lut_filename);
+        }
+    }
+
+    # LUT mix strength — wire from filter.parameters so host overrides apply.
+    # Wired unconditionally per CRA finding (filter.parameters declares min=0.0).
+    f32 s = getParameterFloat('strength);
+    setShaderUniform('pass0, 'strength, s);
+
+    # Emulate Spark scene lighting (0.2 ambient + 0.8 directional, white).
+    # Default 1.0 = no-op; allow 0.0 (full black) too — filter.parameters declares
+    # min=0.0, so an unguarded set is correct.
+    f32 b = getParameterFloat('brightness);
+    setShaderUniform('pass0, 'brightness, b);
+}
+
+#### GLSL shader ####
+
+string glslLut = "
+    varying vec2 sourceTextureCoordinate;
+    BaseUniformsOpenGL;
+
+    uniform sampler2D auxSampler0;
+    uniform sampler2D auxSampler1;
+    uniform sampler2D auxSampler2;
+
+    uniform float brightness;
+
+    void main() {
+      vec4 texel = sampleInput(sourceTextureCoordinate);
+
+      texel.rgb = clamp(texel.rgb, 0.00781, 0.98438);
+
+      float x = texel.r / 8.0;
+      float y = texel.g / 8.0;
+      float z = texel.b;
+
+      float blueY = floor(z * 8.0) / 8.0;
+      float blueX = floor((z - blueY) * 64.0) / 8.0;
+
+      x += blueX;
+      y += blueY;
+
+      vec3 color = texture2D(auxSampler1, vec2(x, y)).xyz;
+
+      texel = mix(texel, vec4(color, texel.a), strength);
+
+      // Spark scene-light emulation: ambient(0.2) + directional(0.8) white,
+      // collapsed to a single brightness multiplier on a flat plane. Default 1.0.
+      texel.rgb *= brightness;
+
+      gl_FragColor = toOutputFormat(texel);
+    }
+    ";

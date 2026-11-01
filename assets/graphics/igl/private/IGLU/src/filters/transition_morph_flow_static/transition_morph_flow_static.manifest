@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "identifier": "transition_morph_flow_static",
+  "displayName": "Morph Flow",
+  "description": "Video transition selection. Morphs between clips along optical flow.",
+  "attribution": "@ishanimitraa",
+  "iglu": {}
+}

@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "identifier": "27D95DBF-F752-4102-A956-225DB4F08E20",
+  "displayName": "Black & White",
+  "description": "[IG Edits] Color preset filter name. Applies a black and white color grade with skin smoothing.",
+  "android": {
+    "previewAsset": {
+      "key": "67b02354",
+      "handle": "AQAF27QO3DNA",
+      "md5": "ed0c6d1de69b41b466e0131a12443012"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAHbsBxJ8kp"
+    }
+  },
+  "iglu": {
+    "legacyId": 3181
+  },
+  "assets": [
+    {
+      "name": "blackwhite_lut.png",
+      "assetHash": "339700017e405fea902be9d1a0e3d7a650c2b66f7172ba536645b1beecd6f2af",
+      "hubAssetId": "1003281089280531"
+    }
+  ]
+}

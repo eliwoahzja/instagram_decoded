@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "identifier": "mayfair",
+  "displayName": "Mayfair",
+  "description": "[IG Edits] Color filter. With \"Mayfair\", the creator can apply the Instagram Mayfair look: warm per-channel LUT, soft glow-field overlay, and a color-overlay curve for a pinkish vignette.",
+  "iglu": {
+    "legacyId": 17
+  },
+  "assets": [
+    {
+      "name": "color_gradient.png",
+      "assetHash": "d3809068133924d83a844465e66eb510464633a8d70cdf5496334b71dde89819",
+      "hubAssetId": "1477310157062743"
+    },
+    {
+      "name": "color_overlay.png",
+      "assetHash": "15f84ff251cd8b88341bced3f6e0b90de12c6567f6d7276cfa7be8f8acd78bd5",
+      "hubAssetId": "1915669715709940"
+    },
+    {
+      "name": "glow_field.png",
+      "assetHash": "3621e07b46cf953f32fa15ecf387d8d2614bbb2ee40ab07e3f79c3d4fc2be1e3",
+      "hubAssetId": "925641996650741"
+    },
+    {
+      "name": "overlay_map100.png",
+      "assetHash": "84b56063e8efd2fa742bd5a62235c378606dc3406613606f99f3c4044b20e31a",
+      "hubAssetId": "1236494364700999"
+    }
+  ]
+}

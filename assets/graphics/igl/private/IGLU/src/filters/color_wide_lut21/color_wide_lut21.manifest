@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "identifier": "negative",
+  "displayName": "Negative",
+  "description": "[IG Edits] Color filter name. With \"Negative\", the creator can apply an inverted film-negative color grade by sampling the negative.lutpk 3D LUT in the color_wide_lut shader.",
+  "iglu": {
+    "legacyId": 5044
+  },
+  "assets": [
+    {
+      "name": "negative.lutpk",
+      "assetHash": "308dae058a650259221be433b4c4c244401acaeb09e5da890e9d36d9905bb0cb",
+      "hubAssetId": "1395570299256559"
+    }
+  ]
+}

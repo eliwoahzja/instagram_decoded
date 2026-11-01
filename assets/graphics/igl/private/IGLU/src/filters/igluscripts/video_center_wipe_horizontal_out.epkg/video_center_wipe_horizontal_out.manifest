@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "identifier": "facf1462-988b-47df-bf65-9d4e7b695492",
+  "displayName": "Wipe out center horizontal",
+  "description": "[IG Edits] Effect name shown in the video effects picker. This is the user-facing label for a video effect.",
+  "iglu": {
+    "legacyId": 3126,
+    "behavior": {
+      "type": "fixedOutro",
+      "durationMs": 2000,
+      "curve": "quarticInOut"
+    },
+    "customization": [
+      {
+        "name": "duration",
+        "default": 1.0,
+        "min": 0.5,
+        "max": 5.0,
+        "displayName": "Duration",
+        "displayMethod": "time"
+      },
+      {
+        "name": "amount",
+        "displayName": "Amount",
+        "default": 0.03,
+        "min": 0.0,
+        "max": 1.0
+      }
+    ]
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQADVLWqRegK"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "6b5cd2be",
+      "handle": "AQADns8MNt-L",
+      "md5": "75ac3e136f9aafd230e8f07f668a46a9"
+    }
+  },
+  "dependencies": [
+    "video_center_wipe_horizontal"
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "identifier": "6B62FB54-BEFA-4D14-B726-9D5648E9C9B5",
+  "displayName": "Dark",
+  "description": "[IG Edits] Color preset filter name. Applies a dark color grade with skin smoothing.",
+  "android": {
+    "previewAsset": {
+      "key": "c92b4e8e",
+      "handle": "AQAFwdtElG7d",
+      "md5": "7db117b82b3b125f5cd7abe1afefa591"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAEAA4jkp1I"
+    }
+  },
+  "iglu": {
+    "legacyId": 3174
+  },
+  "assets": [
+    {
+      "name": "dark_lut.png",
+      "assetHash": "e871c4c17b63afc6782044084b46edf807051b3ab98f1da23e7683d5b9eda85e",
+      "hubAssetId": "1722135898984812"
+    }
+  ]
+}

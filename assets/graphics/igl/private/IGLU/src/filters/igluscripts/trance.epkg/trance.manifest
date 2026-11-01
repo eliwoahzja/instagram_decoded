@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "identifier": "4FDA9086-DD46-45C5-B4A5-94D4AA4BC878",
+  "displayName": "Trance",
+  "description": "[IG Edits] Color filter name. B&W color grade with a hypnotic looping brightness pulse, soft blur, and film grain.",
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAGrOMhGW0t"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "f47aec28",
+      "handle": "AQAC99TCknp4",
+      "md5": "6a5d0c2be6017f6f9089f5459f1b3775"
+    }
+  },
+  "iglu": {
+    "legacyId": 3104
+  },
+  "assets": [
+    {
+      "name": "trance_lut.png",
+      "assetHash": "3d44ffc53e0ce30b651c28bc7ddd5d2f0dd4668cfec97c4a4abe164cfcb28ccf",
+      "hubAssetId": "1000171689094655"
+    }
+  ]
+}

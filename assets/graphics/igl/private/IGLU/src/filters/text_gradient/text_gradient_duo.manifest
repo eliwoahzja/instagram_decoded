@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "text_gradient_duo",
+  "displayName": "Gradient Duo",
+  "description": "[IG Edits] Text effect name. With \"Gradient Duo\", the creator can fill text with a diagonal two-stop hue-shifted gradient driven by a per-paragraph 0.75*(st.x+0.5-0.5*st.y) ramp.",
+  "iglu": {}
+}

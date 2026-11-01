@@ -1,0 +1,283 @@
+[Filter UrbanGlitch]
+# "Urban Glitch" -- Spark AR port. Previously "Not Started" in
+# tracker (could not open in Spark editor); unblocked by bin
+# extraction.
+#
+# Full Spark scene composition:
+#   1. Rectangle (fullscreen, material "materiallut"): camera -> LUT.
+#   2. Face-tracked occluder + blush (SKIPPED -- face-mesh backlog).
+#   3. Face-tracked skin smoothing (retouchingMaterial,
+#      skinSmoothingFactor=0.11 -- very subtle). Ported as full-frame
+#      9-tap skin smoothing (HDR pattern).
+#   4. Rectangle canvas1 (fullscreen, material "OVERLAY"): 15-frame
+#      sequenceTexture at 10fps, SCREEN blend, opacity 0.77.
+#      Frames alternate between dust/scratches textures and warm
+#      orange lens-flare textures. Ported as procedural overlay --
+#      no PVRTC/KTX decoding dependency.
+#
+# Procedural glitch overlay design:
+#   - Cycles through 15 "modes" at 10fps, matching Spark's sequence
+#     timing exactly. Frame index maps to Spark's texture identities:
+#       frames 1, 8, 10, 15: dust (identity A, densest)
+#       frames 3, 11, 14:    dust variant (identity B)
+#       frames 2, 12:        dust variant (identity C)
+#       frame 5:             warm orange lens flare
+#       frame 6:             warm orange lens flare (variant)
+#       frames 4, 9:         hybrid (dust + subtle glow)
+#       frame 7:             hybrid
+#       frame 13:            dust variant (identity D)
+#   - Simplified per-mode: 12 dust frames + 3 lens-flare frames.
+#   - Screen blended over the LUT-graded + softened base.
+#
+# LUT delivered via ARD; local sample-app testing loads from
+# assets/urban_glitch/urban_glitch_lut.png.
+
+[Init]
+fun init(Filter filter)
+{
+    makeTexture('lut);
+
+    filter.parameters = {
+        {strength         = 1.0,    min = 0.0, max = 1.0,  description = "LUT mix strength (0 = camera passthrough, 1 = full grade)"},
+        {blur_strength    = 0.110,  min = 0.0, max = 1.0,  description = "Skin-smoothing 9-tap blur mix amount"},
+        {blur_radius      = 0.003,  min = 0.0, max = 0.05, description = "Skin-smoothing kernel radius in normalized UV"},
+        {overlay_opacity  = 0.571,  min = 0.0, max = 1.0,  description = "Glitch overlay screen-blend strength"},
+        {overlay_fps      = 15.885, min = 1.0, max = 30.0, description = "Glitch overlay animation frame rate"},
+        {dust_density     = 0.339,  min = 0.0, max = 1.0,  description = "Dust particle density on dust frames (0 = sparse, 1 = dense)"},
+        {flare_strength   = 0.565,  min = 0.0, max = 1.5,  description = "Warm lens flare intensity on flare frames"},
+        {flare_fps        = 7.062,  min = 0.5, max = 30.0, description = "Lens flare animation frame rate (independent from dust)"},
+        {squiggle_density = 0.104,  min = 0.0, max = 1.0,  description = "Thin scratch-squiggle density mixed among dust particles"},
+    };
+
+    filter.passes = {{
+      name = 'pass0,
+      inputs = {'default, 'lut},
+      uniforms = {
+        strength         = 1.0,
+        blur_strength    = 0.110,
+        blur_radius      = 0.003,
+        overlay_opacity  = 0.571,
+        overlay_fps      = 15.885,
+        dust_density     = 0.339,
+        flare_strength   = 0.565,
+        flare_fps        = 7.062,
+        squiggle_density = 0.104,
+        time             = 0.0,
+      },
+      glslShader = glslUrbanGlitch,
+    }};
+}
+
+string lut_path = "lut_path";
+string lut_filename = "";
+
+[PreRender]
+fun preRender(Filter filter){
+    string lut_filename_parameter = getParameterString(lut_path);
+    if (lut_filename_parameter != "") {
+        string new_lut_filename = stringAppend("textureFilePath://", lut_filename_parameter);
+        if (new_lut_filename != lut_filename) {
+            lut_filename = new_lut_filename;
+            loadTexture('lut, lut_filename);
+        }
+    }
+
+    f32 s = getParameterFloat('strength);
+    setShaderUniform('pass0, 'strength, s);
+    f32 blr = getParameterFloat('blur_strength);
+    setShaderUniform('pass0, 'blur_strength, blr);
+    f32 blrad = getParameterFloat('blur_radius);
+    setShaderUniform('pass0, 'blur_radius, blrad);
+    f32 oop = getParameterFloat('overlay_opacity);
+    setShaderUniform('pass0, 'overlay_opacity, oop);
+    f32 ofp = getParameterFloat('overlay_fps);
+    setShaderUniform('pass0, 'overlay_fps, ofp);
+    f32 dd = getParameterFloat('dust_density);
+    setShaderUniform('pass0, 'dust_density, dd);
+    f32 fs = getParameterFloat('flare_strength);
+    setShaderUniform('pass0, 'flare_strength, fs);
+    f32 ffps = getParameterFloat('flare_fps);
+    setShaderUniform('pass0, 'flare_fps, ffps);
+    f32 sqd = getParameterFloat('squiggle_density);
+    setShaderUniform('pass0, 'squiggle_density, sqd);
+
+    f32 t = getLocalTime();
+    setShaderUniform('pass0, 'time, t);
+}
+
+#### GLSL shader ####
+
+string glslUrbanGlitch = "
+    varying vec2 sourceTextureCoordinate;
+    BaseUniformsOpenGL;
+
+    uniform sampler2D auxSampler0;  // 'default (camera)
+    uniform sampler2D auxSampler1;  // 'lut
+
+    uniform float blur_strength;
+    uniform float blur_radius;
+    uniform float overlay_opacity;
+    uniform float overlay_fps;
+    uniform float dust_density;
+    uniform float flare_strength;
+    uniform float flare_fps;
+    uniform float squiggle_density;
+    uniform float time;
+
+    // 2D hash used for dust particles + noise.
+    float hash21(vec2 p) {
+      return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
+    }
+    vec2 hash22(vec2 p) {
+      return fract(sin(vec2(dot(p, vec2(127.1, 311.7)),
+                            dot(p, vec2(269.5,  183.3)))) * 43758.5453);
+    }
+
+    // 8x8 grid LUT lookup, catalog convention.
+    vec3 applyLut(vec3 inRgb) {
+      vec3 c = clamp(inRgb, 0.00781, 0.98438);
+      float x = c.r / 8.0;
+      float y = c.g / 8.0;
+      float z = c.b;
+      float blueY = floor(z * 8.0) / 8.0;
+      float blueX = floor((z - blueY) * 64.0) / 8.0;
+      x += blueX;
+      y += blueY;
+      return texture2D(auxSampler1, vec2(x, y)).xyz;
+    }
+
+    // Procedural dust particles for one 'frame slot' of the glitch loop.
+    // frame_seed changes the particle layout per frame; density scales
+    // count and brightness.
+    vec3 dustFrame(vec2 uv, float frame_seed, float density) {
+      vec3 result = vec3(0.0);
+      // Base black with sparse specks. Higher density -> more specks.
+      float grid_scale = 40.0 + density * 40.0;  // 40-80 particles per axis
+      vec2 grid = floor(uv * grid_scale + vec2(frame_seed * 13.7, frame_seed * 7.3));
+      vec2 cell = fract(uv * grid_scale + vec2(frame_seed * 13.7, frame_seed * 7.3));
+      vec2 rp = hash22(grid);
+      // Probability of a speck in each cell.
+      float has_speck = step(1.0 - density * 0.6, hash21(grid + frame_seed));
+      float d = distance(cell, rp);
+      // Speck size + brightness varies.
+      float speck_size = 0.05 + hash21(grid + vec2(1.7)) * 0.1;
+      float speck_bright = 0.4 + hash21(grid + vec2(3.1)) * 0.6;
+      float speck = has_speck * smoothstep(speck_size, 0.0, d) * speck_bright;
+      result = vec3(speck);
+      return result;
+    }
+
+    // Procedural warm lens flare with variety across position, size,
+    // falloff, and hue -- all shades of warm orange/red (no starburst).
+    vec3 flareFrame(vec2 uv, float flare_seed, float intensity) {
+      float style = mod(flare_seed, 3.0);
+      vec2 flare_pos = vec2(
+        0.1 + 0.8 * hash21(vec2(flare_seed, 7.0)),
+        0.1 + 0.8 * hash21(vec2(flare_seed, 11.0))
+      );
+      // Bigger + softer than before: size 0.7-1.5, falloff 0.4-1.1
+      // (values below 1 give very soft, spread edges).
+      float size = 0.5 + hash21(vec2(flare_seed, 13.0)) * 0.55;
+      float falloff = 0.4 + hash21(vec2(flare_seed, 17.0)) * 0.7;
+      vec2 delta = uv - flare_pos;
+      float d = length(delta);
+      float base_glow = pow(1.0 - smoothstep(0.0, size, d), falloff);
+      // Secondary glow at an offset position for a less-defined,
+      // more ambiguous shape (breaks perfect radial symmetry).
+      vec2 offset = (hash22(vec2(flare_seed, 19.0)) - vec2(0.5)) * size * 0.5;
+      vec2 delta2 = uv - flare_pos - offset;
+      float d2 = length(delta2);
+      float glow2 = pow(1.0 - smoothstep(0.0, size * 1.15, d2), falloff * 0.75);
+      float combined = max(base_glow, glow2 * 0.75);
+      // Three warm orange / red hues; no yellow, no rays.
+      vec3 color;
+      if (style < 1.0) {
+        color = vec3(1.0, 0.35, 0.05);
+      } else if (style < 2.0) {
+        color = vec3(1.0, 0.45, 0.10);
+      } else {
+        color = vec3(1.0, 0.22, 0.08);
+      }
+      return color * combined * intensity;
+    }
+
+    // Distance from a point to a wavy curve segment in local rotated space.
+    float squiggleAtCurve(vec2 uv, vec2 anchor, float angle_rad,
+                          float length, float freq, float amp, float thickness) {
+      vec2 local = uv - anchor;
+      float c = cos(angle_rad);
+      float s = sin(angle_rad);
+      vec2 rot = vec2(local.x * c + local.y * s, -local.x * s + local.y * c);
+      if (rot.x < 0.0 || rot.x > length) return 0.0;
+      float curve_y = sin(rot.x * freq) * amp;
+      float dist = abs(rot.y - curve_y);
+      return smoothstep(thickness, 0.0, dist);
+    }
+
+    // Thin scratch-squiggle overlay -- several curved wavy lines per frame,
+    // random position/angle/frequency, subtle brightness.
+    vec3 squiggleFrame(vec2 uv, float frame_seed, float density) {
+      float total = 0.0;
+      for (int i = 0; i < 4; i++) {
+        float fi = float(i);
+        vec2 anchor = hash22(vec2(frame_seed * 3.1 + fi * 7.3, fi * 11.7));
+        float angle = hash21(vec2(frame_seed + fi, 1.7)) * 6.2831853;
+        float len = 0.08 + hash21(vec2(frame_seed + fi, 3.1)) * 0.18;
+        float freq = 30.0 + hash21(vec2(frame_seed + fi, 5.3)) * 90.0;
+        float amp = 0.004 + hash21(vec2(frame_seed + fi, 7.9)) * 0.012;
+        float visible = step(1.0 - density, hash21(vec2(frame_seed + fi, 9.5)));
+        total += visible * squiggleAtCurve(uv, anchor, angle, len, freq, amp, 0.0011);
+      }
+      return vec3(min(total, 1.0) * 1.0);
+    }
+
+    void main() {
+      vec2 uv = sourceTextureCoordinate;
+
+      // ============================================================
+      // Layer 1: subtle 9-tap skin smoothing (matches Spark
+      // retouchingMaterial with skinSmoothingFactor=0.11).
+      // ============================================================
+      float r = blur_radius;
+      vec3 center = sampleInput(uv).rgb;
+      vec3 blurred = center * (4.0 / 16.0);
+      blurred += sampleInput(uv + vec2( r, 0.0)).rgb * (2.0 / 16.0);
+      blurred += sampleInput(uv + vec2(-r, 0.0)).rgb * (2.0 / 16.0);
+      blurred += sampleInput(uv + vec2(0.0,  r)).rgb * (2.0 / 16.0);
+      blurred += sampleInput(uv + vec2(0.0, -r)).rgb * (2.0 / 16.0);
+      blurred += sampleInput(uv + vec2( r,  r)).rgb * (1.0 / 16.0);
+      blurred += sampleInput(uv + vec2( r, -r)).rgb * (1.0 / 16.0);
+      blurred += sampleInput(uv + vec2(-r,  r)).rgb * (1.0 / 16.0);
+      blurred += sampleInput(uv + vec2(-r, -r)).rgb * (1.0 / 16.0);
+      vec3 softened = mix(center, blurred, blur_strength);
+
+      // ============================================================
+      // Layer 2: LUT color grade.
+      // ============================================================
+      vec3 graded = applyLut(softened);
+      vec3 base = mix(softened, graded, strength);
+
+      // ============================================================
+      // Layer 3: procedural glitch overlay -- cycles through 15
+      // frames at overlay_fps. Most frames are dust; frames 5 and
+      // 6 (0-indexed 4, 5) are warm lens flares. Screen-blended at
+      // overlay_opacity (Spark default 0.77).
+      // ============================================================
+      // Dust + squiggles always present, cycling at overlay_fps.
+      float dust_frame = mod(floor(time * overlay_fps), 15.0);
+      vec3 dust = dustFrame(uv, dust_frame, dust_density);
+      vec3 squiggles = squiggleFrame(uv, dust_frame, squiggle_density);
+      // Flare cycles on its own timeline; only ~35% of flare frames are
+      // visible so it stays punctuational, not constant.
+      float flare_frame = floor(time * flare_fps);
+      float flare_visible = step(0.65, hash21(vec2(flare_frame, 3.14)));
+      vec3 flare = flareFrame(uv, flare_frame, flare_strength * flare_visible);
+      vec3 overlay = dust + squiggles + flare;
+
+      // Screen blend: result = 1 - (1 - base) * (1 - overlay * opacity).
+      vec3 result = 1.0 - (1.0 - base) * (1.0 - overlay * overlay_opacity);
+      result = clamp(result, 0.0, 1.0);
+
+      gl_FragColor = toOutputFormat(vec4(result, 1.0));
+    }
+    ";

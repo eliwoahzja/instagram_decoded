@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "cb199884-e851-435d-a927-7e41386774bc",
+  "displayName": "FaceMesh",
+  "description": "[IG Edits] Video effect name. \"FaceMesh\" renders a textured 3D face mesh tracked from the live camera frame via the Ocean face tracker.",
+  "iglu": {}
+}

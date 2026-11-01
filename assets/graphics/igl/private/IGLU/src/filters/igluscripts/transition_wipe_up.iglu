@@ -1,0 +1,46 @@
+# IGLUSCRIPTCOLLISION_BYPASS: IGLUScript port of transition_wipe_up, QE-selectable for A/B vs TransitionWipeFilter.
+[Filter TransitionWipeUp]
+
+[Init]
+fun init(Filter filter) {
+  makeTexture('transition);
+  filter.passes = {{
+    name = 'compose,
+    inputs = {'default, 'transition},
+    shaderInputNames = {'default, 's_texture1},
+    uniforms = { progress = 0.0 },
+    glslShader = glsl,
+  }};
+}
+
+fun easeInOutCubic(f32 t) f32 {
+  if (t < 0.5) {
+    return 4.0 * t * t * t;
+  } else {
+    f32 f = -2.0 * t + 2.0;
+    return 1.0 - pow(f, 3.0) / 2.0;
+  }
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  setShaderUniform('compose, 'progress, easeInOutCubic(getParameterFloat('progress)));
+}
+
+string glsl = "
+  varying vec2 sourceTextureCoordinate;
+  BaseUniformsOpenGL;
+  uniform sampler2D s_texture1;
+  uniform float progress;
+  float fromRange(float x, float lo, float hi) { return (x - lo) / (hi - lo); }
+  void main() {
+    vec2 uv = sourceTextureCoordinate;
+    vec4 a = sampleInput(uv);
+    vec4 b = texture2D(s_texture1, uv);
+    const float feather = 0.01;
+    float mask = 1.0 - uv.y;
+    float grad = fromRange(mask, feather * -2.0, feather * 2.0 + 1.0);
+    float blend = smoothstep(-feather, feather, progress - grad);
+    gl_FragColor = toOutputFormat(mix(a, b, blend));
+  }
+";

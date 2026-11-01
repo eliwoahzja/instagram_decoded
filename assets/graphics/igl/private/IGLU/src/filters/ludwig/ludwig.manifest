@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "identifier": "ludwig",
+  "displayName": "Ludwig",
+  "description": "[IG Edits] Color filter. With \"Ludwig\", the creator can apply a 33-slice 3D LUT color grade plus a top-to-bottom dark grey overlay-blended vignette for a warm, slightly faded look.",
+  "iglu": {
+    "legacyId": 603
+  },
+  "assets": [
+    {
+      "name": "map_ludwig.png",
+      "assetHash": "df477d2e4f74f4a8f643d53a9e64e82cf77274c99e36095b6e5f9f032fc2f7be",
+      "hubAssetId": "2153113068848412"
+    }
+  ]
+}

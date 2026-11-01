@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_trippy",
+  "displayName": "Rainbow",
+  "description": "Video effects selection. Video cycles through colors and hues.",
+  "iglu": {
+    "legacyId": 2023,
+    "customization": [
+      {
+        "name": "speed",
+        "default": 0.3,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Speed",
+        "displayNameDescription": "[IG Edits] Slider label controlling the playback or animation speed of a video effect (noun, not a verb); exact range varies per effect."
+      },
+      {
+        "name": "opacity",
+        "default": 1.0,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Opacity",
+        "displayNameDescription": "[IG Edits] Slider label controlling the opacity (transparency) of an element added by a video effect (low = invisible, high = fully opaque); exact range varies per effect."
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "f5cad4f1",
+      "handle": "AQAE3xl62zuk",
+      "md5": "9966773ac25cab6441aff9ac35dc6dd0"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAE_3HgagQ6"
+    }
+  }
+}

@@ -1,0 +1,94 @@
+.class public final LX/dBs;
+.super LX/MuH;
+.source ""
+
+
+# instance fields
+.field public A00:Ljava/util/List;
+
+
+# virtual methods
+.method public final A00()LX/Btu;
+    .locals 1
+
+    sget-object v0, LX/Btu;->A0Q:LX/Btu;
+
+    return-object v0
+.end method
+
+.method public final A01(Lcom/instagram/common/session/UserSession;Lcom/instagram/share/facebook/cxpnotice/noticestate/internal/CXPNoticeStateRepository;)LX/2nG;
+    .locals 6
+
+    invoke-static {p1}, LX/5B5;->A0Q(Ljava/lang/Object;)V
+
+    invoke-static {p2}, LX/5B5;->A0R(Ljava/lang/Object;)V
+
+    const-string v0, "BOTTOMSHEET_FEED"
+
+    invoke-static {p2, v0}, LX/C37;->A0m(Lcom/instagram/share/facebook/cxpnotice/noticestate/internal/CXPNoticeStateRepository;Ljava/lang/String;)LX/2nG;
+
+    move-result-object v5
+
+    invoke-static {p1}, LX/2in;->A00(Lcom/instagram/common/session/UserSession;)LX/2in;
+
+    move-result-object v4
+
+    invoke-static {v4}, LX/lLv;->A00(LX/2in;)I
+
+    move-result v3
+
+    const/4 v2, 0x0
+
+    sget-object v1, LX/lLv;->A00:LX/Izl;
+
+    sget-object v0, LX/lLv;->A02:[LX/Lms;
+
+    invoke-static {v4, v1, v0, v2}, LX/21X;->A05(Ljava/lang/Object;LX/Izl;[LX/Lms;I)J
+
+    move-result-wide v1
+
+    long-to-int v0, v1
+
+    invoke-virtual {v5, v3, v0}, LX/2nG;->A00(II)LX/2nG;
+
+    move-result-object v0
+
+    return-object v0
+.end method
+
+.method public final A02()Ljava/lang/String;
+    .locals 1
+
+    const-string v0, "BOTTOMSHEET_FEED"
+
+    return-object v0
+.end method
+
+.method public final A03()Ljava/util/List;
+    .locals 1
+
+    iget-object v0, p0, LX/dBs;->A00:Ljava/util/List;
+
+    return-object v0
+.end method
+
+.method public final A04(LX/jNj;)Z
+    .locals 2
+
+    const/4 v1, 0x0
+
+    invoke-static {p1, v1}, LX/5B5;->A0U(Ljava/lang/Object;I)V
+
+    iget-object v0, p1, LX/jNj;->A02:Landroidx/fragment/app/Fragment;
+
+    if-eqz v0, :cond_0
+
+    sget-object v0, LX/Btu;->A0Q:LX/Btu;
+
+    invoke-static {v0, p1}, LX/lMC;->A02(LX/Btu;LX/jNj;)V
+
+    const/4 v1, 0x1
+
+    :cond_0
+    return v1
+.end method

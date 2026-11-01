@@ -1,0 +1,114 @@
+[Filter CinematicVignette]
+
+[Init]
+fun init(Filter filter)
+{
+    makeTexture('lut);
+
+    filter.parameters = {
+        {lut_strength = 0.913, min = 0.0, max = 1.0, description = "LUT mix strength"},
+        {vignette = 0.149, min = 0.0, max = 1.0, description = "Vignette darkness"},
+        {vignette_radius = 0.538, min = 0.0, max = 1.5, description = "Vignette radius (center to edge)"},
+        {vignette_softness = 0.215, min = 0.01, max = 1.0, description = "Vignette edge softness"},
+    };
+
+    filter.passes = {{
+      name = 'pass0,
+      inputs = {'default, 'lut},
+      uniforms = {
+        lut_strength = 0.913,
+        vignette = 0.149,
+        vignette_radius = 0.538,
+        vignette_softness = 0.215,
+        src_x = 1024.0,
+        src_y = 1024.0,
+      },
+      glslShader = glslLut,
+    }};
+}
+
+string lut_path = "lut_path";
+string lut_filename = "";
+
+[PreRender]
+fun preRender(Filter filter){
+    string lut_filename_parameter = getParameterString(lut_path);
+    if (lut_filename_parameter != "") {
+        string new_lut_filename = stringAppend("textureFilePath://", lut_filename_parameter);
+        if (new_lut_filename != lut_filename) {
+            lut_filename = new_lut_filename;
+            loadTexture('lut, lut_filename);
+        }
+    }
+
+    f32 s = getParameterFloat('lut_strength);
+    setShaderUniform('pass0, 'lut_strength, s);
+
+    f32 v = getParameterFloat('vignette);
+    setShaderUniform('pass0, 'vignette, v);
+    f32 vr = getParameterFloat('vignette_radius);
+    setShaderUniform('pass0, 'vignette_radius, vr);
+    f32 vs = getParameterFloat('vignette_softness);
+    setShaderUniform('pass0, 'vignette_softness, vs);
+
+    vec2 srcSize = getTextureSize('default);
+    if (srcSize.x > 0.0) {
+        setShaderUniform('pass0, 'src_x, srcSize.x);
+        setShaderUniform('pass0, 'src_y, srcSize.y);
+    }
+}
+
+#### GLSL shader ####
+
+# 8x8 LUT color grade + responsive, aspect-corrected radial vignette.
+# Vignette uses textureCoordinate (screen/destination space) so it stays
+# centered and scales with the output size like a real lens vignette.
+string glslLut = "
+    varying vec2 sourceTextureCoordinate;
+    varying vec2 textureCoordinate;
+    BaseUniformsOpenGL;
+
+    uniform sampler2D auxSampler0;
+    uniform sampler2D auxSampler1;
+    uniform sampler2D auxSampler2;
+
+    uniform float lut_strength;
+    uniform float vignette;
+    uniform float vignette_radius;
+    uniform float vignette_softness;
+    uniform float src_x;
+    uniform float src_y;
+
+    void main() {
+      vec4 texel = sampleInput(sourceTextureCoordinate);
+
+      texel.rgb = clamp(texel.rgb, 0.00781, 0.98438);
+
+      float x = texel.r / 8.0;
+      float y = texel.g / 8.0;
+      float z = texel.b;
+
+      float blueY = floor(z * 8.0) / 8.0;
+      float blueX = floor((z - blueY) * 64.0) / 8.0;
+
+      x += blueX;
+      y += blueY;
+
+      vec3 color = texture2D(auxSampler1, vec2(x, y)).xyz;
+
+      texel = mix(texel, vec4(color, texel.a), strength * lut_strength);
+
+      // Aspect-corrected radial distance from screen center.
+      float aspect = src_x / max(src_y, 1.0);
+      vec2 cc = textureCoordinate - vec2(0.5, 0.5);
+      cc.x = cc.x * aspect;
+      float d = length(cc);
+
+      // 1.0 in the center, falling to 0.0 past the radius; feathered by softness.
+      float vf = smoothstep(vignette_radius, vignette_radius - vignette_softness, d);
+      float mask = mix(1.0, vf, vignette);
+      texel.rgb = texel.rgb * mask;
+
+      gl_FragColor = toOutputFormat(texel);
+    }
+    ";

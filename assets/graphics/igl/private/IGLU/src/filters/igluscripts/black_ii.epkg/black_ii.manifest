@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "identifier": "428A2EB6-B9D6-41F7-A107-F58353A68F51",
+  "displayName": "Black II",
+  "description": "[IG Edits] Color filter name. With \"Black II\", the creator can apply an 8x8 LUT monochrome grade then a smoothstep radial vignette darkening the corners by about 52%.",
+  "android": {
+    "previewAsset": {
+      "key": "22a12a50",
+      "handle": "AQAMC2WHkGV3",
+      "md5": "f8c379fd434075a74f69d7025d5bfb1f"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAGd_d71zCS"
+    }
+  },
+  "iglu": {
+    "legacyId": 3075
+  },
+  "assets": [
+    {
+      "name": "black_ii_lut.png",
+      "assetHash": "f816d236c7d462944a760482f7a033a65d42053a778d54ac63b816736da63910",
+      "hubAssetId": "985007004387677"
+    }
+  ]
+}

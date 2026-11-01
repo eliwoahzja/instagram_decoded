@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_fade_out",
+  "displayName": "Fade out",
+  "description": "Video effects selection. Video fades out.",
+  "iglu": {
+    "legacyId": 2018,
+    "behavior": {
+      "type": "fixedOutro",
+      "durationMs": 2000,
+      "curve": "linear"
+    },
+    "customization": [
+      {
+        "name": "duration",
+        "default": 2.0,
+        "min": 0.25,
+        "max": 5.0,
+        "displayName": "Duration",
+        "displayNameDescription": "[IG Edits] Slider label controlling how long a video effect's animation lasts; exact units and range vary per effect (seconds or normalized).",
+        "displayMethod": "time"
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "8269f04",
+      "handle": "AQAGO4pH_F6L",
+      "md5": "1472bf17d03f7657a1881e89ded80c3d"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAI_ulM3qn3"
+    }
+  }
+}

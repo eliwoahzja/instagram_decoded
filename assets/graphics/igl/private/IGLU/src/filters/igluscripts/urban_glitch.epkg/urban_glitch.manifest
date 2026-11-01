@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "identifier": "29D23D86-C2D0-4BA6-AD87-2AD28C133682",
+  "displayName": "Urban Glitch",
+  "description": "[IG Edits] Color filter name. Urban-look LUT color grade with subtle skin smoothing and a procedural dust + lens-flare glitch overlay animation.",
+  "ios": {
+    "previewAsset": {
+      "handle": "AQADujQgYJgg"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "f1cf7efb",
+      "handle": "AQAFtgGo17co",
+      "md5": "d923c94f79e4c4b7e10cfbb6d7a56d14"
+    }
+  },
+  "iglu": {
+    "legacyId": 3192
+  },
+  "assets": [
+    {
+      "name": "urban_glitch_lut.png",
+      "assetHash": "6f18326313421c0b790f8b984365a3d225ac725c8834263174bd00d4714223fe",
+      "hubAssetId": "2128559964542078"
+    }
+  ]
+}

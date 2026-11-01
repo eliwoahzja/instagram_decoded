@@ -1,0 +1,9 @@
+.class public abstract LX/WEv;
+.super Ljava/lang/Object;
+.source ""
+
+
+# instance fields
+.field public A00:Ljava/lang/CharSequence;
+
+.field public A01:Z

@@ -1,0 +1,13 @@
+.class public final LX/d0i;
+.super LX/V0O;
+.source ""
+
+
+# instance fields
+.field public A00:Lcom/instagram/common/ui/base/IgTextView;
+
+.field public A01:Lcom/instagram/common/ui/base/IgTextView;
+
+.field public A02:Lcom/instagram/common/ui/base/IgTextView;
+
+.field public A03:Lcom/instagram/common/ui/widget/imageview/IgImageView;

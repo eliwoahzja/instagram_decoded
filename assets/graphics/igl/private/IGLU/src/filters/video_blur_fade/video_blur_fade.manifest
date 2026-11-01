@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_blur_fade",
+  "displayName": "Blur fade",
+  "description": "Video effect name. A video effect is a creative visual element that can be applied to a video. With \"Blur fade\", the creator can add a blur effect that fades in or out.",
+  "iglu": {
+    "legacyId": 2066,
+    "behavior": {
+      "type": "fixedIntro",
+      "durationMs": 2000,
+      "curve": "sinusoidalInOut",
+      "reversed": true
+    },
+    "customization": [
+      {
+        "name": "duration",
+        "default": 2.0,
+        "min": 0.25,
+        "max": 5.0,
+        "displayName": "Duration",
+        "displayNameDescription": "[IG Edits] Slider label controlling how long a video effect's animation lasts; exact units and range vary per effect (seconds or normalized).",
+        "displayMethod": "time"
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "95c52dc6",
+      "handle": "AQADpQVRq6Wm",
+      "md5": "3a001e508b46a68244d1c112fe8caebe"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQACzxzYpE6d"
+    }
+  }
+}

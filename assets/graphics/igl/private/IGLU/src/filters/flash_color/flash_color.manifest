@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "flash_color",
+  "displayName": "Flash Color",
+  "description": "[IG Edits] Video effect name. With \"Flash Color\", the creator can strobe the frame between two tinted color blends at a chosen flashes-per-second rate using a time-driven step.",
+  "iglu": {}
+}

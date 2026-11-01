@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "identifier": "544C6648-4A48-43BC-B0C5-ED6F4B128D6A",
+  "displayName": "Dark Room C",
+  "description": "[IG Edits] Color preset filter name. Applies a dark room color grade with skin smoothing.",
+  "android": {
+    "previewAsset": {
+      "key": "42dff729",
+      "handle": "AQAHobaci0n6",
+      "md5": "965adf1df3febe295d28b038635598f8"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAH-zDwUgsL"
+    }
+  },
+  "iglu": {
+    "legacyId": 3170
+  },
+  "assets": [
+    {
+      "name": "dark_room_c_lut.png",
+      "assetHash": "963d2b17a0abb8b8a07b4336367b20925eace266d1214f96c974faeb7eda555f",
+      "hubAssetId": "1404479711584551"
+    }
+  ]
+}

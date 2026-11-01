@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_bounce",
+  "displayName": "Bounce",
+  "description": "[IG Edits] Video effect name. With \"Bounce\", the creator can make the video bounce with a springy scale animation.",
+  "iglu": {
+    "legacyId": 3006,
+    "customization": [
+      {
+        "name": "speed",
+        "default": 0.2,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Speed",
+        "displayNameDescription": "[IG Edits] Slider label controlling the playback or animation speed of a video effect (noun, not a verb); exact range varies per effect."
+      },
+      {
+        "name": "intensity",
+        "default": 0.4737,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Intensity",
+        "displayNameDescription": "[IG Edits] Slider label controlling the strength of a video effect. Generic across many effects (glow, blur, color, distortion, etc.); exact range varies per effect."
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "603e06ee",
+      "handle": "AQAGE1FVCjEx",
+      "md5": "cdc3b6c6b67d7747a64a3e90e3eb817d"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAQWGtTIXxF"
+    }
+  }
+}

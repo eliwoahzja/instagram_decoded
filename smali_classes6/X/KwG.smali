@@ -1,0 +1,68 @@
+.class public final LX/KwG;
+.super LX/5Ar;
+.source ""
+
+
+# annotations
+.annotation runtime Lkotlin/coroutines/jvm/internal/DebugMetadata;
+    c = "com.instagram.comments.mvvm.data.network.CommentAdsNetworkFetcherImpl"
+    f = "CommentAdsNetworkFetcherImpl.kt"
+    l = {
+        0x26
+    }
+    m = "suspendAndFetchCommentAds"
+.end annotation
+
+
+# instance fields
+.field public A00:I
+
+.field public A01:I
+
+.field public A02:J
+
+.field public A03:Ljava/lang/Object;
+
+.field public synthetic A04:Ljava/lang/Object;
+
+.field public final synthetic A05:Lcom/instagram/comments/mvvm/data/network/CommentAdsNetworkFetcherImpl;
+
+
+# direct methods
+.method public constructor <init>(Lcom/instagram/comments/mvvm/data/network/CommentAdsNetworkFetcherImpl;LX/HAU;)V
+    .locals 0
+
+    iput-object p1, p0, LX/KwG;->A05:Lcom/instagram/comments/mvvm/data/network/CommentAdsNetworkFetcherImpl;
+
+    invoke-direct {p0, p2}, LX/5Ar;-><init>(LX/HAU;)V
+
+    return-void
+.end method
+
+
+# virtual methods
+.method public final invokeSuspend(Ljava/lang/Object;)Ljava/lang/Object;
+    .locals 3
+
+    iput-object p1, p0, LX/KwG;->A04:Ljava/lang/Object;
+
+    iget v1, p0, LX/KwG;->A01:I
+
+    const/high16 v0, -0x80000000
+
+    or-int/2addr v1, v0
+
+    iput v1, p0, LX/KwG;->A01:I
+
+    iget-object v2, p0, LX/KwG;->A05:Lcom/instagram/comments/mvvm/data/network/CommentAdsNetworkFetcherImpl;
+
+    const/4 v1, 0x0
+
+    const/4 v0, 0x0
+
+    invoke-virtual {v2, v0, p0, v1}, Lcom/instagram/comments/mvvm/data/network/CommentAdsNetworkFetcherImpl;->A00(Ljava/lang/String;LX/HAU;I)Ljava/lang/Object;
+
+    move-result-object v0
+
+    return-object v0
+.end method

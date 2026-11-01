@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "lanczos",
+  "displayName": "Lanczos",
+  "description": "[IG Edits] Video effect name. With \"Lanczos\", the creator can resample the frame using a separable Lanczos kernel for high-quality up/down-scaling with sharp detail preservation.",
+  "iglu": {}
+}

@@ -1,0 +1,92 @@
+[Filter LutDemo]
+# Example packaged effect that loads its color LUT from its OWN assets/ folder.
+#
+# This effect ships as a `lut_demo.epkg/` bundle: this script
+# (`lut_demo.iglu`), a base `lut_demo.manifest`, and a `assets/lut_demo_clut.png`
+# color-lookup texture that lives alongside them in the package's own
+# `assets/` folder (NOT in the source-tree `igluscripts/assets/<stem>` location
+# used by older effects). The asset-discovery tooling scans the package's
+# `assets/` folder, hashes `lut_demo_clut.png`, and authors it into the base
+# manifest's `assets[]`; at runtime the texture is fetched from Hub through the
+# normal RemoteAssetDownloader -> RemoteAssetPathRegistry -> CachingResourceLoader
+# path (keyed by the manifest asset), with a silent fallback to the bundled file.
+#
+# Single pass: apply the 8x8x8 unwrapped color LUT (same LUT-grading math as the
+# black_and_white / aesthetic_blur catalog effects). `lut_path` is a host-only
+# string parameter: in the Mac sample app it can point the loader at a local
+# file via the `textureFilePath://` scheme for visual iteration; production
+# leaves it empty so the Hub-delivered LUT (declared in the manifest) is used.
+
+[Init]
+fun init(Filter filter)
+{
+    makeTexture('lut);
+
+    filter.parameters = {
+        {strength = 1.0, min = 0.0, max = 1.0, description = "LUT mix strength"},
+    };
+
+    filter.passes = {{
+        name = 'graded,
+        inputs = {'default, 'lut},
+        uniforms = {
+            strength = 1.0,
+        },
+        glslShader = lutShader,
+    }};
+}
+
+string lut_path = "lut_path";
+string lut_filename = "";
+
+[PreRender]
+fun preRender(Filter filter)
+{
+    # Host-only LUT override for local iteration. Production leaves this empty
+    # so the Hub-delivered LUT bound as 'lut is used unchanged.
+    string lut_filename_parameter = getParameterString(lut_path);
+    if (lut_filename_parameter != "") {
+        string new_lut_filename = stringAppend("textureFilePath://", lut_filename_parameter);
+        if (new_lut_filename != lut_filename) {
+            lut_filename = new_lut_filename;
+            loadTexture('lut, lut_filename);
+        }
+    }
+
+    f32 s = getParameterFloat('strength);
+    setShaderUniform('graded, 'strength, s);
+}
+
+# LUT color grading: unwrap the 512x512 (8x8 tiles of 64x64) color cube and
+# blend toward the graded color by `strength`. Identical to the catalog LUT
+# shader so this example renders a real LUT lookup against lut_demo_clut.png.
+string lutShader = "
+    varying vec2 sourceTextureCoordinate;
+    BaseUniformsOpenGL;
+
+    uniform sampler2D auxSampler0;
+    uniform sampler2D auxSampler1;
+    uniform sampler2D auxSampler2;
+
+    void main() {
+      vec4 texel = sampleInput(sourceTextureCoordinate);
+
+      texel.rgb = clamp(texel.rgb, 0.00781, 0.98438);
+
+      float x = texel.r / 8.0;
+      float y = texel.g / 8.0;
+      float z = texel.b;
+
+      float blueY = floor(z * 8.0) / 8.0;
+      float blueX = floor((z - blueY) * 64.0) / 8.0;
+
+      x += blueX;
+      y += blueY;
+
+      vec3 color = texture2D(auxSampler1, vec2(x, y)).xyz;
+
+      texel = mix(texel, vec4(color, texel.a), strength);
+
+      gl_FragColor = toOutputFormat(texel);
+    }
+    ";

@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "identifier": "boost",
+  "displayName": "Boost",
+  "description": "Filter name for a saturation/contrast boost",
+  "iglu": {
+    "legacyId": 1006
+  },
+  "assets": [
+    {
+      "name": "lut_boost.png",
+      "assetHash": "3ef161fe05c0652879ac531d962ebc42496ed4f68112bc2daf5c022f2aeb4710",
+      "hubAssetId": "2379670322545380"
+    },
+    {
+      "name": "lut_boost_cool.png",
+      "assetHash": "c65691118948cfd26c36d8c07e991f0f5313d1c5e271e21183ffc9af823fb93c",
+      "hubAssetId": "4679550882285865"
+    },
+    {
+      "name": "lut_boost_warm.png",
+      "assetHash": "a3fea8398d9d09bc89438867cf35345dd5f98d8af22102fe4da7b6ccfe40f248",
+      "hubAssetId": "916712450849273"
+    }
+  ]
+}

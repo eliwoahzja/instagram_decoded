@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "text_tv_glitch",
+  "displayName": "Tv Glitch",
+  "description": "Label for the TV Glitch text effect style.",
+  "iglu": {}
+}

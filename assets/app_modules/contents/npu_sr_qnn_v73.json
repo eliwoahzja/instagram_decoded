@@ -1,0 +1,5 @@
+{
+  "assets/npu_sr_qnn_v73/libs.txt": "8125dc5c498698c9b445a62d3641f0506a03c289c09ff4459bf760dd18878d1e",
+  "lib/arm64-v8a/libQnnHtpV73Skel.so": "423e32553cb4f9ac555afa90bc83f5c033ef1eddf48514501f9b74f7a833a53f",
+  "lib/arm64-v8a/libQnnHtpV73Stub.so": "6811ee3b961f411cd437661fb9ad732a3614a8c4dd7ecca6bab77fdcce892240"
+}

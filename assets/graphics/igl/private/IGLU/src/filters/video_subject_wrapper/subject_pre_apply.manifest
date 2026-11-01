@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "subject_pre_apply",
+  "displayName": "Subject Pre Apply",
+  "description": "[IG Edits] Video effect name. With \"Subject Pre Apply\", the creator can isolate the subject by intersecting the input alpha with a color-matched instance mask and outputting premultiplied alpha.",
+  "iglu": {}
+}

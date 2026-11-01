@@ -1,0 +1,87 @@
+[Filter IgluscriptSlideHorizontalInFilter]
+[MaskBehavior alpha]
+
+# AE source: POSITION_SLIDE_LEFT_IN / POSITION_SLIDE_LEFT_OUT
+# Position: X Position, 2 keyframes, 360ms, bezier eased
+# Opacity: linear 0→1 over 280ms (first 77.8% of duration)
+# Offset: 116px on 720px canvas = 0.161111 UV
+
+fun cssBezier(f32 time, f32 x1, f32 y1, f32 x2, f32 y2) f32 {
+  f32 t = time;
+  f32 i = 0.0;
+  while (i < 8.0) {
+    f32 u = 1.0 - t;
+    f32 xt = 3.0 * u * u * t * x1 + 3.0 * u * t * t * x2 + t * t * t;
+    f32 dxdt = 3.0 * u * u * x1 + 6.0 * u * t * (x2 - x1) + 3.0 * t * t * (1.0 - x2);
+    t = t - (xt - time) / max(dxdt, 0.0001);
+    t = clamp(t, 0.0, 1.0);
+    i = i + 1.0;
+  }
+  f32 u = 1.0 - t;
+  return 3.0 * u * u * t * y1 + 3.0 * u * t * t * y2 + t * t * t;
+}
+
+[Init]
+fun init(Filter filter) {
+  filter.parameters = {
+    {direction = 0.0, min = 0.0, max = 1.0, description = "0 = Right-to-center, 1 = Left-to-center"},
+    {outro = 0.0, min = 0.0, max = 1.0, description = "0 = In, 1 = Out"},
+    {positionScale = 1.0, min = 0.0, max = 4.0, description = "Scale position offset"},
+  };
+
+  filter.passes = {{
+      name = 'slideFx,
+      igid = 'video_scale_opacity,
+      inputs = {'default},
+      uniforms = {
+        progress = 0.0,
+        scale = 1.0,
+        opacity = 1.0,
+        center = {0.5, 0.5},
+        position = {0.0, 0.0},
+      }
+    }};
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  f32 p = getParameterFloat('progress);
+  f32 outro = getParameterFloat('outro);
+
+  # Tuning scalar — multiply all position offsets by this value
+  f32 posScale = getParameterFloat('positionScale);
+
+  # Position easing: exact AE CSS bezier
+  f32 t = 0.0;
+  if (outro < 0.5) {
+    t = cssBezier(p, 0.621251, 0.0, 0.096518, 1.0);
+  } else {
+    t = cssBezier(p, 0.686371, 0.0, 0.972222, 0.494269);
+  }
+
+  # Direction: 0 = starts right of center, 1 = starts left of center
+  f32 dir = getParameterFloat('direction);
+  f32 sign = 1.0;
+  if (dir > 0.5) { sign = 0.0 - 1.0; }
+
+  # IN: offset goes from full to 0 (1-t). OUT: offset goes from 0 to full (t).
+  f32 offset = sign * 0.161111 * posScale * (1.0 - t);
+  if (outro > 0.5) {
+    offset = sign * 0.161111 * posScale * t;
+  }
+
+  # Opacity: linear fade over 280ms out of 360ms (77.8% of duration)
+  f32 opacityDuration = 0.6;
+  f32 opacity = 1.0;
+  if (outro < 0.5) {
+    opacity = clamp(p / opacityDuration, 0.0, 1.0);
+  } else {
+    opacity = clamp((1.0 - p) / opacityDuration, 0.0, 1.0);
+  }
+
+  vec2 pos = {offset, 0.0};
+  setShaderUniform('slideFx, 'progress, t);
+  setShaderUniform('slideFx, 'position, pos);
+  setShaderUniform('slideFx, 'scale, 1.0);
+  setShaderUniform('slideFx, 'opacity, opacity);
+}

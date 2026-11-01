@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "identifier": "fade",
+  "displayName": "Fade",
+  "description": "[Instagram Edits] Effects browser - Label for a fade effect that transitions subjects. Character count for labels is 14 characters max.",
+  "iglu": {
+    "legacyId": 1000
+  },
+  "assets": [
+    {
+      "name": "lut_fade.png",
+      "assetHash": "c2f8ed97beebcf66df3f95c9fd3baa7d67f54a17f821c599cffce388797beb3d",
+      "hubAssetId": "1221328980161678"
+    },
+    {
+      "name": "lut_fade_cool.png",
+      "assetHash": "2a2cfcc70df6209c60bd6e53ca88d7d92873ad21ab5dbcd8ce9befd157660249",
+      "hubAssetId": "1615750892896758"
+    },
+    {
+      "name": "lut_fade_warm.png",
+      "assetHash": "95c7e13d90fbbe2aa6a53af6fc08030900c7a6f01ca2f146636570eee9b56df9",
+      "hubAssetId": "2799491827049462"
+    }
+  ]
+}

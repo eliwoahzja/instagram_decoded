@@ -1,0 +1,140 @@
+.class public final LX/isq;
+.super Ljava/lang/Object;
+.source ""
+
+# interfaces
+.implements LX/Nam;
+
+
+# direct methods
+.method public constructor <init>()V
+    .locals 0
+
+    invoke-direct {p0}, Ljava/lang/Object;-><init>()V
+
+    return-void
+.end method
+
+.method public static A00(Landroid/content/Context;)Z
+    .locals 0
+
+    invoke-static {}, LX/iJb;->A00()Z
+
+    move-result p0
+
+    return p0
+.end method
+
+
+# virtual methods
+.method public final B0h(LX/Fzl;LX/1sp;)LX/3j7;
+    .locals 5
+
+    invoke-interface {p1, p2}, LX/Fzl;->BWY(LX/1sp;)[I
+
+    move-result-object v4
+
+    array-length v0, v4
+
+    if-nez v0, :cond_0
+
+    const/4 v2, 0x0
+
+    return-object v2
+
+    :cond_0
+    const/4 v3, 0x0
+
+    aget v2, v4, v3
+
+    const/16 v1, 0x5a
+
+    const/16 v0, 0x8
+
+    if-lt v2, v1, :cond_1
+
+    const/4 v0, 0x4
+
+    :cond_1
+    aput v0, v4, v3
+
+    new-instance v1, LX/iJb;
+
+    invoke-direct {v1}, LX/iJb;-><init>()V
+
+    iget v0, p2, LX/1sp;->A00:I
+
+    new-instance v2, LX/V7H;
+
+    invoke-direct {v2, v0, v4}, LX/Ayz;-><init>(I[I)V
+
+    iput-object v1, v2, LX/V7H;->A00:LX/iJb;
+
+    sput v3, Lredex/$StoreFenceHelper;->DUMMY_VOLATILE:I
+
+    return-object v2
+.end method
+
+.method public final Cw6()I
+    .locals 1
+
+    const/4 v0, 0x7
+
+    return v0
+.end method
+
+.method public final CwE()I
+    .locals 1
+
+    const/16 v0, 0x8
+
+    return v0
+.end method
+
+.method public final toString()Ljava/lang/String;
+    .locals 4
+
+    const-string v3, ""
+
+    new-instance v2, Lorg/json/JSONObject;
+
+    invoke-direct {v2}, Lorg/json/JSONObject;-><init>()V
+
+    :try_start_0
+    const-string v1, "name"
+
+    const-string v0, "huawei"
+
+    invoke-virtual {v2, v1, v0}, Lorg/json/JSONObject;->put(Ljava/lang/String;Ljava/lang/Object;)Lorg/json/JSONObject;
+
+    const-string v1, "framework"
+
+    const-string v0, "PerfHub"
+
+    invoke-virtual {v2, v1, v0}, Lorg/json/JSONObject;->put(Ljava/lang/String;Ljava/lang/Object;)Lorg/json/JSONObject;
+
+    const-string v0, "extra"
+
+    invoke-virtual {v2, v0, v3}, Lorg/json/JSONObject;->put(Ljava/lang/String;Ljava/lang/Object;)Lorg/json/JSONObject;
+
+    const-string v1, "access"
+
+    sget-object v0, LX/iJb;->A02:LX/2tJ;
+
+    invoke-virtual {v0}, LX/2tJ;->A05()Ljava/lang/String;
+
+    move-result-object v0
+
+    invoke-virtual {v2, v1, v0}, Lorg/json/JSONObject;->put(Ljava/lang/String;Ljava/lang/Object;)Lorg/json/JSONObject;
+    :try_end_0
+    .catch Ljava/lang/Exception; {:try_start_0 .. :try_end_0} :catch_0
+
+    invoke-virtual {v2}, Ljava/lang/Object;->toString()Ljava/lang/String;
+
+    move-result-object v0
+
+    return-object v0
+
+    :catch_0
+    return-object v3
+.end method

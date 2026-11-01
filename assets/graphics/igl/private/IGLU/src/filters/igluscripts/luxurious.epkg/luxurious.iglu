@@ -1,0 +1,163 @@
+[Filter Luxurious]
+# "Luxurious" — LUT color grade + skin-tone rouge boost (no overlay).
+# Cloned from neutrals_lovers minus Layer 3 (heart overlay), with a
+# deeper rouge target color tuned for a lipstick-like flush.
+#
+#   Layer 1 — Base LUT (full canvas):
+#     8x8 grid LUT lookup on luxurious.png. Mixed against camera by
+#     `lut_strength`. Standard glamy-style pattern.
+#
+#   Post-LUT — Saturation boost (luminance-preserving):
+#     `mix(luma, graded, saturation)` with Rec.709 luma weights.
+#     Default 1.15 = subtle 15% boost.
+#
+#   Layer 2 — Rouge boost (hue-targeted, no face tracking):
+#     Skin-tone mask via HSV-style hue + saturation analysis (warm
+#     hue +/- 0.08 of pure red AND saturation > 0.10), then mixes the
+#     masked region toward `kRougeTarget = vec3(1.00, 0.60, 0.60)` —
+#     a deeper salmon-red than neutrals_lovers' (1.00, 0.75, 0.75) so
+#     it reads more as lipstick than blush. Default strength 0.15
+#     (slightly above neutrals_lovers' 0.12).
+#
+# // TODO: replace with face-tracked lip + cheek rouge when face
+# // landmark anchoring is available in IGLUScript.
+#
+# Composite order (bottom -> top):
+#   camera -> LUT -> saturation -> skin-tone rouge
+#
+# Time source: not used. All layers are static.
+
+[Init]
+fun init(Filter filter)
+{
+    makeTexture('lut);
+
+    filter.parameters = {
+        # Layer 1 LUT.
+        {lut_strength = 0.902, min = 0.0, max = 1.0, description = "LUT mix strength (1.0 = full LUT, 0.0 = camera passthrough)"},
+
+        # Post-LUT saturation boost (luminance-preserving).
+        {saturation = 1.433, min = 0.0, max = 2.0, description = "Global saturation multiplier (1.0 = no change; <1 = mute; >1 = boost)"},
+
+        # Layer 2 rouge.
+        {rouge_strength = 0.0, min = 0.0, max = 1.0, description = "Skin-tone rouge blend strength (mix toward deep salmon-red at low opacity)"},
+    };
+
+    filter.passes = {{
+      name = 'pass0,
+      inputs = {'default, 'lut},
+      uniforms = {
+        lut_strength = 0.902,
+        saturation = 1.433,
+        rouge_strength = 0.0,
+      },
+      glslShader = glslLuxurious,
+    }};
+}
+
+# Custom Parameter strings for sample-app local-loading.
+string lut_path = "lut_path";
+string lut_filename = "";
+
+[PreRender]
+fun preRender(Filter filter){
+    string lut_filename_parameter = getParameterString(lut_path);
+    if (lut_filename_parameter != "") {
+        string new_lut_filename = stringAppend("textureFilePath://", lut_filename_parameter);
+        if (new_lut_filename != lut_filename) {
+            lut_filename = new_lut_filename;
+            loadTexture('lut, lut_filename);
+        }
+    }
+
+    f32 ls = getParameterFloat('lut_strength);
+    setShaderUniform('pass0, 'lut_strength, ls);
+
+    f32 sat = getParameterFloat('saturation);
+    setShaderUniform('pass0, 'saturation, sat);
+
+    f32 rs = getParameterFloat('rouge_strength);
+    setShaderUniform('pass0, 'rouge_strength, rs);
+}
+
+#### GLSL shader ####
+
+string glslLuxurious = "
+    varying vec2 sourceTextureCoordinate;
+    BaseUniformsOpenGL;
+
+    uniform sampler2D auxSampler0;  // 'default (camera)
+    uniform sampler2D auxSampler1;  // 'lut
+
+    uniform float lut_strength;
+    uniform float saturation;
+    uniform float rouge_strength;
+
+    // Deep salmon-red rouge target (lipstick-leaning).
+    const vec3 kRougeTarget = vec3(1.00, 0.60, 0.60);
+
+    // 8x8 grid LUT lookup on auxSampler1.
+    vec3 lutLookup(vec3 inRgb) {
+      vec3 c = clamp(inRgb, 0.00781, 0.98438);
+      float x = c.r / 8.0;
+      float y = c.g / 8.0;
+      float z = c.b;
+      float blueY = floor(z * 8.0) / 8.0;
+      float blueX = floor((z - blueY) * 64.0) / 8.0;
+      x += blueX;
+      y += blueY;
+      return texture2D(auxSampler1, vec2(x, y)).xyz;
+    }
+
+    // Approximate skin-tone mask without a face tracker.
+    // Warm hue (red dominant, |hue| < 0.08) and saturation > 0.10.
+    float skinToneMask(vec3 rgb) {
+      float cMax = max(max(rgb.r, rgb.g), rgb.b);
+      float cMin = min(min(rgb.r, rgb.g), rgb.b);
+      float d = cMax - cMin;
+      if (d < 0.001) return 0.0;
+      if (cMax != rgb.r) return 0.0;
+      float h = mod((rgb.g - rgb.b) / d, 6.0) / 6.0;
+      if (h > 0.5) h -= 1.0;
+      float hue_in = 1.0 - smoothstep(0.05, 0.10, abs(h));
+      float sat = d / max(cMax, 0.001);
+      float sat_in = smoothstep(0.10, 0.20, sat);
+      return hue_in * sat_in;
+    }
+
+    void main() {
+      vec2 uv = sourceTextureCoordinate;
+      vec4 cam = sampleInput(uv);
+
+      // ============================================================
+      // Layer 1: LUT-graded camera, mixed against passthrough by
+      // lut_strength. Includes a graceful fallback for WIP / not-yet-
+      // uploaded LUTs (probe LUT center).
+      // ============================================================
+      vec3 lut_rgb = lutLookup(cam.rgb);
+      vec3 lut_probe = texture2D(auxSampler1, vec2(0.5, 0.5)).rgb;
+      float lut_loaded = step(0.05,
+          max(max(lut_probe.r, lut_probe.g), lut_probe.b));
+      vec3 graded = mix(cam.rgb, lut_rgb, lut_strength * lut_loaded);
+
+      // ============================================================
+      // Saturation boost (luminance-preserving). Mix between a grey-
+      // of-luminance and the graded RGB by `saturation`.
+      // ============================================================
+      float lum = dot(graded, vec3(0.2126, 0.7152, 0.0722));
+      graded = clamp(
+          mix(vec3(lum), graded, saturation), 0.0, 1.0);
+
+      // ============================================================
+      // Layer 2: Hue-targeted rouge boost. Mask warm-hued pixels and
+      // mix toward kRougeTarget at the dialed strength. Reads as a
+      // lipstick-leaning flush; never tints background neutrals or
+      // cool tones.
+      // ============================================================
+      float skin_mask = skinToneMask(graded);
+      vec3 rouged = mix(graded, kRougeTarget,
+                        rouge_strength * skin_mask);
+
+      gl_FragColor = toOutputFormat(vec4(rouged, cam.a));
+    }
+    ";

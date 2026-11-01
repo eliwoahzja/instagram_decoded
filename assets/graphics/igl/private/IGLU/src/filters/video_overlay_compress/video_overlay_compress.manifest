@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_cutout_compress",
+  "displayName": "Compress",
+  "description": "[Instagram Edits] Effect browser - Label for a stretch/compress effect applied to subjects. Character count for labels is 14 characters max.",
+  "iglu": {
+    "legacyId": 5077,
+    "subject": {
+      "overlay": true
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAFuUKZcHi0"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "5085bb19",
+      "handle": "AQAFhz4SVODF",
+      "md5": "486b14f04d50c9f9f5629ccc98e1f712"
+    }
+  },
+  "assets": [
+    {
+      "name": "stretch.png",
+      "assetHash": "5143ee1fb6e226055af915ca371b734ad70b330f58d93ef3c403503e33129a99",
+      "hubAssetId": "1889347115032280"
+    }
+  ]
+}

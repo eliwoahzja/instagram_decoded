@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "text_transparent",
+  "displayName": "Transparent",
+  "description": "Text effect with transparency",
+  "iglu": {}
+}

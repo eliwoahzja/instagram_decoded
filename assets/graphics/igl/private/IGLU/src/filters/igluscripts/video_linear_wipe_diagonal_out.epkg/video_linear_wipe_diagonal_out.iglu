@@ -1,0 +1,45 @@
+[Filter LinearWipeDiagonalOut]
+[MaskBehavior alpha]
+
+[Init]
+fun init(Filter filter) {
+    filter.parameters = {
+        {direction = 8.0, min = 8.0, max = 11.0, description = "Wipe direction"},
+        {amount = 0.1, min = 0.0, max = 0.5, description = "Edge smoothness"},
+    };
+
+    filter.passes = {{
+        name = 'base,
+        igid = 'video_linear_wipe_diagonal,
+        inputs = {'default},
+        uniforms = {
+            dirX = 1.0,
+            dirY = 1.0,
+            outro = 1.0,
+        }
+    }};
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+    f32 direction = getParameterFloat('direction);
+    f32 amount = getParameterFloat('amount);
+
+    if(direction == 8.0) {
+        setShaderUniform('base, 'dirX, 1.0);
+        setShaderUniform('base, 'dirY, 1.0);
+    } else if(direction == 9.0) {
+        setShaderUniform('base, 'dirX, -1.0);
+        setShaderUniform('base, 'dirY, 1.0);
+    } else if(direction == 10.0) {
+        setShaderUniform('base, 'dirX, -1.0);
+        setShaderUniform('base, 'dirY, -1.0);
+    } else {
+        setShaderUniform('base, 'dirX, 1.0);
+        setShaderUniform('base, 'dirY, -1.0);
+    }
+
+    # keep amount off 0 so the smoothstep edge doesn't collapse
+    amount = max(0.001, amount);
+    setShaderUniform('base, 'amount, amount);
+}

@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "identifier": "8C7D481F-649A-4166-8DC7-37001B526157",
+  "displayName": "Disposable II",
+  "description": "[IG Edits] Color filter name. With \"Disposable II\", the creator gets a stacked 3-LUT color composite: base LUT, mid LUT multiplied at 50%, top LUT mixed at 50% for a layered film grade.",
+  "android": {
+    "previewAsset": {
+      "key": "6333731f",
+      "handle": "AQAKiav8_3GB",
+      "md5": "749934c6bb41fd7a58d380da9cc54a0b"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQADuhFtg-LV"
+    }
+  },
+  "iglu": {
+    "legacyId": 3096
+  },
+  "assets": [
+    {
+      "name": "disposable_ii_lut_1.png",
+      "assetHash": "8efcc7568256cc79f96969a59fdac2048fa245c7ef0f35f8561598d0e7cf216d",
+      "hubAssetId": "2548842485548619"
+    },
+    {
+      "name": "disposable_ii_lut_2.png",
+      "assetHash": "1dd1b4972bb360c442b10e66b2f4827098b354f1c85d7f3e1461c1fa97cc1726",
+      "hubAssetId": "874466184989505"
+    },
+    {
+      "name": "disposable_ii_lut_3.png",
+      "assetHash": "943a0099071cbffb824c9a4753f576e6cbfad0460c265e494fcd0649b4366362",
+      "hubAssetId": "2012040146057271"
+    }
+  ]
+}

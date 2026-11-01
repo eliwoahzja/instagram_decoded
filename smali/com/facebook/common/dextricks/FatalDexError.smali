@@ -1,0 +1,19 @@
+.class public final Lcom/facebook/common/dextricks/FatalDexError;
+.super Ljava/lang/Error;
+.source ""
+
+
+# static fields
+.field public static final serialVersionUID:J = 0x1L
+
+
+# direct methods
+.method public constructor <init>(Ljava/lang/Throwable;)V
+    .locals 0
+
+    .line 0
+    invoke-direct {p0, p1}, Ljava/lang/Error;-><init>(Ljava/lang/Throwable;)V
+
+    .line 3
+    return-void
+.end method

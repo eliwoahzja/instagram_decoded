@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Base.Theme.Launcher" parent="@style/Theme.Instagram">
+        <item name="android:windowSplashScreenBackground">@color/ig_splash_screen_background</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/instagram_padded</item>
+        <item name="android:windowSplashScreenBrandingImage">@drawable/from_meta_gradient_padded</item>
+        <item name="android:windowSplashScreenIconBackgroundColor">@color/ig_splash_screen_background</item>
+    </style>
+</resources>

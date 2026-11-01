@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape>
+            <gradient android:startColor="?igds_color_gradient_purple" android:endColor="?igds_color_gradient_orange" android:angle="45.0" android:centerColor="?igds_color_gradient_pink" />
+        </shape>
+    </item>
+    <item android:drawable="@drawable/stories_memories_pog_avatar__app_bitmap_0" android:left="18.0dp" android:top="18.0dp" android:right="18.0dp" android:bottom="18.0dp" />
+</layer-list>

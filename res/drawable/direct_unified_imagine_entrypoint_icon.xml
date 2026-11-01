@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@id/unified_imagine_entrypoint_icon" android:drawable="@drawable/direct_unified_imagine_entrypoint_icon__app_bitmap_0" android:left="@dimen/abc_floating_window_z" android:top="@dimen/abc_floating_window_z" android:right="@dimen/abc_floating_window_z" android:bottom="@dimen/abc_floating_window_z" />
+</layer-list>

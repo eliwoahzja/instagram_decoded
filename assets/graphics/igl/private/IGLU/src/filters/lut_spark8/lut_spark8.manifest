@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "identifier": "spring",
+  "displayName": "Spring",
+  "description": "[IG Edits] Color filter name. With \"Spring\", the creator can apply a fresh green-pastel springtime cast by remapping each pixel's RGB through a 3D color lookup table.",
+  "iglu": {
+    "legacyId": 825
+  },
+  "assets": [
+    {
+      "name": "spring.png",
+      "assetHash": "943a0099071cbffb824c9a4753f576e6cbfad0460c265e494fcd0649b4366362",
+      "hubAssetId": "2012040146057271"
+    },
+    {
+      "name": "spring_compressed.png",
+      "assetHash": "c6067d445e33072c1a3589ebaeae2ee41d6aad8e276c72cda3a0d54fbe3b6ba9",
+      "hubAssetId": "981412441068487"
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "text_screen_leak",
+  "displayName": "Screen Leak",
+  "description": "[IG Edits] Text effect name. With \"Screen Leak\", the creator can render text with a CRT-style blue chromatic-aberration leak, pixel-blind tile mask and jittery RGB channel offsets.",
+  "iglu": {}
+}

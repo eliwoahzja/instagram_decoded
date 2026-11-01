@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "identifier": "wash",
+  "displayName": "Wash",
+  "description": "[IG Edits] Color filter name. With \"Wash\", the creator can apply a washed-out faded color grade by sampling the wash.lutpk 3D LUT in the color_wide_lut shader.",
+  "iglu": {
+    "legacyId": 5048
+  },
+  "assets": [
+    {
+      "name": "wash.lutpk",
+      "assetHash": "1967c6226b2454001c3566a7d95b89841406f354b9140c676a44eb69c23deef2",
+      "hubAssetId": "2041329053463712"
+    }
+  ]
+}

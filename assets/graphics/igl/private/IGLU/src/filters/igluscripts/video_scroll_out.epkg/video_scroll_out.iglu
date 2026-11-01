@@ -1,0 +1,23 @@
+[Filter VideoScrollOut]
+[MaskBehavior alpha]
+
+[Init]
+fun init(Filter filter) {
+  filter.passes = {{
+      name = 'scrollOut,
+      igid = 'video_scroll_in,
+      inputs = {'default},
+      uniforms = {},
+    }};
+
+  filter.parameters = {
+    {direction = 2.0, min = 2.0, max = 3.0, description = "Direction code: 2 = Scroll up, 3 = Scroll down"},
+  };
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  setShaderUniform('scrollOut, 'progress, getParameterFloat('progress));
+  setShaderUniform('scrollOut, 'direction, getParameterFloat('direction));
+  setShaderUniform('scrollOut, 'outro, 1.0);
+}

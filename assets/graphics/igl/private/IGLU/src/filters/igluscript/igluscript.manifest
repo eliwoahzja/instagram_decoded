@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "igluscript",
+  "displayName": "IGLUScript",
+  "description": "[IG Edits] Video effect name. With \"IGLUScript\", the creator can run a multi-pass IGLUScript filter graph parsed from a .iglu file, executing the chained image-filter pipeline on the frame.",
+  "iglu": {}
+}

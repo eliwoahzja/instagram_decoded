@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "displayName": "Slam spin in",
+  "description": "[IG Edits] Effect name shown in the video effects picker. This is the user-facing label for a video effect.",
+  "iglu": {
+    "legacyId": 5125,
+    "behavior": {
+      "type": "fixedIntro",
+      "durationMs": 1000,
+      "curve": "linear"
+    },
+    "customization": [
+      {
+        "name": "duration",
+        "default": 1.0,
+        "min": 0.1,
+        "max": 5.0,
+        "displayName": "Duration",
+        "displayMethod": "time"
+      },
+      {
+        "name": "amount",
+        "displayName": "Amount",
+        "default": 0.2,
+        "min": 0.0,
+        "max": 1.0
+      }
+    ],
+    "subject": {
+      "overlay": true
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "d1ae6efa",
+      "handle": "AQADf65AjXPC",
+      "md5": "24527c27f4f5fa84dffa679feeae8a6a"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAHizqAj3rr"
+    }
+  }
+}

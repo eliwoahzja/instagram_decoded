@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "transition_shake",
+  "displayName": "Shake",
+  "description": "Video effects selection. Video shakes a little.",
+  "iglu": {}
+}

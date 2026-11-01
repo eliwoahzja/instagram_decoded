@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:gravity="top" android:orientation="vertical" android:background="?android:windowBackground" android:padding="18.0dp" android:layout_width="match_parent" android:layout_height="match_parent"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <androidx.appcompat.widget.Toolbar android:id="@id/camera_settings_toolbar" android:layout_width="match_parent" android:layout_height="wrap_content">
+        <TextView android:textSize="22.0sp" android:textStyle="bold" android:layout_gravity="start" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/string_0x7f130064" />
+        <TextView android:textSize="18.0sp" android:layout_gravity="end" android:id="@id/camera_settings_close_button" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/string_0x7f13004b" />
+    </androidx.appcompat.widget.Toolbar>
+    <Space android:layout_width="match_parent" android:layout_height="16.0dp" />
+    <ScrollView android:layout_width="match_parent" android:layout_height="match_parent">
+        <LinearLayout android:orientation="vertical" android:id="@id/camera_settings_menu_item_container" android:paddingBottom="48.0dp" android:layout_width="match_parent" android:layout_height="wrap_content">
+            <include layout="@layout/honolulu_camera_setting_default_camera_mode" />
+            <include layout="@layout/honolulu_camera_setting_recorder_type" />
+            <include layout="@layout/honolulu_camera_setting_gallery_type" />
+            <include layout="@layout/honolulu_camera_setting_surface_type" />
+            <include layout="@layout/honolulu_camera_setting_jpeg_r" />
+            <include layout="@layout/honolulu_camera_setting_instant_thumbnail" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

@@ -1,0 +1,89 @@
+.class final Lapp/morphe/extension/crimera/internal/google/common/util/concurrent/ServiceManager$ServiceManagerState$StoppedGuard;
+.super Lapp/morphe/extension/crimera/internal/google/common/util/concurrent/Monitor$Guard;
+.source "ServiceManager.java"
+
+
+# annotations
+.annotation system Ldalvik/annotation/EnclosingClass;
+    value = Lapp/morphe/extension/crimera/internal/google/common/util/concurrent/ServiceManager$ServiceManagerState;
+.end annotation
+
+.annotation system Ldalvik/annotation/InnerClass;
+    accessFlags = 0x11
+    name = "StoppedGuard"
+.end annotation
+
+
+# instance fields
+.field final synthetic this$0:Lapp/morphe/extension/crimera/internal/google/common/util/concurrent/ServiceManager$ServiceManagerState;
+
+
+# direct methods
+.method public constructor <init>(Lapp/morphe/extension/crimera/internal/google/common/util/concurrent/ServiceManager$ServiceManagerState;)V
+    .locals 0
+    .annotation system Ldalvik/annotation/MethodParameters;
+        accessFlags = {
+            0x8010
+        }
+        names = {
+            "this$0"
+        }
+    .end annotation
+
+    .line 463
+    iput-object p1, p0, Lapp/morphe/extension/crimera/internal/google/common/util/concurrent/ServiceManager$ServiceManagerState$StoppedGuard;->this$0:Lapp/morphe/extension/crimera/internal/google/common/util/concurrent/ServiceManager$ServiceManagerState;
+
+    .line 464
+    iget-object p1, p1, Lapp/morphe/extension/crimera/internal/google/common/util/concurrent/ServiceManager$ServiceManagerState;->monitor:Lapp/morphe/extension/crimera/internal/google/common/util/concurrent/Monitor;
+
+    invoke-direct {p0, p1}, Lapp/morphe/extension/crimera/internal/google/common/util/concurrent/Monitor$Guard;-><init>(Lapp/morphe/extension/crimera/internal/google/common/util/concurrent/Monitor;)V
+
+    return-void
+.end method
+
+
+# virtual methods
+.method public isSatisfied()Z
+    .locals 3
+    .annotation build Lapp/morphe/extension/crimera/internal/google/errorprone/annotations/concurrent/GuardedBy;
+        value = "ServiceManagerState.this.monitor"
+    .end annotation
+
+    .line 470
+    iget-object v0, p0, Lapp/morphe/extension/crimera/internal/google/common/util/concurrent/ServiceManager$ServiceManagerState$StoppedGuard;->this$0:Lapp/morphe/extension/crimera/internal/google/common/util/concurrent/ServiceManager$ServiceManagerState;
+
+    iget-object v0, v0, Lapp/morphe/extension/crimera/internal/google/common/util/concurrent/ServiceManager$ServiceManagerState;->states:Lapp/morphe/extension/crimera/internal/google/common/collect/Multiset;
+
+    sget-object v1, Lapp/morphe/extension/crimera/internal/google/common/util/concurrent/Service$State;->TERMINATED:Lapp/morphe/extension/crimera/internal/google/common/util/concurrent/Service$State;
+
+    invoke-interface {v0, v1}, Lapp/morphe/extension/crimera/internal/google/common/collect/Multiset;->count(Ljava/lang/Object;)I
+
+    move-result v0
+
+    iget-object v1, p0, Lapp/morphe/extension/crimera/internal/google/common/util/concurrent/ServiceManager$ServiceManagerState$StoppedGuard;->this$0:Lapp/morphe/extension/crimera/internal/google/common/util/concurrent/ServiceManager$ServiceManagerState;
+
+    iget-object v1, v1, Lapp/morphe/extension/crimera/internal/google/common/util/concurrent/ServiceManager$ServiceManagerState;->states:Lapp/morphe/extension/crimera/internal/google/common/collect/Multiset;
+
+    sget-object v2, Lapp/morphe/extension/crimera/internal/google/common/util/concurrent/Service$State;->FAILED:Lapp/morphe/extension/crimera/internal/google/common/util/concurrent/Service$State;
+
+    invoke-interface {v1, v2}, Lapp/morphe/extension/crimera/internal/google/common/collect/Multiset;->count(Ljava/lang/Object;)I
+
+    move-result v1
+
+    add-int/2addr v0, v1
+
+    iget-object p0, p0, Lapp/morphe/extension/crimera/internal/google/common/util/concurrent/ServiceManager$ServiceManagerState$StoppedGuard;->this$0:Lapp/morphe/extension/crimera/internal/google/common/util/concurrent/ServiceManager$ServiceManagerState;
+
+    iget p0, p0, Lapp/morphe/extension/crimera/internal/google/common/util/concurrent/ServiceManager$ServiceManagerState;->numberOfServices:I
+
+    if-ne v0, p0, :cond_0
+
+    const/4 p0, 0x1
+
+    return p0
+
+    :cond_0
+    const/4 p0, 0x0
+
+    return p0
+.end method

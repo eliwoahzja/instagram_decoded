@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:gravity="center" android:height="22.0dp" android:width="22.0dp">
+        <shape android:shape="oval">
+            <solid android:color="?igds_color_primary_background" />
+        </shape>
+    </item>
+    <item android:gravity="center" android:height="18.0dp" android:width="18.0dp">
+        <shape android:shape="oval">
+            <solid android:color="?igds_color_secondary_icon" />
+        </shape>
+    </item>
+    <item android:gravity="center" android:height="12.0dp" android:width="12.0dp" android:drawable="@drawable/birthday_ghost_pog_indicator__app_bitmap_0" />
+</layer-list>

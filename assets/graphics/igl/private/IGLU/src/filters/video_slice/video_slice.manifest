@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_slice",
+  "displayName": "Slice",
+  "description": "Video effect name. A video effect is a creative visual element that can be applied to a video. With \"Slice\", the creator can slice the video into multiple segments.",
+  "iglu": {
+    "legacyId": 2063,
+    "customization": [
+      {
+        "name": "speed",
+        "default": 1.5,
+        "min": 0.5,
+        "max": 3.0,
+        "displayName": "Speed",
+        "displayNameDescription": "[IG Edits] Slider label controlling the playback or animation speed of a video effect (noun, not a verb); exact range varies per effect.",
+        "displayMethod": "percent"
+      },
+      {
+        "name": "size",
+        "default": 8,
+        "min": 1,
+        "max": 10,
+        "displayName": "Size",
+        "displayNameDescription": "[IG Edits] Slider label controlling the size or scale of an element produced by a video effect; exact units and range vary per effect.",
+        "displayMethod": "number"
+      },
+      {
+        "name": "direction",
+        "defaultSelection": "horizontal",
+        "available": [
+          "vertical",
+          "horizontal"
+        ],
+        "displayName": "Direction",
+        "displayNameDescription": "[IG Edits] Picker label for the orientation of a video effect, typically choosing between values like horizontal and vertical; available options vary per effect."
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "d6e58282",
+      "handle": "AQAG114hb1CQ",
+      "md5": "aedc7f62297b86454bfe42b20d63d152"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAE3L4dzWsb"
+    }
+  }
+}

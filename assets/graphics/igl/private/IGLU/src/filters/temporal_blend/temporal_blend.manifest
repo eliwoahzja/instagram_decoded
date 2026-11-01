@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "temporal_blend",
+  "displayName": "Temporal Blend",
+  "description": "[IG Edits] Composable video effect primitive. With \"Temporal Blend\", the creator blends each frame with the previous output using a decay factor for temporal denoise or motion-trail looks.",
+  "iglu": {}
+}

@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "identifier": "boost_cool",
+  "displayName": "Boost Cool",
+  "description": "Filter name for a cool-toned saturation/contrast boost",
+  "iglu": {
+    "legacyId": 1008
+  },
+  "assets": [
+    {
+      "name": "lut_boost_cool.png",
+      "assetHash": "c65691118948cfd26c36d8c07e991f0f5313d1c5e271e21183ffc9af823fb93c",
+      "hubAssetId": "4679550882285865"
+    }
+  ]
+}

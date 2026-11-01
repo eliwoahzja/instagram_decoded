@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "identifier": "text_retro_chrome",
+  "displayName": "Text Retro Chrome",
+  "description": "[IG Edits] Text effect name. With \"Text Retro Chrome\", the creator can render text with a rainbow chrome matcap and an animated gyroid-noise glow shimmering over the surface.",
+  "assets": [
+    {
+      "name": "black.png",
+      "assetHash": "3c53ac933517e06dcae15dba9ea860e16755f0ad63655742f0806cd268a1dab6",
+      "hubAssetId": "854122020989573"
+    },
+    {
+      "name": "retro_chrome_matcap.png",
+      "assetHash": "7e913c04cb88aabf53550b2370ed8d2c61aecaf6cb8b972218e00c39c7d0e000",
+      "hubAssetId": "1412201726950701"
+    }
+  ],
+  "iglu": {}
+}

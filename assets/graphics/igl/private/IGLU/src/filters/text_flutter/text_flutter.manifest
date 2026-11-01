@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "identifier": "text_flutter",
+  "displayName": "Text Flutter",
+  "description": "[IG Edits] Text effect name. With \"Text Flutter\", the creator can wrap text in soft blurred shadow layers with bevel highlights and animated sparkle particles fluttering across glyphs.",
+  "assets": [
+    {
+      "name": "sparkle.png",
+      "assetHash": "2415f14f09363bd40d92336804dd819927481d951d25d97cc6f8cfdbd9e83de8",
+      "hubAssetId": "787086830563012"
+    }
+  ],
+  "iglu": {}
+}

@@ -1,0 +1,49 @@
+# IGLUSCRIPTCOLLISION_BYPASS: IGLUScript port of transition_pixel, QE-selectable for A/B vs TransitionPixelFilter.
+[Filter TransitionPixel]
+
+[Init]
+fun init(Filter filter) {
+  makeTexture('transition);
+  filter.passes = {{
+    name = 'single_pass,
+    inputs = {'default, 'transition},
+    shaderInputNames = {'default, 's_texture1},
+    uniforms = {
+      progress = 0.0,
+      outputSize = {1024.0, 1024.0},
+      pixelScale = 2.0,
+    },
+    glslShader = glsl,
+  }};
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  setShaderUniform('single_pass, 'progress, getParameterFloat('progress));
+  setShaderUniform('single_pass, 'outputSize, getTextureSize('default));
+}
+
+string glsl = "
+  varying vec2 sourceTextureCoordinate;
+  BaseUniformsOpenGL;
+  uniform sampler2D s_texture1;
+  uniform float progress;
+  uniform vec2 outputSize;
+  uniform float pixelScale;
+  float parabola(float x, float k) { return pow(4.0 * x * (1.0 - x), k); }
+  void main() {
+    vec2 uv = sourceTextureCoordinate;
+    float t = parabola(progress, 0.5);
+    float maxBlockSize = 32.0 * pixelScale;
+    float blockSize = mix(1.0, maxBlockSize, t);
+    blockSize = blockSize * (outputSize.y / 1920.0);
+    vec2 st = (uv - 0.5) * outputSize;
+    vec2 pixelatedST = floor(st / blockSize) * blockSize + blockSize * 0.5;
+    vec2 pixelatedUV = pixelatedST / outputSize + 0.5;
+    vec4 a = sampleInput(pixelatedUV);
+    vec4 b = texture2D(s_texture1, pixelatedUV);
+    float blend = smoothstep(0.4, 0.6, progress);
+    vec4 color = mix(a, b, blend);
+    gl_FragColor = toOutputFormat(color);
+  }
+";

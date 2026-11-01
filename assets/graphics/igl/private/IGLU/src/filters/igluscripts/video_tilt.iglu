@@ -1,0 +1,168 @@
+[Filter IgluscriptVideoTiltFilter]
+
+[Init]
+fun init(Filter filter) {
+  filter.parameters = {
+    {duration = 0.6, min = 0.2, max = 3.0},
+    # Normalized 0..1 slider mapped to raw [0.2, 1.5] via mix.
+    {intensity = 0.61538462, min = 0.0, max = 1.0}
+  };
+
+  filter.passes = {{
+    name = 'rotate_in, inputs = {'default},
+    uniforms = {
+      progress = 0.0,
+      inputSize = {1080.0, 1920.0},
+      scaleVal = 1.0,
+      rotRad = 0.0,
+      targetOffset = {0.0, 0.0},
+    },
+    glslShader = glsl
+  }};
+}
+
+# Keyframe position values
+vec2 K0 = {502.0 / 720.0, 646.0 / 1280.0};
+vec2 K1 = {390.1 / 720.0, 631.7 / 1280.0};
+vec2 K2 = {361.1 / 720.0, 632.7 / 1280.0};
+vec2 K3 = {360.0 / 720.0, 640.0 / 1280.0};
+
+# Keyframe times
+f32 T0 = 0.0;
+f32 T1 = 3.0 / 90.0;
+f32 T2 = 5.0 / 90.0;
+f32 T3 = 10.0 / 90.0;
+f32 T4 = 18.0 / 90.0;
+f32 T5 = 1.0;
+
+# Scale keyframes
+f32 S0 = 0.71;
+f32 S1 = 0.951;
+f32 S2 = 1.0;
+
+# Rotation keyframes (degrees)
+f32 R0 = 17.0;
+f32 R1 = 0.0;
+f32 R2 = 0.0 - 8.0;
+
+fun catmullRomVec2(vec2 p0, vec2 p1, vec2 p2, vec2 p3, f32 t) vec2 {
+  f32 t2 = t * t;
+  f32 t3 = t2 * t;
+  f32 x = 0.5 * ((2.0 * p1.x) + ((0.0 - p0.x) + p2.x) * t + (2.0 * p0.x - 5.0 * p1.x + 4.0 * p2.x - p3.x) * t2 + ((0.0 - p0.x) + 3.0 * p1.x - 3.0 * p2.x + p3.x) * t3);
+  f32 y = 0.5 * ((2.0 * p1.y) + ((0.0 - p0.y) + p2.y) * t + (2.0 * p0.y - 5.0 * p1.y + 4.0 * p2.y - p3.y) * t2 + ((0.0 - p0.y) + 3.0 * p1.y - 3.0 * p2.y + p3.y) * t3);
+  vec2 result = {x, y};
+  return result;
+}
+
+fun catmullRom(f32 p0, f32 p1, f32 p2, f32 p3, f32 t) f32 {
+  f32 t2 = t * t;
+  f32 t3 = t2 * t;
+  return 0.5 * ((2.0 * p1) + ((0.0 - p0) + p2) * t + (2.0 * p0 - 5.0 * p1 + 4.0 * p2 - p3) * t2 + ((0.0 - p0) + 3.0 * p1 - 3.0 * p2 + p3) * t3);
+}
+
+fun radians(f32 deg) f32 {
+  return deg * 3.14159265359 / 180.0;
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  f32 progress = getParameterFloat('progress);
+  # Normalized [0..1] remapped to the raw [0.2, 1.5] intensity range.
+  f32 intensityNorm = getParameterFloat('intensity);
+  f32 intensity = mix(0.2, 1.5, intensityNorm);
+
+  # Speed up 5x because curves were originally timed for 3 seconds
+  # but animation only runs for 0.6s
+  f32 p = progress * 0.2;
+
+  vec2 targetUV = K3;
+  f32 scaleVal = S2;
+  f32 rotDeg = R1;
+
+  # Calculate target UV position
+  if (p < T1) {
+    f32 u = (p - T0) / (T1 - T0);
+    targetUV = catmullRomVec2(K0, K0, K1, K2, u);
+  } else if (p < T2) {
+    f32 u = (p - T1) / (T2 - T1);
+    targetUV = catmullRomVec2(K0, K1, K2, K3, u);
+  } else if (p < T4) {
+    f32 u = (p - T2) / (T4 - T2);
+    targetUV = catmullRomVec2(K1, K2, K3, K3, u);
+  }
+
+  # Calculate scale and rotation
+  if (p < T1) {
+    f32 t = (p - T0) / (T1 - T0);
+    scaleVal = catmullRom(S0, S0, S1, S1, t);
+    rotDeg = catmullRom(R0, R0, R1, R2, t);
+  } else if (p < T3) {
+    f32 t = (p - T1) / (T3 - T1);
+    scaleVal = catmullRom(S0, S1, S1, S2, t);
+    rotDeg = catmullRom(R0, R1, R2, R1, t);
+  } else if (p < T4) {
+    f32 t = (p - T3) / (T4 - T3);
+    scaleVal = catmullRom(S1, S1, S2, S2, t);
+    rotDeg = catmullRom(R1, R2, R1, R1, t);
+  }
+
+  # Apply intensity to deviations from end state
+  f32 scaleDelta = (scaleVal - S2) * intensity;
+  f32 rotDelta = rotDeg * intensity;
+  f32 offsetX = (targetUV.x - K3.x) * intensity;
+  f32 offsetY = (targetUV.y - K3.y) * intensity;
+
+  vec2 offset = {K3.x + offsetX - 0.5, K3.y + offsetY - 0.5};
+
+  setShaderUniform('rotate_in, 'progress, progress);
+  setShaderUniform('rotate_in, 'scaleVal, S2 + scaleDelta);
+  setShaderUniform('rotate_in, 'rotRad, radians(rotDelta));
+  setShaderUniform('rotate_in, 'targetOffset, offset);
+}
+
+string glsl = "precision highp float;
+
+varying vec2 sourceTextureCoordinate;
+
+BaseUniformsOpenGL;
+
+uniform vec2 inputSize;
+uniform float progress;
+uniform float scaleVal;
+uniform float rotRad;
+uniform vec2 targetOffset;
+
+vec2 mirrorUv(vec2 v) {
+  vec2 m = mod(v, 2.0);
+  return mix(m, 2.0 - m, step(1.0, m));
+}
+
+void main() {
+  vec2 uv = sourceTextureCoordinate;
+  vec2 ratio = vec2(inputSize.xy / inputSize.y);
+
+  float c = cos(rotRad);
+  float ss = sin(rotRad);
+  mat2 rot2d = mat2(c, -ss, ss, c);
+
+  uv = uv - vec2(0.5);
+  uv *= ratio;
+  uv = rot2d * uv;
+  uv /= ratio;
+  uv -= targetOffset;
+  uv /= scaleVal;
+  uv += vec2(0.5);
+
+  uv = mirrorUv(uv);
+
+  // Motion blur
+  vec2 dir = uv - vec2(1.0, 0.75);
+  float blurAmt = 0.025 * clamp(1.0 - progress / 0.15, 0.0, 1.0);
+  vec4 c0 = sampleInput(uv);
+  vec4 c1 = sampleInput(uv - dir * (blurAmt * 0.33));
+  vec4 c2 = sampleInput(uv - dir * (blurAmt * 0.66));
+
+  vec4 color = (c0 + c1 + c2) / 3.0;
+  gl_FragColor = toOutputFormat(color);
+}
+";

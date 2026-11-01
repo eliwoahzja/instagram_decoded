@@ -1,0 +1,93 @@
+# IGLUSCRIPTCOLLISION_BYPASS: Intentional replacement of C++ native effect - IGLUScript takes precedence on Android/iOS; C++ filter retained as fallback for direct C++ callers (sample app, server tools).
+[Filter VideoPulseZoom]
+
+# Pulse Zoom: a center-anchored magnification that either oscillates on a clock or pulses once per
+# beat.
+#
+# The whole effect reduces to one scalar, zoomScale, resolved in [PreRender]. Only the playhead
+# differs:
+#   useBeats false -> clock-driven, a sine sweep between 1.0 and zoomEnd at pulseSpeed
+#   useBeats true  -> beat-driven, beatProgress ramps 1.0 -> zoomEnd so the peak lands ON the beat
+#
+# useBeats is set by BeatReactiveController when a manifest declares beatReactive; with no such
+# manifest nothing writes it and the false default selects the clock.
+#
+# Evaluating in [PreRender] rather than the shader keeps the shader to pure UV geometry -- no time,
+# no beat, no branch.
+#
+# The slider remaps below are VideoPulseZoomFilter's kPulseSpeedMin/Max and kZoomEndMin/Max, so the
+# shipped look is preserved at the manifest defaults:
+#   pulseSpeed = mix(0.3, 2.0, speed)  ->  speed 0.1764706 yields 0.6
+#   zoomEnd    = mix(1.1, 2.0, zoom)   ->  zoom  0.3333333 yields 1.4
+
+[Init]
+fun init(Filter filter) {
+  filter.parameters = {
+    {speed = 0.1764706, min = 0.0, max = 1.0, description = "Oscillation rate of the clock-driven pulse"},
+    {zoom = 0.3333333, min = 0.0, max = 1.0, description = "Magnification reached at the peak of a pulse"},
+    {useBeats = false, description = "True while the beat system is driving this effect"},
+    {beatProgress = 0.0, min = 0.0, max = 1.0, description = "Beat-driven pulse playhead"},
+  };
+
+  filter.passes = {{
+    name = 'zoom_pulse,
+    inputs = {'default},
+    uniforms = {
+      zoomScale = 1.0,
+    },
+    glslShader = glslZoomPulse,
+  }};
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  # Media time, not getLocalTime(): both playheads are host-driven so preview and export agree
+  # frame-for-frame. getLocalTime() is wall-clock since shader start and an export pass cannot
+  # reproduce it. The guidance preferring getLocalTime() for continuous animation is about the sample
+  # app, where time_sec wraps with the looping 10s sample video; in Edits it advances with the clip.
+  f32 time = getParameterFloat('time_sec);
+  f32 speed = getParameterFloat('speed);
+  f32 zoom = getParameterFloat('zoom);
+  boolean useBeats = getParameterBoolean('useBeats);
+
+  f32 pulseSpeed = 0.3 + (2.0 - 0.3) * speed;
+  f32 zoomEnd = 1.1 + (2.0 - 1.1) * zoom;
+
+  f32 zoomScale = 1.0;
+
+  if (useBeats) {
+    f32 beat = getParameterFloat('beatProgress);
+
+    # The envelope IS the pulse: 0 at rest resolves to passthrough, 1 on the beat to full zoom.
+    # This replaces the sine rather than attenuating it, as the legacy beat_intensity keyframe path
+    # did -- a free-running oscillation left in place would beat against the envelope.
+    zoomScale = 1.0 + beat * (zoomEnd - 1.0);
+  } else {
+    f32 t = 0.5 * (1.0 + sin(time * pulseSpeed * 6.2831));
+    zoomScale = 1.0 + t * (zoomEnd - 1.0);
+  }
+
+  # The shader divides by this. zoomEnd is at least 1.1 and both playheads are clamped to [0, 1], so
+  # this only defends against a host writing an out-of-range parameter.
+  zoomScale = max(zoomScale, 1.0);
+  setShaderUniform('zoom_pulse, 'zoomScale, zoomScale);
+}
+
+#### Single pass: center-anchored zoom ####
+# A zoomScale above 1.0 samples a smaller central region, so sampling stays inside the source and
+# needs no boundary treatment.
+
+string glslZoomPulse = "
+  precision highp float;
+  varying vec2 sourceTextureCoordinate;
+  BaseUniformsOpenGL;
+
+  uniform float zoomScale;
+
+  void main() {
+    vec2 uv = sourceTextureCoordinate;
+    const vec2 center = vec2(0.5);
+    vec2 zoomedUV = center + (uv - center) / zoomScale;
+    gl_FragColor = toOutputFormat(sampleInput(zoomedUV));
+  }
+";

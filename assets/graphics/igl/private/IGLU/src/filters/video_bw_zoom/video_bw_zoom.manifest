@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_bw_zoom",
+  "displayName": "B&W zoom",
+  "description": "Video effects selection. Video zooms in and color shifts to black and white.",
+  "iglu": {
+    "legacyId": 2035,
+    "behavior": {
+      "type": "fixedIntro",
+      "durationMs": 3000,
+      "curve": "linear"
+    },
+    "customization": [
+      {
+        "name": "zoom",
+        "default": 0.2592593,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Zoom",
+        "displayNameDescription": "[IG Edits] Slider label controlling the zoom factor (scale toward/away from the subject) of a video effect; exact range varies per effect."
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "ee566207",
+      "handle": "AQAEu4-pGDrB",
+      "md5": "9bb97f565eb5cc5a070c00f1d275238f"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAF_77Kdt9S"
+    }
+  }
+}

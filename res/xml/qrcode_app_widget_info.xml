@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="utf-8"?>
+<appwidget-provider android:minWidth="@dimen/horizon_button_horizontal_padding" android:minHeight="@dimen/horizon_button_horizontal_padding" android:updatePeriodMillis="21600000" android:initialLayout="@layout/qrcode_app_widget" android:previewImage="@mipmap/icon" android:resizeMode="none" android:widgetCategory="home_screen" android:targetCellWidth="2" android:targetCellHeight="2"
+  xmlns:android="http://schemas.android.com/apk/res/android" />

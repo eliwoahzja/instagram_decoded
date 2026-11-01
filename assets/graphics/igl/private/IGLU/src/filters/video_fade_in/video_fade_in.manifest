@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_fade_in",
+  "displayName": "Fade in",
+  "description": "Video effects selection. Video fades in.",
+  "iglu": {
+    "legacyId": 2017,
+    "behavior": {
+      "type": "fixedIntro",
+      "durationMs": 2000,
+      "curve": "linear",
+      "reversed": true
+    },
+    "customization": [
+      {
+        "name": "duration",
+        "default": 2.0,
+        "min": 0.25,
+        "max": 5.0,
+        "displayName": "Duration",
+        "displayNameDescription": "[IG Edits] Slider label controlling how long a video effect's animation lasts; exact units and range vary per effect (seconds or normalized).",
+        "displayMethod": "time"
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "29f599aa",
+      "handle": "AQADpYMjAsGZ",
+      "md5": "9575a35eb00f7b79180a40727fa44bd1"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQADwLLIrmTh"
+    }
+  }
+}

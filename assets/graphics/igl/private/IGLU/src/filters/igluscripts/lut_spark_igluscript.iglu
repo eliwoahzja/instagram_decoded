@@ -1,0 +1,112 @@
+[Filter LutSparkIGLUScript]
+# port of the older C++ LutSpark filter to ensure it works in IGLUScript
+
+[Init]
+fun init(Filter filter)
+{
+    # make placeholder, real texture loaded at runtime in PreRender
+    makeTexture('asset1);
+
+    filter.passes = {{
+      name = 'pass0,
+      inputs = {'default, 'asset1},
+      uniforms = {
+        strength = 1.0,
+      },
+      glslShader  = glslLutSpark,
+     metalShader = metalLutSpark,
+    }
+    };
+}
+
+
+string lut_path = "lut_path"; # parameter name
+string lut_filename = ""; # filename loaded
+
+[PreRender]
+fun preRender(Filter filter){
+
+    # if parameter changes asset name, load new one.
+    string lut_filename_parameter = getParameterString(lut_path);
+    string new_lut_filename = stringAppend("textureFilePath://", lut_filename_parameter);
+    if (new_lut_filename != lut_filename) {
+        lut_filename = new_lut_filename;
+        loadTexture('asset1, lut_filename);
+      }
+}
+
+
+#### GLSL shaders ####
+
+# double pass separables
+string glslLutSpark = "
+    varying vec2 sourceTextureCoordinate;
+    BaseUniformsOpenGL;
+
+    uniform sampler2D auxSampler0;
+    uniform sampler2D auxSampler1;
+    uniform sampler2D auxSampler2;
+
+    void main() {
+      vec4 texel = sampleInput(sourceTextureCoordinate);
+
+      texel.rgb = clamp(texel.rgb, 0.00781, 0.98438);
+
+      float x = texel.r / 8.0;
+      float y = texel.g / 8.0;
+      float z = texel.b;
+
+      float blueY = floor(z * 8.0) / 8.0;
+      float blueX = floor((z - blueY) * 64.0) / 8.0;
+
+      x += blueX;
+      y += blueY;
+
+      vec3 color = texture2D(auxSampler1, vec2(x, y)).xyz;
+
+      texel = mix(texel, vec4(color, texel.a), strength);
+      gl_FragColor = toOutputFormat(texel);
+    }
+    ";
+
+
+
+#### Metal shaders ####
+
+string metalLutSpark = "
+   struct fragmentOut { float4 _gl_FragColor [[color(0)]]; };
+
+      struct fragmentIn { float2 sourceTextureCoordinate [[user(locn1)]]; };
+
+      typedef struct { BaseUniformsMetal; } Uniforms;
+
+      fragment fragmentOut fragmentShader(fragmentIn in [[stage_in]],
+                                          constant Uniforms & uniforms [[buffer(1)]],
+                                          DefaultInputs defaultInputs,
+
+                                          texture2d<float> tex0,
+                                          sampler auxSampler0
+                                          ) {
+        float2 param = in.sourceTextureCoordinate;
+
+        float4 texel = sampleInput(defaultInputs, param);
+
+        texel.rgb = clamp(texel.rgb, 0.00781, 0.98438);
+
+        float x = texel.r / 8.0;
+        float y = texel.g / 8.0;
+        float z = texel.b;
+
+        float blueY = floor(z * 8.0) / 8.0;
+        float blueX = floor((z - blueY) * 64.0) / 8.0;
+
+        x += blueX;
+        y += blueY;
+        float3 color = tex0.sample(auxSampler0, float2(x, y)).xyz;
+
+        texel = mix(texel, float4(color, texel.a), uniforms.strength);
+
+        fragmentOut out = {._gl_FragColor = toOutputFormat(texel)};
+        return out;
+      }
+";

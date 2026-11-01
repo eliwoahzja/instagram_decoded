@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout android:gravity="center" android:layout_gravity="center" android:layout_width="match_parent" android:layout_height="match_parent"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout android:gravity="center" android:layout_gravity="center" android:orientation="vertical" android:layout_width="match_parent" android:layout_height="wrap_content">
+        <ImageButton android:layout_gravity="center_horizontal" android:id="@id/unlock_button" android:background="@drawable/round_button_bg" android:padding="8.0dp" android:layout_width="@dimen/account_group_management_title_text_horizontal_padding" android:layout_height="@dimen/account_group_management_title_text_horizontal_padding" android:src="@drawable/lock_button" android:scaleType="fitCenter" />
+        <TextView android:textStyle="bold" android:textColor="@color/bds_white" android:gravity="center_horizontal" android:id="@id/no_media_message_title" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/abc_floating_window_z" android:text="@string/string_0x7f1300a1" android:layout_marginStart="@dimen/abc_floating_window_z" android:layout_marginEnd="@dimen/abc_floating_window_z" />
+        <TextView android:gravity="center_horizontal" android:id="@id/no_media_message_description" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/abc_floating_window_z" android:text="@string/string_0x7f1300a0" android:layout_marginStart="@dimen/abc_floating_window_z" android:layout_marginEnd="@dimen/abc_floating_window_z" />
+    </LinearLayout>
+</FrameLayout>

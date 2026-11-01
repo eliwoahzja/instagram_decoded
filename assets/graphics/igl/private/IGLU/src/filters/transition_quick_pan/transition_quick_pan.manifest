@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "transition_quick_pan",
+  "displayName": "Quick Pan",
+  "description": "Video transition selection. Chooses to apply quick pan transition.",
+  "iglu": {}
+}

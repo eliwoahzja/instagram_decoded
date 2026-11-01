@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "transition_shake_zoom",
+  "displayName": "Shake Zoom",
+  "description": "[IG Edits] Transition name. With \"Shake Zoom\", the creator can transition between clips by punching in with a zoom and noise-driven camera shake, then crossfading through a directional motion blur.",
+  "iglu": {}
+}

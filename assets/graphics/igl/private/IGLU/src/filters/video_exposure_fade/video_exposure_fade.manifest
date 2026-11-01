@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_exposure_fade",
+  "displayName": "Flash",
+  "description": "Video effect name. A video effect is a creative visual element that can be applied to a video. With \"Flash\", the creator can add a large bright white light effect that fills the clip screen.",
+  "iglu": {
+    "legacyId": 2041,
+    "behavior": {
+      "type": "fixedIntro",
+      "durationMs": 600,
+      "curve": "circularInOut",
+      "reversed": true
+    },
+    "customization": [
+      {
+        "name": "amount",
+        "default": 1.0,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Amount",
+        "displayNameDescription": "[IG Edits] Slider label controlling the magnitude or quantity of a video effect. Generic across many effects; exact range varies per effect."
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "95b3d2d",
+      "handle": "AQADyjg7IQyd",
+      "md5": "7a88135614020abf9d845c1e61c398b7"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAGTBHHAobw"
+    }
+  }
+}

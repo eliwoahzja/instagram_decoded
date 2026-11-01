@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "identifier": "5B6AF8C2-5E72-443A-852A-70A472D359E7",
+  "displayName": "iPhone 14",
+  "description": "[IG Edits] Color filter name. With \"iPhone 14\", the creator gets a pure 8x8 LUT color grade applied to the camera image at full strength.",
+  "ios": {
+    "previewAsset": {
+      "handle": "AQBlDIfZ-92t"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "82754f39",
+      "handle": "AQAFGLyjQT4R",
+      "md5": "5075a7f488589e5201251e6652be2c80"
+    }
+  },
+  "iglu": {
+    "legacyId": 3097
+  },
+  "assets": [
+    {
+      "name": "iphone_14_lut.png",
+      "assetHash": "d03c84cbabdbe3527de87e12b8a2d4153214bbb0ec07863b3a5bb39d646a8477",
+      "hubAssetId": "2043570432932869"
+    }
+  ]
+}

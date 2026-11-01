@@ -1,0 +1,311 @@
+[Filter BlueJeans]
+
+[Init]
+fun init(Filter filter)
+{
+    loadTexture('noiseTex, 'texture://TextEffectsSharedAssets/PerlinNoise);
+    makeTexture('perlin_noise_fine_512);
+
+    filter.parameters = {
+        {amount = 1.0, min = 0.0, max = 1.0, description = "Filter amount"},
+        {opacity = 0.0, min = 0.0, max = 1.0, description = "Blend background between paper (0) and input image (1)"},
+        {direction = 12.0, min = 12.0, max = 15.0, description = "Hatch line direction (12=diagonal asc, 13=diagonal desc, 14=vertical, 15=horizontal)"},
+        {color = {0.016, 0.110, 0.275, 1.0}, description = "Jeans color"},
+        {intensity = 1.0, min = 0.0, max = 1.0, description = "Color Opacity"},
+        {time_sec = 0.0, description = "Elapsed time in seconds"},
+
+        {density = 162.62, min = 10.0, max = 200.0, description = "Line density"},
+        {levelLow = 0.15, min = 0.0, max = 1.0, description = "Luminance black point"},
+        {levelHigh = 0.90, min = 0.0, max = 1.0, description = "Luminance white point"},
+        {gamma = 2.01, min = 0.2, max = 4.0, description = "Luminance gamma"},
+        {noiseAmountLarge = 0.76, min = 0.0, max = 5.0, description = "Large noise strength"},
+        {noiseScaleLarge = 0.17, min = 0.0, max = 2.0, description = "Large noise tiling"},
+        {noiseAmountSmall = 0.20, min = 0.0, max = 1.0, description = "Small noise strength"},
+        {noiseScaleSmall = 7.0, min = 1.0, max = 20.0, description = "Small noise tiling"},
+        {inkColor = {0.016, 0.110, 0.275, 1.0}, description = "Line color"},
+        {speed = 0.2, min = 0.0, max = 1.0, description = "Noise animation speed"},
+    };
+
+    filter.passes = {{
+        name = 'hatch,
+        inputs = {'default, 'noiseTex, 'perlin_noise_fine_512},
+        uniforms = {
+            density = 162.62,
+            angle = -0.7853,
+            levelLow = 0.15,
+            levelHigh = 0.90,
+            gamma = 2.01,
+            noiseAmountLarge = 0.76,
+            noiseScaleLarge = 0.17,
+            noiseAmountSmall = 0.20,
+            noiseScaleSmall = 7.0,
+            inkColor = {0.016, 0.110, 0.275, 1.0},
+            paperColor = {0.980, 0.949, 0.863, 1.0},
+            opacity = 0.0,
+            outputSize = {1080.0, 1920.0},
+            noiseAnimAmount = 0.0,
+        },
+        glslShader = hatchingGlsl,
+    }};
+}
+
+# Helper: Convert RGB to HSL (returns vec3 with h, s, l in 0-1 range)
+fun rgbToHsl(vec3 rgb) vec3 {
+  f32 r = rgb.r;
+  f32 g = rgb.g;
+  f32 b = rgb.b;
+
+  f32 maxVal = max(max(r, g), b);
+  f32 minVal = min(min(r, g), b);
+  f32 delta = maxVal - minVal;
+
+  f32 h = 0.0;
+  f32 s = 0.0;
+  f32 l = (maxVal + minVal) * 0.5;
+
+  if (delta > 0.001) {
+    if (l < 0.5) {
+      s = delta / (maxVal + minVal);
+    } else {
+      s = delta / (2.0 - maxVal - minVal);
+    }
+
+    if (maxVal == r) {
+      h = (g - b) / delta;
+      if (g < b) {
+        h = h + 6.0;
+      }
+    } else if (maxVal == g) {
+      h = (b - r) / delta + 2.0;
+    } else {
+      h = (r - g) / delta + 4.0;
+    }
+    h = h / 6.0;
+  }
+
+  vec3 hsl = {h, s, l};
+  return hsl;
+}
+
+# Helper: Convert HSL to RGB (h, s, l in 0-1 range)
+fun hslToRgb(vec3 hsl) vec3 {
+  f32 h = hsl.r;
+  f32 s = hsl.g;
+  f32 l = hsl.b;
+
+  f32 r = 0.0;
+  f32 g = 0.0;
+  f32 b = 0.0;
+
+  if (s < 0.001) {
+    r = l;
+    g = l;
+    b = l;
+  } else {
+    f32 q = 0.0;
+    if (l < 0.5) {
+      q = l * (1.0 + s);
+    } else {
+      q = l + s - l * s;
+    }
+    f32 p = 2.0 * l - q;
+
+    f32 hk = h + 0.333333;
+    if (hk > 1.0) { hk = hk - 1.0; }
+    if (hk < 0.0) { hk = hk + 1.0; }
+
+    if (hk < 0.166666) {
+      r = p + (q - p) * 6.0 * hk;
+    } else if (hk < 0.5) {
+      r = q;
+    } else if (hk < 0.666666) {
+      r = p + (q - p) * (0.666666 - hk) * 6.0;
+    } else {
+      r = p;
+    }
+
+    hk = h;
+    if (hk > 1.0) { hk = hk - 1.0; }
+    if (hk < 0.0) { hk = hk + 1.0; }
+
+    if (hk < 0.166666) {
+      g = p + (q - p) * 6.0 * hk;
+    } else if (hk < 0.5) {
+      g = q;
+    } else if (hk < 0.666666) {
+      g = p + (q - p) * (0.666666 - hk) * 6.0;
+    } else {
+      g = p;
+    }
+
+    hk = h - 0.333333;
+    if (hk > 1.0) { hk = hk - 1.0; }
+    if (hk < 0.0) { hk = hk + 1.0; }
+
+    if (hk < 0.166666) {
+      b = p + (q - p) * 6.0 * hk;
+    } else if (hk < 0.5) {
+      b = q;
+    } else if (hk < 0.666666) {
+      b = p + (q - p) * (0.666666 - hk) * 6.0;
+    } else {
+      b = p;
+    }
+  }
+
+  vec3 rgb = {r, g, b};
+  return rgb;
+}
+
+# Helper: Complementary highlight color from ink color
+# (hue + 180 degrees, high saturation, medium-high lightness).
+fun calculateHighlightColor(vec3 inkRgb) vec3 {
+  vec3 hsl = rgbToHsl(inkRgb);
+
+  f32 compHue = hsl.r + 0.5;
+  if (compHue > 1.0) {
+    compHue = compHue - 1.0;
+  }
+
+  f32 highlightSat = 1.0;
+  f32 highlightLight = 0.92;
+
+  vec3 highlightHsl = {compHue, highlightSat, highlightLight};
+  vec3 highlightRgb = hslToRgb(highlightHsl);
+  return highlightRgb;
+}
+
+# The fine noise ships as an ARD asset (perlin_noise_fine_512.png in the manifest).
+# Per the asset-stem matching rule, the host binds it via a string parameter keyed
+# by the manifest asset stem, so the key AND the texture symbol must both be
+# 'perlin_noise_fine_512' for the binding to resolve on Android/iOS.
+string noise_fine_path = "perlin_noise_fine_512";
+string noise_fine_filename = "";
+
+[PreRender]
+fun preRender(Filter filter)
+{
+  # Load the fine noise from its host-provided path (ARD in production).
+  string noise_fine_param = getParameterString(noise_fine_path);
+  if (noise_fine_param != "") {
+    string new_noise_fine = stringAppend("textureFilePath://", noise_fine_param);
+    if (new_noise_fine != noise_fine_filename) {
+      noise_fine_filename = new_noise_fine;
+      loadTexture('perlin_noise_fine_512, noise_fine_filename);
+    }
+  }
+
+  vec2 sz = getTextureSize('default);
+    setShaderUniform('hatch, 'outputSize, sz);
+
+    f32 t = getParameterFloat('time_sec);
+    setShaderUniform('hatch, 'time, t);
+
+    f32 amount = getParameterFloat('amount);
+    vec4 color = getParameterVec4('color);
+    f32 colorOpacity = getParameterFloat('intensity);
+
+    setShaderUniform('hatch, 'density,  mix(70.0, 200.0, amount) );
+    setShaderUniform('hatch, 'inkColor, color);
+    setShaderUniform('hatch, 'colorOpacity, colorOpacity);
+
+    # Dynamic paper color: compute the background as the complementary highlight
+    # of the ink color (hue+180 degrees, high saturation/lightness), matching easel.
+    vec3 inkRgb = {color.r, color.g, color.b};
+    vec3 highlightRgb = calculateHighlightColor(inkRgb);
+    vec4 autoPaper = {highlightRgb.r, highlightRgb.g, highlightRgb.b, 1.0};
+    setShaderUniform('hatch, 'paperColor, autoPaper);
+
+    # Opacity: blend the background between paper (0) and the input image (1),
+    # matching easel. Wired in the shader as mix(paperColor, src, opacity).
+    setShaderUniform('hatch, 'opacity, getParameterFloat('opacity));
+
+    setShaderUniform('hatch, 'noiseAnimAmount, getParameterFloat('speed));
+
+    # Direction dropdown -> hatch line angle (radians, screen-space y-up).
+    # The host delivers 'direction as a float code
+    # (see BSLToolsDirectionPickerItemParamModel):
+    #   12 = diagonal-ascending (/), 13 = diagonal-descending (\),
+    #   14 = vertical   (lines run up/down),
+    #   15 = horizontal (lines run left/right).
+    f32 direction = getParameterFloat('direction);
+    if (direction == 12.0) { setShaderUniform('hatch, 'angle, -0.7853); }
+    else if (direction == 14.0) { setShaderUniform('hatch, 'angle, 1.5708); }
+    else if (direction == 15.0) { setShaderUniform('hatch, 'angle, 0.0); }
+    else { setShaderUniform('hatch, 'angle, -0.7853); }
+}
+
+string hatchingGlsl = "
+    varying vec2 sourceTextureCoordinate;
+    BaseUniformsOpenGL;
+
+    uniform sampler2D auxSampler1;
+    uniform sampler2D auxSampler2;
+
+    uniform float density;
+    uniform float angle;
+    uniform float levelLow;
+    uniform float levelHigh;
+    uniform float gamma;
+    uniform float noiseAmountLarge;
+    uniform float noiseScaleLarge;
+    uniform float noiseAmountSmall;
+    uniform float noiseScaleSmall;
+    uniform vec4 inkColor;
+    uniform vec4 paperColor;
+    uniform float opacity;
+    uniform vec2 outputSize;
+    uniform float colorOpacity;
+    uniform float time;
+    uniform float noiseAnimAmount;
+
+    float luma(vec3 c) {
+      return dot(c, vec3(0.2126, 0.7152, 0.0722));
+    }
+
+    void main() {
+      vec2 uv = sourceTextureCoordinate;
+      vec4 src = sampleInput(uv);
+
+      float l = luma(src.rgb);
+      float lAdj = clamp((l - levelLow) / max(levelHigh - levelLow, 0.001), 0.0, 1.0);
+      lAdj = pow(lAdj, gamma);
+
+      float aspect = outputSize.x / outputSize.y;
+      // p is in screen-space (y axis up). UP flips uv.y on Metal so the same
+      // screen-space coords drive both backends.
+      vec2 p = vec2((uv.x - 0.5) * aspect, (uv.y - 0.5) * UP);
+
+      float ca = cos(angle);
+      float sa = sin(angle);
+      vec2 pr = vec2(ca * p.x - sa * p.y, sa * p.x + ca * p.y);
+
+      float linePos = pr.y * density;
+
+      // Noise must be sampled in a screen-aligned uv so the wobble pattern
+      // matches between OpenGL and Metal (sourceTextureCoordinate has Y
+      // flipped on Metal — sampleInput accounts for that, but direct texture2D
+      // calls into auxSampler1/auxSampler2 do not).
+      vec2 nuv = vec2(uv.x, 0.5 + (uv.y - 0.5) * UP);
+      float qt = floor(time * 6.0) / 6.0;
+      vec2 nOffset = fract(sin(vec2(qt * 12.9898, qt * 78.233)) * 43758.5453) * noiseAnimAmount;
+      nuv = nuv + nOffset;
+      float nLarge = texture2D(auxSampler1, fract(nuv * noiseScaleLarge)).r - 0.5;
+      float nSmall = texture2D(auxSampler2, fract(nuv * noiseScaleSmall + vec2(0.37, 0.71))).r - 0.5;
+      linePos += (nLarge * noiseAmountLarge + nSmall * noiseAmountSmall) * 2.0;
+
+      float dist = abs(fract(linePos) - 0.5);
+      float thickness = (1.0 - lAdj) * 0.5;
+
+      //float aa = max(fwidth(linePos) * 0.5, 0.001);
+      float aa = max(density / outputSize.y * 0.5, 0.001);
+      float line = 1.0 - smoothstep(thickness - aa, thickness + aa, dist);
+
+      vec4 bg = mix(paperColor, src, opacity);
+      vec4 ink = mix(vec4(0.0), inkColor, colorOpacity );
+      vec4 color = mix(bg, ink, line);
+      color.a = src.a;
+
+      gl_FragColor = toOutputFormat(color);
+    }
+";

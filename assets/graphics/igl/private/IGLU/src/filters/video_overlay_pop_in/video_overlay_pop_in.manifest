@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_cutout_pop",
+  "displayName": "Pop In",
+  "description": "[IG Edits] Video effect name. With \"Pop In\", the creator can overlay a scale-and-bounce sprite animation that pops into frame on top of the subject.",
+  "iglu": {
+    "legacyId": 5066,
+    "subject": {
+      "overlay": true
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "c8beaa5",
+      "handle": "AQAFlWGvyZaX",
+      "md5": "18ada9f4653d54fab8509634d1624901"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAEXRWd9Rad"
+    }
+  }
+}

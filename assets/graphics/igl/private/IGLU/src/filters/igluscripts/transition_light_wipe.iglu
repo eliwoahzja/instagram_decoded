@@ -1,0 +1,71 @@
+# IGLUSCRIPTCOLLISION_BYPASS: IGLUScript port of transition_light_wipe, QE-selectable for A/B vs TransitionLightWipeFilter.
+[Filter TransitionLightWipe]
+
+[Init]
+fun init(Filter filter) {
+  makeTexture('transition);
+  filter.passes = {{
+    name = 'light_wipe,
+    inputs = {'default, 'transition},
+    shaderInputNames = {'default, 's_texture1},
+    uniforms = {
+      progress = 0.0,
+      coreWidth = 0.1,
+      glowWidth = 0.4,
+      displacement = 0.2,
+      slideDirection = {1.0, 1.0},
+      outputSize = {1024.0, 1024.0},
+      neonColor = {0.76, 0.26, 0.94, 1.0},
+    },
+    glslShader = glsl,
+  }};
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  setShaderUniform('light_wipe, 'progress, getParameterFloat('progress));
+  setShaderUniform('light_wipe, 'outputSize, getTextureSize('default));
+}
+
+string glsl = "
+  varying vec2 sourceTextureCoordinate;
+  BaseUniformsOpenGL;
+  uniform sampler2D s_texture1;
+  uniform float progress;
+  uniform float coreWidth;
+  uniform float glowWidth;
+  uniform float displacement;
+  uniform vec2 slideDirection;
+  uniform vec2 outputSize;
+  uniform vec4 neonColor;
+  void main() {
+    float tp = -(cos(3.14159265358979 * progress) - 1.0) / 2.0;
+    vec2 uv = sourceTextureCoordinate;
+    vec2 slideDir = vec2(slideDirection.x, slideDirection.y * DOWN);
+    vec2 normDir = normalize(slideDir);
+    vec2 normSize = outputSize / max(outputSize.x, outputSize.y);
+    float maxDist = abs(dot(abs(normDir), normSize));
+    float normProg = (1.0 - tp - 0.5) * maxDist + 0.5;
+    vec2 st = (uv - 0.5) * normSize;
+    float dist = dot(normDir, st) - 0.5 + normProg;
+    vec4 texA = sampleInput(uv);
+    vec4 texB = texture2D(s_texture1, uv);
+    float lumaA = dot(texA.rgb, vec3(0.299, 0.587, 0.114));
+    float lumaB = dot(texB.rgb, vec3(0.299, 0.587, 0.114));
+    float offset = mix(lumaA, lumaB, smoothstep(0.75, 0.25, tp)) - 0.5;
+    offset = offset * max(0.0, 0.3 - abs(dist));
+    float timeFade = smoothstep(0.5, 0.45, abs(tp - 0.5));
+    offset = offset * timeFade;
+    dist = dist + offset * displacement;
+    float alpha = step(0.0, dist);
+    vec4 color = mix(texB, texA, alpha);
+    float absDist = abs(dist);
+    float core = exp(-25.0 * absDist / coreWidth);
+    float glow = exp(-3.0 * absDist / glowWidth);
+    color.rgb = mix(color.rgb, neonColor.rgb, glow * 0.3 * timeFade);
+    color.rgb += glow * neonColor.rgb * 0.7 * timeFade;
+    color.rgb += core * timeFade;
+    color.rgb = clamp(color.rgb, 0.0, 1.0);
+    gl_FragColor = toOutputFormat(color);
+  }
+";

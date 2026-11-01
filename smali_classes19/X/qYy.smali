@@ -1,0 +1,83 @@
+.class public final LX/qYy;
+.super LX/5Ar;
+.source ""
+
+
+# annotations
+.annotation runtime Lkotlin/coroutines/jvm/internal/DebugMetadata;
+    c = "com.instagram.settings2.core.viewmodel.UiStateKt"
+    f = "UiState.kt"
+    l = {
+        0x1a4,
+        0x1ac,
+        0x1b4,
+        0x1ce,
+        0x1d0,
+        0x1d2
+    }
+    m = "toUiState"
+.end annotation
+
+
+# instance fields
+.field public A00:I
+
+.field public A01:Ljava/lang/Object;
+
+.field public A02:Ljava/lang/Object;
+
+.field public A03:Ljava/lang/Object;
+
+.field public A04:Ljava/lang/Object;
+
+.field public A05:Ljava/lang/Object;
+
+.field public A06:Ljava/lang/Object;
+
+.field public A07:Ljava/lang/Object;
+
+.field public A08:Ljava/lang/Object;
+
+.field public A09:Ljava/lang/Object;
+
+.field public A0A:Ljava/lang/Object;
+
+.field public A0B:Z
+
+.field public A0C:Z
+
+.field public synthetic A0D:Ljava/lang/Object;
+
+
+# direct methods
+.method public constructor <init>(LX/HAU;)V
+    .locals 0
+
+    invoke-direct {p0, p1}, LX/5Ar;-><init>(LX/HAU;)V
+
+    return-void
+.end method
+
+
+# virtual methods
+.method public final invokeSuspend(Ljava/lang/Object;)Ljava/lang/Object;
+    .locals 2
+
+    iput-object p1, p0, LX/qYy;->A0D:Ljava/lang/Object;
+
+    iget v1, p0, LX/qYy;->A00:I
+
+    const/high16 v0, -0x80000000
+
+    or-int/2addr v1, v0
+
+    iput v1, p0, LX/qYy;->A00:I
+
+    const/4 v0, 0x0
+
+    invoke-static {v0, v0, v0, p0}, Lcom/instagram/settings2/core/viewmodel/UiStateKt;->A07(LX/b1v;Lcom/instagram/settings2/core/session/SettingsSession;LX/15z;LX/HAU;)Ljava/lang/Object;
+
+    move-result-object v0
+
+    return-object v0
+.end method

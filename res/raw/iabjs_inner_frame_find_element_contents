@@ -1,0 +1,1 @@
+(function(selectorsJSON,capturePropertiesJSON){return window._META.IABInnerFrame.findElementContents(JSON.parse(selectorsJSON),capturePropertiesJSON?JSON.parse(capturePropertiesJSON):void 0)})

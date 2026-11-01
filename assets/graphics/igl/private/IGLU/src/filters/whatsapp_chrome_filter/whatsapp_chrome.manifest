@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "whatsapp_chrome",
+  "displayName": "Chrome",
+  "description": "Text effect with chrome look",
+  "iglu": {}
+}

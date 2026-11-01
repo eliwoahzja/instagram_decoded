@@ -1,0 +1,110 @@
+[Filter LutDemoOverlay]
+# Variant shader for the `lut_demo.epkg` example's `overlay` variant. This is
+# a STANDALONE shader (inline passes only, no composition into another effect)
+# that REPLACES the base
+# `lut_demo.epkg/lut_demo.iglu` when the `overlay` variant is selected: the
+# loader probes `variants/overlay/lut_demo.overlay.iglu` before the base
+# `lut_demo.iglu` and
+# hands these bytes to the filter. When the variant is not selected, the loader
+# falls back to the base script and renders the base LUT grade instead.
+#
+# It is deliberately VISIBLY DISTINCT from the base in two independent ways:
+#   1. It samples the variant's OWN color-LUT texture
+#      (`lut_demo_overlay_clut.png`, copied from a different lookup table than the
+#      base `lut_demo_clut.png`), so the LUT grade differs.
+#   2. On top of the graded color it applies a warm tint and a radial vignette —
+#      a transform the base shader does not apply at all — so the rendered result
+#      differs even ignoring the LUT swap.
+#
+# Same host-only `lut_path` local-iteration convention as the base: production
+# leaves it empty so the Hub-delivered variant LUT bound as 'lut is used.
+
+[Init]
+fun init(Filter filter)
+{
+    makeTexture('lut);
+
+    filter.parameters = {
+        {lut_strength = 1.0, min = 0.0, max = 1.0, description = "LUT mix strength"},
+        {vignette_strength = 0.5, min = 0.0, max = 1.0, description = "Vignette darkening at the edges"},
+    };
+
+    filter.passes = {{
+        name = 'graded,
+        inputs = {'default, 'lut},
+        uniforms = {
+            lut_strength = 1.0,
+            vignette_strength = 0.5,
+        },
+        glslShader = overlayShader,
+    }};
+}
+
+string lut_path = "lut_path";
+string lut_filename = "";
+
+[PreRender]
+fun preRender(Filter filter)
+{
+    # Host-only LUT override for local iteration, mirroring the base script.
+    # Production leaves this empty so the Hub-delivered variant LUT bound as 'lut
+    # is used unchanged.
+    string lut_filename_parameter = getParameterString(lut_path);
+    if (lut_filename_parameter != "") {
+        string new_lut_filename = stringAppend("textureFilePath://", lut_filename_parameter);
+        if (new_lut_filename != lut_filename) {
+            lut_filename = new_lut_filename;
+            loadTexture('lut, lut_filename);
+        }
+    }
+
+    f32 l = getParameterFloat('lut_strength);
+    setShaderUniform('graded, 'lut_strength, l);
+
+    f32 v = getParameterFloat('vignette_strength);
+    setShaderUniform('graded, 'vignette_strength, v);
+}
+
+# LUT color grading (same 8x8x8 unwrapped color-cube lookup as the base) against
+# the VARIANT's own LUT, THEN a warm tint and a radial vignette that the base
+# shader does not apply. `lut_strength` and `vignette_strength` are custom
+# uniforms (NOT the framework-reserved `strength`), so they must be declared
+# explicitly in the GLSL below.
+string overlayShader = "
+    varying vec2 sourceTextureCoordinate;
+    BaseUniformsOpenGL;
+
+    uniform sampler2D auxSampler1;
+    uniform float lut_strength;
+    uniform float vignette_strength;
+
+    void main() {
+      vec4 texel = sampleInput(sourceTextureCoordinate);
+
+      texel.rgb = clamp(texel.rgb, 0.00781, 0.98438);
+
+      float x = texel.r / 8.0;
+      float y = texel.g / 8.0;
+      float z = texel.b;
+
+      float blueY = floor(z * 8.0) / 8.0;
+      float blueX = floor((z - blueY) * 64.0) / 8.0;
+
+      x += blueX;
+      y += blueY;
+
+      vec3 color = texture2D(auxSampler1, vec2(x, y)).xyz;
+
+      vec3 graded = mix(texel.rgb, color, lut_strength);
+
+      // Warm tint: lift reds, drop blues. Absent from the base shader.
+      graded *= vec3(1.08, 1.0, 0.92);
+
+      // Radial vignette darkening toward the frame edges. Absent from the base.
+      vec2 centered = sourceTextureCoordinate - vec2(0.5);
+      float vignette = 1.0 - vignette_strength * dot(centered, centered) * 2.0;
+      graded *= clamp(vignette, 0.0, 1.0);
+
+      gl_FragColor = toOutputFormat(vec4(graded, texel.a));
+    }
+    ";

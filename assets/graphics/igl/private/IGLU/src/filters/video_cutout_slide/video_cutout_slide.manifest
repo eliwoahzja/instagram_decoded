@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_cutout_slide",
+  "displayName": "Slide",
+  "description": "[Instagram Edits] Effects browser - Label for an effect that slides a subject in or out of the frame. Character count for labels is 14 characters max.",
+  "iglu": {
+    "customization": [
+      {
+        "name": "speed",
+        "default": 0.19,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Speed",
+        "displayNameDescription": "[IG Edits] Slider label controlling the playback or animation speed of a video effect (noun, not a verb); exact range varies per effect."
+      }
+    ],
+    "subject": {
+      "enabled": true,
+      "fullFrameEnabled": false
+    }
+  }
+}

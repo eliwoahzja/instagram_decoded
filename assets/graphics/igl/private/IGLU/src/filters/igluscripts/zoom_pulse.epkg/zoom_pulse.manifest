@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "identifier": "61D26F34-21F5-499D-8AE4-CB3528EF223E",
+  "displayName": "Zoom Pulse",
+  "description": "[IG Edits] Color filter name. With \"Zoom Pulse\", the creator gets a continuous ping-pong zoom animation centered on the canvas, scaling 1.0 -> 1.5 -> 1.0 every 6 seconds.",
+  "ios": {
+    "previewAsset": {
+      "handle": "AQADy8brI3o9"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "3a92aaad",
+      "handle": "AQAFJ0UxTKmJ",
+      "md5": "ce81a558b8115b2fc222df41e32875da"
+    }
+  },
+  "iglu": {
+    "legacyId": 3091
+  }
+}

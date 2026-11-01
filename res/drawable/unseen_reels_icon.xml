@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="oval">
+            <size android:height="@dimen/alert_dialog_button_cell_height" android:width="@dimen/alert_dialog_button_cell_height" />
+            <solid android:color="@color/igds_creation_tools_purple" />
+        </shape>
+    </item>
+    <item android:drawable="@drawable/instagram_reels_pano_prism_filled_32" />
+</layer-list>

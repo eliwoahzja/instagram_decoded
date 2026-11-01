@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_particles_out",
+  "displayName": "Particles out",
+  "description": "Video effects selection. Particle animation outro effect.",
+  "iglu": {
+    "legacyId": 5088,
+    "behavior": {
+      "type": "fixedOutro",
+      "durationMs": 2500,
+      "curve": "quadraticInOut"
+    },
+    "subject": {
+      "overlay": true
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAJ5gllQxfY"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "71fe7a5e",
+      "handle": "AQAJ16tWCm3H",
+      "md5": "cbc2bd7c87fd480b563463451aec0bd7"
+    }
+  },
+  "assets": [
+    {
+      "name": "rgba_noise_256.png",
+      "assetHash": "3415067e1e7cd2965854c813f34bdb028aed7f87695903797ff6ec62f156c506",
+      "hubAssetId": "1274215854629798"
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "identifier": "shade",
+  "displayName": "Shade",
+  "description": "[IG Edits] Color filter name. With \"Shade\", the creator can apply a cool muted shadow-leaning tone by remapping each pixel's RGB through a 3D color lookup table.",
+  "iglu": {
+    "legacyId": 821
+  },
+  "assets": [
+    {
+      "name": "shade.png",
+      "assetHash": "98ca504c3c465ea55913382cf7eaa727ae8e070f28ba7edc3bc885023bc62b19",
+      "hubAssetId": "1207368768016260"
+    },
+    {
+      "name": "shade_compressed.png",
+      "assetHash": "3de9ed92da07d7b4328c2e434faa00e98aadd8505f2d67506c006bd993058778",
+      "hubAssetId": "2416773458806800"
+    }
+  ]
+}

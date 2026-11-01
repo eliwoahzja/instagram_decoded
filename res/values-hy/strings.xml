@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="string_0x7f130002">Նահանգ</string>
+    <string name="string_0x7f130004">Հասցե</string>
+    <string name="string_0x7f130006">Բն/փող (կամընտիր)</string>
+    <string name="string_0x7f13002c">Փակել դիտարկիչը</string>
+    <string name="string_0x7f13002f">%1$s տիրույթն ուզում է օգտագործել Ձեր սարքի տեսախցիկը:</string>
+    <string name="string_0x7f130030">%1$s ուզում է օգտագործել Ձեր սարքի տեղադրությունը:</string>
+    <string name="string_0x7f130032">Թույլ տվեք բոլոր մեդիաներին օգտագործել ֆայլի ընտրիչ</string>
+    <string name="string_0x7f130033">Թույլատրել</string>
+    <string name="string_0x7f130034">Արգելափակել</string>
+    <string name="string_0x7f130038">Այս կայքի անվտանգության հավաստագրի հետ կապված խնդիրներ կան</string>
+    <string name="string_0x7f130039">Վերադառնալ</string>
+    <string name="string_0x7f13003a">Անվտանգության սխալ</string>
+    <string name="string_0x7f13008d">Ինչ-որ բան այն չէ</string>
+    <string name="string_0x7f13008e">Բաց թողնել</string>
+    <string name="string_0x7f13008f">էլփոստ</string>
+    <string name="string_0x7f130091">Վեբկայքը, որը դիտում եք, փորձում է բացել արտաքին հավելված: Կցանկանա՞ք շարունակել։</string>
+    <string name="string_0x7f130092">Հետ գնալ</string>
+    <string name="string_0x7f130093">Շարունակել</string>
+    <string name="string_0x7f130094">Դուք լքում եք մեր հավելվածը</string>
+    <string name="string_0x7f130095">Սա կարող է լինել տեխնիկական սխալի պատճառով, որը շտկելու ուղղությամբ մենք աշխատում ենք: Փորձեք վերաբեռնել այս էջը:</string>
+    <string name="string_0x7f130096">Թարմացնել</string>
+    <string name="string_0x7f130097">Էջն այս պահին հասանելի չէ</string>
+    <string name="string_0x7f130098">Ազգանուն</string>
+    <string name="string_0x7f130099">Էջը հնարավոր չէ բեռնել</string>
+    <string name="string_0x7f13009a">Բացել՝ օգտագործելով․․․</string>
+    <string name="string_0x7f13009b">Բացել %1$s հավելվածում</string>
+    <string name="string_0x7f13009c">Այլ ընտրանքներ</string>
+    <string name="string_0x7f1300aa">Անուն</string>
+    <string name="string_0x7f1300af">Դուք այժմ դիտում եք լիաէկրան ռեժիմում: Դուրս գալու համար սահեցրեք ձախ կամ հպեք «Հետ» կոճակին:</string>
+    <string name="string_0x7f1300cb">Մենք հենց հիմա խնդիրներ ունենք %2$s հավելվածը %1$s լեզվով կարգավորելու հետ կապված։ Դուք կարող եք կրկին փորձել կամ այս պահին %2$s-ն օգտագործել անգլերենով (ԱՄՆ)։</string>
+    <string name="string_0x7f1300cc">Մի պահ սպասեք, մինչ մենք կարգավորում ենք %1$s լեզուն…</string>
+    <string name="string_0x7f1300cd">Կրկին փորձել</string>
+    <string name="string_0x7f1300ce">Շարունակել անգլերենով (Ամերիկյան)</string>
+    <string name="string_0x7f13010b">Փոստային դասիչ</string>
+    <string name="string_0x7f1301d7">Ընտրեք ժամանակը</string>
+</resources>

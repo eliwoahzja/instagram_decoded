@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "identifier": "bubblegum",
+  "displayName": "Bubblegum",
+  "description": "[IG Edits] Color filter name. With \"Bubblegum\", the creator can apply a candy-pink bubblegum color grade by sampling the bubblegum.png Spark-style 2D LUT through the lut_spark shader.",
+  "iglu": {
+    "legacyId": 832
+  },
+  "assets": [
+    {
+      "name": "bubblegum.png",
+      "assetHash": "705a868b8d52b708c5a32cb53dd55e64f8ea8f4b3162f86dc5ca39ab2ef7fe8c",
+      "hubAssetId": "1363242315638272"
+    },
+    {
+      "name": "bubblegum_compressed.png",
+      "assetHash": "42010ad42d076486327e784abcce5920f130bcdccc22dafb49f39c784622976d",
+      "hubAssetId": "962325109542057"
+    }
+  ]
+}

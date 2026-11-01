@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="string_0x7f130003">Shahar</string>
+    <string name="string_0x7f130004">Manzil</string>
+    <string name="string_0x7f130006">Kvartira/ofis (ixtiyoriy)</string>
+    <string name="string_0x7f130008">Reklama hisobingizdan karta bilan avtomatik kiritilsinmi?</string>
+    <string name="string_0x7f13002c">Brauzerni yopish</string>
+    <string name="string_0x7f13002f">%1$s qurilmangiz kamerasidan foydalanmoqchi.</string>
+    <string name="string_0x7f130030">%1$s qurilmangizning joylashuv axborotidan foydalanmoqchi.</string>
+    <string name="string_0x7f130033">Ruxsat</string>
+    <string name="string_0x7f130034">Bloklash</string>
+    <string name="string_0x7f130038">Bu sayt uchun xavfsizlik sertifikatiga oid muammolar mavjud</string>
+    <string name="string_0x7f130039">Orqaga</string>
+    <string name="string_0x7f13003a">Xavfsizlikka oid xato</string>
+    <string name="string_0x7f13008d">Nimadir xato ketdi</string>
+    <string name="string_0x7f13008e">Yopish</string>
+    <string name="string_0x7f130091">Siz koʻrayotgan veb-sayt tashqi ilovani ochishga urinmoqda. Davom etasizmi?</string>
+    <string name="string_0x7f130092">Orqaga</string>
+    <string name="string_0x7f130093">Davom etish</string>
+    <string name="string_0x7f130094">Siz ilovamizni tark etyapsiz</string>
+    <string name="string_0x7f130095">Bu biz tuzatish ustida ishlayotgan texnik xato sababli boʻlishi mumkin. Bu sahifani qayta yuklab koʻring.</string>
+    <string name="string_0x7f130096">Yangilash</string>
+    <string name="string_0x7f130097">Sahifa ayni vaqtda mavjud emas</string>
+    <string name="string_0x7f130098">Familiya</string>
+    <string name="string_0x7f130099">Sahifa yuklanmadi</string>
+    <string name="string_0x7f13009a">Quyidagi orqali ochish:</string>
+    <string name="string_0x7f13009b">%1$s ilovasida ochish</string>
+    <string name="string_0x7f13009c">Boshqa parametrlar</string>
+    <string name="string_0x7f1300aa">Ism</string>
+    <string name="string_0x7f1300af">Butun ekran rejimi yoqildi. Bu rejimdan chiqish uchun chapga suring yoki Orqaga tugmasini bosing.</string>
+    <string name="string_0x7f1300cb">Ayni damda %2$s ilovasi uchun %1$s tilini oʻrnatib boʻlmayapti. Qayta urining yoki %2$s ilovasidan hozircha ingliz tilida (AQSH) foydalaning.</string>
+    <string name="string_0x7f1300cc">Biroz kuting. %1$s oʻrnatilmoqda...</string>
+    <string name="string_0x7f1300cd">Qayta urinish</string>
+    <string name="string_0x7f1300ce">Ingliz (AQSH) tiliga oʻtish</string>
+    <string name="string_0x7f1300da">Yopish</string>
+    <string name="string_0x7f1300dd">Karta qoʻshish uchun bosing</string>
+    <string name="string_0x7f130192">Koʻzoynagingiz ulandi</string>
+    <string name="string_0x7f1301d3">Telefon</string>
+    <string name="string_0x7f1301d7">Vaqtni sozlash</string>
+</resources>

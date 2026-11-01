@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "identifier": "0f92c6d5-a29c-465b-96b2-82f2fa9c0f6b",
+  "displayName": "Cherry Color",
+  "description": "[IG Edits] Video effect name. With \"Cherry Color\", the creator gets a face-tracked makeup overlay — LUT color grade + blush/contour/lip multiply + highlighter over the graded scene.",
+  "iglu": {
+    "legacyId": 3210
+  },
+  "assets": [
+    {
+      "name": "cherry_color_lut.png",
+      "assetHash": "171a03c04b6b088eb0fdf71d3d6a04d646f19dd5aef35896380dcce3738f7e42",
+      "hubAssetId": "1398896715501001"
+    },
+    {
+      "name": "cherry_color_makeup.png",
+      "assetHash": "b2c8dde601f798f5b773513b1da471c0acf9c2804b50a941d6be57f52850d2b1",
+      "hubAssetId": "926473486403139"
+    },
+    {
+      "name": "cherry_color_highlights.png",
+      "assetHash": "e7ce3a77bb70fd8131518d57ee3bddb6eb4b871ad99c6dffd474a473fadbf158",
+      "hubAssetId": "2042814003275426"
+    }
+  ]
+}

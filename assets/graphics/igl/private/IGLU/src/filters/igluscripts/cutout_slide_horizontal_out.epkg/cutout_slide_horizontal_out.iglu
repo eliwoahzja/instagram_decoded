@@ -1,0 +1,27 @@
+[Filter CutoutSlideHorizontalOut]
+[MaskBehavior alpha]
+
+# OUT wrapper — composes cutout_slide with direction=(-1,0) and outro=1.0
+
+[Init]
+fun init(Filter filter) {
+  filter.passes = {{
+      name = 'slideHOut,
+      igid = 'cutout_slide,
+      inputs = {'default},
+      uniforms = {},
+    }};
+
+  filter.parameters = {
+    {iterations = 4.0, min = 1.0, max = 10.0, description = "Number of passes before settling"},
+  };
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  setShaderUniform('slideHOut, 'progress, getParameterFloat('progress));
+  setShaderUniform('slideHOut, 'directionX, -1.0);
+  setShaderUniform('slideHOut, 'directionY, 0.0);
+  setShaderUniform('slideHOut, 'iterations, getParameterFloat('iterations));
+  setShaderUniform('slideHOut, 'outro, 1.0);
+}

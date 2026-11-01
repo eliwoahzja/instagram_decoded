@@ -1,0 +1,419 @@
+[Filter Camcorder]
+[MaskBehavior alpha]
+# Vintage camcorder / VHS effect
+# Features:
+#   - Blinking red recording dot (top-left, no text)
+#   - Scanlines that DISPLACE (warp) the image, then darken it
+#   - Rolling tracking band that BENDS / TEARS the image and pumps
+#     chromatic + noise like a bad signal
+#   - Random VHS static, vignette, washed-out color cast
+# Uses system-provided time_sec and inputSize uniforms.
+
+[Init]
+fun init(Filter filter) {
+
+  filter.parameters = {
+    {intensity = 1.0, min = 0.0, max = 1.0, description = "Effect intensity"},
+    {scanlineIntensity = 0.4, min = 0.0, max = 10.0, description = "Scanline intensity"},
+    {scanlineDisplace = 3.6, min = 0.0, max = 10.0, description = "Scanline displacement"},
+    {chromaticAmount = 0.002, min = 0.0, max = 0.03, description = "Chromatic aberration"},
+    {noiseAmount = 0.18, min = 0.0, max = 0.6, description = "Static noise"},
+    {vignetteAmount = 0.6, min = 0.0, max = 1.0, description = "Vignette"},
+    {desaturation = 0.4, min = 0.0, max = 1.0, description = "Desaturation"},
+    {jitterAmount = 0.85, min = 0.0, max = 1.0, description = "Tape jitter"},
+    {bandSpeed = 0.20, min = 0.0, max = 1.0, description = "Tracking band speed"},
+    {bandWidth = 0.5, min = 0.01, max = 1.0, description = "Tracking band width"},
+    {bandDistort = 0.7, min = 0.0, max = 1.0, description = "Bad-signal distortion"},
+    {showRecDot = true, description = "Show recording dot"},
+  };
+
+  makeTexture('camcorder_overlay);
+
+  filter.passes = {
+  {
+    name = 'overlays,
+    inputs = {'default, 'camcorder_overlay},
+    uniforms = {
+      spriteInputSize = {256.0, 173.0},
+      showRecDot = 1.0,
+    },
+    glslShader = overlayShader,
+
+  },
+  {
+    name = 'compose,
+    inputs = {'default, 'overlays},
+    glslShader = composeShader,
+    uniforms = {
+          strength = 1.0,
+      }
+  },
+  {
+    name = 'camcorder,
+    inputs = {'compose},
+    uniforms = {
+      strength = 1.0,
+      scanlineIntensity = 0.4,
+      scanlineDisplace = 0.6,
+      chromaticAmount = 0.005,
+      noiseAmount = 0.18,
+      vignetteAmount = 0.6,
+      desaturation = 0.25,
+      jitterAmount = 0.5,
+      bandSpeed = 0.13,
+      bandWidth = 0.08,
+      bandDistort = 0.7,
+    },
+    glslShader = camcorderShader,
+  }};
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  boolean showDot = getParameterBoolean('showRecDot);
+  if (showDot) {
+    setShaderUniform('overlays, 'showRecDot, 1.0);
+  } else {
+    setShaderUniform('overlays, 'showRecDot, 0.0);
+  }
+
+
+  f32 intensity = getParameterFloat('intensity);
+  setShaderUniform('compose, 'strength, intensity);
+  setShaderUniform('camcorder, 'strength, intensity);
+
+}
+
+string overlayShader = "
+  varying vec2 sourceTextureCoordinate;
+
+  uniform sampler2D auxSampler1;
+  uniform float time_sec;
+
+  uniform vec2 spriteInputSize;  // size of the sprite sheet (px)
+  uniform vec2 inputSize;        // size of the composite frame (px)
+  uniform float showRecDot;
+
+  // Hash helper for noise (returns 0..1)
+  float noiseHash(vec2 p) {
+    return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123);
+  }
+
+  // Smooth value noise — bilinear interpolation between hashed lattice
+  // points with a smoothstep-style fade. Returns a value in [0, 1].
+  float smoothNoise(vec2 p) {
+    vec2 i = floor(p);
+    vec2 f = fract(p);
+
+    // Hashed values at the 4 corners of the integer cell.
+    float a = noiseHash(i);
+    float b = noiseHash(i + vec2(1.0, 0.0));
+    float c = noiseHash(i + vec2(0.0, 1.0));
+    float d = noiseHash(i + vec2(1.0, 1.0));
+
+    // Smooth interpolation factor (3f^2 - 2f^3).
+    vec2 u = f * f * (3.0 - 2.0 * f);
+
+    return mix(mix(a, b, u.x), mix(c, d, u.x), u.y);
+  }
+
+  // destX, destY are [0..1] fractions of the output frame (top-left of the
+  // sprite). scale is relative to a 720x1280 reference: scale = 0.7 at 720x1280
+  // is the general size reference. The sprite's physical size scales with the
+  // input width (widthScale = inputSize.x / 720), so it grows on wider frames
+  // and shrinks on narrower ones. Because destX/destY are fractions of the
+  // frame, elements naturally stick to whichever border they are closest to
+  // and their border offset scales with input width.
+  vec4 sampleSprite(float srcX, float srcY, float srcW, float srcH,
+                    float destX, float destY, float scale) {
+    vec2 kRefSize = vec2(720.0, 1280.0);
+    float widthScale = inputSize.x / kRefSize.x;
+
+    // Physical sprite size in output pixels, then converted to UV space.
+    vec2 destSizePx = vec2(srcW, srcH) * scale * widthScale;
+    vec2 destSize = destSizePx / inputSize;
+
+    vec2 localUv = (sourceTextureCoordinate - vec2(destX, destY)) / destSize;
+
+    // Outside the destination rect → transparent.
+    if (localUv.x < 0.0 || localUv.x > 1.0 ||
+        localUv.y < 0.0 || localUv.y > 1.0) {
+      return vec4(0.0);
+    }
+
+    // Map localUv into the sprite-sheet cell, normalized to [0..1].
+    vec2 cellOrigin = vec2(srcX, srcY) / spriteInputSize;
+    vec2 cellSize   = vec2(srcW, srcH) / spriteInputSize;
+    vec2 spriteUv   = cellOrigin + localUv * cellSize;
+    return texture2D(auxSampler1, spriteUv);
+  }
+
+  void main() {
+
+    float invFactor = step(0.00001, UP);
+
+    vec2 uv = vec2(sourceTextureCoordinate.x, 1.0 - sourceTextureCoordinate.y);
+    vec4 color = vec4(vec3(0.0), 1.0); // sampleInput(sourceTextureCoordinate);
+
+
+    // Recording dot -----
+    // Reference (720x1280): destX=inputSize.x-190=530, destY=70.
+    vec4 rec = sampleSprite(0.0, 0.0, 110.0, 55.0, 0.7361, 0.0547, 0.7);
+    color = mix(color, vec4(1.0), rec.r);
+
+    if (showRecDot > 0.5) {
+      vec2 dotCenterUv = vec2(0.7, 0.0647 );
+
+      float blink = step(0.5, fract(time_sec * 1.2));
+
+      // Scale the dot with input width, matching how sampleSprite scales.
+      // ~9 px radius at 720x1280 reference.
+      float widthScale = inputSize.x / 720.0;
+      float dotRadiusPx = 9.0 * widthScale;
+
+      // Circle test in pixel space avoids aspect distortion without needing
+      // an aspect-correction on uv.
+      vec2 fragPx = sourceTextureCoordinate * inputSize;
+      vec2 centerPx = dotCenterUv * inputSize;
+      float dist = length(fragPx - centerPx);
+      float dotMask = 1.0 - smoothstep(dotRadiusPx - 1.0, dotRadiusPx + 1.0, dist);
+      color = mix(color, vec4(1.0, 0.12, 0.12, 1.0), dotMask * blink);
+    }
+
+    // Arrow ----------------
+    // Reference (720x1280): destX=150, destY=inputSize.y-100=1180.
+    vec4 arrow = sampleSprite(0.0, 125.0, 50.0, 45.0, 0.12, 0.9219, 0.7);
+    color = mix(color, vec4(1.0), arrow.r);
+
+    // LEVELS ----------
+    float levelSpeed = time_sec * 5.0;
+    vec2 letterPos = vec2(0.70, 0.9141);
+    // 30 px horizontal offset in reference frame → 30/720 = 0.0417.
+    // 30 px vertical offset in reference frame → 30/1280 = 0.0234.
+
+    // L levels ----------------
+    vec4 levelL = sampleSprite(50.0, 50.0, 130.0, 40.0, letterPos.x + 0.0417, letterPos.y + 0.0, 0.7);
+    float ll = smoothNoise(vec2(levelSpeed, 0.1)) + ((sin(levelSpeed * 10.0) + 1.0) / 20.0) ;
+    float mappedL = mix(0.2, 0.6, ll);
+    levelL.r = smoothstep(mappedL, mappedL, levelL.r);
+    color = mix(color, vec4(1.0), levelL.r);
+
+    // R levels ----------------
+    vec4 levelR = sampleSprite(50.0, 50.0, 130.0, 40.0, letterPos.x + 0.0417, letterPos.y + 0.0234, 0.7);
+    float lr = smoothNoise(vec2(levelSpeed + 1.0, 0.1)) + ((sin(levelSpeed * 10.0) + 1.0) / 20.0);
+    float mappedR = mix(0.2, 0.6, lr);
+    levelR.r = smoothstep(mappedR, mappedR, levelR.r);
+    color = mix(color, vec4(1.0), levelR.r);
+
+    // R & L text ----------------
+    vec4 levelLetters = sampleSprite(0.0, 50.0, 30.0, 75.0, letterPos.x, letterPos.y, 0.7);
+    color = mix(color, vec4(1.0), levelLetters);
+
+    color.a = color.r;
+    // vec4 testc = texture2D(auxSampler1, uv); // used to test the sprite sheet texture
+    gl_FragColor = color;
+  }
+";
+
+string composeShader = "
+  varying vec2 sourceTextureCoordinate;
+  BaseUniformsOpenGL;
+
+  uniform sampler2D auxSampler1;
+
+  void main() {
+
+    float invFactor = step(0.00001, UP);
+
+    vec2 uv = sourceTextureCoordinate;
+    vec2 flipUv = vec2(uv.x, abs(invFactor - uv.y));
+
+    vec4 color = sampleInput(sourceTextureCoordinate);
+    vec4 srcColor = color;
+
+    vec4 shadow = texture2D(auxSampler1, flipUv + vec2(0.0, 0.002));
+    color.rgb =  mix(color.rgb, vec3(0.0), shadow.a);
+
+    vec4 overlays = texture2D(auxSampler1, flipUv);
+    color.rgb =  mix(color.rgb, overlays.rgb, overlays.a);
+
+    gl_FragColor = toOutputFormat(mix(srcColor, color, strength) );
+  }
+";
+
+string camcorderShader = "
+  varying vec2 sourceTextureCoordinate;
+
+  BaseUniformsOpenGL;
+
+  uniform float time_sec;
+  uniform vec2 inputSize;
+
+  uniform float scanlineIntensity;
+  uniform float scanlineDisplace;
+  uniform float chromaticAmount;
+  uniform float noiseAmount;
+  uniform float vignetteAmount;
+  uniform float desaturation;
+  uniform float jitterAmount;
+  uniform float bandSpeed;
+  uniform float bandWidth;
+  uniform float bandDistort;
+
+  // ------------------------------------------------------------------
+  // Hashes
+  // ------------------------------------------------------------------
+  float hash2(vec2 p) {
+    return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453);
+  }
+  float hash1(float p) {
+    return fract(sin(p * 12.9898) * 43758.5453);
+  }
+
+  // ------------------------------------------------------------------
+  // Scanline displacement — every scanline gets a tiny horizontal warp
+  // proportional to a high-frequency sine + noise per row
+  // ------------------------------------------------------------------
+  float computeScanOffset(float uvY, float t, float inputHeight,
+                          float displace, float intensity) {
+    float scanFreq = max(inputHeight, 1.0) * 1.5;
+    float scanWave = sin((uvY + t * 0.04) * scanFreq);
+    float scanOffset = scanWave * 0.0018 * displace * intensity;
+
+    // Per-row 'broadcast jitter'
+    float rowNoise = hash2(vec2(floor(uvY * scanFreq * 0.5),
+                                 floor(t * 24.0)));
+    scanOffset += (rowNoise - 0.5) * 0.004 * displace * intensity;
+    return scanOffset;
+  }
+
+  // ------------------------------------------------------------------
+  // Tracking band — wide rolling region that bends + tears the image.
+  // Call multiple times with different speeds / widths / seeds to stack
+  // bands. The returned vec4 components are designed to be SUMMED
+  // (or maxed for the envelopes) across several calls.
+  //
+  // Inputs:
+  //   uvY      — current fragment Y in [0, 1]
+  //   t        — time in seconds
+  //   speed    — vertical roll speed of the band
+  //   width    — vertical thickness of the band in UV space
+  //   distort  — overall bad-signal distortion amount
+  //   seed     — per-band offset to decorrelate noise (0.0 for first band)
+  //
+  // Returns:
+  //   .x = bandHead    softened envelope (use for color/aberration boost)
+  //   .y = bandSharp   sharper envelope  (use for tear/static)
+  //   .z = bandOffset  horizontal UV displacement
+  //   .w = bandYJitter vertical UV jitter at the leading edge
+  // ------------------------------------------------------------------
+  vec4 computeTrackingBand(float uvY, float t, float speed, float width,
+                           float distort, float seed) {
+    float bandPos = fract(uvY - t * speed + seed * 0.137);
+    // Smooth ramp 1.0 (head) → 0.0 (tail) inside [0, width]
+    float bandShape = 1.0 - smoothstep(0.0, width, bandPos);
+    // Soften & sharpen at the leading edge
+    float bandHead = pow(bandShape, 2.0);
+    float bandSharp = pow(bandShape, 6.0);
+
+    // Combined band displacement: low-frequency bend + high-frequency tear
+    float bandBend = sin((uvY - t * speed + seed) * 25.0) * 0.012;
+    float tearNoise = hash2(vec2(floor(uvY * 300.0),
+                                  floor(t * 80.0) + seed * 17.0));
+    float bandTear = (tearNoise - 0.5) * 0.06 * bandSharp;
+    float bandOffset = (bandBend * bandHead + bandTear) * distort;
+
+    // Y-jitter at the band edge — image looks pulled up briefly
+    float bandYJitter = bandSharp
+                        * (hash1(floor(t * 25.0) + seed * 53.0) - 0.5)
+                        * 0.01 * distort;
+
+    return vec4(bandHead, bandSharp, bandOffset, bandYJitter);
+  }
+
+  void main() {
+    vec2 uv = sourceTextureCoordinate;
+    vec4 srcColor = sampleInput(uv);
+
+
+    // ------------------------------------------------------------------
+    // Tape jitter — occasional horizontal slice shift + per-row noise
+    // ------------------------------------------------------------------
+    float bigTime = floor(time_sec * 3.0);
+    float bigChance = step(0.85, hash1(bigTime));
+    float bigShift = (hash1(bigTime + 11.0) - 0.5) * 0.05 * bigChance * jitterAmount;
+
+    float rowJitter = (hash2(vec2(floor(uv.y * 600.0), floor(time_sec * 30.0))) - 0.5)
+                      * 0.003 * jitterAmount;
+
+    // Bottom-of-tape wobble
+    float wobble = sin(uv.y * 220.0 + time_sec * 4.0) * 0.0015
+                   * smoothstep(0.7, 1.0, uv.y) * jitterAmount;
+
+    // ------------------------------------------------------------------
+    // Scanline displacement — every scanline gets a tiny horizontal warp
+    // proportional to a high-frequency sine + noise per row
+    // ------------------------------------------------------------------
+    float scanOffset = computeScanOffset(uv.y, time_sec, inputSize.y,
+                                         scanlineDisplace, scanlineIntensity);
+
+    // Tracking Bands ------------------------------------------------------------------
+    vec4 band  = computeTrackingBand(uv.y, time_sec, bandSpeed,        bandWidth,        bandDistort, 0.0);
+    // Example second band — slower, wider, weaker:
+    band += computeTrackingBand(uv.y, time_sec + 0.1, bandSpeed * 0.4,  bandWidth * 1.7,  bandDistort * 0.5, 1.0);
+    // Example fast thin glitch band:
+    band += computeTrackingBand(uv.y, time_sec + 0.3, bandSpeed * 0.5,  bandWidth * 0.3,  bandDistort * 0.8, 2.0);
+
+    float bandHead    = clamp(band.x, 0.0, 1.0);
+    float bandSharp   = clamp(band.y, 0.0, 1.0);
+    float bandOffset  = band.z;
+    float bandYJitter = band.w;
+
+    // ------------------------------------------------------------------
+    // Build the final sample UV
+    // ------------------------------------------------------------------
+    vec2 sampUv = uv;
+    sampUv.x += bigShift + rowJitter + wobble + scanOffset + bandOffset;
+    sampUv.y += bandYJitter;
+
+    // ------------------------------------------------------------------
+    // Chromatic aberration (radial, boosted inside the band)
+    // ------------------------------------------------------------------
+    vec2 dir = sampUv - vec2(0.5);
+    float aberr = chromaticAmount * (1.0 + length(dir) * 2.0)
+                + bandHead * 0.025 * bandDistort;
+    vec3 color;
+    color.r = sampleInput(sampUv + dir * aberr).r;
+    color.g = sampleInput(sampUv).g;
+    color.b = sampleInput(sampUv - dir * aberr).b;
+    float srcAlpha = srcColor.a;
+
+    // ------------------------------------------------------------------
+    // Color: desaturate, lift blacks, slight VHS color cast
+    // ------------------------------------------------------------------
+    float luma = dot(color, vec3(0.299, 0.587, 0.114));
+    color = mix(color, vec3(luma), desaturation);
+    color += vec3(0.04, 0.02, 0.0)  * luma;
+    color += vec3(0.0, 0.01, 0.04)  * (1.0 - luma);
+    color = color * 0.94 + 0.04;
+
+    // ------------------------------------------------------------------
+    // Random static noise everywhere
+    // ------------------------------------------------------------------
+    float n = hash2(uv * vec2(800.0, 600.0) + time_sec * 60.0);
+    color += (n - 0.5) * noiseAmount;
+
+    // ------------------------------------------------------------------
+    // Vignette
+    // ------------------------------------------------------------------
+    float dist = distance(uv, vec2(0.5));
+    float vig = smoothstep(0.85, 0.25, dist);
+    color *= mix(1.0, vig, vignetteAmount);
+
+
+
+    // Mix with original based on strength
+    vec4 finalColor = mix(srcColor, vec4(color, srcAlpha), strength);
+    gl_FragColor =  toOutputFormat(finalColor);
+  }
+";

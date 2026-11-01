@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "identifier": "kodak_ektachrome",
+  "displayName": "Kodak Ektachrome",
+  "description": "[IG Edits] Color filter name. With \"Kodak Ektachrome\", the creator can apply a Kodak Ektachrome film emulation via the clut_ektachrome 3D LUT, producing cool clean slide-film tones.",
+  "assets": [
+    {
+      "name": "clut_ektachrome.png",
+      "assetHash": "de898c6d325e1bcd268a646b1ce57c46a458652c305d2c0e47d424e89ff62356",
+      "hubAssetId": "1420238279645208"
+    }
+  ],
+  "iglu": {}
+}

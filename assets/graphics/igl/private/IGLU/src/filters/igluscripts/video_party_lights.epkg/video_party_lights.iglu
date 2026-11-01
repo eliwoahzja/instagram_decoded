@@ -1,0 +1,247 @@
+# IGLUSCRIPTCOLLISION_BYPASS: Intentional replacement of C++ native effect - IGLUScript takes precedence on Android/iOS; C++ filter retained as fallback for direct C++ callers (sample app, server tools).
+[Filter VideoPartyLights]
+
+# Flash Pulse (video_party_lights): colorful lights with small zoom in-and-out.
+#
+# Two playheads selected in [PreRender]; the shader has no time/beat branch.
+#   useBeats true  -> beat-synced, pulse follows the beat envelope
+#   useBeats false -> clock-driven, pulse follows wall-clock time
+#
+# useBeats is written by BeatReactiveController when a beatReactive manifest is
+# active; otherwise the false default selects the clock. Only scalars pulse
+# and intensity arrive from [PreRender]; color-cycling state (tMirror, color
+# index, sinNorm) remains time-driven for variety.
+
+[Init]
+fun init(Filter filter) {
+  filter.parameters = {
+    {intensity = 1.0, min = 0.0, max = 1.0, description = "Intensity"},
+    {speed = 0.622, min = 0.0, max = 1.0, description = "Speed"},
+    {useBeats = false, description = "True while the beat system is driving this effect"},
+    {beatProgress = 0.0, min = 0.0, max = 1.0, description = "Beat-driven pulse playhead"},
+  };
+
+  filter.passes = {{
+    name = 'partyLights,
+    inputs = {'default},
+    uniforms = {
+      pulse = 0.0,
+      intensity = 1.0,
+      time_sec = 0.0,
+    },
+    glslShader = glslPartyLights,
+  }};
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  # time_sec is media time (advances with the clip). An export pass
+  # reproduces it frame-for-frame, where getLocalTime() would not.
+  f32 time = getParameterFloat('time_sec);
+  f32 intensityParam = getParameterFloat('intensity);
+  f32 speedParam = getParameterFloat('speed);
+  boolean useBeats = getParameterBoolean('useBeats);
+
+  # The base filter's slider maps [0..1] -> [0.1..1.0] for both
+  # intensity and zoom strength (one slider drives both).
+  f32 intensity = 0.1 + intensityParam * 0.9;
+
+  f32 pulse = 0.0;
+  if (useBeats) {
+    pulse = getParameterFloat('beatProgress);
+  } else {
+    # Clock pulse: sine mapped from [-0.6..1] into [0..1] and clamped.
+    # Produces a zoom wave that pauses at the zoomed-out rest.
+    f32 speed = 0.5 + speedParam * 4.5;
+    f32 wave = sin(time * speed * 3.14159265);
+    f32 norm = (wave + 0.6) / 1.6;
+    norm = clamp(norm, 0.0, 1.0);
+    pulse = norm;
+  }
+
+  setShaderUniform('partyLights, 'pulse, pulse);
+  setShaderUniform('partyLights, 'intensity, intensity);
+  setShaderUniform('partyLights, 'time_sec, time);
+}
+
+string glslPartyLights = "
+  precision highp float;
+  varying vec2 sourceTextureCoordinate;
+  BaseUniformsOpenGL;
+
+  uniform float pulse;
+  uniform float intensity;
+  uniform vec2 outputSize;
+  uniform float time_sec;
+
+  const float PI = 3.1415926535897932384626433832795;
+
+  vec2 scaleUV(vec2 uv, vec2 origin, vec2 scale) {
+    return (uv - origin) / scale + origin;
+  }
+
+  float fromRange(float val, float minVal, float maxVal) {
+    return (val - minVal) / (maxVal - minVal);
+  }
+
+  float toRange(float val, float minVal, float maxVal) {
+    return (val * (maxVal - minVal)) + minVal;
+  }
+
+  vec4 exposure(vec4 color, float exposure) {
+    return vec4(pow(2.0, exposure) * color.rgb, color.a);
+  }
+
+  vec4 gradientStep(float gradient, vec4 previousStep, vec4 newColor, float startRange, float endRange) {
+    float alpha = clamp(fromRange(gradient, startRange, endRange), 0., 1.);
+    return mix(previousStep, newColor, alpha);
+  }
+
+  float linearGradient(vec2 uv, vec2 start, vec2 end) {
+    vec2 dir = end - start;
+    return dot(uv - start, dir) / dot(dir, dir);
+  }
+
+  vec4 blendScreen(vec4 base, vec4 blend) {
+    return vec4(1.0 - ((1.0 - blend.rgb) * (1.0 - base.rgb)), max(base.a, blend.a));
+  }
+
+  vec4 blendAdd(vec4 base, vec4 blend) {
+    return vec4(min(base.rgb + blend.rgb, vec3(1.0)), base.a);
+  }
+
+  vec3 blendLinearBurn(vec3 base, vec3 blend, float opacity) {
+    return (max(base + blend - vec3(1.0), vec3(0.0)) * opacity + base * (1.0 - opacity));
+  }
+
+  float expoInOut(float t) {
+    if (t < 0.5) {
+      return 0.5 * pow(2.0 * t, 3.0);
+    } else {
+      return 1.0 - 0.5 * pow(2.0 - 2.0 * t, 3.0);
+    }
+  }
+
+  vec2 getStartPoint(int index) {
+    if (index == 0) return vec2(0.172, 0.810);
+    if (index == 1) return vec2(0.380, 0.540);
+    if (index == 2) return vec2(0.172, 0.810);
+    if (index == 3) return vec2(0.944, 0.028);
+    if (index == 4) return vec2(0.338, 0.367);
+    if (index == 5) return vec2(0.380, 0.540);
+  }
+
+  vec2 getEndPoint(int index) {
+    if (index == 0) return vec2(0.802, 0.021);
+    if (index == 1) return vec2(-0.394, -0.109);
+    if (index == 2) return vec2(0.802, 0.021);
+    if (index == 3) return vec2(0.2, 0.821);
+    if (index == 4) return vec2(-0.016, 0.003);
+    if (index == 5) return vec2(-0.394, -0.109);
+  }
+
+  vec4 bottomVignette() {
+    vec2 uv = sourceTextureCoordinate;
+    vec2 suv = scaleUV(uv, vec2(0.5), vec2(1.0, 0.6));
+    float vignette = step(.5, uv.y) * length(suv - .5);
+    float smoothVignette = smoothstep(0.5, 1.2, vignette);
+    return vec4(vec3(0.0), smoothVignette);
+  }
+
+  vec4 spotlight(vec2 uv, vec2 lightPosition, float lightAlpha, vec4 startColor, vec4 endColor) {
+    vec2 size = outputSize;
+    vec2 yg = vec2(1., size.x / size.y);
+    vec2 xg = vec2(size.y / size.x, 1.);
+    vec2 edge = vec2(step(size.x, size.y));
+    vec2 aspectScale = mix(xg, yg, edge);
+    vec2 scaledLightUV = scaleUV(uv, lightPosition, aspectScale);
+    float dist = 1. - length(scaledLightUV - lightPosition) / 1.;
+    float light = smoothstep(0.0, 0.8, dist);
+    vec4 coloredLight = gradientStep(light, startColor, endColor, 0.0, 1.0);
+    float alpha = lightAlpha * light;
+    return vec4(coloredLight.rgb * alpha, alpha);
+  }
+
+  vec4 splashLight(float t, float lightAlpha, vec4 startColor, vec4 endColor, vec2 startPoint, vec2 endPoint) {
+    vec2 uv = sourceTextureCoordinate;
+    float gradient = linearGradient(uv, startPoint, endPoint);
+    vec4 coloredGradient = gradientStep(gradient, startColor, endColor, 0.0, 1.0);
+    return vec4(coloredGradient.rgb * lightAlpha, lightAlpha);
+  }
+
+  vec4 darkenShadows(vec4 color, float threshold, float amount) {
+    vec3 darkened = color.rgb * (1.0 - smoothstep(vec3(threshold), vec3(0.0), color.rgb) * amount);
+    return vec4(darkened, 1.0);
+  }
+
+  const vec4 startSLA = vec4(255., 28.9141, 28.9141, 255.) / 255.;
+  const vec4 startSLB = vec4(0., 30.8672, 255., 255.) / 255.;
+  const vec4 startSLC = vec4(255., 28.9141, 28.9141, 255.) / 255.;
+  const vec4 startSLD = vec4(230.536, 153.063, 251.281, 255.) / 255.;
+  const vec4 startSLE = vec4(255., 28.9141, 28.9141, 255.) / 255.;
+  const vec4 startSLF = vec4(0., 30.8672, 255., 255.) / 255.;
+
+  const vec4 endSLA = vec4(255., 171.341, 60.8008, 255.) / 255.;
+  const vec4 endSLB = vec4(60.8008, 255., 218.498, 255.) / 255.;
+  const vec4 endSLC = vec4(255., 171.341, 60.8008, 255.) / 255.;
+  const vec4 endSLD = vec4(146.12, 60.8008, 255., 255.) / 255.;
+  const vec4 endSLE = vec4(255., 171.341, 60.8008, 255.) / 255.;
+  const vec4 endSLF = vec4(60.8008, 255., 218.498, 255.) / 255.;
+
+  const float slg0 = 0.15556;
+  const float slg1 = 0.34444;
+  const float slg2 = 0.43333;
+  const float slg3 = 0.53333;
+  const float slg4 = 0.71111;
+  const float slg5 = 0.9;
+
+  void main() {
+    vec2 uv = sourceTextureCoordinate;
+    float tMirror = length(mod(time_sec, 2.0) - 1.0);
+
+    // Single pulse drives both zoom and light alpha; clamp to [1..1.4] via
+    // expoInOut so the beat envelope shapes a unified in-and-out.
+    float zoomMax = 1.4;
+    float zoom = mix(1.0, zoomMax, pulse * intensity);
+    float zoomCurve = expoInOut(zoom);
+    vec2 zoomedUV = scaleUV(uv, vec2(0.5), vec2(zoomCurve));
+    vec4 base = sampleInput(zoomedUV);
+
+    // Color cycling runs on time for variety (not on the beat).
+    vec4 gs1 = gradientStep(tMirror, startSLA, startSLB, slg0, slg1);
+    vec4 gs2 = gradientStep(tMirror, gs1, startSLC, slg1, slg2);
+    vec4 gs3 = gradientStep(tMirror, gs2, startSLD, slg2, slg3);
+    vec4 gs4 = gradientStep(tMirror, gs3, startSLE, slg3, slg4);
+    vec4 gs5 = gradientStep(tMirror, gs4, startSLF, slg4, slg5);
+
+    vec4 ge1 = gradientStep(tMirror, endSLA, endSLB, slg0, slg1);
+    vec4 ge2 = gradientStep(tMirror, ge1, endSLC, slg1, slg2);
+    vec4 ge3 = gradientStep(tMirror, ge2, endSLD, slg2, slg3);
+    vec4 ge4 = gradientStep(tMirror, ge3, endSLE, slg3, slg4);
+    vec4 ge5 = gradientStep(tMirror, ge4, endSLF, slg4, slg5);
+
+    float lightAlpha = 0.5 * pulse * intensity;
+
+    int index = int(mod(floor(time_sec * 0.5), 6.));
+    vec2 startPt = getStartPoint(index);
+    vec2 endPt = getEndPoint(index);
+
+    float steepertMirror = smoothstep(0.5, 1.0, tMirror);
+    vec4 splashLights = splashLight(steepertMirror, lightAlpha * 2.5, gs5, ge5, startPt, endPt);
+    vec4 colorSplash = blendScreen(base, splashLights);
+
+    float sinNorm = fromRange(sin(PI * time_sec * 0.5), -1., 1.);
+    vec2 spotlightPosition = mix(vec2(0.0, 0.0), vec2(1.0, 0.0), step(sinNorm, 0.5));
+    vec4 spotlights = spotlight(zoomedUV, spotlightPosition, lightAlpha, gs5, ge5);
+    vec4 colorSpotlights = blendAdd(colorSplash, spotlights);
+
+    vec4 colorDarkened = mix(colorSpotlights, darkenShadows(colorSpotlights, .333, 1.), intensity);
+    vec4 colorExposure = exposure(colorDarkened, toRange(pulse, -intensity, intensity * .25));
+    vec4 colorExposureMix = mix(colorSpotlights, colorExposure, .77);
+
+    vec4 vignette = bottomVignette();
+    vec4 colorVignette = vec4(blendLinearBurn(colorExposureMix.rgb, vignette.rgb, vignette.a * intensity), 1.);
+
+    gl_FragColor = toOutputFormat(colorVignette);
+  }
+";

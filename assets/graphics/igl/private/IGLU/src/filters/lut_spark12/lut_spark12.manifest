@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "identifier": "blush",
+  "displayName": "Blush",
+  "description": "[IG Edits] Color filter name. With \"Blush\", the creator can apply a soft pink blush color grade by sampling the blush.png Spark-style 2D LUT through the lut_spark shader.",
+  "iglu": {
+    "legacyId": 829
+  },
+  "assets": [
+    {
+      "name": "blush.png",
+      "assetHash": "43f080b80cef8aa8b98b9df4f577f734284177d160d5e9256f4af3249eff3264",
+      "hubAssetId": "974895725293076"
+    },
+    {
+      "name": "blush_compressed.png",
+      "assetHash": "1e02e698d3927555f12a204431f46ea5af7687f3a024299a38db4622b684d412",
+      "hubAssetId": "1261166025778697"
+    }
+  ]
+}

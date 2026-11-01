@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "split_screen",
+  "displayName": "Split Screen",
+  "description": "[IG Edits] Video effect name. With \"Split Screen\", the creator can render two child filters into a left and right pane joined at a configurable split_factor seam.",
+  "iglu": {}
+}

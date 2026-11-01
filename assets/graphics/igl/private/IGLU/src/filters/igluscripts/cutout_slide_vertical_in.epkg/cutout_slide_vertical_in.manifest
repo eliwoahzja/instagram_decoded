@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "identifier": "cutout_slide_vertical_in",
+  "displayName": "Cutout Slide Vertical In",
+  "description": "[IG Edits] Transition name. With \"Cutout Slide Vertical In\", the creator can slide the segmented subject vertically into frame with motion-blur ghosting as a 1-second intro.",
+  "iglu": {
+    "legacyId": 3066,
+    "behavior": {
+      "type": "fixedIntro",
+      "durationMs": 1000,
+      "curve": "linear"
+    }
+  },
+  "dependencies": [
+    "cutout_slide"
+  ]
+}

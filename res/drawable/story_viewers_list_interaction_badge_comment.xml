@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="?igds_color_primary_background" />
+            <size android:height="@dimen/story_viewers_list_interaction_badge_size" android:width="@dimen/story_viewers_list_interaction_badge_size" />
+        </shape>
+    </item>
+    <item android:gravity="center" android:height="@dimen/abc_select_dialog_padding_start_material" android:width="@dimen/abc_select_dialog_padding_start_material">
+        <shape android:shape="oval">
+            <solid android:color="@color/badge_color" />
+        </shape>
+    </item>
+    <item android:gravity="center" android:height="@dimen/story_viewers_list_interaction_badge_icon_size" android:width="@dimen/story_viewers_list_interaction_badge_icon_size" android:drawable="@drawable/story_viewers_list_interaction_badge_comment__app_bitmap_0" android:top="1.0dp" />
+</layer-list>

@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "f4932181-d28e-4fbc-af3e-0e1a14353404",
+  "displayName": "Slow Motion Frame Blend",
+  "description": "[IG Edits] Internal video filter that blends slow-motion frames using retained frame history.",
+  "iglu": {}
+}

@@ -1,0 +1,64 @@
+[Filter IgluscriptVideoWashedOutFilter]
+
+[Init]
+fun init(Filter filter) {
+  filter.parameters = {
+    {intensity = 1.0, min = 0.0, max = 1.0}
+  };
+
+  filter.passes = {{
+    name = 'washed_out, inputs = {'default},
+    uniforms = {
+      inputSize = {1080.0, 1920.0},
+      intensity = 1.0
+    },
+    glslShader = glsl
+  }};
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  vec2 inputSize = getTextureSize('default);
+  setShaderUniform('washed_out, 'inputSize, inputSize);
+}
+
+string glsl = "
+
+varying vec2 sourceTextureCoordinate;
+
+BaseUniformsOpenGL;
+
+uniform vec2 inputSize;
+uniform float intensity;
+
+vec4 sharpen(vec2 uv){
+  vec2 d = 1.25 / inputSize;
+  vec4 c = sampleInput(uv) * 5.0;
+  c -= sampleInput(uv + vec2(d.x, 0.0));
+  c -= sampleInput(uv + vec2(-d.x, 0.0));
+  c -= sampleInput(uv + vec2(0.0,d.y));
+  c -= sampleInput(uv + vec2(0.0,-d.y));
+  return c;
+}
+
+vec3 colorCorrect(vec3 col){
+  col *= 2.0;
+  col -= 0.2;
+  col.rb += 0.045;
+  col = clamp(col, 0.0, 0.9);
+  col += 0.025;
+  col = pow(col, vec3(0.8));
+  col /= 1.25;
+  return col;
+}
+
+void main() {
+  vec2 uv = sourceTextureCoordinate;
+
+  vec4 s = sharpen(uv);
+  vec3 cc = colorCorrect(s.rgb);
+
+  vec4 color = vec4(mix(s.rgb, cc, intensity), 1.0);
+  gl_FragColor = toOutputFormat(color);
+}
+";

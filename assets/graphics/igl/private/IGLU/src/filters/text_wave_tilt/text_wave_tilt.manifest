@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "text_wave_tilt",
+  "displayName": "Wave Tilt",
+  "description": "[IG Edits] Text effect name. With \"Wave Tilt\", the creator can warp a text line into a single cosine arc that tilts the glyphs vertically across the padded width.",
+  "iglu": {}
+}

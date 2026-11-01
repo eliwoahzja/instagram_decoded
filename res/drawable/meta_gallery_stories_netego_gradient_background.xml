@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <gradient android:startColor="@color/bds_purple_5" android:endColor="@color/badge_color" android:angle="@integer/meta_gallery_stories_netego_gradient_rotation" android:type="linear" />
+</shape>

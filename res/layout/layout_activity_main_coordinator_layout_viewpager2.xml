@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.instagram.common.ui.base.IgFrameLayout android:layout_width="match_parent" android:layout_height="match_parent"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <com.instagram.ui.swipenavigation.container.SwipeNavigationContainer android:id="@id/swipe_navigation_container" android:layout_width="match_parent" android:layout_height="match_parent">
+        <com.instagram.common.ui.base.IgFrameLayout android:id="@id/layout_container_left" android:layout_width="match_parent" android:layout_height="match_parent" />
+        <com.instagram.common.ui.base.IgFrameLayout android:id="@id/bottom_sheet_camera_container" android:layout_width="match_parent" android:layout_height="match_parent" />
+        <com.instagram.common.ui.widget.touchinterceptorlayout.TouchInterceptorCoordinatorLayout android:id="@id/layout_container_center_right_coordinator_layout" android:layout_width="match_parent" android:layout_height="match_parent" android:importantForAccessibility="no">
+            <include layout="@layout/layout_activity_main_internal_viewpager2" />
+        </com.instagram.common.ui.widget.touchinterceptorlayout.TouchInterceptorCoordinatorLayout>
+        <view android:id="@id/layout_voice_message_bar_stub" android:layout="@layout/layout_voice_message_bar" android:layout_width="match_parent" android:layout_height="@dimen/abc_alert_dialog_button_dimen" class="android.view.ViewStub" />
+    </com.instagram.ui.swipenavigation.container.SwipeNavigationContainer>
+    <view android:id="@id/layout_meta_ai_voice_session_notification_stub" android:layout="@layout/meta_ai_voice_background_banner" android:inflatedId="@id/layout_meta_ai_voice_session_notification" android:layout_width="match_parent" android:layout_height="@dimen/action_bar_immersive_gradient_height" class="android.view.ViewStub" />
+    <view android:id="@id/modal_container_stub" android:layout="@layout/modal_container" android:layout_width="match_parent" android:layout_height="match_parent" class="android.view.ViewStub" />
+    <view android:id="@id/pip_fragment_container_stub" android:layout="@layout/pip_fragment_container" android:layout_width="match_parent" android:layout_height="match_parent" class="android.view.ViewStub" />
+    <com.instagram.common.ui.base.IgFrameLayout android:id="@id/overlay_layout_container" android:layout_width="match_parent" android:layout_height="match_parent">
+        <view android:layout_gravity="bottom" android:id="@id/snack_bar_stub" android:layout_width="match_parent" android:layout_height="wrap_content" class="android.view.ViewStub" />
+    </com.instagram.common.ui.base.IgFrameLayout>
+</com.instagram.common.ui.base.IgFrameLayout>

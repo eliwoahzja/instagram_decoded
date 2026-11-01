@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "spin_transition",
+  "displayName": "Spin Transition",
+  "description": "[IG Edits] Transition name. With \"Spin Transition\", the creator can transition between clips by combining a radial spin blur, a UV rotation and a triangle-pulse crossfade.",
+  "iglu": {}
+}

@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "identifier": "grayscale",
+  "displayName": "Grayscale",
+  "description": "Filter name for a black-and-white / grayscale effect",
+  "iglu": {
+    "legacyId": 1009
+  },
+  "assets": [
+    {
+      "name": "lut_grayscale.png",
+      "assetHash": "35211b9b1d3e7027b79519651bb46f13793fbc4b31ed630d4b6fdad1a0cfffca",
+      "hubAssetId": "952270110601622"
+    }
+  ]
+}

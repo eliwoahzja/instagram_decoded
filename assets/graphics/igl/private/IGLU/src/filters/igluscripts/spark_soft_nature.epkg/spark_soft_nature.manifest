@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "identifier": "spark_soft_nature",
+  "displayName": "Soft Nature",
+  "description": "[IG Edits] Color filter name. With \"Soft Nature\", the creator can apply a Spark-ported soft nature LUT grade that gently warms outdoor tones.",
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAGXQEW9wgS"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "8a397eaa",
+      "handle": "AQBltIIaDFP5",
+      "md5": "af533936bccfccbda43aa798db1cb4d2"
+    }
+  },
+  "iglu": {
+    "legacyId": 3068
+  },
+  "assets": [
+    {
+      "name": "spark_soft_nature_lut.png",
+      "assetHash": "9cff78709fd453fa0d9620969e79c2c3ad0aafea69dc040d5def70cdb0dbbf54",
+      "hubAssetId": "984058277903755"
+    }
+  ]
+}

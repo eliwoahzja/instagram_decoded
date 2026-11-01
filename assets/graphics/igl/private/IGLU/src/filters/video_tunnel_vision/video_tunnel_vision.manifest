@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_tunnel_vision",
+  "displayName": "Tunnel vision",
+  "description": "[IG Edits] Video effect name. With \"Tunnel vision\", the creator can imitate the effect of focusing in the middle of the clip while the sides of the clip get distorted.",
+  "iglu": {
+    "legacyId": 2071,
+    "customization": [
+      {
+        "name": "intensity",
+        "default": 0.5,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Intensity",
+        "displayNameDescription": "[IG Edits] Slider label controlling the strength of a video effect. Generic across many effects (glow, blur, color, distortion, etc.); exact range varies per effect."
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "d251c3a6",
+      "handle": "AQAQhUvhocFY",
+      "md5": "adc733c5562109d1d9be62dc6918bc14"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQADsr--fG20"
+    }
+  }
+}

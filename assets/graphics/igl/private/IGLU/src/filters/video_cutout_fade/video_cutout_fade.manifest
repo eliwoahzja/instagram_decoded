@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_cutout_fade",
+  "displayName": "Fade",
+  "description": "[Instagram Edits] Effects browser - Label for a fade effect that transitions subjects. Character count for labels is 14 characters max.",
+  "iglu": {
+    "customization": [
+      {
+        "name": "speed",
+        "default": 0.27,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Speed",
+        "displayNameDescription": "[IG Edits] Slider label controlling the playback or animation speed of a video effect (noun, not a verb); exact range varies per effect."
+      }
+    ],
+    "subject": {
+      "enabled": true,
+      "fullFrameEnabled": false
+    }
+  }
+}

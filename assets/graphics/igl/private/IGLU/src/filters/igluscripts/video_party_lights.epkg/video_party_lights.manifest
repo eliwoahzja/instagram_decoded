@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_party_lights",
+  "displayName": "Flash pulse",
+  "description": "Video effect name. A video effect is a creative visual element that can be applied to a video. With \"Flash pulse\", the creator can imitate the effect of colorful lights with a small zoom in-and-out.",
+  "iglu": {
+    "legacyId": 2047,
+    "customization": [
+      {
+        "name": "intensity",
+        "default": 1.0,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Intensity",
+        "displayNameDescription": "[IG Edits] Slider label controlling the strength of a video effect. Generic across many effects (glow, blur, color, distortion, etc.); exact range varies per effect."
+      },
+      {
+        "name": "speed",
+        "default": 0.622,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Speed",
+        "displayNameDescription": "[IG Edits] Slider label controlling the playback or animation speed of a video effect (noun, not a verb); exact range varies per effect."
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "4bc84788",
+      "handle": "AQADrZ69Tase",
+      "md5": "d1bbb0f09d6a4c9bea81c976d0131998"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAFruXJ5OXC"
+    }
+  }
+}

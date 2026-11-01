@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "identifier": "cee36bf6-32e4-4bf0-9aaf-a8c2b5ae5e9c",
+  "displayName": "Glossier",
+  "description": "[IG Edits] Video effect name. With \"Glossier\", the creator gets a face-tracked glossy-skin makeup look — LUT color grade + cheek/lip multiply layers — composited over the LUT-graded scene.",
+  "ios": {
+    "previewAsset": {
+      "handle": "AQADZS1cKGsO"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "619303ad",
+      "handle": "AQADSemljuBh",
+      "md5": "ce521f6de304437b86cb7c63a3608025"
+    }
+  },
+  "iglu": {
+    "legacyId": 3211
+  },
+  "assets": [
+    {
+      "name": "glossier_lut.png",
+      "assetHash": "834f31558e0f526503eaf87c1656c783bebab855ba20ee276d5394b8ea684b06",
+      "hubAssetId": "1770586557276791"
+    },
+    {
+      "name": "glossier_makeup.png",
+      "assetHash": "3b5218874f1e36f05f9f16b30b20ebce1ef38d5691310b3b205f78e14710bc3c",
+      "hubAssetId": "4652222741679146"
+    },
+    {
+      "name": "glossier_highlights.png",
+      "assetHash": "f12ddfea20dcca2fa350d75d5ed2ae76a4fffbcdfd2b8f2357558b90072dab9f",
+      "hubAssetId": "1358346476016667"
+    }
+  ]
+}

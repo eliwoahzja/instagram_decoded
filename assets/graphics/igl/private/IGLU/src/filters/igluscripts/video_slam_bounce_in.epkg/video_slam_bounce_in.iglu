@@ -1,0 +1,55 @@
+[Filter IgluscriptVideoSlamBounceFilter]
+[MaskBehavior alpha]
+
+fun mix(f32 a, f32 b, f32 t) f32 {
+  return a * (1.0 - t) + b * t;
+}
+
+# Elastic ease-out with decaying frequency and amplitude
+fun easeOutElastic(f32 t) f32 {
+  if (t <= 0.0) { return 0.0; }
+  if (t >= 1.0) { return 1.0; }
+  # Increase period over time to reduce frequency toward the tail
+  f32 p = 0.1 + t * 0.2;
+  f32 s = p / 4.0;
+  # Steeper exponential decay to dampen amplitude faster
+  return pow(2.0, -15.0 * t) * sin((t - s) * 2.0 * 3.14159265 / p) + 1.0;
+}
+
+[Init]
+fun init(Filter filter) {
+  filter.parameters = {
+    {center = {0.5, 0.5}, min = {0.0, 0.0}, max = {1.0, 1.0}},
+    {outro = 0.0, min = 0.0, max = 1.0, description = "0 = In, 1 = Out"},
+    {size = 0.30, min = 0.0, max = 1.0, description = "Starting Scale"},
+  };
+
+  filter.passes = {{
+      name = 'scaleFx,
+      igid = 'video_scale_opacity,
+      inputs = {'default},
+      uniforms = {
+        progress = 0.0,
+        scale = 1.5,
+        opacity = 0.0,
+        center = {0.5, 0.5},
+      }
+    }};
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  f32 p = getParameterFloat('progress);
+  f32 outro = getParameterFloat('outro);
+  if (outro > 0.5) { p = 1.0 - p; }
+  f32 t = easeOutElastic(p);
+
+  f32 size = mix(1.1, 2.5, getParameterFloat('size));
+  f32 scale = mix(size, 1.0, t);
+  f32 opacity = clamp(p * 100.0, 0.0, 1.0);
+
+  setShaderUniform('scaleFx, 'progress, p);
+  setShaderUniform('scaleFx, 'scale, scale);
+  setShaderUniform('scaleFx, 'opacity, opacity);
+  setShaderUniform('scaleFx, 'center, getParameterVec2('center));
+}

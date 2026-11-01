@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "text_liquid_metal",
+  "displayName": "Liquid Metal",
+  "description": "Label for the Liquid Metal text effect style.",
+  "iglu": {}
+}

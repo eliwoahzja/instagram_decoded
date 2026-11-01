@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "identifier": "242C879E-8B07-48F0-B71D-9D0A7845883F",
+  "displayName": "Drammatico",
+  "description": "[IG Edits] Color filter name. With \"Drammatico\", the creator gets a pure 8x8 LUT color grade applied to the camera image at full strength.",
+  "ios": {
+    "previewAsset": {
+      "handle": "AQADYhMqWin7"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "8a4146fb",
+      "handle": "AQAQLcizD5Mr",
+      "md5": "442aaee8107f4bb1f2a4b02935813707"
+    }
+  },
+  "iglu": {
+    "legacyId": 3193
+  },
+  "assets": [
+    {
+      "name": "drammatico_lut.png",
+      "assetHash": "90129297b0edd210f5988d43a9c2511b3234caed2c4bf9522e6b738bf3a97c78",
+      "hubAssetId": "1524929008555108"
+    }
+  ]
+}

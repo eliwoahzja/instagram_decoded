@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "identifier": "denim",
+  "displayName": "Denim",
+  "description": "[IG Edits] Color filter name. With \"Denim\", the creator can remap pixel RGB through the Denim 3D LUT for a cool desaturated blue cast.",
+  "iglu": {
+    "legacyId": 5032
+  },
+  "assets": [
+    {
+      "name": "denim.lutpk",
+      "assetHash": "a7f300f77eaae7d4fcf1dd2ba2299e735467db1836d2eb7346057da43eed2b82",
+      "hubAssetId": "1514662556851907"
+    }
+  ]
+}

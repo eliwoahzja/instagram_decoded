@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "identifier": "0B8732EC-5CE7-4D5D-B35F-B9210AE537C6",
+  "displayName": "Quad LUT",
+  "description": "[IG Edits] Color filter name. With \"Quad LUT\", the creator gets a 2x2 grid effect: four tiled copies of the camera image, each color-graded with the same LUT, filling the full canvas.",
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAD83tF0eWo"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "cbc537f7",
+      "handle": "AQAFBkzylFap",
+      "md5": "19a8c2d2ead827fa27c2f17572970afd"
+    }
+  },
+  "iglu": {
+    "legacyId": 3090
+  },
+  "assets": [
+    {
+      "name": "quad_lut_lut.png",
+      "assetHash": "ecf3ed65c2fb7a2ad82ac052a015e9bfaaaffe579de7f67579f7b3b36e70b48f",
+      "hubAssetId": "1504655774491584"
+    }
+  ]
+}

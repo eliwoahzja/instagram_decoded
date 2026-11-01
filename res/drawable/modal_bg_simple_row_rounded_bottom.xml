@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="true">
+        <shape android:shape="rectangle">
+            <corners android:bottomLeftRadius="@dimen/abc_floating_window_z" android:bottomRightRadius="@dimen/abc_floating_window_z" />
+            <solid android:color="?igds_color_elevated_highlight_background" />
+        </shape>
+    </item>
+</selector>

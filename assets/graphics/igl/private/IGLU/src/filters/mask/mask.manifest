@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "mask",
+  "displayName": "Mask",
+  "description": "[IG Edits] Internal effect. With \"Mask\", the engine can apply an arbitrary mask asset to the video (developer-only utility).",
+  "iglu": {}
+}

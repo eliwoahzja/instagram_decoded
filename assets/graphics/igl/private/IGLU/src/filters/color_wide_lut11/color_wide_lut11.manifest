@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "identifier": "fresh",
+  "displayName": "Fresh",
+  "description": "[IG Edits] Color filter name. With \"Fresh\", the creator can remap pixel RGB through the Fresh 3D LUT for a clean bright tone with crisp whites.",
+  "iglu": {
+    "legacyId": 5034
+  },
+  "assets": [
+    {
+      "name": "fresh.lutpk",
+      "assetHash": "e929ccb979c06cbb9de62ac5bd16e5e056c555c25ce6ee5c45f9ed72934f42ba",
+      "hubAssetId": "3459063787580345"
+    }
+  ]
+}

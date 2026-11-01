@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "subject_composite",
+  "displayName": "Subject Composite",
+  "description": "[IG Edits] Video effect name. With \"Subject Composite\", the creator can over-blend a processed premultiplied subject texture onto the original background via standard alpha-over compositing.",
+  "iglu": {}
+}

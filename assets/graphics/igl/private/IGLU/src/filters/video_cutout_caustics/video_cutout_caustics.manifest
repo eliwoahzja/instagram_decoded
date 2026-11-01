@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_cutout_caustics",
+  "displayName": "Caustics",
+  "description": "[IG Edits] Video effect name. With \"Caustics\", the creator can cast animated underwater light-caustic patterns onto the segmented subject while preserving the background.",
+  "iglu": {
+    "legacyId": 2122,
+    "subject": {
+      "enabled": true
+    }
+  }
+}

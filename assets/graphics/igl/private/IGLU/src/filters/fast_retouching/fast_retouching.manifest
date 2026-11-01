@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "fast_retouching",
+  "displayName": "Fast Retouching",
+  "description": "[IG Edits] Video effect name. With \"Fast Retouching\", the creator can smooth skin via a guided-filter at 1/8 res with optional face-mask gating, screen blend, color gain and S-curve.",
+  "iglu": {}
+}

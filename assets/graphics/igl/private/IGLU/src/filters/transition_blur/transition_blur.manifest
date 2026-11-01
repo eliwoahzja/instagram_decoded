@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "transition_blur",
+  "displayName": "Blur",
+  "description": "Video effects selection. Blurs video.",
+  "iglu": {}
+}

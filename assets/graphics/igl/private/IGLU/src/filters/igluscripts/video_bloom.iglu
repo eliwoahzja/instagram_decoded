@@ -1,0 +1,253 @@
+[Filter IgluscriptBloomFilter]
+[MaskBehavior alpha]
+
+[Init]
+fun init(Filter filter) {
+
+  filter.parameters = {
+    {intensity = 1.0, min = 0.0, max = 1.0, description = "Intensity"},
+    {amount = 0.15, min = 0.0, max = 1.0, description = "Amount"},
+    {speed    = 1.0, min = 0.0, max = 1.0, description = "Bloom Radius"}, #speed
+  };
+
+  filter.passes = {
+  {
+    name = 'threshold,
+    inputs = {'default},
+    uniforms = {
+      threshold = 0.85,
+      feather = 0.2,
+      darken = 1.0,
+    },
+    glslShader = thresholdGlsl,
+  },
+{
+      name = 'verticalPass,
+      inputs = {'threshold},
+      scale = {0.5, 0.5},
+      uniforms = {
+        strength = 1.0,
+        sigma = 20.0,
+        kernelSize = 40.0,
+        blurStep = {1.0,0.0}, # H or V step size
+        invTotalWeight = 1.0, # scaling
+        dda = {1.0,1.0,1.0}, # used to compute powers
+      },
+      glslShader  = glslSeparableBlur,
+    },{
+      name = 'horizontalPass,
+      inputs = {'verticalPass},
+      scale = {0.5, 0.5},
+      uniforms = {
+        strength = 1.0,
+        sigma = 20.0,
+        kernelSize = 40.0,
+        blurStep = {0.0,1.0}, # H or V step size
+        invTotalWeight = 1.0, # scaling
+        dda = {1.0,1.0,1.0},  # used to compute powers
+      },
+      glslShader  = glslSeparableBlur,
+    },
+  {
+    name = 'composite,
+    inputs = {'default, 'horizontalPass},
+    uniforms = {
+      exposure       = 1.0,
+      saturation     = 1.0,
+      tintColor      = {1.0, 1.0, 1.0},
+      bloomTintColor = {1.0, 1.0, 1.0},
+    },
+    glslShader  = compositeGlsl,
+  }
+  };
+}
+
+f32 lastKernelSize = -1.0;
+f32 lastSigma = -1.0;
+vec2 lastOutputSize = {-1.0,-1.0};
+vec2 dV = {1.0,1.0};
+vec2 dH = {1.0,1.0};
+f32 invTotalWeight = 1.0;
+vec3 forwardDifferencer = {1.0,1.0,1.0};
+
+[PreRender]
+fun preRender(Filter filter){
+
+  f32 intensity = getParameterFloat('intensity);
+
+  setShaderUniform('composite, 'exposure, intensity );
+
+  vec2 outputSize = getTextureSize('default);
+
+  if (length(lastOutputSize - outputSize) > 0.00001)
+  {
+    lastOutputSize = outputSize;
+
+    dV = {0.0,1.0/outputSize.y};
+    dH = {1.0/outputSize.x,0.0};
+
+  }
+  setShaderUniform('verticalPass,'blurStep, dV);
+  setShaderUniform('horizontalPass,'blurStep, dH);
+
+  f32 radius = mix(0.1, 0.85, getParameterFloat('speed));
+  f32 kernelSize = 40.0;
+  f32 sigma = 20.0 * radius;
+
+  if (abs(lastKernelSize - kernelSize) + abs(lastSigma - sigma) > 0.00001)
+  {
+  lastKernelSize = kernelSize;
+  lastSigma = sigma;
+
+  # special case: to match the sampled pixels, where they are taken 2 at a time,
+  # ensure kernel is odd sized (center pixel + N pairs..)
+  kernelSize = 2.0*floor(kernelSize/2.0)+1.0;
+
+
+  f32 totalWeight = 0.0;
+  f32 pow1 = exp(-0.5/(sigma*sigma));
+  f32 i = -kernelSize;
+  while (i <= kernelSize)
+  {
+    totalWeight = totalWeight + pow(pow1,i*i);
+    i = i + 1.0;
+  }
+  invTotalWeight = 1.0/totalWeight;
+
+  forwardDifferencer.x = pow1*pow1;
+  forwardDifferencer.y = pow1*pow1*pow1;
+  forwardDifferencer.z = pow1;
+  }
+
+  setShaderUniform('verticalPass, 'invTotalWeight, invTotalWeight);
+  setShaderUniform('horizontalPass, 'invTotalWeight, invTotalWeight);
+  setShaderUniform('verticalPass, 'dda, forwardDifferencer);
+  setShaderUniform('horizontalPass, 'dda, forwardDifferencer);
+  setShaderUniform('verticalPass, 'sigma, lastSigma);
+  setShaderUniform('verticalPass, 'kernelSize, kernelSize);
+  setShaderUniform('horizontalPass, 'sigma, lastSigma);
+  setShaderUniform('horizontalPass, 'kernelSize, kernelSize);
+
+
+  f32 th = 1.0 - getParameterFloat('amount);
+
+  setShaderUniform('threshold, 'threshold, th);
+  setShaderUniform('threshold, 'feather, 0.2);
+  setShaderUniform('threshold, 'darken, 1.0);
+}
+
+string thresholdGlsl = "
+precision highp float;
+
+varying vec2 sourceTextureCoordinate;
+BaseUniformsOpenGL;
+
+uniform float threshold;
+uniform float feather;
+uniform float darken;
+
+float luma(vec3 color) {
+  return dot(color, vec3(0.3, 0.6, 0.1));
+}
+
+void main() {
+  vec2 uv = sourceTextureCoordinate;
+  vec4 color = sampleInput(uv);
+
+  float l = luma(color.xyz);
+
+  color.rgb *= smoothstep(threshold - feather, threshold + feather , l);
+  color.rgb *= darken;
+  color.a = 1.0;
+
+  gl_FragColor = toOutputFormat(color);
+}
+";
+
+# double pass separables
+string glslSeparableBlur = "
+      precision highp float;
+
+      varying vec2 textureCoordinate;
+      varying vec2 sourceTextureCoordinate;
+      BaseUniformsOpenGL;
+      uniform float sigma;
+      uniform float kernelSize;
+      uniform vec2 blurStep;
+      uniform float invTotalWeight;
+      uniform vec3 dda;  // used to compute powers
+      uniform sampler2D auxSampler1;
+
+      void main() {
+
+        vec2 uv = sourceTextureCoordinate;
+
+        if (kernelSize <= 1.0) {
+          gl_FragColor = toOutputFormat(sampleInput(uv));
+          return;
+        }
+
+        vec4 color = sampleInput(uv);
+        vec3 accumColor = color.rgb;
+
+        float d0 = dda.x;
+        float d1 = dda.y;
+        float d2 = dda.z;
+
+        for (float i = 1.0; i <= kernelSize; i = i + 2.0)
+        {
+            float s = 1.0 + d1;
+            float a = d1 / s;
+            vec2 step = (a + i) * blurStep;
+
+            // sample 4 pixels via bilinear hardware
+            accumColor += (s * d2) * (
+              sampleInput(uv + step).rgb +
+              sampleInput(uv - step).rgb
+              );
+
+            d2 = d2 * d1;
+            d1 = d1 * d0;
+            d2 = d2 * d1;
+            d1 = d1 * d0;
+        }
+
+        gl_FragColor = toOutputFormat(vec4(accumColor * invTotalWeight,color.a));
+      }";
+
+
+# ==========================================================================
+# Bloom compose - combines original image with blurred threshold output
+# Multi-input: sampleInput = default (original), auxSampler1 = blur2
+# ==========================================================================
+
+string compositeGlsl = "
+precision highp float;
+
+varying vec2 sourceTextureCoordinate;
+BaseUniformsOpenGL;
+
+
+uniform float exposure;
+uniform float saturation;
+uniform vec3 bloomTintColor;
+uniform vec3 tintColor;
+
+uniform sampler2D auxSampler1;
+
+
+vec3 adjustSaturation(vec3 rgb, float adjustment) {
+  const vec3 W = vec3(0.2125, 0.7154, 0.0721);
+  vec3 intensity = vec3(dot(rgb, W));
+  return mix(intensity, rgb, adjustment);
+}
+
+void main() {
+
+  vec4 color = sampleInput(sourceTextureCoordinate) * vec4(tintColor, 1.0);
+  vec3 bloom = texture2D(auxSampler1, sourceTextureCoordinate).rgb * bloomTintColor * exposure;
+
+  vec4 result = vec4(adjustSaturation(color.rgb, saturation) + bloom, 1.0);
+  gl_FragColor = toOutputFormat( result );
+}
+";

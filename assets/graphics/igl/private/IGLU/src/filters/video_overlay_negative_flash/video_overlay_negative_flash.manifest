@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_cutout_negative_flash",
+  "displayName": "Negative Flash",
+  "description": "[Instagram Edits] Effect browser - Label for an effect that creates a negative flash effect in the video or subjects within the video. Character count for labels is 14 characters max.",
+  "iglu": {
+    "legacyId": 5070,
+    "customization": [
+      {
+        "name": "speed",
+        "default": 0.41,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Speed",
+        "displayNameDescription": "[IG Edits] Slider label controlling the playback or animation speed of a video effect (noun, not a verb); exact range varies per effect."
+      }
+    ],
+    "subject": {
+      "overlay": true
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "cfd9d36a",
+      "handle": "AQADedbMi9XM",
+      "md5": "108d8c1ac7e38e542bbd3b4312db01f4"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAGmudR1CHA"
+    }
+  }
+}

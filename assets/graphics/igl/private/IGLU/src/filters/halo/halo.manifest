@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "identifier": "halo",
+  "displayName": "Halo",
+  "description": "[IG Edits] Video effect name. With \"Halo\", the creator can add a soft glowing halo around bright pixels.",
+  "iglu": {
+    "legacyId": 1102
+  }
+}

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="string_0x7f130003">Шаҳр</string>
+    <string name="string_0x7f130004">Суроға</string>
+    <string name="string_0x7f13002c">Пӯшидани браузер</string>
+    <string name="string_0x7f130030">%1$s мехоҳад макони дастгоҳи шуморо истифода барад.</string>
+    <string name="string_0x7f130033">Иҷозат додан</string>
+    <string name="string_0x7f130034">Манъ кардан</string>
+    <string name="string_0x7f130039">Баргаштан</string>
+    <string name="string_0x7f13008d">Хатое ба миён омад</string>
+    <string name="string_0x7f13008f">Почтаи электронӣ</string>
+    <string name="string_0x7f130091">Сомонае, ки мебинед, кӯшиш мекунад барномаи берунаро кушояд. Мехоҳед идома диҳед?</string>
+    <string name="string_0x7f130092">Баргаштан</string>
+    <string name="string_0x7f130093">Идома додан</string>
+    <string name="string_0x7f130094">Шумо барномаи моро тарк мекунед</string>
+    <string name="string_0x7f130095">Ин шояд аз сабаби хатогии техникие бошад, ки мо барои бартараф кардани он кор карда истодаем. Кӯшиш кунед ин саҳифаро аз нав бор кунед.</string>
+    <string name="string_0x7f130096">Таҷдид кардан</string>
+    <string name="string_0x7f130097">Саҳифа дар айни ҳол дастрас нест</string>
+    <string name="string_0x7f130098">Насаб</string>
+    <string name="string_0x7f130099">Бор кардани саҳифа ғайриимкон аст</string>
+    <string name="string_0x7f13009a">Кушодан бо...</string>
+    <string name="string_0x7f13009b">Кушодан дар %1$s</string>
+    <string name="string_0x7f13009c">Имконоти бештар</string>
+    <string name="string_0x7f1300aa">Ном</string>
+    <string name="string_0x7f1300af">Ҳоло шумо экрани пурраро мебинед. Барои баромадан ба тарафи чап кашед ё тугмаи қафоро ангушт занед.</string>
+    <string name="string_0x7f1300cb">Айни замон, ҳангоми танзим кардани %2$s бо забони %1$s мо бо мушкилиҳо дучор мешавем. Метавонед кӯшишро такрор кунед ё %2$s-ро бо забони англисӣ (ИМА) истифода баред.</string>
+    <string name="string_0x7f1300cc">Як лаҳза, мо ба %1$s танзим мекунем…</string>
+    <string name="string_0x7f1300cd">Аз нав кӯшиш кардан</string>
+    <string name="string_0x7f1300ce">Идомадиҳӣ бо забони англисӣ (ИМА)</string>
+</resources>

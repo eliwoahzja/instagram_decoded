@@ -1,0 +1,239 @@
+# IGLUSCRIPTCOLLISION_BYPASS: Intentional replacement of C++ native effect - IGLUScript takes precedence on Android/iOS; C++ filter retained as fallback for direct C++ callers (sample app, server tools).
+[Filter VideoExposureStretch]
+
+# Exposure Stretch: pulsating exposure boost feeding a horizontal stretch with chromatic aberration.
+# Two passes: exposure_pulse brightens, stretch_pulse distorts.
+#
+# One pulse shape (a gated cosine) and one shaping curve serve both behaviors; only the playhead
+# differs:
+#   useBeats false -> clock-driven, time_sec wrapped into a fixed period
+#   useBeats true  -> beat-driven, beatProgress scrubs the shaping curve
+#
+# useBeats is set by BeatReactiveController when a manifest declares beatReactive; with no such
+# manifest nothing writes it and the false default selects the clock.
+#
+# Both pulses are evaluated in [PreRender], not in the shader: they are per-frame scalars with
+# nothing per-pixel about them, so the shader carries no time, beat or branch logic -- only the
+# stretch/aberration geometry.
+
+[Init]
+fun init(Filter filter) {
+  filter.parameters = {
+    {intensity = 0.5, min = 0.0, max = 1.0, description = "Exposure magnitude and stretch UV mix"},
+    {amount = 0.44, min = 0.0, max = 1.0, description = "Stretch and aberration amount"},
+    {useBeats = false, description = "True while the beat system is driving this effect"},
+    {beatProgress = 0.0, min = 0.0, max = 1.0, description = "Beat-driven pulse playhead"},
+  };
+
+  filter.passes = {{
+    name = 'exposure_pulse,
+    inputs = {'default},
+    uniforms = {
+      pulse = 1.0,
+    },
+    glslShader = glslExposurePulse,
+  },
+  {
+    name = 'stretch_pulse,
+    inputs = {'exposure_pulse},
+    uniforms = {
+      pulse = 0.0,
+      offsetPulse = 0.0,
+      stretchX = 8.0,
+      stretchY = 1.5,
+      distortion = 0.0,
+      aberration = 40.0,
+      aberrationOffset = 0.0,
+      intensity = 1.0,
+    },
+    glslShader = glslStretchPulse,
+  }};
+}
+
+# Helper functions live in the [Init] section: a section's FIRST function is its entry point, so
+# putting these under [PreRender] would make the compiler treat the first helper as preRender.
+
+# The shared pulse shape: sweeps 0 -> -1 -> 0 as s goes 0 -> 0.5 -> 1.
+fun cosinePulse(f32 s) f32 {
+  return 0.0 - (1.0 - cos(s * 6.28318)) * 0.5;
+}
+
+# Shared shaping; max() guards pow() against a negative base. The exponent is the main "snappiness"
+# dial -- very steep near 0, so most visible motion happens at the extreme of the sweep. Raising it
+# toward 0.5 spreads the motion out and reaches a higher peak. Affects BOTH paths.
+fun shapePulse(f32 raw) f32 {
+  f32 curved = (raw + 1.0) * 0.5;
+  return pow(max(curved, 0.0), 0.1);
+}
+
+# Clock playhead: wrap time into the period, then gate to the active middle half and map it to 0..1.
+# Outside the window it returns 0, which shapePulse maps to the neutral resting level.
+# floor() rather than fract() to stay on the scalar math surface.
+fun clockPhase(f32 timeSec, f32 period) f32 {
+  f32 q = timeSec / period;
+  f32 t = q - floor(q);
+  if (t < 0.25) {
+    return 0.0;
+  }
+  if (t >= 0.75) {
+    return 0.0;
+  }
+  # (t - 0.25) / 0.5, written to avoid a leading parenthesis: IGLUScript rejects `return (`.
+  return t * 2.0 - 0.5;
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  f32 time = getParameterFloat('time_sec);
+  f32 intensity = getParameterFloat('intensity);
+  f32 amount = getParameterFloat('amount);
+  boolean useBeats = getParameterBoolean('useBeats);
+
+  # Matches the C++ kDefaultExposure * intensity_.
+  f32 exposureMag = 3.0 * intensity;
+
+  f32 exposure = 1.0;
+  f32 pulse = 0.0;
+  f32 offsetPulse = 0.0;
+
+  if (useBeats) {
+    f32 beat = getParameterFloat('beatProgress);
+
+    # Sweep the full cosine curve, t in [1.0, 0.0]
+    f32 t = 1.0 - beat;
+    pulse = shapePulse(cosinePulse(t));
+    offsetPulse = shapePulse(cosinePulse(t + 0.1));
+
+    # Ramp to the ceiling the clock path reaches, so both paths match in brightness.
+    f32 exposureCeiling = 1.0 + (exposureMag * exposureMag) / 10.0;
+    exposure = 1.0 + beat * (exposureCeiling - 1.0);
+  } else {
+    # period and speed are the C++ kDefaultPulseSpeed * 0.2667.
+    f32 period = 2.0 * 0.2667;
+    pulse = shapePulse(cosinePulse(clockPhase(time, period)));
+    offsetPulse = shapePulse(cosinePulse(clockPhase(time + 0.1, period)));
+
+    f32 raw = sin(time * 2.0 * 6.2831);
+    f32 curved = (raw + 1.0) * 0.5;
+    # Floor is strictly positive, unlike shapePulse's max(x, 0.0): this exponent is negative, so a
+    # base of 0 is a divide by zero.
+    curved = pow(max(curved, 0.0001), -0.2);
+    curved = clamp(curved, 0.0, 1.0 + exposureMag / 10.0);
+    exposure = 1.0 + (curved - 1.0) * exposureMag;
+  }
+
+  exposure = max(exposure, 1.0);
+  setShaderUniform('exposure_pulse, 'pulse, exposure);
+
+  setShaderUniform('stretch_pulse, 'pulse, pulse);
+  setShaderUniform('stretch_pulse, 'offsetPulse, offsetPulse);
+  setShaderUniform('stretch_pulse, 'intensity, intensity);
+
+  # amount scales stretch and aberration; matches the C++ applyParameterUniforms().
+  setShaderUniform('stretch_pulse, 'stretchX, 1.0 + (8.0 - 1.0) * amount);
+  setShaderUniform('stretch_pulse, 'stretchY, 1.0 + (1.5 - 1.0) * amount);
+  setShaderUniform('stretch_pulse, 'aberration, 40.0 * amount);
+}
+
+#### Pass 1: exposure boost ####
+# Premultiplied-alpha aware.
+
+string glslExposurePulse = "
+  precision highp float;
+  varying vec2 sourceTextureCoordinate;
+  BaseUniformsOpenGL;
+
+  uniform float pulse;
+
+  void main() {
+    vec4 base = sampleInput(sourceTextureCoordinate);
+    base.rgb /= base.a;
+    base.rgb = min(base.rgb * pulse, 1.0);
+    base.rgb *= base.a;
+    gl_FragColor = toOutputFormat(base);
+  }
+";
+
+#### Pass 2: stretch plus chromatic aberration ####
+# No time and no beat inputs: `pulse` and `offsetPulse` arrive already shaped from [PreRender].
+
+string glslStretchPulse = "
+  precision highp float;
+  varying vec2 sourceTextureCoordinate;
+  BaseUniformsOpenGL;
+
+  uniform vec2 outputSize;
+  uniform float pulse;
+  uniform float offsetPulse;
+  uniform float stretchX;
+  uniform float stretchY;
+  uniform float distortion;
+  uniform float aberration;
+  uniform float aberrationOffset;
+  uniform float intensity;
+
+  vec2 mirror(vec2 v) {
+    vec2 m = mod(v, 2.0);
+    return mix(m, 2.0 - m, step(1.0, m));
+  }
+
+  vec2 cubicDistortionUV(vec2 uv, float dist, vec2 size) {
+    float aspectRatio = size.x / size.y;
+
+    // negate aspect ratio in distortion
+    uv.x = 0.5 + (uv.x - 0.5) * aspectRatio;
+
+    // apply distortion
+    vec2 dir = uv - 0.5;
+    dir.y *= 0.75;
+    float d = length(dir);
+    vec2 duv = uv + dir * d * d * dist;
+
+    // reapply aspect ratio negation
+    duv.x = 0.5 + (duv.x - 0.5) / aspectRatio;
+
+    return duv;
+  }
+
+  void main() {
+    vec2 uv = sourceTextureCoordinate;
+    vec2 originalUV = uv;
+    vec2 ratio = vec2(outputSize.x / outputSize.y, 1.0);
+    vec2 st = vec2(uv.x * ratio.x, uv.y);
+    vec2 center = vec2(0.5 * ratio.x, 0.5);
+
+    float inversePulse = 1.0 - pulse;
+
+    // STRETCH
+    float scaleY = mix(stretchY, 1.0, offsetPulse);
+    float scaleX = mix(stretchX - 1.0, 0.9, pulse);
+
+    st = (st - center) / vec2(scaleX, scaleY) + center;
+    uv = vec2(st.x / ratio.x, st.y);
+    // Mix stretched UV toward input UV (0 = passthrough, 1 = full stretch).
+    uv = mix(originalUV, uv, intensity);
+    st = mirror(st);
+
+    // ABERRATE
+    vec2 distortionUV = cubicDistortionUV(uv, -inversePulse * distortion, outputSize);
+
+    vec4 distortionColor = vec4(0.0, 0.0, 0.0, 1.0);
+    float offset = aberration * aberrationOffset;
+    float aberr = aberration * (pulse - 0.965) * 10.0;
+
+    const float steps = 12.0;
+    for (float i = 0.0; i < steps; i++) {
+      float currentStep = i / steps;
+      float aberrate = aberr * currentStep * pulse;
+
+      vec2 duvRG = cubicDistortionUV(distortionUV, (aberrate * inversePulse) + offset, outputSize);
+      distortionColor += sampleInput(duvRG) / steps;
+
+      vec2 duvGB = cubicDistortionUV(distortionUV, (-aberrate * inversePulse) + offset, outputSize);
+      distortionColor += sampleInput(duvGB) / steps;
+    }
+
+    distortionColor /= 2.0;
+    gl_FragColor = toOutputFormat(distortionColor);
+  }
+";

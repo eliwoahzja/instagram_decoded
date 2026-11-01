@@ -1,0 +1,13 @@
+.class public final Lcom/facebook/wearable/companion/healthapi/sleep_sample/SleepSample;
+.super Lcom/facebook/hyperthrift/HyperThriftBase;
+.source ""
+
+
+# direct methods
+.method public constructor <init>()V
+    .locals 0
+
+    invoke-direct {p0}, Ljava/lang/Object;-><init>()V
+
+    return-void
+.end method

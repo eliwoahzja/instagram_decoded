@@ -1,0 +1,33 @@
+[Filter VideoScaleOvershootOut]
+[MaskBehavior alpha]
+
+# Composable wrapper — delegates to VideoScaleOvershoot with outro=1.0
+
+[Init]
+fun init(Filter filter) {
+  filter.passes = {
+    {
+      name = 'scaleOvershootOut,
+      igid = 'video_scale_overshoot,
+      inputs = {'default},
+      uniforms = {
+        outro = 1.0,
+      },
+    }
+  };
+
+  filter.parameters = {
+    {progress = 0.0, min = 0.0, max = 1.0, description = "Animation Progress"},
+    {center = {0.5, 0.5}, min = {0.0, 0.0}, max = {1.0, 1.0}},
+    {size = 0.45, min = 0.0, max = 1.0, description = "Overshoot Amount"},
+  };
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  f32 p = getParameterFloat('progress);
+  setShaderUniform('scaleOvershootOut, 'progress, p);
+  setShaderUniform('scaleOvershootOut, 'outro, 1.0);
+  setShaderUniform('scaleOvershootOut, 'center, getParameterVec2('center));
+  setShaderUniform('scaleOvershootOut, 'size, getParameterFloat('size));
+}

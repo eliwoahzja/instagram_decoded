@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout android:layout_gravity="center" android:layout_width="match_parent" android:layout_height="match_parent"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <include android:id="@id/controls_panel_top" layout="@layout/honolulu_top_control_bar" />
+    <FrameLayout android:layout_gravity="center|top" android:id="@id/honolulu_camera_recording_timer" android:background="@drawable/camera_recording_timer_shape" android:visibility="gone" android:layout_width="@dimen/action_bar_immersive_gradient_height" android:layout_height="@dimen/action_bar_friends_lane_face_pile_size" android:layout_marginTop="@dimen/abc_list_item_height_material">
+        <TextView android:textSize="12.0sp" android:typeface="monospace" android:textStyle="bold" android:textColor="@android:color/white" android:gravity="center" android:layout_gravity="center" android:id="@id/camera_recording_timer_text" android:layout_width="match_parent" android:layout_height="match_parent" />
+    </FrameLayout>
+    <FrameLayout android:layout_gravity="end|center" android:id="@id/camera_tools_container" android:visibility="invisible" android:layout_width="wrap_content" android:layout_height="wrap_content">
+        <LinearLayout android:layout_gravity="end|center" android:orientation="vertical" android:id="@id/camera_tools" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_margin="20.0dp" />
+        <FrameLayout android:layout_gravity="start|center" android:id="@id/camera_toolbar_legibility_gradient" android:background="@drawable/camera_toolbar_legibility_gradient" android:layout_width="@dimen/camera_toolbar_legibility_gradient_width" android:layout_height="@dimen/camera_toolbar_legibility_gradient_height" />
+    </FrameLayout>
+    <LinearLayout android:layout_gravity="bottom" android:orientation="vertical" android:layout_width="match_parent" android:layout_height="wrap_content">
+        <androidx.recyclerview.widget.RecyclerView android:orientation="horizontal" android:id="@id/color_filter_tray" android:background="@android:color/transparent" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="35.0dp" />
+        <FrameLayout android:layout_width="match_parent" android:layout_height="wrap_content">
+            <include android:layout_gravity="center|bottom" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginBottom="10.0dp" layout="@layout/honolulu_shutter_zoom_controlls" />
+            <include android:layout_gravity="bottom" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="-5.0dp" layout="@layout/honolulu_bottom_bar" />
+        </FrameLayout>
+    </LinearLayout>
+</FrameLayout>

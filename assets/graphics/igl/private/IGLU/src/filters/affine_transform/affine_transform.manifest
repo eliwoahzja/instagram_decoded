@@ -1,0 +1,95 @@
+{
+  "schemaVersion": 1,
+  "identifier": "affine_transform",
+  "displayName": "Affine Transform",
+  "description": "[IG Edits] Video effect name. With \"Affine Transform\", the creator can move, scale, rotate, skew, flip and fade the frame using a single 2D transform applied to the quad's vertices.",
+  "iglu": {
+    "customization": [
+      {
+        "name": "scale_x",
+        "default": 1.0,
+        "min": 0.0,
+        "max": 3.0,
+        "displayName": "Width",
+        "displayNameDescription": "[IG Edits] Slider label controlling the horizontal (X axis) scale of a video effect; 1 leaves the width unchanged."
+      },
+      {
+        "name": "scale_y",
+        "default": 1.0,
+        "min": 0.0,
+        "max": 3.0,
+        "displayName": "Height",
+        "displayNameDescription": "[IG Edits] Slider label controlling the vertical (Y axis) scale of a video effect; 1 leaves the height unchanged."
+      },
+      {
+        "name": "rotation",
+        "default": 0.0,
+        "min": -3.14159265,
+        "max": 3.14159265,
+        "displayName": "Rotation",
+        "displayNameDescription": "[IG Edits] Slider label controlling how far a video effect rotates the frame, from a half turn counter-clockwise to a half turn clockwise."
+      },
+      {
+        "name": "translate_x",
+        "default": 0.0,
+        "min": -1.0,
+        "max": 1.0,
+        "displayName": "Horizontal",
+        "displayNameDescription": "[IG Edits] Slider label controlling the horizontal position or offset (X axis) of a video effect; exact units and range vary per effect (pixels or normalized).",
+        "displayMethod": "percent"
+      },
+      {
+        "name": "translate_y",
+        "default": 0.0,
+        "min": -1.0,
+        "max": 1.0,
+        "displayName": "Vertical",
+        "displayNameDescription": "[IG Edits] Slider label controlling the vertical position or offset (Y axis) of a video effect; exact units and range vary per effect (pixels or normalized).",
+        "displayMethod": "percent"
+      },
+      {
+        "name": "skew_x",
+        "default": 0.0,
+        "min": -1.0,
+        "max": 1.0,
+        "displayName": "Skew Horizontal",
+        "displayNameDescription": "[IG Edits] Slider label controlling how far a video effect slants the frame sideways, leaning the top and bottom edges in opposite directions."
+      },
+      {
+        "name": "skew_y",
+        "default": 0.0,
+        "min": -1.0,
+        "max": 1.0,
+        "displayName": "Skew Vertical",
+        "displayNameDescription": "[IG Edits] Slider label controlling how far a video effect slants the frame up and down, leaning the left and right edges in opposite directions."
+      },
+      {
+        "name": "center_x",
+        "default": 0.5,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Pivot Horizontal",
+        "displayNameDescription": "[IG Edits] Slider label controlling the horizontal (X axis) position of the anchor point a video effect scales, rotates and skews around; 0.5 is the middle of the frame.",
+        "displayMethod": "percent"
+      },
+      {
+        "name": "center_y",
+        "default": 0.5,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Pivot Vertical",
+        "displayNameDescription": "[IG Edits] Slider label controlling the vertical (Y axis) position of the anchor point a video effect scales, rotates and skews around; 0.5 is the middle of the frame.",
+        "displayMethod": "percent"
+      },
+      {
+        "name": "opacity",
+        "default": 1.0,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Opacity",
+        "displayNameDescription": "[IG Edits] Slider label controlling how opaque a video effect's output is, from fully transparent to fully opaque.",
+        "displayMethod": "percent"
+      }
+    ]
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "identifier": "26CE7C2B-D398-4BC5-B4EE-A50464022A90",
+  "displayName": "Warm",
+  "description": "[IG Edits] Color preset filter name. Applies a warm color grade with skin smoothing.",
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAD3BQXofNk"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "8a3fd327",
+      "handle": "AQAFHU97Ry7A",
+      "md5": "27a636a2e01ac584021a66b3060bf9db"
+    }
+  },
+  "iglu": {
+    "legacyId": 3175
+  },
+  "assets": [
+    {
+      "name": "warm_lut.png",
+      "assetHash": "ad319467339b0bb657e4a5f0d4cb201cec4c9aa5e43b4ef49e99c892b2e3713c",
+      "hubAssetId": "1021847466882338"
+    }
+  ]
+}

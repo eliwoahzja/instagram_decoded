@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_stack",
+  "displayName": "Stack",
+  "description": "Video effect name. A video effect is a creative visual element that can be applied to a video. With \"Stack\", the creator can create a stacked video effect.",
+  "iglu": {
+    "legacyId": 2056,
+    "customization": [
+      {
+        "name": "amount",
+        "default": 3,
+        "min": 2,
+        "max": 7,
+        "displayName": "Amount",
+        "displayNameDescription": "[IG Edits] Slider label controlling the magnitude or quantity of a video effect. Generic across many effects; exact range varies per effect.",
+        "displayMethod": "number"
+      },
+      {
+        "name": "position",
+        "default": 0.5,
+        "min": 0,
+        "max": 1,
+        "displayName": "Position",
+        "displayNameDescription": "[IG Edits] Slider label controlling the location of a video effect along a single axis; exact units and range vary per effect (normalized or pixels).",
+        "displayMethod": "percent"
+      },
+      {
+        "name": "direction",
+        "defaultSelection": "vertical",
+        "available": [
+          "horizontal",
+          "vertical"
+        ],
+        "displayName": "Direction",
+        "displayNameDescription": "[IG Edits] Picker label for the orientation of a video effect, typically choosing between values like horizontal and vertical; available options vary per effect."
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "2812182e",
+      "handle": "AQAE3Gdi1Uxd",
+      "md5": "1843bef192cceeb195f0f14e14445727"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQBkAsB6YX3-",
+      "isImageFormat": true
+    }
+  }
+}

@@ -1,0 +1,1 @@
+(function(cssSelector,viewportLandingZone){try{const element=document.querySelector(cssSelector);return viewportLandingZone&&-1!==["start","center","end"].indexOf(viewportLandingZone)?element.scrollIntoView({behavior:"smooth",block:viewportLandingZone}):element.scrollIntoView({behavior:"smooth"}),{success:!0}}catch(error){return{success:!1,error:error.message}}})

@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_ethereal",
+  "displayName": "Ethereal",
+  "description": "[IG Edits] Video effect name. With \"Ethereal\", the creator can give the frame a dreamy glow by chromatically blurring highlights, screen-blending lens dirt, and warming the grade.",
+  "iglu": {
+    "legacyId": 2200
+  },
+  "assets": [
+    {
+      "name": "lensDirt.png",
+      "assetHash": "de2c12d2722ca3efedd4bb92e37a3d484492646bdbe13d82055bf8f4634afd0f",
+      "hubAssetId": "1723864558739535"
+    }
+  ]
+}

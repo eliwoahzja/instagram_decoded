@@ -1,0 +1,1 @@
+(function(cssSelector){try{const element=document.querySelector(cssSelector);if(!element)return{success:!1};const rect=element.getBoundingClientRect(),inViewport=undefined;return{success:!(rect.top>=0&&rect.top<=window.innerHeight)}}catch{return{success:!1}}})

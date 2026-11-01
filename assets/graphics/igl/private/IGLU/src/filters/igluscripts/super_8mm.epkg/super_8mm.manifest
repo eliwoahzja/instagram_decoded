@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "identifier": "1A111565-17C5-41CD-9385-079B18D2D4D6",
+  "displayName": "Super 8mm",
+  "description": "[IG Edits] Video effect name. With \"Super 8mm\", the creator can apply a Super 8 film look combining a warm LUT, screen-blended grain, animated sepia tint, and a jittering rounded black frame border.",
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAGTwAjdUXe"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "dcbac01c",
+      "handle": "AQAHUfqvt1fN",
+      "md5": "9a363227034e6a250492647d8d3ed15c"
+    }
+  },
+  "iglu": {
+    "legacyId": 3084
+  },
+  "assets": [
+    {
+      "name": "8mm_lut.png",
+      "assetHash": "8ec97040a37e12a3ac9f20537b0b5842693009ac4d6816df640697af71d2f251",
+      "hubAssetId": "2056424871752040"
+    }
+  ]
+}

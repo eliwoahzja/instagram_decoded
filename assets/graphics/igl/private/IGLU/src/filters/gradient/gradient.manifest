@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "gradient",
+  "displayName": "Gradient",
+  "description": "[IG Edits] Video effect name. With \"Gradient\", the creator can render a multi-stop colored gradient quad at a chosen angle and bounds, with interpolated vertex colors clipped to the bounding rect.",
+  "iglu": {}
+}

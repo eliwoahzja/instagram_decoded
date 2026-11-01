@@ -1,0 +1,184 @@
+[Filter ScienceLab]
+# "Science Lab" -- Spark AR port. Previously "Blocked" in tracker
+# (could not open in Spark editor); unblocked 2026-07-06 by bin
+# extraction.
+#
+# Scene composition (3 stacked rectangles on a fullscreen canvas):
+#   Layer 1 (bottom, fullscreen)     -- material "foto 2"
+#     camera -> LUT BLACK&WHITE color grade (alpha blend)
+#   Layer 2 (middle, scaled to 0.67) -- material "foto 1"
+#     camera -> LUT COLOR color grade (alpha blend, PiP centered)
+#     Only visible inside inner 67% square -- outer 33% margin shows
+#     the B&W layer beneath.
+#   Layer 3 (top, multiply blend, 24.66% opacity) -- material "ruido"
+#     RUIDO texture (Spanish for "noise/static") multiply-blended
+#     over both layers for a grungy film-lab look.
+#
+# The Spark original stores RUIDO as a KTX file (likely PVRTC-encoded
+# like Loading's icon frames -- same tooling blocker). We replace it
+# with a procedural film-grain overlay (bipolar hash noise per frame,
+# multiply blend at grain_opacity). Visually equivalent to a generic
+# grain texture without the PVRTC decoder dependency.
+#
+# LUT lookup note: Spark's patch graph uses an unusual edge clamp of
+# [0.1, 0.97] instead of the typical [0.0078125, 0.98438]. This gives
+# a wider "safe zone" and discards more LUT edge pixels -- matching
+# it exactly preserves color fidelity.
+#
+# Assets:
+#   assets/science_lab/science_lab_bw_lut.png    -- 512x512, 8x8 grid
+#   assets/science_lab/science_lab_color_lut.png -- 512x512, 8x8 grid
+
+[Init]
+fun init(Filter filter)
+{
+    makeTexture('bw_lut);
+    makeTexture('color_lut);
+
+    filter.parameters = {
+        {strength        = 1.0,    min = 0.0, max = 1.0,  description = "Overall filter mix (0 = camera passthrough, 1 = full effect)"},
+        {bw_strength     = 1.0,    min = 0.0, max = 1.0,  description = "B&W LUT mix strength for the fullscreen background layer"},
+        {color_strength  = 1.0,    min = 0.0, max = 1.0,  description = "COLOR LUT mix strength for the picture-in-picture inset"},
+        {inset_scale     = 0.713,   min = 0.1, max = 1.0,  description = "Color picture-in-picture size as fraction of screen (Spark: 0.67)"},
+        {grain_opacity  = 0.037, min = 0.0, max = 1.0,  description = "Procedural noise multiply overlay strength (Spark ruido opacity: 0.247)"},
+        {grain_size      = 0.703,    min = 0.0, max = 1.0,  description = "Grain pattern scale (0 = fine grain / high freq, 1 = large chunky grain)"},
+    };
+
+    filter.passes = {{
+      name = 'pass0,
+      inputs = {'default, 'bw_lut, 'color_lut},
+      uniforms = {
+        strength       = 1.0,
+        bw_strength    = 1.0,
+        color_strength = 1.0,
+        inset_scale    = 0.713,
+        grain_opacity  = 0.037,
+        grain_size     = 0.703,
+        time           = 0.0,
+      },
+      glslShader = glslScienceLab,
+    }};
+}
+
+# Custom Parameter strings for sample-app + ARD LUT loading.
+string bw_lut_path = "bw_lut_path";
+string bw_lut_filename = "";
+string color_lut_path = "color_lut_path";
+string color_lut_filename = "";
+
+[PreRender]
+fun preRender(Filter filter){
+    string bw_lut_filename_parameter = getParameterString(bw_lut_path);
+    if (bw_lut_filename_parameter != "") {
+        string new_bw_filename = stringAppend("textureFilePath://", bw_lut_filename_parameter);
+        if (new_bw_filename != bw_lut_filename) {
+            bw_lut_filename = new_bw_filename;
+            loadTexture('bw_lut, bw_lut_filename);
+        }
+    }
+
+    string color_lut_filename_parameter = getParameterString(color_lut_path);
+    if (color_lut_filename_parameter != "") {
+        string new_color_filename = stringAppend("textureFilePath://", color_lut_filename_parameter);
+        if (new_color_filename != color_lut_filename) {
+            color_lut_filename = new_color_filename;
+            loadTexture('color_lut, color_lut_filename);
+        }
+    }
+
+    f32 s = getParameterFloat('strength);
+    setShaderUniform('pass0, 'strength, s);
+    f32 bws = getParameterFloat('bw_strength);
+    setShaderUniform('pass0, 'bw_strength, bws);
+    f32 cs = getParameterFloat('color_strength);
+    setShaderUniform('pass0, 'color_strength, cs);
+    f32 isc = getParameterFloat('inset_scale);
+    setShaderUniform('pass0, 'inset_scale, isc);
+    f32 go = getParameterFloat('grain_opacity);
+    setShaderUniform('pass0, 'grain_opacity, go);
+    f32 gsz = getParameterFloat('grain_size);
+    setShaderUniform('pass0, 'grain_size, gsz);
+
+    f32 t = getLocalTime();
+    setShaderUniform('pass0, 'time, t);
+}
+
+#### GLSL shader ####
+
+string glslScienceLab = "
+    varying vec2 sourceTextureCoordinate;
+    BaseUniformsOpenGL;
+
+    uniform sampler2D auxSampler0;  // 'default (camera)
+    uniform sampler2D auxSampler1;  // 'bw_lut
+    uniform sampler2D auxSampler2;  // 'color_lut
+
+    uniform float bw_strength;
+    uniform float color_strength;
+    uniform float inset_scale;
+    uniform float grain_opacity;
+    uniform float grain_size;
+    uniform float time;
+
+    // 2D hash for grain (matches old_movie / cpm_35 grain).
+    float hash21(vec2 p) {
+      return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
+    }
+
+    // Spark's Science Lab LUT lookup uses unusual clamp [0.1, 0.97]
+    // instead of the typical [0.00781, 0.98438]. Matching exactly.
+    vec3 lutLookup(vec3 inRgb, sampler2D lutTex) {
+      vec3 c = clamp(inRgb, 0.1, 0.97);
+      float x = c.r / 8.0;
+      float y = c.g / 8.0;
+      float z = c.b;
+      float blueY = floor(z * 8.0) / 8.0;
+      float blueX = floor((z - blueY) * 64.0) / 8.0;
+      x += blueX;
+      y += blueY;
+      return texture2D(lutTex, vec2(x, y)).xyz;
+    }
+
+    void main() {
+      vec2 uv = sourceTextureCoordinate;
+      vec3 cam = sampleInput(uv).rgb;
+
+      // ============================================================
+      // Layer 1: B&W LUT applied to full camera (fullscreen background).
+      // ============================================================
+      vec3 bw_graded = lutLookup(cam, auxSampler1);
+      vec3 bw_layer = mix(cam, bw_graded, bw_strength);
+
+      // ============================================================
+      // Layer 2: COLOR LUT applied to camera, visible only inside
+      // the centered 67% picture-in-picture rectangle.
+      // Sample camera at PiP-local UV so the inset shows a scaled
+      // view of the same camera (matches Spark plane transform).
+      // ============================================================
+      vec2 pip_uv = (uv - vec2(0.5)) / inset_scale + vec2(0.5);
+      float in_pip = step(0.0, pip_uv.x) * step(pip_uv.x, 1.0) *
+                     step(0.0, pip_uv.y) * step(pip_uv.y, 1.0);
+      vec3 pip_cam = sampleInput(pip_uv).rgb;
+      vec3 color_graded = lutLookup(pip_cam, auxSampler2);
+      vec3 color_layer = mix(pip_cam, color_graded, color_strength);
+
+      vec3 base = mix(bw_layer, color_layer, in_pip);
+
+      // ============================================================
+      // Layer 3: procedural film-grain noise multiply overlay.
+      // Matches Spark 'ruido' material (multiply blend, ~25% opacity).
+      // grain_size 0 = fine (1024x freq), 1 = chunky (~102x freq).
+      // ============================================================
+      float grain_scale = mix(1024.0, 102.0, grain_size);
+      float t_frame = floor(time * 24.0);
+      float noise_val = hash21(uv * grain_scale + vec2(t_frame, t_frame * 1.7));
+      vec3 multiplied = base * noise_val;
+      vec3 with_grain = mix(base, multiplied, grain_opacity);
+
+      // Overall filter strength: mix raw camera with the full effect.
+      vec3 result = mix(cam, with_grain, strength);
+      result = clamp(result, 0.0, 1.0);
+
+      gl_FragColor = toOutputFormat(vec4(result, 1.0));
+    }
+    ";

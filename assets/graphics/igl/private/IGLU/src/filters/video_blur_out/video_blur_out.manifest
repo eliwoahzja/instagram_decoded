@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_blur_out",
+  "displayName": "Blur out",
+  "description": "Video effects selection. Starts sharp ends blurry.",
+  "iglu": {
+    "legacyId": 2015,
+    "behavior": {
+      "type": "fixedOutro",
+      "durationMs": 2000,
+      "curve": "sinusoidalInOut"
+    },
+    "customization": [
+      {
+        "name": "duration",
+        "default": 2.0,
+        "min": 0.25,
+        "max": 5.0,
+        "displayName": "Duration",
+        "displayNameDescription": "[IG Edits] Slider label controlling how long a video effect's animation lasts; exact units and range vary per effect (seconds or normalized).",
+        "displayMethod": "time"
+      },
+      {
+        "name": "intensity",
+        "default": 0.0,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Intensity",
+        "displayNameDescription": "[IG Edits] Slider label controlling the strength of a video effect. Generic across many effects (glow, blur, color, distortion, etc.); exact range varies per effect."
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "c0792c12",
+      "handle": "AQAHoyyyTPCT",
+      "md5": "3c312d56e0673428957287880e399f7f"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAGBtzOi4Qc"
+    }
+  }
+}

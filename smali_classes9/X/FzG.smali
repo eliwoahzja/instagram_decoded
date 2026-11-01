@@ -1,0 +1,9 @@
+.class public final LX/FzG;
+.super LX/HGv;
+.source ""
+
+
+# instance fields
+.field public A00:LX/Bfu;
+
+.field public A01:LX/Bfu;

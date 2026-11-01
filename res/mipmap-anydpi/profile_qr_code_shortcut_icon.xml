@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<adaptive-icon
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <background android:drawable="@mipmap/honolulu_shortcut_background" />
+    <foreground android:drawable="@mipmap/instagram_icons_exceptions_scan_qr_gradient_filled_116" />
+</adaptive-icon>

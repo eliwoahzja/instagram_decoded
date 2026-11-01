@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape android:shape="rectangle"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <stroke android:width="@dimen/account_preview_media_end_card_stroke_width" android:color="?igds_color_feed_seekbar_knob_outer_circle_active" />
+    <solid android:color="?igds_color_prism_chip_background" />
+    <corners android:radius="@dimen/ai_agent_share_profile_sticker_padding" />
+</shape>

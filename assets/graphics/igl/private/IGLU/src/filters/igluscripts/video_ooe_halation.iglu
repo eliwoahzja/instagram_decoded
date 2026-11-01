@@ -1,0 +1,413 @@
+[Filter HalationFilter]
+[MaskBehavior alpha]
+[InEditsApp]
+
+[Init]
+fun init(Filter filter) {
+
+  filter.parameters = {
+    {color = {1.0, 0.25, 0.05, 1.0}, description = "Primary halation tint"},
+    {size = 0.4, min = 0.01, max = 1.0, description = "Glow Size"},
+    {intensity = 1.0, min = 0.0, max = 1.0, description = "Intensity"},
+    {amount = 0.35, min = 0.0, max = 1.0, description = "Brightness cutoff level"},
+  };
+
+  filter.passes = {
+  {
+    name = 'threshold,
+    inputs = {'default},
+    uniforms = {
+      threshold = 0.35,
+      feather = 0.15,
+    },
+    glslShader = thresholdGlsl,
+  },
+  # Wide blur (vertical + horizontal) — red channel scatter
+  {
+    name = 'blur_a_wide_v,
+    inputs = {'threshold},
+    scale = {0.25, 0.25},
+    uniforms = {
+      sigma = 12.5,
+      kernelSize = 25.0,
+      blurStep = {0.0, 1.0},
+      invTotalWeight = 1.0,
+      dda = {1.0, 1.0, 1.0},
+    },
+    glslShader = glslSeparableBlur,
+  },
+  {
+    name = 'blur_a_wide_h,
+    inputs = {'blur_a_wide_v},
+    scale = {0.25, 0.25},
+    uniforms = {
+      sigma = 12.5,
+      kernelSize = 25.0,
+      blurStep = {1.0, 0.0},
+      invTotalWeight = 1.0,
+      dda = {1.0, 1.0, 1.0},
+    },
+    glslShader = glslSeparableBlur,
+  },
+  # Medium blur (vertical + horizontal) — green channel
+  {
+    name = 'blur_b_medium_v,
+    inputs = {'threshold},
+    scale = {0.5, 0.5},
+    uniforms = {
+      sigma = 10.0,
+      kernelSize = 20.0,
+      blurStep = {0.0, 1.0},
+      invTotalWeight = 1.0,
+      dda = {1.0, 1.0, 1.0},
+    },
+    glslShader = glslSeparableBlur,
+  },
+  {
+    name = 'blur_b_medium_h,
+    inputs = {'blur_b_medium_v},
+    scale = {0.5, 0.5},
+    uniforms = {
+      sigma = 10.0,
+      kernelSize = 20.0,
+      blurStep = {1.0, 0.0},
+      invTotalWeight = 1.0,
+      dda = {1.0, 1.0, 1.0},
+    },
+    glslShader = glslSeparableBlur,
+  },
+  # Tight blur (vertical + horizontal) — blue channel scatter
+  {
+    name = 'blur_c_tight_v,
+    inputs = {'threshold},
+    scale = {0.5, 0.5},
+    uniforms = {
+      sigma = 7.5,
+      kernelSize = 15.0,
+      blurStep = {0.0, 1.0},
+      invTotalWeight = 1.0,
+      dda = {1.0, 1.0, 1.0},
+    },
+    glslShader = glslSeparableBlur,
+  },
+  {
+    name = 'blur_c_tight_h,
+    inputs = {'blur_c_tight_v},
+    scale = {0.5, 0.5},
+    uniforms = {
+      sigma = 7.5,
+      kernelSize = 15.0,
+      blurStep = {1.0, 0.0},
+      invTotalWeight = 1.0,
+      dda = {1.0, 1.0, 1.0},
+    },
+    glslShader = glslSeparableBlur,
+  },
+  {
+    name = 'compose,
+    inputs = {'default, 'blur_a_wide_h, 'blur_b_medium_h, 'blur_c_tight_h},
+    uniforms = {
+      opacity = 1.0,
+      halationColor = {1.0, 0.25, 0.05},
+      chromaticSpread = 0.5,
+      warmth = 0.5,
+      maskSoftness = 0.4,
+      highlightProtect = 0.8,
+    },
+    glslShader = composeGlsl,
+  }
+  };
+}
+
+f32 lastKernelSizeWide = -1.0;
+f32 lastSigmaWide = -1.0;
+f32 lastKernelSizeMedium = -1.0;
+f32 lastSigmaMedium = -1.0;
+f32 lastKernelSizeTight = -1.0;
+f32 lastSigmaTight = -1.0;
+vec2 lastOutputSize = {-1.0, -1.0};
+
+# A wide Gaussian is the most downsample-tolerant pass in the chain and the
+# tight one carries the detail, so the wide chain runs at 0.25 and the tight one
+# at 0.5. Each chain steps by exactly one texel of its own render target: 4
+# full-res pixels for the 0.25 chain, 2 for the 0.5 chains.
+f32 kWideStep = 4.0;
+f32 kMediumStep = 2.0;
+f32 kTightStep = 2.0;
+
+vec2 dV4 = {0.0, 1.0};
+vec2 dH4 = {1.0, 0.0};
+vec2 dV2 = {0.0, 1.0};
+vec2 dH2 = {1.0, 0.0};
+
+f32 invWeightWide = 1.0;
+f32 invWeightMedium = 1.0;
+f32 invWeightTight = 1.0;
+vec3 ddaWide = {1.0, 1.0, 1.0};
+vec3 ddaMedium = {1.0, 1.0, 1.0};
+vec3 ddaTight = {1.0, 1.0, 1.0};
+
+# Gaussian weight block for one blur chain, returned as
+# {invTotalWeight, dda.x, dda.y, dda.z}. sigma and kernelSize must both be
+# expressed in the chain's own step units.
+fun gaussianWeights(f32 sigma, f32 kernelSize) vec4 {
+  f32 total = 0.0;
+  f32 pow1 = exp(-0.5 / (sigma * sigma));
+  f32 i = 0.0 - kernelSize;
+  while (i <= kernelSize) {
+    total = total + pow(pow1, i * i);
+    i = i + 1.0;
+  }
+  vec4 block = {1.0 / total, pow1 * pow1, pow1 * pow1 * pow1, pow1};
+  return block;
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  f32 size = getParameterFloat('size) * 25.0;
+  f32 spread = 0.5;
+
+  # Chromatic dispersion: red scatters widest, blue tightest
+  f32 wideScale = 1.0 + spread * 0.5;
+  f32 tightScale = 1.0 - spread * 0.5;
+
+  f32 sigmaWide   = size * wideScale;
+  f32 sigmaMedium = size;
+  f32 sigmaTight  = size * tightScale;
+
+  # Update blur step vectors when output size changes
+  vec2 outputSize = getTextureSize('threshold);
+  if (length(lastOutputSize - outputSize) > 0.00001) {
+    lastOutputSize = outputSize;
+    dV4 = {0.0, kWideStep / outputSize.y};
+    dH4 = {kWideStep / outputSize.x, 0.0};
+    dV2 = {0.0, kMediumStep / outputSize.y};
+    dH2 = {kMediumStep / outputSize.x, 0.0};
+  }
+
+  # --- Wide blur ---
+  # sigma and the kernel half-width arrive in full-res pixels; divide both by
+  # the chain's step so the glow radius in image space is unchanged while the
+  # tap count drops to what the render target can resolve. Kernels stay odd
+  # sized (centre pixel + N pairs) to match the two-at-a-time sampling.
+  f32 sigmaWideEff = sigmaWide / kWideStep;
+  f32 kernelSizeWide =
+      2.0 * floor(min(sigmaWide * 2.0, 100.0) / (kWideStep * 2.0)) + 1.0;
+  if (abs(lastKernelSizeWide - kernelSizeWide) + abs(lastSigmaWide - sigmaWideEff) > 0.00001) {
+    lastKernelSizeWide = kernelSizeWide;
+    lastSigmaWide = sigmaWideEff;
+    vec4 blockWide = gaussianWeights(sigmaWideEff, kernelSizeWide);
+    invWeightWide = blockWide.x;
+    ddaWide = {blockWide.y, blockWide.z, blockWide.w};
+  }
+
+  setShaderUniform('blur_a_wide_v, 'blurStep, dV4);
+  setShaderUniform('blur_a_wide_h, 'blurStep, dH4);
+  setShaderUniform('blur_a_wide_v, 'sigma, sigmaWideEff);
+  setShaderUniform('blur_a_wide_h, 'sigma, sigmaWideEff);
+  setShaderUniform('blur_a_wide_v, 'kernelSize, kernelSizeWide);
+  setShaderUniform('blur_a_wide_h, 'kernelSize, kernelSizeWide);
+  setShaderUniform('blur_a_wide_v, 'invTotalWeight, invWeightWide);
+  setShaderUniform('blur_a_wide_h, 'invTotalWeight, invWeightWide);
+  setShaderUniform('blur_a_wide_v, 'dda, ddaWide);
+  setShaderUniform('blur_a_wide_h, 'dda, ddaWide);
+
+  # --- Medium blur ---
+  f32 sigmaMediumEff = sigmaMedium / kMediumStep;
+  f32 kernelSizeMedium =
+      2.0 * floor(min(sigmaMedium * 2.0, 100.0) / (kMediumStep * 2.0)) + 1.0;
+  if (abs(lastKernelSizeMedium - kernelSizeMedium) + abs(lastSigmaMedium - sigmaMediumEff) > 0.00001) {
+    lastKernelSizeMedium = kernelSizeMedium;
+    lastSigmaMedium = sigmaMediumEff;
+    vec4 blockMedium = gaussianWeights(sigmaMediumEff, kernelSizeMedium);
+    invWeightMedium = blockMedium.x;
+    ddaMedium = {blockMedium.y, blockMedium.z, blockMedium.w};
+  }
+
+  setShaderUniform('blur_b_medium_v, 'blurStep, dV2);
+  setShaderUniform('blur_b_medium_h, 'blurStep, dH2);
+  setShaderUniform('blur_b_medium_v, 'sigma, sigmaMediumEff);
+  setShaderUniform('blur_b_medium_h, 'sigma, sigmaMediumEff);
+  setShaderUniform('blur_b_medium_v, 'kernelSize, kernelSizeMedium);
+  setShaderUniform('blur_b_medium_h, 'kernelSize, kernelSizeMedium);
+  setShaderUniform('blur_b_medium_v, 'invTotalWeight, invWeightMedium);
+  setShaderUniform('blur_b_medium_h, 'invTotalWeight, invWeightMedium);
+  setShaderUniform('blur_b_medium_v, 'dda, ddaMedium);
+  setShaderUniform('blur_b_medium_h, 'dda, ddaMedium);
+
+  # --- Tight blur ---
+  f32 sigmaTightEff = sigmaTight / kTightStep;
+  f32 kernelSizeTight =
+      2.0 * floor(min(sigmaTight * 2.0, 100.0) / (kTightStep * 2.0)) + 1.0;
+  if (abs(lastKernelSizeTight - kernelSizeTight) + abs(lastSigmaTight - sigmaTightEff) > 0.00001) {
+    lastKernelSizeTight = kernelSizeTight;
+    lastSigmaTight = sigmaTightEff;
+    vec4 blockTight = gaussianWeights(sigmaTightEff, kernelSizeTight);
+    invWeightTight = blockTight.x;
+    ddaTight = {blockTight.y, blockTight.z, blockTight.w};
+  }
+
+  setShaderUniform('blur_c_tight_v, 'blurStep, dV2);
+  setShaderUniform('blur_c_tight_h, 'blurStep, dH2);
+  setShaderUniform('blur_c_tight_v, 'sigma, sigmaTightEff);
+  setShaderUniform('blur_c_tight_h, 'sigma, sigmaTightEff);
+  setShaderUniform('blur_c_tight_v, 'kernelSize, kernelSizeTight);
+  setShaderUniform('blur_c_tight_h, 'kernelSize, kernelSizeTight);
+  setShaderUniform('blur_c_tight_v, 'invTotalWeight, invWeightTight);
+  setShaderUniform('blur_c_tight_h, 'invTotalWeight, invWeightTight);
+  setShaderUniform('blur_c_tight_v, 'dda, ddaTight);
+  setShaderUniform('blur_c_tight_h, 'dda, ddaTight);
+
+  # --- Threshold ---
+  f32 th = getParameterFloat('amount);
+  th = 1.0 - th;
+  setShaderUniform('threshold, 'threshold, th);
+
+  # --- Compose ---
+  vec4 hcol = getParameterVec4('color);
+  vec3 hcolor3 = {hcol.r, hcol.g, hcol.b};
+  setShaderUniform('compose, 'halationColor, hcolor3);
+
+  f32 intensity = getParameterFloat('intensity);
+  setShaderUniform('compose, 'opacity, intensity);
+}
+
+# ==========================================================================
+# Separable Gaussian blur shader (inlined from quick_gaussian)
+# ==========================================================================
+string glslSeparableBlur = "
+      precision highp float;
+
+      varying vec2 textureCoordinate;
+      varying vec2 sourceTextureCoordinate;
+      BaseUniformsOpenGL;
+      uniform float sigma;
+      uniform float kernelSize;
+      uniform vec2 blurStep;
+      uniform float invTotalWeight;
+      uniform vec3 dda;
+
+      void main() {
+
+        vec2 uv = sourceTextureCoordinate;
+
+        if (kernelSize <= 1.0) {
+          gl_FragColor = toOutputFormat(sampleInput(uv));
+          return;
+        }
+
+        vec4 color = sampleInput(uv);
+        vec3 accumColor = color.rgb;
+
+        float d0 = dda.x;
+        float d1 = dda.y;
+        float d2 = dda.z;
+
+        for (float i = 1.0; i <= kernelSize; i = i + 2.0)
+        {
+            float s = 1.0 + d1;
+            float a = d1 / s;
+            vec2 step = (a + i) * blurStep;
+
+            accumColor += (s * d2) * (
+              sampleInput(uv + step).rgb +
+              sampleInput(uv - step).rgb
+              );
+
+            d2 = d2 * d1;
+            d1 = d1 * d0;
+            d2 = d2 * d1;
+            d1 = d1 * d0;
+        }
+
+        gl_FragColor = toOutputFormat(vec4(accumColor * invTotalWeight, color.a));
+      }";
+
+# ==========================================================================
+# Threshold shader — luma-based brightness mask
+# ==========================================================================
+string thresholdGlsl = "
+precision mediump float;
+
+varying vec2 sourceTextureCoordinate;
+BaseUniformsOpenGL;
+
+uniform float threshold;
+uniform float feather;
+
+float luma(vec3 color) {
+  return dot(color, vec3(0.2126, 0.7152, 0.0722));
+}
+
+void main() {
+  vec2 uv = sourceTextureCoordinate;
+  vec4 color = sampleInput(uv);
+  float l = luma(color.xyz);
+  color.rgb *= smoothstep(threshold - feather, threshold + feather, l);
+  color.a = 1.0;
+  gl_FragColor = toOutputFormat(color);
+}
+";
+
+# ==========================================================================
+# Compose — chromatic halation with warmth tinting and streak blending
+# ==========================================================================
+string composeGlsl = "
+precision mediump float;
+
+varying vec2 sourceTextureCoordinate;
+BaseUniformsOpenGL;
+
+uniform sampler2D auxSampler1;
+uniform sampler2D auxSampler2;
+uniform sampler2D auxSampler3;
+
+uniform float opacity;
+uniform vec3 halationColor;
+uniform float chromaticSpread;
+uniform float warmth;
+uniform float maskSoftness;
+uniform float highlightProtect;
+
+void main() {
+  vec2 uv = sourceTextureCoordinate;
+  vec4 source = sampleInput(uv);
+
+  vec3 wide   = texture2D(auxSampler1, uv).rgb;  // blur_wide
+  vec3 medium = texture2D(auxSampler2, uv).rgb;  // blur_medium
+  vec3 tight  = texture2D(auxSampler3, uv).rgb;  // blur_tight
+
+  // Chromatic recombination: red takes widest blur, blue takes tightest
+  // Models anti-halation backing absorbing short wavelengths preferentially
+  float r = mix(medium.r, wide.r, chromaticSpread);
+  float g = medium.g;
+  float b = mix(medium.b, tight.b, chromaticSpread);
+  vec3 chromaGlow = vec3(r, g, b);
+
+  // Color temperature shift
+  vec3 coolShift = vec3(0.8, 0.85, 1.0);
+  vec3 warmShift = vec3(1.0, 0.8, 0.5);
+  vec3 tempTint = mix(coolShift, warmShift, warmth);
+
+  vec3 tintColor = halationColor * tempTint;
+
+  // Tint the chromatic glow
+  vec3 tintedGlow = chromaGlow * tintColor;
+
+  vec3 combined = tintedGlow;
+
+  // Inverse highlight mask: glow bleeds into shadows/midtones, not onto highlights
+  float srcLuma = dot(source.rgb, vec3(0.2126, 0.7152, 0.0722));
+  float maskLow  = 0.3 * (1.0 - maskSoftness);
+  float maskHigh = 0.3 + 0.7 * maskSoftness;
+  float inverseMask = 1.0 - smoothstep(maskLow, maskHigh, srcLuma);
+  inverseMask = mix(1.0, inverseMask, highlightProtect);
+
+  // Additive blend with mask
+  vec3 maskedGlow = combined * inverseMask;
+  vec3 result = source.rgb + maskedGlow * opacity;
+  result = min(result, vec3(1.0));
+
+  gl_FragColor = toOutputFormat(vec4(result, 1.0));
+}
+";

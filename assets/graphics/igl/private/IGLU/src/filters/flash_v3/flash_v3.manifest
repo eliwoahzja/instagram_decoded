@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "identifier": "8751C649-4467-4DBE-B73A-A2972FE2954D",
+  "displayName": "Flash V3",
+  "description": "[IG Edits] Video effect name. Face-tracked flash effect emulating disposable-camera flash lighting: face-anchored brightness, procedural specular highlights, LUT, bloom, film grain.",
+  "iglu": {
+    "legacyId": 3200
+  },
+  "assets": [
+    {
+      "name": "flash_v3_face_texture.png",
+      "assetHash": "df8bb0761354b7ed00f4987542682db328b601c637dbeff6f0299b4e281bff33",
+      "hubAssetId": "2552589925242863"
+    },
+    {
+      "name": "flash_v3_decal.png",
+      "assetHash": "3cda86db57ca0d775871e2a7129d6e5fbf23a816f7470683b800f8f47ffebc7a",
+      "hubAssetId": "1371418531632432"
+    },
+    {
+      "name": "flash_v3_lut.png",
+      "assetHash": "03f4001310746865c92a3731cfb7cc4eba05b61492b6c5ebb32755e84b8a6519",
+      "hubAssetId": "1324337503072386"
+    }
+  ]
+}

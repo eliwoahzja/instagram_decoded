@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "identifier": "8f3e2a7c-1d4b-4e9a-b6c2-9d5f8a1e3b7d",
+  "displayName": "Skate Cam",
+  "description": "[IG Edits] Video effect name. With \"Skate Cam\", the creator can apply a fisheye bulge with chromatic aberration, film grain, and a blurred circular lens-frame reflection.",
+  "iglu": {
+    "legacyId": 3069,
+    "customization": [
+      {
+        "name": "intensity",
+        "default": 0.6,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Intensity",
+        "displayNameDescription": "[IG Edits] Slider label controlling the strength of a video effect. Generic across many effects (glow, blur, color, distortion, etc.); exact range varies per effect."
+      },
+      {
+        "name": "amount",
+        "default": 1.0,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Distortion",
+        "displayNameDescription": "[IG Edits] Slider label controlling the amount of fisheye lens distortion applied by a video effect (0 = none, higher = stronger curvature); exact range varies per effect.",
+        "displayMethod": "percent"
+      },
+      {
+        "name": "opacity",
+        "default": 0.5,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Abberation",
+        "displayNameDescription": "[IG Edits] Slider label controlling the amount chromatic color aberration applied by a video effect (0 = none, higher = stronger color distortion); exact range varies per effect.",
+        "displayMethod": "percent"
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "25b90a9f",
+      "handle": "AQADmLRnfbZo",
+      "md5": "7aeccc0332afbe9fef2a03f12b2be32b"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAImaQU7CIc",
+      "isImageFormat": true
+    }
+  }
+}

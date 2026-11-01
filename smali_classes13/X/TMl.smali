@@ -1,0 +1,57 @@
+.class public abstract LX/TMl;
+.super Ljava/lang/Object;
+.source ""
+
+
+# direct methods
+.method public static final A00(Landroid/content/Context;Ljava/util/List;)Ljava/lang/String;
+    .locals 3
+
+    const/4 v2, 0x0
+
+    invoke-static {p0, v2}, LX/5B5;->A0U(Ljava/lang/Object;I)V
+
+    const/4 v1, 0x1
+
+    invoke-interface {p1}, Ljava/util/List;->size()I
+
+    move-result v0
+
+    if-ne v0, v1, :cond_0
+
+    invoke-static {p1, v2}, LX/20W;->A10(Ljava/util/List;I)Ljava/lang/String;
+
+    move-result-object v0
+
+    return-object v0
+
+    :cond_0
+    invoke-interface {p1}, Ljava/util/List;->size()I
+
+    move-result v0
+
+    if-le v0, v1, :cond_1
+
+    invoke-virtual {p0}, Landroid/content/Context;->getResources()Landroid/content/res/Resources;
+
+    move-result-object v2
+
+    const v1, 0x7f135e1c
+
+    invoke-interface {p1}, Ljava/util/List;->size()I
+
+    move-result v0
+
+    invoke-static {v2, v0, v1}, LX/255;->A0i(Landroid/content/res/Resources;II)Ljava/lang/String;
+
+    move-result-object v0
+
+    invoke-static {v0}, LX/5B5;->A0C(Ljava/lang/Object;)V
+
+    return-object v0
+
+    :cond_1
+    const-string v0, ""
+
+    return-object v0
+.end method

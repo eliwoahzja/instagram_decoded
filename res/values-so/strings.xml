@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="string_0x7f130003">Magaalo</string>
+    <string name="string_0x7f130006">Guriga/nambarka qolka (ikhtiyaari ah)</string>
+    <string name="string_0x7f13002c">Daalacdaha xidh</string>
+    <string name="string_0x7f13002f">%1$s waxa uu doonayaa in uu isticmaalo kaamirada aaladdaada.</string>
+    <string name="string_0x7f130030">%1$s ayaa rabo inuu isticmaalo goobta aaladaada.</string>
+    <string name="string_0x7f130032">Fadlan u oggolow dhammaan warbaahinada in ay isticmaalaan doortaha faylka</string>
+    <string name="string_0x7f130033">Oggolow</string>
+    <string name="string_0x7f130034">Xannib</string>
+    <string name="string_0x7f130039">Dib u noqo</string>
+    <string name="string_0x7f13008d">Wax Ayaa Khaldamay</string>
+    <string name="string_0x7f13008e">Isdhaafi</string>
+    <string name="string_0x7f13008f">Iimaylka</string>
+    <string name="string_0x7f130091">Mareegta aad eegeyso waxay isku dayaysaa in ay furto app dibadda ah. Ma jeclaan lahayd inaad sii wadato?</string>
+    <string name="string_0x7f130092">Dib u noqo</string>
+    <string name="string_0x7f130093">Sii wad</string>
+    <string name="string_0x7f130094">Waxaad ka baxeysaa app-kayaga</string>
+    <string name="string_0x7f130095">Tani waxa laga yaabaa inay sabab u tahay cilad farsamo oo aanu ka shaqaynayno sidii aanu u hagaajin lahayn. Isku day inaad dib u soo kiciso boggan.</string>
+    <string name="string_0x7f130096">Dib u cusboonaysii</string>
+    <string name="string_0x7f130097">Bogga hadda lama heli karo</string>
+    <string name="string_0x7f130098">Magaca Labaad</string>
+    <string name="string_0x7f130099">Bogga lama soo muujin karo</string>
+    <string name="string_0x7f13009a">Ku fur ...</string>
+    <string name="string_0x7f13009b">Ku fur %1$s</string>
+    <string name="string_0x7f13009c">Ikhtiyaaro badan</string>
+    <string name="string_0x7f1300aa">Magaca Koowaad</string>
+    <string name="string_0x7f1300af">Waxaad hadda ku daawanaysaa shaashad dhammeystiran. Dhinaca bidix u dhaqaaji ama taabo badhanka dib u noqo si aad uga baxdo.</string>
+    <string name="string_0x7f1300cb">Waxaan dhibaato ku qabnaa dajinta %2$s ee %1$s hadeer. Waad isku dayi kartaa markale, ama ku isticmaali kartaa %2$s af Ingiriis (US) hadda.</string>
+    <string name="string_0x7f1300cc">Waxyar inta aan diyaarineyno %1$s…</string>
+    <string name="string_0x7f1300cd">Markale isku day</string>
+    <string name="string_0x7f1300ce">Ku sii wad Ingiriiska (US)</string>
+</resources>

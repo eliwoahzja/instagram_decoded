@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "identifier": "wide_angle",
+  "displayName": "Wide Angle",
+  "description": "[IG Edits] Video effect name. With \"Wide Angle\", the creator can warp the frame outward with a fisheye-style barrel distortion driven by radial UV displacement.",
+  "iglu": {
+    "legacyId": 1110
+  }
+}

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="string_0x7f130002">ျပည္နယ္</string>
+    <string name="string_0x7f130003">ၿမိဳ့</string>
+    <string name="string_0x7f130004">ေနရပ္လိပ္စာ</string>
+    <string name="string_0x7f130006">တိုက္ခန္း/အခန္း အမွတ္</string>
+    <string name="string_0x7f13002c">ဘေရာက္ဇာပိတ္ပါ</string>
+    <string name="string_0x7f13002f">%1$s သည္ သင့္ကိရိယာ၏ ကင္မရာကို လိုခ်င္ပါသည္။</string>
+    <string name="string_0x7f130030">%1$s သည္ သင့္ကိရိယာ၏ တည္ေနရာကို အသုံးျပဳလိုပါသည္။</string>
+    <string name="string_0x7f130033">ခြင့္ျပဳရန္</string>
+    <string name="string_0x7f130034">ပိတ္ပင္မယ္</string>
+    <string name="string_0x7f130038">ဤဆိုဒ္အတြက္ လုံျခဳံေရး လက္မွတ္ႏွင့္ပတ္သက္ေသာ ျပႆနာမ်ား ျဖစ္သည္။</string>
+    <string name="string_0x7f130039">ေနာက္သို့</string>
+    <string name="string_0x7f13003a">လုံျခဳံမွု အမွား</string>
+    <string name="string_0x7f13008d">တစ္ခုခုမွားေနသည္။</string>
+    <string name="string_0x7f13008f">အီးေမး</string>
+    <string name="string_0x7f130095">ဒါဟာ ကၽြန္ုပ္တို့ ျပဳျပင္ေနဆဲျဖစ္တဲ့ နည္းပညာပိုင္းဆိုင္ရာ အမွားအယြင္းတစ္ခုေၾကာင့္ ျဖစ္ေကာင္းျဖစ္နိုင္ပါတယ္။ စာမ်က္ႏွာကို ျပန္ဖြင့္ၾကည့္ပါ။</string>
+    <string name="string_0x7f130096">ျပန္ဖြင့္မယ္</string>
+    <string name="string_0x7f130097">ေလာေလာဆယ္ စာမ်က္ႏွာကို ၾကည့္လို့မရပါဘူး</string>
+    <string name="string_0x7f130098">မ်ိဳးရိုးအမည္</string>
+    <string name="string_0x7f130099">စာမ်က္ႏွာကို မသြားနိုင္ပါ။</string>
+    <string name="string_0x7f13009a">ႏွင့္ ဖြင့္ရန္</string>
+    <string name="string_0x7f13009b">%1$sတြင္ ဖြင့္ပါ။</string>
+    <string name="string_0x7f13009c">ေနာက္ထပ္ ေရြးစရာမ်ား</string>
+    <string name="string_0x7f1300aa">အမည္</string>
+    <string name="string_0x7f1300cb">%2$s ကို %1$s ျဖင့္ အသုံးျပဳနိုင္ရန္ အသင့္ျပင္ေပးရာ၌ အခက္အခဲရွိေနပါသည္။ သင္ထပ္မံႀကိဳးစားၾကည့္နိုင္သည္ သို့မဟုတ္ %2$s ကို လတ္တေလာတြင္ အဂၤလိပ္ (US) ျဖင့္ အသုံးျပဳနိုင္သည္။</string>
+    <string name="string_0x7f1300cc">%1$s ဘာသာသို့ ေျပာင္းေနစဥ္ ခဏေစာင့္ပါ…</string>
+    <string name="string_0x7f1300cd">ထပ္ႀကိဳးစားၾကည့္မယ္</string>
+    <string name="string_0x7f1300ce">အဂၤလိပ္စာ (ယူအက္စ္) ျဖင့္ ဆက္သုံးမယ္</string>
+    <string name="string_0x7f13010b">စာပို့သေကၤတ</string>
+    <string name="string_0x7f1301d3">တယ္လီဖုန္း</string>
+</resources>

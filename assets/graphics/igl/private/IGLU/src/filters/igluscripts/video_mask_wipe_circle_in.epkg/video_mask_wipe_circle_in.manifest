@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "identifier": "fa3fca62-0eff-409d-ba6d-aad8af214799",
+  "displayName": "Wipe in circle",
+  "description": "[IG Edits] Effect name shown in the video effects picker. This is the user-facing label for a video effect.",
+  "iglu": {
+    "legacyId": 3143,
+    "behavior": {
+      "type": "fixedIntro",
+      "durationMs": 1500,
+      "curve": "quadraticInOut"
+    },
+    "customization": [
+      {
+        "name": "duration",
+        "default": 1.5,
+        "min": 0.5,
+        "max": 5.0,
+        "displayName": "Duration",
+        "displayMethod": "time"
+      },
+      {
+        "name": "amount",
+        "displayName": "Amount",
+        "default": 0.2,
+        "min": 0.0,
+        "max": 1.0
+      }
+    ]
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAH8Z2QIGgy"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "872018c6",
+      "handle": "AQAGIRHs169l",
+      "md5": "36a0844e7c81fd49c9eafa25abc57d19"
+    }
+  },
+  "dependencies": [
+    "video_mask_wipe_circle"
+  ]
+}

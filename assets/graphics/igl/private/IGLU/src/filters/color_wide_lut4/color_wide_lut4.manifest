@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "identifier": "bluehour",
+  "displayName": "BlueHour",
+  "description": "[IG Edits] Color filter name. With \"BlueHour\", the creator can apply a cool blue-hour twilight color grade via a 3D LUT lookup.",
+  "iglu": {
+    "legacyId": 5027
+  },
+  "assets": [
+    {
+      "name": "bluehour.lutpk",
+      "assetHash": "f3beb56a99682c35ea7262e5f617eceb419705bb4617b3cd8ca23d587920c802",
+      "hubAssetId": "1552906899730907"
+    }
+  ]
+}

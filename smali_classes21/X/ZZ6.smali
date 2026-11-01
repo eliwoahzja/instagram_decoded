@@ -1,0 +1,313 @@
+.class public final LX/ZZ6;
+.super LX/4Li;
+.source ""
+
+# interfaces
+.implements LX/Zmi;
+.implements LX/k0Q;
+
+
+# static fields
+.field public static final A00:LX/ZZ6;
+
+
+# direct methods
+.method public static constructor <clinit>()V
+    .locals 1
+
+    new-instance v0, LX/ZZ6;
+
+    invoke-direct {v0}, Ljava/lang/Object;-><init>()V
+
+    sput-object v0, LX/ZZ6;->A00:LX/ZZ6;
+
+    return-void
+.end method
+
+.method public constructor <init>()V
+    .locals 0
+
+    invoke-direct {p0}, Ljava/lang/Object;-><init>()V
+
+    return-void
+.end method
+
+
+# virtual methods
+.method public final bridge synthetic GMz(Lcom/instagram/common/session/UserSession;Ljava/io/InputStream;)Ljava/lang/Object;
+    .locals 3
+
+    invoke-static {p1, p2}, LX/R67;->A0G(Lcom/instagram/common/session/UserSession;Ljava/io/InputStream;)LX/8WZ;
+
+    move-result-object v2
+
+    invoke-static {p1}, LX/R67;->A0H(Lcom/instagram/common/session/UserSession;)LX/0MP;
+
+    move-result-object v1
+
+    const-class v0, LX/bY4;
+
+    invoke-virtual {v2, v0}, Lcom/facebook/pando/TreeJNI;->recreateWithoutFragment(Ljava/lang/Class;)Lcom/facebook/pando/TreeJNI;
+
+    move-result-object v0
+
+    check-cast v0, LX/bY4;
+
+    invoke-virtual {v0, v1}, LX/bY4;->A2o(LX/0MP;)V
+
+    return-object v0
+.end method
+
+.method public final bridge synthetic unsafeParseFromJson(LX/4Bd;)Ljava/lang/Object;
+    .locals 12
+
+    check-cast p1, LX/4oy;
+
+    invoke-static {p1}, LX/238;->A0G(LX/4Bd;)LX/1xw;
+
+    move-result-object v1
+
+    sget-object v0, LX/1xw;->A0D:LX/1xw;
+
+    const/4 v11, 0x0
+
+    if-eq v1, v0, :cond_0
+
+    invoke-virtual {p1}, LX/4Bd;->A1f()V
+
+    return-object v11
+
+    :cond_0
+    invoke-static {}, LX/J4T;->A0N()LX/0uM;
+
+    move-result-object v5
+
+    move-object v6, v11
+
+    move-object v4, v11
+
+    move-object v10, v11
+
+    move-object v3, v11
+
+    :goto_0
+    invoke-virtual {p1}, LX/4Bd;->A1N()LX/1xw;
+
+    move-result-object v2
+
+    sget-object v1, LX/1xw;->A09:LX/1xw;
+
+    const-string v9, "more_available"
+
+    const/16 v0, 0x5dc
+
+    invoke-static {v0}, LX/000;->A00(I)Ljava/lang/String;
+
+    move-result-object v8
+
+    const-string v7, "members"
+
+    if-eq v2, v1, :cond_9
+
+    invoke-static {p1}, LX/1yd;->A08(LX/4Bd;)Ljava/lang/String;
+
+    move-result-object v2
+
+    invoke-virtual {v2}, Ljava/lang/String;->hashCode()I
+
+    move-result v1
+
+    const v0, -0x4070de2a
+
+    if-eq v1, v0, :cond_7
+
+    const v0, 0x1e5c1c14
+
+    if-eq v1, v0, :cond_4
+
+    const v0, 0x388ec919
+
+    if-eq v1, v0, :cond_2
+
+    const v0, 0x3d175a5f
+
+    if-ne v1, v0, :cond_8
+
+    invoke-virtual {v2, v9}, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
+
+    move-result v0
+
+    if-eqz v0, :cond_8
+
+    invoke-static {p1}, LX/039;->A0G(LX/4Bd;)Ljava/lang/Boolean;
+
+    move-result-object v10
+
+    :cond_1
+    :goto_1
+    invoke-virtual {p1}, LX/4Bd;->A1f()V
+
+    goto :goto_0
+
+    :cond_2
+    invoke-virtual {v2, v7}, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
+
+    move-result v0
+
+    if-eqz v0, :cond_8
+
+    invoke-virtual {p1}, LX/4Bd;->A1d()LX/1xw;
+
+    move-result-object v1
+
+    sget-object v0, LX/1xw;->A0C:LX/1xw;
+
+    if-ne v1, v0, :cond_3
+
+    invoke-static {}, LX/011;->A0b()Ljava/util/ArrayList;
+
+    move-result-object v6
+
+    :goto_2
+    invoke-virtual {p1}, LX/4Bd;->A1N()LX/1xw;
+
+    move-result-object v1
+
+    sget-object v0, LX/1xw;->A08:LX/1xw;
+
+    if-eq v1, v0, :cond_1
+
+    invoke-static {p1, v6}, LX/220;->A1R(LX/4oy;Ljava/util/AbstractCollection;)V
+
+    goto :goto_2
+
+    :cond_3
+    move-object v6, v11
+
+    goto :goto_1
+
+    :cond_4
+    invoke-virtual {v2, v8}, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
+
+    move-result v0
+
+    if-eqz v0, :cond_8
+
+    invoke-virtual {p1}, LX/4Bd;->A1d()LX/1xw;
+
+    move-result-object v1
+
+    sget-object v0, LX/1xw;->A0C:LX/1xw;
+
+    if-ne v1, v0, :cond_6
+
+    invoke-static {}, LX/011;->A0b()Ljava/util/ArrayList;
+
+    move-result-object v4
+
+    :cond_5
+    :goto_3
+    invoke-virtual {p1}, LX/4Bd;->A1N()LX/1xw;
+
+    move-result-object v1
+
+    sget-object v0, LX/1xw;->A08:LX/1xw;
+
+    if-eq v1, v0, :cond_1
+
+    invoke-virtual {p1}, LX/4Bd;->A1d()LX/1xw;
+
+    move-result-object v1
+
+    sget-object v0, LX/1xw;->A0G:LX/1xw;
+
+    if-eq v1, v0, :cond_5
+
+    sget-object v0, LX/EzC;->A00:LX/EzC;
+
+    invoke-static {p1, v0, v4}, LX/4Li;->A4D(LX/4Bd;LX/4Li;Ljava/util/AbstractCollection;)V
+
+    goto :goto_3
+
+    :cond_6
+    move-object v4, v11
+
+    goto :goto_1
+
+    :cond_7
+    const-string v0, "max_id"
+
+    invoke-virtual {v2, v0}, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
+
+    move-result v0
+
+    if-eqz v0, :cond_8
+
+    invoke-static {p1}, LX/1yd;->A07(LX/4Bd;)Ljava/lang/String;
+
+    move-result-object v3
+
+    goto :goto_1
+
+    :cond_8
+    invoke-static {p1, v5, v2}, LX/7yw;->A01(LX/4Bd;LX/0uM;Ljava/lang/String;)V
+
+    goto :goto_1
+
+    :cond_9
+    const-string v0, "FanClubMembersResponseImpl"
+
+    if-eqz v6, :cond_b
+
+    if-eqz v4, :cond_a
+
+    if-eqz v10, :cond_c
+
+    invoke-virtual {v10}, Ljava/lang/Boolean;->booleanValue()Z
+
+    move-result v2
+
+    const-string v0, "XDTFanClubMembersResponse"
+
+    new-instance v1, LX/WWc;
+
+    invoke-direct {v1, v0}, LX/4Fb;-><init>(Ljava/lang/String;)V
+
+    iput-object v3, v1, LX/WWc;->A00:Ljava/lang/String;
+
+    iput-object v6, v1, LX/WWc;->A02:Ljava/util/List;
+
+    iput-object v4, v1, LX/WWc;->A01:Ljava/util/List;
+
+    iput-boolean v2, v1, LX/WWc;->A03:Z
+
+    invoke-static {v5, v1}, LX/R67;->A0u(LX/0uM;LX/0uM;)V
+
+    iget-object v0, v5, LX/0uM;->A09:Ljava/lang/String;
+
+    invoke-static {v1, v5, v0}, LX/011;->A0n(LX/0uM;LX/0uM;Ljava/lang/String;)V
+
+    invoke-static {v5, v1}, LX/011;->A0m(LX/0uM;LX/0uM;)V
+
+    return-object v1
+
+    :cond_a
+    invoke-static {v8, v0}, LX/1yd;->A0I(Ljava/lang/String;Ljava/lang/String;)V
+
+    goto :goto_4
+
+    :cond_b
+    invoke-static {v7, v0}, LX/1yd;->A0I(Ljava/lang/String;Ljava/lang/String;)V
+
+    goto :goto_4
+
+    :cond_c
+    invoke-static {v9, v0}, LX/1yd;->A0I(Ljava/lang/String;Ljava/lang/String;)V
+
+    :goto_4
+    invoke-static {}, LX/002;->createAndThrow()LX/002;
+
+    move-result-object v0
+
+    throw v0
+.end method

@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "identifier": "A79EB7C9-8D6D-48FC-8826-1354011EF286",
+  "displayName": "CCTV",
+  "description": "[IG Edits] Video effect name. With \"CCTV\", the creator can apply a surveillance-camera look with scanlines, desaturation, greenish tint, lens distortion, and horizontal noise bands.",
+  "iglu": {
+    "legacyId": 3085,
+    "customization": [
+      {
+        "name": "color",
+        "defaultSelection": "#FF7A00",
+        "available": [
+          "#FF7A00",
+          "#FF0169",
+          "#FFFF00",
+          "#1CD164",
+          "#0095F6",
+          "#0000FF"
+        ],
+        "displayName": "Color",
+        "displayNameDescription": "[IG Edits] Color picker label. The user selects a color used by the video effect (e.g., glow tint, outline color, sparkle color); available palette varies per effect."
+      },
+      {
+        "name": "opacity",
+        "default": 0.1,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Tint Opacity"
+      },
+      {
+        "name": "intensity",
+        "default": 0.33,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Intensity"
+      },
+      {
+        "name": "amount",
+        "default": 1.0,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Distortion"
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "17a2c310",
+      "handle": "AQADfOp1o2tx",
+      "md5": "9b993162aff79e588de05578a7283727"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAIJHt2TNqs"
+    }
+  }
+}

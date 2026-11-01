@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_grid_expand",
+  "displayName": "Grid expand",
+  "description": "[IG Edits] Video effect name. With \"Grid expand\", the creator can outro the clip by progressively subdividing it into a tiled grid that doubles in column and row count over time.",
+  "iglu": {
+    "legacyId": 3001,
+    "behavior": {
+      "type": "fixedOutro",
+      "durationMs": 2000,
+      "curve": "linear"
+    },
+    "customization": [
+      {
+        "name": "duration",
+        "default": 2.0,
+        "min": 0.5,
+        "max": 5.0,
+        "displayName": "Duration",
+        "displayNameDescription": "[IG Edits] Slider label controlling how long a video effect's animation lasts; exact units and range vary per effect (seconds or normalized).",
+        "displayMethod": "time"
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "69212842",
+      "handle": "AQADpt66_Req",
+      "md5": "7ad9cc0bb14c764f8d4e80d69edf08a4"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAHdlKWgCvd"
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "identifier": "hyper",
+  "displayName": "Hyper",
+  "description": "Filter name for an intense / hyper-saturated look",
+  "iglu": {
+    "legacyId": 1010
+  },
+  "assets": [
+    {
+      "name": "lut_hyper.png",
+      "assetHash": "0d7a72e39f88007735b4b53f61b0eeee7e008ed8312194a3a000b1a4d71207aa",
+      "hubAssetId": "2985908434931532"
+    }
+  ]
+}

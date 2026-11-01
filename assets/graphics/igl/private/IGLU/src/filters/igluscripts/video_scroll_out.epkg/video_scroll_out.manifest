@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "identifier": "82A7FDA5-61CC-4E74-AAA6-AC8557159D1C",
+  "displayName": "Scroll out",
+  "description": "[IG Edits] Effect name shown in the video effects picker. This is the user-facing label for a video effect.",
+  "iglu": {
+    "legacyId": 3993,
+    "behavior": {
+      "type": "fixedOutro",
+      "durationMs": 1040,
+      "curve": "linear"
+    },
+    "customization": [
+      {
+        "name": "direction",
+        "defaultSelection": "up",
+        "available": [
+          "up",
+          "down"
+        ],
+        "displayName": "Direction"
+      },
+      {
+        "name": "duration",
+        "default": 1.04,
+        "min": 0.1,
+        "max": 5.0,
+        "displayName": "Duration",
+        "displayMethod": "time"
+      }
+    ]
+  },
+  "dependencies": [
+    "video_scroll_in"
+  ],
+  "ios": {
+    "previewAsset": {
+      "handle": "AQADqPYwiJYC"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "48edbd9c",
+      "handle": "AQADuZCnKsbH",
+      "md5": "fd9cb46ce9b7d98eeff79bcdc5f55044"
+    }
+  }
+}

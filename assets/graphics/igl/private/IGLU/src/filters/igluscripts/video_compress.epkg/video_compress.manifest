@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_compress",
+  "displayName": "Compress",
+  "description": "[Instagram Edits] Effect browser - Label for a stretch/compress effect applied to subjects. Character count for labels is 14 characters max.",
+  "iglu": {
+    "legacyId": 3034,
+    "customization": [
+      {
+        "name": "speed",
+        "default": 0.0,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Speed",
+        "displayNameDescription": "[IG Edits] Slider label controlling the playback or animation speed of a video effect (noun, not a verb); exact range varies per effect."
+      }
+    ]
+  },
+  "assets": [
+    {
+      "name": "stretch.png",
+      "assetHash": "5143ee1fb6e226055af915ca371b734ad70b330f58d93ef3c403503e33129a99",
+      "hubAssetId": "1889347115032280"
+    }
+  ],
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAEuaFCQJcY"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "af6c0fe2",
+      "handle": "AQAHn5YUlE5M",
+      "md5": "d6ccb0372f6f5455d67c79b71b803d75"
+    }
+  }
+}

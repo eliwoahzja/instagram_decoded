@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "text_glitch_in",
+  "displayName": "Glitch In",
+  "description": "Label for the Glitch In text effect style. This is a text effect that users can add to their content. It animates with a glitch transition-in animation.",
+  "iglu": {}
+}

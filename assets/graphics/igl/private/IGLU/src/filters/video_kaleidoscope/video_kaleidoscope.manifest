@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_kaleidoscope",
+  "displayName": "Kaleidoscope",
+  "description": "[IG Edits] Video effect name. With \"Kaleidoscope\", the creator can fold the frame across its center axes and pan it over time in a chosen direction with adjustable speed.",
+  "iglu": {
+    "legacyId": 2033,
+    "customization": [
+      {
+        "name": "direction",
+        "defaultSelection": "left",
+        "available": [
+          "left",
+          "right",
+          "up",
+          "down",
+          "diagonal-in",
+          "diagonal-out"
+        ],
+        "displayName": "Direction",
+        "displayNameDescription": "[IG Edits] Picker label for the orientation of a video effect, typically choosing between values like horizontal and vertical; available options vary per effect."
+      },
+      {
+        "name": "speed",
+        "default": 0.5,
+        "min": 0.0,
+        "max": 2.0,
+        "displayName": "Speed",
+        "displayNameDescription": "[IG Edits] Slider label controlling the playback or animation speed of a video effect (noun, not a verb); exact range varies per effect.",
+        "displayMethod": "percent"
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "b8c96dc4",
+      "handle": "AQAE1aEeIvY5",
+      "md5": "409f34279a0627eb1790cf299158a0aa"
+    }
+  }
+}

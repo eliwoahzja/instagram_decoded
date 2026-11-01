@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_zoom_shake",
+  "displayName": "Zoom shake",
+  "description": "Video effects selection. Video zooms in and shakes.",
+  "iglu": {
+    "legacyId": 2045,
+    "behavior": {
+      "type": "fixedIntro",
+      "durationMs": 4000,
+      "curve": "linear"
+    },
+    "customization": [
+      {
+        "name": "amount",
+        "default": 0.8,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Amount",
+        "displayNameDescription": "[IG Edits] Slider label controlling the magnitude or quantity of a video effect. Generic across many effects; exact range varies per effect."
+      },
+      {
+        "name": "intensity",
+        "default": 0.5,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Intensity",
+        "displayNameDescription": "[IG Edits] Slider label controlling the strength of a video effect. Generic across many effects (glow, blur, color, distortion, etc.); exact range varies per effect."
+      },
+      {
+        "name": "zoom",
+        "default": 0.3103448,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Zoom",
+        "displayNameDescription": "[IG Edits] Slider label controlling the zoom factor (scale toward/away from the subject) of a video effect; exact range varies per effect."
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "61596084",
+      "handle": "AQAGJkqINLWZ",
+      "md5": "9b4f961413d4cd36e63b399c87621a72"
+    }
+  },
+  "assets": [
+    {
+      "name": "perlin_noise.png",
+      "assetHash": "42393e620664a372495800bfcf40ca960aa0ab3e2ddfe42fbfe2b86098d33000",
+      "hubAssetId": "1259354255546062"
+    }
+  ],
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAGJnKIQpsb"
+    }
+  }
+}

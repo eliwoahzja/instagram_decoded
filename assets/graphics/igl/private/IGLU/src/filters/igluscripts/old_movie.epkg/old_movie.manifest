@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "identifier": "667870D7-CAB8-4B00-8EB1-5B5873BEED67",
+  "displayName": "Old Movie",
+  "description": "[IG Edits] Color filter name. Vintage cinema look with LUT color grade, animated dust specks, film grain, radial vignette, and a mix of smooth camera drift and occasional projector-jitter frame jumps.",
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAFxeSY6wTo"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "58972fba",
+      "handle": "AQAFEN461Zpr",
+      "md5": "94f09fa84fed7a57c80196ebde4deecf"
+    }
+  },
+  "iglu": {
+    "legacyId": 3185
+  },
+  "assets": [
+    {
+      "name": "old_movie_lut.png"
+    }
+  ]
+}

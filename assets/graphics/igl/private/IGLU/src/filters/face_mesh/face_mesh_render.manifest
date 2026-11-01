@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "bcc25bf7-6ac3-4faf-b12b-8393ef9b1b96",
+  "displayName": "FaceMeshRender",
+  "description": "[IG Edits] Internal video effect; not user-facing. Draws a pre-projected 3D mesh sampled from the input frame at per-vertex UV.",
+  "iglu": {}
+}

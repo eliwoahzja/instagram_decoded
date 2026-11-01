@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "identifier": "81d0068d-2fcc-4291-842e-a12134bf0562",
+  "displayName": "Wipe in center vertical",
+  "description": "[IG Edits] Effect name shown in the video effects picker. This is the user-facing label for a video effect.",
+  "iglu": {
+    "legacyId": 3128,
+    "behavior": {
+      "type": "fixedIntro",
+      "durationMs": 1000,
+      "curve": "quadraticInOut"
+    },
+    "customization": [
+      {
+        "name": "duration",
+        "default": 1.0,
+        "min": 0.5,
+        "max": 5.0,
+        "displayName": "Duration",
+        "displayMethod": "time"
+      },
+      {
+        "name": "amount",
+        "displayName": "Amount",
+        "default": 0.1,
+        "min": 0.0,
+        "max": 1.0
+      }
+    ]
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQADj7UJWXDq"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "277c4777",
+      "handle": "AQAE2dhdIQe4",
+      "md5": "c09f4bd0fae46c57f959e89c28f9a38e"
+    }
+  },
+  "dependencies": [
+    "video_center_wipe_vertical"
+  ]
+}

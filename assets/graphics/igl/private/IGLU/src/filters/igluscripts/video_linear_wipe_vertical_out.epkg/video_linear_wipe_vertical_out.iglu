@@ -1,0 +1,30 @@
+[Filter LinearWipeVerticalOut]
+[MaskBehavior alpha]
+
+[Init]
+fun init(Filter filter) {
+    filter.parameters = {
+        {direction = 2.0, min = 2.0, max = 3.0, description = "Wipe direction"},
+        {amount = 0.1, min = 0.0, max = 0.5, description = "Edge smoothness"},
+    };
+
+    filter.passes = {{
+        name = 'base,
+        igid = 'video_linear_wipe_vertical,
+        inputs = {'default},
+        uniforms = {
+            direction = 2.0,
+            outro = 1.0,
+        }
+    }};
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+    f32 direction = getParameterFloat('direction);
+    f32 amount = getParameterFloat('amount);
+    setShaderUniform('base, 'direction, (1.0-(direction-2.0)) + 2.0);
+    # keep amount off 0 so the smoothstep edge doesn't collapse
+    amount = max(0.001, amount);
+    setShaderUniform('base, 'amount, amount);
+}

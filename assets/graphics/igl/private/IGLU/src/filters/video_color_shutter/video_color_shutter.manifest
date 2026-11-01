@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_color_shutter",
+  "displayName": "Color shutter",
+  "description": "[IG Edits] Video effect name. With \"Color shutter\", the creator can imitate the effect of a multicolored greenish outline with slight slow motion.",
+  "iglu": {
+    "legacyId": 2067,
+    "customization": [
+      {
+        "name": "intensity",
+        "default": 1.0,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Intensity",
+        "displayNameDescription": "[IG Edits] Slider label controlling the strength of a video effect. Generic across many effects (glow, blur, color, distortion, etc.); exact range varies per effect."
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "79732ed3",
+      "handle": "AQAGO5YY5JYz",
+      "md5": "20e9108d7e3aeb5e2738144cb822c469"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAIPJbw82XY"
+    }
+  }
+}

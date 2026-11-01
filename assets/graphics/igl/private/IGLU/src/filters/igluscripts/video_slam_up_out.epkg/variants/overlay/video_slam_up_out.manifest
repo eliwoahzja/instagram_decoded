@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "displayName": "Slam out",
+  "description": "[IG Edits] Effect name shown in the video effects picker. This is the user-facing label for a video effect.",
+  "iglu": {
+    "legacyId": 5127,
+    "behavior": {
+      "type": "fixedOutro",
+      "durationMs": 750,
+      "curve": "linear"
+    },
+    "customization": [
+      {
+        "name": "duration",
+        "default": 0.75,
+        "min": 0.1,
+        "max": 5.0,
+        "displayName": "Duration",
+        "displayMethod": "time"
+      },
+      {
+        "name": "size",
+        "displayName": "Size",
+        "default": 0.45,
+        "min": 0.0,
+        "max": 1.0
+      }
+    ],
+    "subject": {
+      "overlay": true
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAFTsCgzJVR"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "b8f534d3",
+      "handle": "AQAFiAAL-NP7",
+      "md5": "a06584b80e03c1ec929ecac95cd710fd"
+    }
+  }
+}

@@ -1,0 +1,85 @@
+[Filter TextCrafty]
+#
+# Port of C++ text_crafty/TextCraftyFilter.cpp — continuous looping "crafty" jitter: choppy
+# posterized time drives a triangle-wave horizontal warp + vertical scaling. LOOP family, so the
+# shader's `time` is driven from the host `renderFrameTimeSeconds` param (the same continuous,
+# monotonic value the C++ filter reads via TextFilter::customParameterHandled on Android, where
+# presentationTime is invalid) — NOT `time_sec` (which the text host never feeds). No behavior
+# header (Static is the default for loops). Faithful to the C++ TEXT shader; Metal auto-generated.
+
+[Init]
+fun init(Filter filter) {
+    filter.parameters = {
+        {renderFrameTimeSeconds = 0.0, description = "Continuous media time (seconds), host-driven"},
+        {speed = 5.0},
+        {posterization = 0.8},
+        {vertical_scale = 0.2},
+        {angle_intensity = 0.2},
+        {horizontal_intensity = 0.03},
+    };
+
+    filter.passes = {{
+        name = 'crafty,
+        inputs = {'default},
+        uniforms = {
+            time = 0.0,
+            speed = 5.0,
+            posterization = 0.8,
+            vertical_scale = 0.2,
+            angle_intensity = 0.2,
+            horizontal_intensity = 0.03,
+        },
+        glslShader = glsl,
+    }};
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+    setShaderUniform('crafty, 'time, getParameterFloat('renderFrameTimeSeconds));
+    setShaderUniform('crafty, 'speed, getParameterFloat('speed));
+    setShaderUniform('crafty, 'posterization, getParameterFloat('posterization));
+    setShaderUniform('crafty, 'vertical_scale, getParameterFloat('vertical_scale));
+    setShaderUniform('crafty, 'angle_intensity, getParameterFloat('angle_intensity));
+    setShaderUniform('crafty, 'horizontal_intensity, getParameterFloat('horizontal_intensity));
+}
+
+
+# --- GLSL Shader (faithful port of TextCraftyFilter.cpp craftyFragmentShaderStr) ---
+
+string glsl = "
+    precision highp float;
+    varying vec2 sourceTextureCoordinate;
+
+    BaseUniformsOpenGL;
+    uniform float time;
+    uniform float speed;
+    uniform float posterization;
+    uniform float vertical_scale;
+    uniform float angle_intensity;
+    uniform float horizontal_intensity;
+
+    float triangleWave(float x) { return abs(2.0 * fract(x) - 1.0); }
+
+    void main() {
+        vec2 uv = sourceTextureCoordinate;
+        vec4 color = vec4(1.0);
+        float t = time * speed;
+        t *= posterization;
+        t = floor(t);
+        t /= posterization;
+        t = mod(t, 12.0);
+
+        float divisions = sin(t * 0.43) + cos(t * 0.63) + sin(t) + 3.0;
+        float angle = (uv.y - 0.5) * angle_intensity;
+        uv.x += (triangleWave(divisions * uv.x + angle) - 0.5) * horizontal_intensity;
+
+        float scale_y = triangleWave(divisions * uv.x) - 0.5;
+        scale_y *= vertical_scale;
+        uv.y -= 0.5;
+        uv.y *= 1.0 + scale_y;
+        uv.y += 0.5;
+
+        color = sampleInput(uv);
+        gl_FragColor = toOutputFormat(color);
+    }
+";

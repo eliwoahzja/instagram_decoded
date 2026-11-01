@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "transition_wipe_up",
+  "displayName": "Wipe Up",
+  "description": "Video transition selection. Chooses to apply wipe up transition.",
+  "iglu": {}
+}

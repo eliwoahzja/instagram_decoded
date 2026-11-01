@@ -1,0 +1,1 @@
+(function(){return getTruncatedPageText();function getTruncatedPageText(){const title=document.title,bodyEl=document.body,body=bodyEl?bodyEl.innerText??"":"",textTruncateLength=1e3,truncatedTitle=undefined,truncatedBody=undefined;return[title.substring(0,1e3),body.substring(0,1e3)]}})()

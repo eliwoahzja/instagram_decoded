@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "transition_glitch",
+  "displayName": "Glitch",
+  "description": "[IG Edits] Video effect name. With \"Glitch\", the creator can imitate the effect of square pixels and low quality in their video.",
+  "iglu": {}
+}

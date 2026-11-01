@@ -1,0 +1,37 @@
+.class public final LX/5rK;
+.super LX/1kp;
+.source ""
+
+
+# instance fields
+.field public final synthetic A00:Lkotlin/jvm/functions/Function0;
+
+
+# direct methods
+.method public constructor <init>(Lkotlin/jvm/functions/Function0;)V
+    .locals 3
+
+    iput-object p1, p0, LX/5rK;->A00:Lkotlin/jvm/functions/Function0;
+
+    const v2, 0x37d467fd
+
+    const/4 v1, 0x3
+
+    const/4 v0, 0x0
+
+    invoke-direct {p0, v2, v1, v0, v0}, LX/1kp;-><init>(IIZZ)V
+
+    return-void
+.end method
+
+
+# virtual methods
+.method public final run()V
+    .locals 1
+
+    iget-object v0, p0, LX/5rK;->A00:Lkotlin/jvm/functions/Function0;
+
+    invoke-interface {v0}, Lkotlin/jvm/functions/Function0;->invoke()Ljava/lang/Object;
+
+    return-void
+.end method

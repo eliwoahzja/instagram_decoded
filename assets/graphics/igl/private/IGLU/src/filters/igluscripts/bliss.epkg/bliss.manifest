@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "identifier": "7CEB8F9B-E52B-442C-8D69-A89DB71A0651",
+  "displayName": "Bliss",
+  "description": "[IG Edits] Color filter name. With \"Bliss\", the creator gets a pure 8x8 LUT color grade applied to the camera image at full strength.",
+  "android": {
+    "previewAsset": {
+      "key": "3c73ccd",
+      "handle": "AQBjyskX-R03",
+      "md5": "419c63c375c67dbf9f967c4c93b20c95"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAGMEUfiKC7"
+    }
+  },
+  "iglu": {
+    "legacyId": 3092
+  },
+  "assets": [
+    {
+      "name": "bliss_lut.png",
+      "assetHash": "3a7e4596b58e00a93d0a5b24b63a03adaf1e9dceed4d771a671c156d24da445c",
+      "hubAssetId": "1517471396441049"
+    }
+  ]
+}

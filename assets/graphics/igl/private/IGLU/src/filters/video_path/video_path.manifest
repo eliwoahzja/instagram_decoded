@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_path",
+  "displayName": "Path",
+  "description": "Video effects selection. Looping path animation effect.",
+  "iglu": {
+    "legacyId": 3032,
+    "customization": [
+      {
+        "name": "speed",
+        "default": 0.15,
+        "min": 0.15,
+        "max": 1.0,
+        "displayName": "Speed",
+        "displayNameDescription": "[IG Edits] Slider label controlling the playback or animation speed of a video effect (noun, not a verb); exact range varies per effect.",
+        "displayMethod": "percent"
+      },
+      {
+        "name": "intensity",
+        "default": 0.0625,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Intensity",
+        "displayNameDescription": "[IG Edits] Slider label controlling the strength of a video effect. Generic across many effects (glow, blur, color, distortion, etc.); exact range varies per effect."
+      }
+    ]
+  },
+  "assets": [
+    {
+      "name": "slide_right.png",
+      "assetHash": "52e2dbdb59490bccaab861be24f90f5c92346bc647711c6ef676ebe5fda3e438",
+      "hubAssetId": "26372106545782120"
+    }
+  ],
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAHjXxzlnmP"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "c87187ce",
+      "handle": "AQADo-xc9kT_",
+      "md5": "142779d6c0d1df8a66156e375cbcbef6"
+    }
+  }
+}

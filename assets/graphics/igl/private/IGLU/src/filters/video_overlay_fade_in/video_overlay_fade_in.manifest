@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_cutout_fade",
+  "displayName": "Fade In",
+  "description": "[IG Edits] Video overlay fade-in effect name. With \"Fade In\", the overlay opacity ramps from 0 to 1 over the intro window, easing the clip into view.",
+  "iglu": {
+    "legacyId": 5062,
+    "subject": {
+      "overlay": true
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "58fc57dd",
+      "handle": "AQACkj9tQbCL",
+      "md5": "58dcf8c2b0c4404700dfa9b93806bdc4"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAE_yL4l_3W"
+    }
+  }
+}

@@ -1,0 +1,1 @@
+(function(batchTrackingId,translatedTextJson){if("function"!=typeof window._PageTranslationHandler){const submittedTranslations=new Map;window._PageTranslationHandler=function(batchId){submittedTranslations.has(batchId)}}window._PageTranslationHandler(batchTrackingId,JSON.parse(translatedTextJson))})

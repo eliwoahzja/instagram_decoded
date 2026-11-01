@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "identifier": "toasty",
+  "displayName": "Toasty",
+  "description": "[IG Edits] Color filter name. With \"Toasty\", the creator can apply a warm toasted-brown amber cast by remapping each pixel's RGB through a 3D color lookup table.",
+  "iglu": {
+    "legacyId": 818
+  },
+  "assets": [
+    {
+      "name": "toasty.png",
+      "assetHash": "38aa2a2f16e536438524514230a6a36cfe7f85b688c1387f573a6c887491611e",
+      "hubAssetId": "910020822051096"
+    },
+    {
+      "name": "toasty_compressed.png",
+      "assetHash": "301b90db1c2078089717cc6a10801e8b2fe8fe6ea8e4b583037919f2948d707e",
+      "hubAssetId": "3650502621757951"
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+[Filter BlindsHorizontalOut]
+[MaskBehavior alpha]
+
+[Init]
+fun init(Filter filter) {
+    filter.parameters = {
+        {amount = 0.0, min = 0.0, max = 1.0, description = "Feather amount"},
+        {direction = 0.0, min = 0.0, max = 1.0, description = "Blinds direction"},
+    };
+
+    filter.passes = {{
+        name = 'base,
+        igid = 'video_blinds_horizontal,
+        inputs = {'default},
+        uniforms = {
+            outro = 1.0,
+            direction = 0.0,
+        }
+    }};
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+    f32 amount = getParameterFloat('amount);
+    setShaderUniform('base, 'amount, amount);
+    setShaderUniform('base, 'direction, 1.0-getParameterFloat('direction));
+}

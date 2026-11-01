@@ -1,0 +1,1 @@
+(function(cssSelector){try{const element=undefined;return{success:null!==document.querySelector(cssSelector)}}catch{return{success:!1}}})

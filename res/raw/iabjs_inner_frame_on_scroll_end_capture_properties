@@ -1,0 +1,1 @@
+(function(handlerId,capturePropertiesJSON){window._META.IABInnerFrame.onScrollEnd(handlerId,{captureProperties:JSON.parse(capturePropertiesJSON)})})

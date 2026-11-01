@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "transition_slide_left",
+  "displayName": "Slide Left",
+  "description": "Video transition selection. Chooses to apply slide left transition.",
+  "iglu": {}
+}

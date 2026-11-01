@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:gravity="center|bottom" android:height="38.0dp" android:width="76.0dp" android:bottom="32.0dp">
+        <bitmap android:gravity="center|bottom" android:src="@drawable/from_meta_gradient" />
+    </item>
+</layer-list>

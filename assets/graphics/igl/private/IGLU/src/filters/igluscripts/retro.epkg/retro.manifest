@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "identifier": "03C43394-3A99-45EE-BFE8-D93D395CECFA",
+  "displayName": "Retro",
+  "description": "[IG Edits] Color preset filter name. Applies a retro color grade with film light leak overlay and skin smoothing.",
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAE6RwlfB_E"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "bd17e6d0",
+      "handle": "AQADwU0h-dvS",
+      "md5": "585633355817dd8e2a3f48ec56d5e8ea"
+    }
+  },
+  "iglu": {
+    "legacyId": 3179
+  },
+  "assets": [
+    {
+      "name": "retro_lut.png",
+      "assetHash": "e0b8e8d9b546258c374cabfe5bffb66e8d1a0d638dc8e7a8965c2acff634b94a",
+      "hubAssetId": "4123823357908556"
+    },
+    {
+      "name": "retro_overlay.png",
+      "assetHash": "db7ef34ebd9762309f3c3b98f9f7fb4701da416147bc224ef509f956a447d858",
+      "hubAssetId": "1928044861215127"
+    }
+  ]
+}

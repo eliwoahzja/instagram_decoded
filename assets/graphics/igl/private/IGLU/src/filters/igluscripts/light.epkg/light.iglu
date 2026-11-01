@@ -1,0 +1,141 @@
+[Filter Light]
+# "Light" — LUT color grade + RGB-shift chromatic aberration on the
+# raw camera, multiply-blended onto the LUT output. Two logical layers
+# in a single fragment pass.
+#
+#   Layer 1 — Base LUT (full canvas):
+#     8x8 grid LUT lookup on light_lut.png. Mixed against camera by
+#     `lut_strength`. Standard glamy-style pattern.
+#
+#   Layer 2 — RGB-shift chromatic aberration (multiply blend):
+#     3-tap channel-shifted sample of the RAW CAMERA (not LUT output):
+#       r = sample(uv + (+rgb_shift_amount, 0)).r
+#       g = sample(uv                    ).g
+#       b = sample(uv + (-rgb_shift_amount, 0)).b
+#     This produces a shifted RGB image where R is offset right, B
+#     left, G centered — classic chromatic-aberration look.
+#
+#     Blend: standard 50% multiply blend onto the LUT output:
+#       result = mix(lut_rgb, lut_rgb * shifted, multiply_opacity)
+#
+#     RGB shift pattern follows toxic_glitch's split-channel sampling.
+#
+# Composite order (bottom -> top):
+#   camera -> LUT  +  shifted(camera) (multiply)
+#
+# Time source: not used. All layers are static.
+
+[Init]
+fun init(Filter filter)
+{
+    makeTexture('lut);
+
+    filter.parameters = {
+        # Layer 1 LUT.
+        {lut_strength = 1.0, min = 0.0, max = 1.0, description = "LUT mix strength (1.0 = full LUT, 0.0 = camera passthrough)"},
+
+        # Layer 2 RGB shift + multiply blend.
+        {rgb_shift_amount = 0.010, min = 0.0, max = 0.10, description = "RGB channel UV displacement (chromatic aberration)"},
+        {multiply_opacity = 0.773, min = 0.0, max = 1.0, description = "Multiply-blend opacity of the RGB-shifted layer onto the LUT result"},
+    };
+
+    filter.passes = {{
+      name = 'pass0,
+      inputs = {'default, 'lut},
+      uniforms = {
+        lut_strength = 1.0,
+        rgb_shift_amount = 0.010,
+        multiply_opacity = 0.773,
+      },
+      glslShader = glslLight,
+    }};
+}
+
+# Custom Parameter strings for sample-app local-loading.
+string lut_path = "lut_path";
+string lut_filename = "";
+
+[PreRender]
+fun preRender(Filter filter){
+    string lut_filename_parameter = getParameterString(lut_path);
+    if (lut_filename_parameter != "") {
+        string new_lut_filename = stringAppend("textureFilePath://", lut_filename_parameter);
+        if (new_lut_filename != lut_filename) {
+            lut_filename = new_lut_filename;
+            loadTexture('lut, lut_filename);
+        }
+    }
+
+    f32 ls = getParameterFloat('lut_strength);
+    setShaderUniform('pass0, 'lut_strength, ls);
+
+    f32 rsa = getParameterFloat('rgb_shift_amount);
+    setShaderUniform('pass0, 'rgb_shift_amount, rsa);
+
+    f32 mo = getParameterFloat('multiply_opacity);
+    setShaderUniform('pass0, 'multiply_opacity, mo);
+}
+
+#### GLSL shader ####
+
+string glslLight = "
+    varying vec2 sourceTextureCoordinate;
+    BaseUniformsOpenGL;
+
+    uniform sampler2D auxSampler0;  // 'default (camera)
+    uniform sampler2D auxSampler1;  // 'lut
+
+    uniform float lut_strength;
+    uniform float rgb_shift_amount;
+    uniform float multiply_opacity;
+
+    // 8x8 grid LUT lookup on auxSampler1.
+    vec3 lutLookup(vec3 inRgb) {
+      vec3 c = clamp(inRgb, 0.00781, 0.98438);
+      float x = c.r / 8.0;
+      float y = c.g / 8.0;
+      float z = c.b;
+      float blueY = floor(z * 8.0) / 8.0;
+      float blueX = floor((z - blueY) * 64.0) / 8.0;
+      x += blueX;
+      y += blueY;
+      return texture2D(auxSampler1, vec2(x, y)).xyz;
+    }
+
+    void main() {
+      vec2 uv = sourceTextureCoordinate;
+      vec4 cam = sampleInput(uv);
+
+      // ============================================================
+      // Layer 1: LUT-graded camera. Standard mix() pattern. Includes
+      // a graceful fallback for WIP / not-yet-uploaded LUTs (probe LUT
+      // center and skip the grade if empty).
+      // ============================================================
+      vec3 lut_rgb = lutLookup(cam.rgb);
+      vec3 lut_probe = texture2D(auxSampler1, vec2(0.5, 0.5)).rgb;
+      float lut_loaded = step(0.05,
+          max(max(lut_probe.r, lut_probe.g), lut_probe.b));
+      vec3 graded = mix(cam.rgb, lut_rgb, lut_strength * lut_loaded);
+
+      // ============================================================
+      // Layer 2: RGB-shift chromatic aberration on the raw camera.
+      // R offset right, B offset left, G centered. Same horizontal-
+      // shift pattern as toxic_glitch.
+      // ============================================================
+      vec2 shift_x = vec2(rgb_shift_amount, 0.0);
+      float r_shifted = sampleInput(uv + shift_x).r;
+      float g_shifted = sampleInput(uv          ).g;
+      float b_shifted = sampleInput(uv - shift_x).b;
+      vec3 shifted = vec3(r_shifted, g_shifted, b_shifted);
+
+      // ============================================================
+      // Multiply blend at multiply_opacity. result = mix(graded,
+      // graded * shifted, multiply_opacity).
+      // ============================================================
+      vec3 multiplied = graded * shifted;
+      vec3 result = mix(graded, multiplied, multiply_opacity);
+      result = clamp(result, 0.0, 1.0);
+
+      gl_FragColor = toOutputFormat(vec4(result, cam.a));
+    }
+    ";

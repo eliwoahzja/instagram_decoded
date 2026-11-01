@@ -1,0 +1,54 @@
+.class public final Lcom/instagram/ui/widget/nestablescrollingview/NestableHorizontalRecyclerPager;
+.super Lcom/instagram/ui/recyclerpager/HorizontalRecyclerPager;
+.source ""
+
+
+# direct methods
+.method public constructor <init>(Landroid/content/Context;)V
+    .locals 1
+
+    .line 536870912
+    invoke-static {p1}, LX/5B5;->A0Q(Ljava/lang/Object;)V
+
+    .line 536870913
+    .line 536870914
+    .line 536870915
+    const/4 v0, 0x0
+
+    .line 536870916
+    invoke-direct {p0, p1, v0}, Lcom/instagram/ui/widget/nestablescrollingview/NestableHorizontalRecyclerPager;-><init>(Landroid/content/Context;Landroid/util/AttributeSet;)V
+
+    .line 536870917
+    .line 536870918
+    .line 536870919
+    return-void
+.end method
+
+.method public constructor <init>(Landroid/content/Context;Landroid/util/AttributeSet;)V
+    .locals 1
+
+    const/4 v0, 0x0
+
+    invoke-static {p1, v0}, LX/5B5;->A0U(Ljava/lang/Object;I)V
+
+    invoke-direct {p0, p1, p2, v0}, Lcom/instagram/ui/widget/nestablescrollingview/NestableHorizontalRecyclerPager;-><init>(Landroid/content/Context;Landroid/util/AttributeSet;I)V
+
+    return-void
+.end method
+
+.method public constructor <init>(Landroid/content/Context;Landroid/util/AttributeSet;I)V
+    .locals 0
+
+    .line 268435456
+    invoke-static {p1}, LX/5B5;->A0Q(Ljava/lang/Object;)V
+
+    .line 268435457
+    .line 268435458
+    .line 268435459
+    invoke-direct {p0, p1, p2, p3}, Lcom/instagram/ui/recyclerpager/HorizontalRecyclerPager;-><init>(Landroid/content/Context;Landroid/util/AttributeSet;I)V
+
+    .line 268435460
+    .line 268435461
+    .line 268435462
+    return-void
+.end method

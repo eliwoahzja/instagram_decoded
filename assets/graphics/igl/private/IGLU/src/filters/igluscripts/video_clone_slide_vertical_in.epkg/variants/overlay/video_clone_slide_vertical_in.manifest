@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "displayName": "Clone Slide Vertical In",
+  "description": "[IG Edits] Transition name. \"Clone Slide Vertical In\" slides the segmented subject in from above in repeating clone passes with motion-blur ghosting as a 1-second intro.",
+  "iglu": {
+    "legacyId": 5152,
+    "behavior": {
+      "type": "fixedIntro",
+      "durationMs": 1000,
+      "curve": "linear"
+    },
+    "customization": [
+      {
+        "name": "duration",
+        "default": 1.0,
+        "min": 0.1,
+        "max": 5.0,
+        "displayName": "Duration",
+        "displayMethod": "time"
+      }
+    ],
+    "subject": {
+      "overlay": true
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAGE5mCrFtr"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "dc53fdd",
+      "handle": "AQAGiPWKlaFf",
+      "md5": "e6ce78432ef8399f3ff1612ceb87bb27"
+    }
+  }
+}

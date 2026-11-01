@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector android:variablePadding="false"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_enabled="true" android:state_pressed="true">
+        <shape>
+            <solid android:color="@color/fbui_accent_blue_20" />
+            <stroke android:width="1.0dp" android:color="@color/fbui_btn_light_primary_stroke_pressed" />
+            <corners android:radius="@dimen/abc_action_bar_elevation_material" />
+            <padding android:left="@dimen/abc_dialog_padding_material" android:top="@dimen/action_bar_item_spacing_right" android:right="@dimen/abc_dialog_padding_material" android:bottom="@dimen/action_bar_item_spacing_right" />
+        </shape>
+    </item>
+    <item android:state_enabled="true">
+        <shape>
+            <solid android:color="@color/abc_decor_view_status_guard_light" />
+            <stroke android:width="1.0dp" android:color="@color/fbui_accent_blue_40" />
+            <corners android:radius="@dimen/abc_action_bar_elevation_material" />
+            <padding android:left="@dimen/abc_dialog_padding_material" android:top="@dimen/action_bar_item_spacing_right" android:right="@dimen/abc_dialog_padding_material" android:bottom="@dimen/action_bar_item_spacing_right" />
+        </shape>
+    </item>
+    <item android:state_enabled="false">
+        <shape>
+            <solid android:color="@color/abc_decor_view_status_guard_light" />
+            <stroke android:width="1.0dp" android:color="@color/fbui_accent_blue_40" />
+            <corners android:radius="@dimen/abc_action_bar_elevation_material" />
+            <padding android:left="@dimen/abc_dialog_padding_material" android:top="@dimen/action_bar_item_spacing_right" android:right="@dimen/abc_dialog_padding_material" android:bottom="@dimen/action_bar_item_spacing_right" />
+        </shape>
+    </item>
+</selector>

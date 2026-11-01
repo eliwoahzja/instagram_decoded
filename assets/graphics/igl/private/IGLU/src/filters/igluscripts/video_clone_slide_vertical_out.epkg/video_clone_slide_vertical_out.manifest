@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "identifier": "d4dfe6e8-a527-497b-8c28-7cd3ac89c08c",
+  "displayName": "Clone Slide Vertical Out",
+  "description": "[IG Edits] Transition name. \"Clone Slide Vertical Out\" slides the segmented subject upward out of frame in repeating clone passes with motion-blur ghosting as a 1-second outro.",
+  "iglu": {
+    "legacyId": 3999,
+    "behavior": {
+      "type": "fixedOutro",
+      "durationMs": 1000,
+      "curve": "linear"
+    },
+    "customization": [
+      {
+        "name": "duration",
+        "default": 1.0,
+        "min": 0.1,
+        "max": 5.0,
+        "displayName": "Duration",
+        "displayMethod": "time"
+      }
+    ]
+  },
+  "dependencies": [
+    "video_clone_slide"
+  ],
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAHJu_-VQ8F"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "f1e385a0",
+      "handle": "AQADt8185CH9",
+      "md5": "138930dd9d2b1b85c0fa0abadeed6ef9"
+    }
+  }
+}

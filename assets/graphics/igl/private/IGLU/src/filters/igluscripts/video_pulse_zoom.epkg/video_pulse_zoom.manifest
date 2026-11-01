@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_pulse_zoom",
+  "displayName": "Pulse zoom",
+  "description": "Video effects selection. Video zooms in and out.",
+  "iglu": {
+    "legacyId": 2019,
+    "customization": [
+      {
+        "name": "speed",
+        "default": 0.1764706,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Speed",
+        "displayNameDescription": "[IG Edits] Slider label controlling the playback or animation speed of a video effect (noun, not a verb); exact range varies per effect."
+      },
+      {
+        "name": "zoom",
+        "default": 0.3333333,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Zoom",
+        "displayNameDescription": "[IG Edits] Slider label controlling the zoom factor (scale toward/away from the subject) of a video effect; exact range varies per effect."
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "de94e9b9",
+      "handle": "AQAQcaQKaqxf",
+      "md5": "756415cffe680abe8ee32bd411ce5295"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQADw9lOWQXD"
+    }
+  }
+}

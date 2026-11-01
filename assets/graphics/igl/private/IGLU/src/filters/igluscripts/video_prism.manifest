@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_prism",
+  "displayName": "Prism",
+  "description": "[IG Edits] Video effect name. With \"Prism\", the creator can radially split the clip into 5 rotating, chromatically-shifted copies that orbit around a clean center preserving the original image.",
+  "iglu": {
+    "legacyId": 3013,
+    "customization": [
+      {
+        "name": "distance",
+        "default": 0.027,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Distance",
+        "displayNameDescription": "[IG Edits] Slider label controlling the spatial offset or spread of a video effect, e.g., distance between an outline and the subject; exact range varies per effect."
+      },
+      {
+        "name": "speed",
+        "default": 0.25,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Speed",
+        "displayNameDescription": "[IG Edits] Slider label controlling the playback or animation speed of a video effect (noun, not a verb); exact range varies per effect."
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "d25dbec1",
+      "handle": "AQADtLfCf9sf",
+      "md5": "bb60eafe587877fec36cf19aa359eb7b"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQADtj0hSpIG"
+    }
+  }
+}

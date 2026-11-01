@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_color_wipe",
+  "displayName": "Color wipe",
+  "description": "Video effects selection. Starts black and white, then becomes saturated from left to right.",
+  "iglu": {
+    "legacyId": 2040,
+    "behavior": {
+      "type": "fixedIntro",
+      "durationMs": 1500,
+      "curve": "linear"
+    },
+    "customization": [
+      {
+        "name": "intensity",
+        "default": 1.0,
+        "min": 0.0,
+        "max": 1.0,
+        "displayName": "Softness",
+        "displayNameDescription": "[IG Edits] Slider label controlling the softness (feather, edge blur) of a video effect's transition or mask; exact range varies per effect."
+      }
+    ]
+  },
+  "android": {
+    "previewAsset": {
+      "key": "61647cf5",
+      "handle": "AQBg5ogVVxpO",
+      "md5": "9dacb60e03ec2e65ff02ff2ec4fadecf"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQBg7RxCgB6E"
+    }
+  }
+}

@@ -1,0 +1,15 @@
+.class public final LX/ah5;
+.super Ljava/lang/Object;
+.source ""
+
+
+# instance fields
+.field public A00:Landroid/content/Context;
+
+.field public A01:Lcom/instagram/common/session/UserSession;
+
+.field public A02:Ljava/lang/String;
+
+.field public A03:Lkotlin/jvm/functions/Function0;
+
+.field public A04:Z

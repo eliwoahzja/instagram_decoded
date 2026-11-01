@@ -1,0 +1,189 @@
+# IGLUSCRIPTCOLLISION_BYPASS: Intentional replacement of C++ native effect - IGLUScript takes precedence on Android/iOS; C++ filter retained as fallback for direct C++ callers (sample app, server tools).
+[Filter VideoBlurPulse]
+
+# Blur Pulse (video_blur_pulse): sharp in-and-out defocus.
+#
+# Two playheads selected in [PreRender]; the shader has no time/beat branch.
+#   useBeats true  -> beat-synced, pulse follows the beat envelope
+#   useBeats false -> clock-driven, pulse follows wall-clock time
+#
+# useBeats is written by BeatReactiveController when a beatReactive manifest
+# is active; otherwise the false default selects the clock. Only scalars
+# blurFactor and time_sec arrive from [PreRender].
+
+[Init]
+fun init(Filter filter) {
+  filter.parameters = {
+    {intensity = 0.5556, min = 0.0, max = 1.0, description = "Blur radius (intensity)"},
+    {speed = 0.8, min = 0.0, max = 1.0, description = "Pulse rate (speed)"},
+    {useBeats = false, description = "True while the beat system is driving this effect"},
+    {beatProgress = 0.0, min = 0.0, max = 1.0, description = "Beat-driven pulse playhead"},
+  };
+
+  filter.passes = {{
+    name = 'blurPulse,
+    inputs = {'default},
+    uniforms = {
+      blur_factor = 0.0,
+      time_sec = 0.0,
+    },
+    glslShader = glslBlurPulse,
+  }};
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  # time_sec is media time (advances with the clip). An export pass
+  # reproduces it frame-for-frame, where getLocalTime() would not.
+  f32 time = getParameterFloat('time_sec);
+  f32 intensityParam = getParameterFloat('intensity);
+  f32 speedParam = getParameterFloat('speed);
+  boolean useBeats = getParameterBoolean('useBeats);
+
+  # Shipped range mapping: intensity lerp(1,10) -> blurRadius, speed
+  # lerp(8,0.5) inverted so higher Speed slider -> faster pulse.
+  f32 blurRadius = 1.0 + intensityParam * 9.0;
+  f32 pulseSpeed = 8.0 + speedParam * (0.5 - 8.0);
+  f32 period = pulseSpeed * 0.2667;
+
+  f32 pulse = 0.0;
+  if (useBeats) {
+    pulse = getParameterFloat('beatProgress);
+  } else {
+    # Clock pulse: 4-segment keyframe pulse 0→-0.5→-1→0, looped on period.
+    # The envelope shapes a sharp in-and-out defocus on a wall clock;
+    # beats replace the clock pulse with the beat envelope instead.
+    f32 t = time / period;
+    t = t - floor(t);
+    if (t < 0.25) {
+      pulse = 0.0;
+    } else if (t < 0.5) {
+      pulse = (t - 0.25) * -2.0;
+    } else if (t < 0.75) {
+      pulse = (0.75 - t) * -4.0;
+    } else {
+      pulse = 0.0;
+    }
+  }
+
+  # One scalar drives the disk blur. The shader ramps its tap count on
+  # clamp(blur_factor, 0, 1), so feed magnitude: the clock pulse is negative
+  # ([-1,0]) while the beat pulse is positive ([0,1]), and both must map to
+  # the same positive defocus at equal magnitude.
+  f32 blurFactor = blurRadius * abs(pulse);
+  setShaderUniform('blurPulse, 'blur_factor, blurFactor);
+  setShaderUniform('blurPulse, 'time_sec, time);
+}
+
+string glslBlurPulse = "
+  precision highp float;
+  varying vec2 sourceTextureCoordinate;
+
+  VideoShaderUniformsOpenGL;
+
+  mat2 rotate2d(float radians) {
+    float c = cos(radians);
+    float s = sin(radians);
+    return mat2(c, -s, s, c);
+  }
+
+  uniform float blur_factor;
+
+  float hash21(vec2 p) {
+    p = fract(p * vec2(123.34, 345.45));
+    p += dot(p, p + 34.345);
+    return fract(p.x * p.y);
+  }
+
+  // shaderc represents else-if chains as nested branches and limits parser depth.
+  // Keep these checks independent so all 64 samples compile on Apple.
+  vec2 getBlueNoiseSample(int i) {
+    if (i == 0) return vec2(-0.6139, -0.1379);
+    if (i == 1) return vec2(0.3201, -0.7372);
+    if (i == 2) return vec2(-0.1149, 0.9782);
+    if (i == 3) return vec2(0.8283, 0.3380);
+    if (i == 4) return vec2(-0.8236, 0.3831);
+    if (i == 5) return vec2(0.0934, 0.5341);
+    if (i == 6) return vec2(0.5286, -0.0783);
+    if (i == 7) return vec2(-0.3430, -0.5532);
+    if (i == 8) return vec2(-0.1795, 0.1427);
+    if (i == 9) return vec2(0.2193, -0.3049);
+    if (i == 10) return vec2(-0.4934, 0.8342);
+    if (i == 11) return vec2(0.7290, -0.4648);
+    if (i == 12) return vec2(-0.9392, -0.2016);
+    if (i == 13) return vec2(0.2106, 0.8722);
+    if (i == 14) return vec2(-0.0517, -0.9247);
+    if (i == 15) return vec2(0.9610, 0.0730);
+    if (i == 16) return vec2(-0.7073, 0.0008);
+    if (i == 17) return vec2(0.4939, 0.7011);
+    if (i == 18) return vec2(-0.2425, 0.5489);
+    if (i == 19) return vec2(0.0521, -0.5472);
+    if (i == 20) return vec2(-0.3455, 0.2746);
+    if (i == 21) return vec2(0.3521, 0.2348);
+    if (i == 22) return vec2(-0.6169, -0.8076);
+    if (i == 23) return vec2(0.6294, -0.2175);
+    if (i == 24) return vec2(-0.0490, -0.2509);
+    if (i == 25) return vec2(0.1451, 0.1206);
+    if (i == 26) return vec2(-0.2350, -0.8641);
+    if (i == 27) return vec2(0.2945, 0.9781);
+    if (i == 28) return vec2(-0.9673, 0.1534);
+    if (i == 29) return vec2(0.8291, -0.0213);
+    if (i == 30) return vec2(-0.4868, -0.2893);
+    if (i == 31) return vec2(0.5682, 0.4284);
+    if (i == 32) return vec2(-0.8901, -0.4540);
+    if (i == 33) return vec2(0.1745, -0.9816);
+    if (i == 34) return vec2(-0.2311, 0.9707);
+    if (i == 35) return vec2(0.9443, 0.3283);
+    if (i == 36) return vec2(-0.7831, 0.6178);
+    if (i == 37) return vec2(0.5902, -0.6903);
+    if (i == 38) return vec2(-0.1410, 0.4002);
+    if (i == 39) return vec2(0.4079, 0.1951);
+    if (i == 40) return vec2(-0.2753, -0.7119);
+    if (i == 41) return vec2(0.2274, 0.8512);
+    if (i == 42) return vec2(-0.9575, 0.2891);
+    if (i == 43) return vec2(0.7668, -0.5592);
+    if (i == 44) return vec2(-0.4835, 0.0313);
+    if (i == 45) return vec2(0.1443, -0.0550);
+    if (i == 46) return vec2(-0.3332, -0.3337);
+    if (i == 47) return vec2(0.2673, -0.4911);
+    if (i == 48) return vec2(-0.7256, 0.1825);
+    if (i == 49) return vec2(0.8120, 0.5619);
+    if (i == 50) return vec2(-0.0439, -0.9817);
+    if (i == 51) return vec2(0.5638, 0.8268);
+    if (i == 52) return vec2(-0.9871, -0.0640);
+    if (i == 53) return vec2(0.4352, -0.8634);
+    if (i == 54) return vec2(-0.5050, 0.5789);
+    if (i == 55) return vec2(0.0463, 0.3148);
+    if (i == 56) return vec2(-0.2589, 0.9064);
+    if (i == 57) return vec2(0.8894, -0.4342);
+    if (i == 58) return vec2(-0.6730, -0.7195);
+    if (i == 59) return vec2(0.3161, 0.4841);
+    if (i == 60) return vec2(-0.6139, 0.3379);
+    if (i == 61) return vec2(0.2331, -0.1572);
+    if (i == 62) return vec2(-0.3849, 0.7582);
+    return vec2(0.9283, 0.3380);
+  }
+
+  vec4 circleBlur(vec2 uv, vec2 scale) {
+    vec2 ps = (1.0 / output_size) * scale * 12.0;
+    float jitter = hash21(uv * output_size) * 6.2831853;
+    float s = sin(jitter), c = cos(jitter);
+    mat2 R = mat2(c, -s, s, c);
+    int taps = int(mix(16.0, 64.0, clamp(blur_factor, 0.0, 1.0)));
+    vec4 acc = sampleInput(uv);
+    float wsum = 1.0;
+    for (int i = 0; i < taps; ++i) {
+      vec2 offset = R * getBlueNoiseSample(i);
+      vec2 texOffset = offset * ps;
+      acc += sampleInput(uv + texOffset);
+      wsum += 1.0;
+    }
+    return acc / wsum;
+  }
+
+  void main() {
+    vec2 uv = sourceTextureCoordinate;
+    vec4 color = circleBlur(uv, vec2(blur_factor));
+    gl_FragColor = toOutputFormat(color);
+  }
+";

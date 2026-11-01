@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "identifier": "crisp",
+  "displayName": "Crisp",
+  "description": "[IG Edits] Color filter name. With \"Crisp\", the creator can remap pixel RGB through the Crisp 3D LUT for a clean high-contrast neutral grade with lifted clarity.",
+  "iglu": {
+    "legacyId": 5030
+  },
+  "assets": [
+    {
+      "name": "crisp.lutpk",
+      "assetHash": "d3c42122b58ff092940426d8eb74c34106133a9e75168d22b4b2d032352f5ad2",
+      "hubAssetId": "790837323854127"
+    }
+  ]
+}

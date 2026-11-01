@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "identifier": "445afbac-aa7a-46b7-8883-be5d5503adb6",
+  "displayName": "Wipe out vertical",
+  "description": "[IG Edits] Effect name shown in the video effects picker. This is the user-facing label for a video effect.",
+  "iglu": {
+    "legacyId": 3141,
+    "behavior": {
+      "type": "fixedOutro",
+      "durationMs": 1000,
+      "curve": "quadraticInOut"
+    },
+    "customization": [
+      {
+        "name": "direction",
+        "defaultSelection": "down",
+        "available": [
+          "up",
+          "down"
+        ],
+        "displayName": "Wipe Direction"
+      },
+      {
+        "name": "duration",
+        "default": 1.0,
+        "min": 0.5,
+        "max": 5.0,
+        "displayName": "Duration",
+        "displayMethod": "time"
+      },
+      {
+        "name": "amount",
+        "displayName": "Amount",
+        "default": 0.1,
+        "min": 0.0,
+        "max": 1.0
+      }
+    ]
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQADnqCQKbCN"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "6cb6c8fd",
+      "handle": "AQAGT7yaz_B4",
+      "md5": "66bcec097b821f4848a80aa88ed45860"
+    }
+  },
+  "dependencies": [
+    "video_linear_wipe_vertical"
+  ]
+}

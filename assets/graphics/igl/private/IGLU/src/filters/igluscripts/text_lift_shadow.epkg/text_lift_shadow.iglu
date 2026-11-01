@@ -1,0 +1,246 @@
+[Filter IgluscriptTextLiftShadowFilter]
+
+f32 BASE_FONT_SIZE = 100.0;
+
+# Tap counts are capped at the shaders' fixed loop bounds.
+f32 MAX_HALF_SAMPLES = 10.0;
+f32 MAX_DILATE_STEPS = 8.0;
+
+# Reference tap count the blur decay is normalized against, so the falloff
+# shape stays fixed as the tap count changes.
+f32 REF_SAMPLES = 21.0;
+
+[Init]
+fun init(Filter filter) {
+  filter.parameters = {
+    {shadowColor = {0.0, 0.0, 0.0, 1.0}, description = "Shadow Color"},
+    {shadowOpacity = 0.75, min = 0.0, max = 1.0, description = "Shadow Opacity"},
+    {spread = 3.48, min = 0.0, max = 40.0, description = "Spread"},
+    {blur = 4.35, min = 0.0, max = 80.0, description = "Blur"},
+    {offsetX = -4.57, min = -10.0, max = 10.0, description = "Offset X"},
+    {offsetY = -6.09, min = -10.0, max = 10.0, description = "Offset Y"},
+    {falloffCurve = 2.0, min = 0.1, max = 40.0, description = "Blur Falloff"},
+  };
+
+  filter.passes = {
+  {
+    name = 'dilateH,
+    inputs = {'default},
+    uniforms = {
+      outputSize = {1080.0, 1920.0},
+      axis = {1.0, 0.0},
+      radius = 6.0,
+      dilateSteps = 8.0,
+    },
+    glslShader = dilateGlsl,
+  },
+  {
+    name = 'dilateV,
+    inputs = {'dilateH},
+    uniforms = {
+      outputSize = {1080.0, 1920.0},
+      axis = {0.0, 1.0},
+      radius = 6.0,
+      dilateSteps = 8.0,
+    },
+    glslShader = dilateGlsl,
+  },
+  {
+    name = 'blurH,
+    inputs = {'dilateV},
+    scale = {0.5, 0.5},
+    uniforms = {
+      inputSize = {1080.0, 1920.0},
+      axis = {1.0, 0.0},
+      halfSamples = 10.0,
+      blurStep = 2.4,
+      falloffRate = 0.095,
+    },
+    glslShader = blurGlsl,
+  },
+  {
+    name = 'blurV,
+    inputs = {'blurH},
+    scale = {0.5, 0.5},
+    uniforms = {
+      inputSize = {1080.0, 1920.0},
+      axis = {0.0, 1.0},
+      halfSamples = 10.0,
+      blurStep = 2.4,
+      falloffRate = 0.095,
+    },
+    glslShader = blurGlsl,
+  },
+  {
+    name = 'compose,
+    inputs = {'default, 'blurV},
+    uniforms = {
+      offset = {0.0, 0.0},
+      shadowColor = {0.0, 0.0, 0.0, 1.0},
+      shadowOpacity = 0.9,
+    },
+    glslShader = composeGlsl,
+  }
+  };
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  vec2 size = getTextureSize('default);
+
+  f32 fontSize = getParameterFloat('fontSize);
+  if (fontSize < 1.0) {
+    fontSize = min(size.x, size.y) * 0.09;
+  }
+  f32 fontScale = fontSize / BASE_FONT_SIZE;
+
+  f32 spread = getParameterFloat('spread) * fontScale;
+  f32 blur = getParameterFloat('blur) * fontScale;
+  f32 offsetX = getParameterFloat('offsetX) * fontScale;
+  f32 offsetY = getParameterFloat('offsetY) * fontScale;
+  f32 falloffCurve = getParameterFloat('falloffCurve);
+  f32 shadowOpacity = getParameterFloat('shadowOpacity);
+  vec4 shadowColor = getParameterVec4('shadowColor);
+
+  # Tap counts track the radius at ~1px spacing instead of running a fixed
+  # count. Keeping blurStep <= 1 texel is what makes the blur's bilinear tap
+  # pairing lossless.
+  f32 halfSamples = clamp(ceil(blur), 2.0, MAX_HALF_SAMPLES);
+  f32 blurStep = blur / halfSamples;
+
+  f32 dilateSteps = clamp(ceil(spread), 1.0, MAX_DILATE_STEPS);
+
+  # Decay is per-pixel, so normalizing by the reference tap count keeps the
+  # falloff shape identical as the tap count varies.
+  f32 falloffRate = falloffCurve / REF_SAMPLES;
+
+  setShaderUniform('dilateH, 'outputSize, size);
+  setShaderUniform('dilateH, 'radius, spread);
+  setShaderUniform('dilateH, 'dilateSteps, dilateSteps);
+  setShaderUniform('dilateV, 'outputSize, size);
+  setShaderUniform('dilateV, 'radius, spread);
+  setShaderUniform('dilateV, 'dilateSteps, dilateSteps);
+
+  setShaderUniform('blurH, 'inputSize, size);
+  setShaderUniform('blurH, 'halfSamples, halfSamples);
+  setShaderUniform('blurH, 'blurStep, blurStep);
+  setShaderUniform('blurH, 'falloffRate, falloffRate);
+  setShaderUniform('blurV, 'inputSize, size);
+  setShaderUniform('blurV, 'halfSamples, halfSamples);
+  setShaderUniform('blurV, 'blurStep, blurStep);
+  setShaderUniform('blurV, 'falloffRate, falloffRate);
+
+  vec2 offsetUv = {offsetX / size.x, offsetY / size.y};
+  setShaderUniform('compose, 'offset, offsetUv);
+  setShaderUniform('compose, 'shadowColor, shadowColor);
+  setShaderUniform('compose, 'shadowOpacity, shadowOpacity);
+}
+
+string dilateGlsl = "
+precision highp float;
+
+varying vec2 sourceTextureCoordinate;
+BaseUniformsOpenGL;
+
+uniform vec2 outputSize;
+uniform vec2 axis;
+uniform float radius;
+uniform float dilateSteps;
+
+#define MAX_RADIUS 8
+
+// max() is idempotent, so we only need taps dense enough to cover the radius.
+vec4 dilate(vec2 uv, vec2 pixel) {
+  vec4 c = sampleInput(uv);
+  for (int i = 1; i <= MAX_RADIUS; ++i) {
+    if (float(i) > dilateSteps) break;
+    c = max(c, sampleInput(uv + pixel * float(i)));
+    c = max(c, sampleInput(uv - pixel * float(i)));
+  }
+  return c;
+}
+
+void main() {
+  vec2 uv = sourceTextureCoordinate;
+  vec2 duv = axis / outputSize;
+  vec4 color = dilate(uv, radius * duv / max(dilateSteps, 1.0));
+  gl_FragColor = toOutputFormat(color);
+}
+";
+
+string blurGlsl = "
+precision highp float;
+
+varying vec2 sourceTextureCoordinate;
+BaseUniformsOpenGL;
+
+uniform vec2 inputSize;
+uniform vec2 axis;
+uniform float halfSamples;
+uniform float blurStep;
+uniform float falloffRate;
+
+void main() {
+  vec2 uv = sourceTextureCoordinate;
+  vec2 dir = axis / inputSize;
+
+  // The kernel is symmetric, so taps come in +/- pairs sharing a weight.
+  vec4 texel = sampleInput(uv);
+  float totalWeight = 1.0;
+
+  // Merge each adjacent pair of taps into ONE bilinear fetch at their
+  // weight-averaged position. blurStep is <= 1 texel by construction, so a pair
+  // usually falls inside a single texel where the hardware lerp is exactly
+  // linear and the merge is lossless.
+  for (float j = 1.0; j < 64.0; j += 2.0) {
+    if (j > halfSamples) break;
+
+    float p1 = j * blurStep;
+    float p2 = (j + 1.0) * blurStep;
+
+    float w1 = exp(-p1 * falloffRate);
+    // Odd tap count leaves p1 unpaired on the last iteration; w2 = 0 collapses
+    // the pair back to a single tap at p1.
+    float w2 = 0.0;
+    if (j + 1.0 <= halfSamples) {
+      w2 = exp(-p2 * falloffRate);
+    }
+
+    float w = w1 + w2;
+    float o = (p1 * w1 + p2 * w2) / w;
+
+    texel += (sampleInput(uv + dir * o) + sampleInput(uv - dir * o)) * w;
+    totalWeight += 2.0 * w;
+  }
+
+  gl_FragColor = toOutputFormat(texel / totalWeight);
+}
+";
+
+string composeGlsl = "
+precision highp float;
+
+varying vec2 sourceTextureCoordinate;
+BaseUniformsOpenGL;
+
+uniform sampler2D auxSampler1;
+uniform vec2 offset;
+uniform vec4 shadowColor;
+uniform float shadowOpacity;
+
+void main() {
+  vec2 uv = sourceTextureCoordinate;
+
+  vec4 base = sampleInput(uv);
+
+  vec2 off = vec2(offset.x, -offset.y);
+  vec4 blurred = texture2D(auxSampler1, uv - off);
+  float shadowAlpha = blurred.a * shadowOpacity;
+
+  // Premultiplied shadow, then text over it.
+  vec4 shadow = vec4(shadowColor.r, shadowColor.g, shadowColor.b, 1.0) * shadowAlpha;
+  vec4 color = base + shadow * (1.0 - base.a);
+
+  gl_FragColor = toOutputFormat(color);
+}
+";

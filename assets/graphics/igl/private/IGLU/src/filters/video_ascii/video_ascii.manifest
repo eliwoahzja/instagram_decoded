@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "video_ascii",
+  "displayName": "ASCII",
+  "description": "[IG Edits] Video effect name. With \"ASCII\", the creator can replace the frame with a luminance-mapped grid of ASCII characters sampled from an atlas, recoloring per cell.",
+  "iglu": {}
+}

@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "text_distortion_fisheye",
+  "displayName": "Fisheye",
+  "description": "[IG Edits] Text effect name. With \"Fisheye\", the creator distorts a text layer with a wide-angle bulge that pushes letters outward from the center.",
+  "iglu": {}
+}

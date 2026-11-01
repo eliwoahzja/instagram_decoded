@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "clear",
+  "displayName": "Clear",
+  "description": "[IG Edits] Video effect name. With \"Clear\", the creator can clear the framebuffer to a configurable solid clear_color via a LoadAction::Clear render pass.",
+  "iglu": {}
+}

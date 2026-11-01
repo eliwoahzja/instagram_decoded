@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@android:id/background">
+        <shape android:shape="ring" android:useLevel="false" android:innerRadius="@dimen/clips_controls_with_attached_scrubber_hairline_height" android:thickness="@dimen/afi_indicator_arrow_margin_top">
+            <solid android:color="@color/bds_white_20_transparent" />
+            <size android:height="@dimen/avatar_reel_ring_size_extra_large" android:width="@dimen/avatar_reel_ring_size_extra_large" />
+        </shape>
+    </item>
+    <item android:id="@android:id/progress">
+        <rotate android:fromDegrees="0.0" android:toDegrees="1080.0" android:pivotX="50.0%" android:pivotY="50.0%" android:repeatCount="infinite">
+            <shape android:shape="ring" android:useLevel="false" android:innerRadius="@dimen/clips_controls_with_attached_scrubber_hairline_height" android:thickness="@dimen/afi_indicator_arrow_margin_top">
+                <gradient android:startColor="@color/bds_transparent" android:endColor="@color/bds_white" android:angle="0.0" android:type="sweep" />
+                <size android:height="@dimen/avatar_reel_ring_size_extra_large" android:width="@dimen/avatar_reel_ring_size_extra_large" />
+            </shape>
+        </rotate>
+    </item>
+</layer-list>

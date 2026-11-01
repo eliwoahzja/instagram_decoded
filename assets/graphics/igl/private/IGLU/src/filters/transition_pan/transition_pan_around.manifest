@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "transition_pan_around",
+  "displayName": "Pan Around",
+  "description": "Video effect name. A video effect is a creative visual element that can be applied to a video. With \"Pan around\", the creator can add a panning camera movement around the subject.",
+  "iglu": {}
+}

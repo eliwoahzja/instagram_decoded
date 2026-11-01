@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "identifier": "7087dd6a-5671-4623-9448-2c8d4969c7d5",
+  "displayName": "Rose",
+  "description": "[IG Edits] Video effect name. With \"Rose\", the creator gets a face-tracked rose makeup overlay composited over a LUT color-graded camera scene.",
+  "iglu": {
+    "legacyId": 3203
+  },
+  "assets": [
+    {
+      "name": "my_rose_filter_texture.png",
+      "assetHash": "aec4e6a85e9db07e8a9fa2c57d1d110ad6611bd5d3473be66177fed0f3c29da9",
+      "hubAssetId": "2232529560855392"
+    },
+    {
+      "name": "my_rose_filter_lut.png",
+      "assetHash": "b528ba54a2035ea374db092b2b3cbdd46edd4e830930b930e88214ab38ec1835",
+      "hubAssetId": "1732643171107616"
+    }
+  ]
+}

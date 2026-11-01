@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "text_jagged",
+  "displayName": "Jagged",
+  "description": "Label for the Jagged text effect style.",
+  "iglu": {}
+}

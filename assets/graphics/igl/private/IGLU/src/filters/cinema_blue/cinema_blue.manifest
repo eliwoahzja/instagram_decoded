@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "identifier": "buenos_aires",
+  "displayName": "Buenos Aires",
+  "description": "City-name color filter",
+  "iglu": {
+    "legacyId": 705
+  },
+  "assets": [
+    {
+      "name": "clut_cinema_blue.png",
+      "assetHash": "f272af03fa3078145ae23e892cbb3cca002d92b17b3f0eca236b64f126abb573",
+      "hubAssetId": "932967145776445"
+    }
+  ]
+}

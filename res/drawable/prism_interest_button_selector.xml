@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_selected="true">
+        <shape>
+            <solid android:color="?igds_color_prism_pill_active_background" />
+            <corners android:radius="9.0dp" />
+        </shape>
+    </item>
+    <item>
+        <shape>
+            <solid android:color="?igds_color_pill_background" />
+            <corners android:radius="9.0dp" />
+        </shape>
+    </item>
+</selector>

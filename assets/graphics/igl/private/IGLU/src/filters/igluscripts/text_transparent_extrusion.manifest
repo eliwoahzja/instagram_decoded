@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "text_extrusion_transparent",
+  "displayName": "3D Knockout",
+  "description": "Text effect with 3D knockout",
+  "iglu": {}
+}

@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "e433aadb-2255-485c-93da-598243b37d98",
+  "displayName": "ARClownRender",
+  "description": "[IG Edits] Internal video effect; not user-facing. Draws a pre-projected dense face mesh and composites a makeup texture sampled in canonical face UV against the input camera frame.",
+  "iglu": {}
+}

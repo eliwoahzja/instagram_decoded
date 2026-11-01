@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "landmark",
+  "displayName": "Landmark",
+  "description": "[IG Edits] Video effect name. With \"Landmark\", the creator can draw face-tracking landmark points as gl_Points with per-point color gradient and size scaled to frame resolution.",
+  "iglu": {}
+}

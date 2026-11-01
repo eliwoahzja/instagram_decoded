@@ -1,0 +1,104 @@
+[Filter IgluscriptVideoSuperWobbleFilter]
+
+[Init]
+fun init(Filter filter) {
+  filter.parameters = {
+    {zoom = 0.5, min = 0.0, max = 1.0},
+    {intensity = 0.29411764706, min = 0.0, max = 1.0},
+    {duration = 1.371, min = 0.5, max = 6.0}
+  };
+
+  filter.passes = {{
+    name = 'super_wobble, inputs = {'default},
+    uniforms = {
+      inputSize = {1080.0, 1920.0},
+      maxZoom = 2.0,
+      maxAngle = 30.0,
+      progress = 0.0,
+    },
+    glslShader = glsl
+  }};
+}
+
+[PreRender]
+fun preRender(Filter filter) {
+  f32 progressValue = getParameterFloat('progress);
+  setShaderUniform('super_wobble, 'progress, progressValue);
+
+  # Normalized 0..1 sliders remapped to legacy raw ranges. Defaults project
+  # back to the prior hardcoded values:
+  #   zoom=0.5            -> maxZoom  = 1.0 + 0.5 * 2.0  = 2.0
+  #   intensity=0.2941... -> maxAngle = 5.0 + 0.2941 * 85.0 ~= 30.0
+  f32 zoomNorm = getParameterFloat('zoom);
+  setShaderUniform('super_wobble, 'maxZoom, 1.0 + zoomNorm * 2.0);
+
+  f32 intensityNorm = getParameterFloat('intensity);
+  setShaderUniform('super_wobble, 'maxAngle, 5.0 + intensityNorm * 85.0);
+}
+
+string glsl = "
+varying vec2 sourceTextureCoordinate;
+
+BaseUniformsOpenGL;
+
+uniform vec2 inputSize;
+uniform float maxZoom;
+uniform float maxAngle;
+uniform float progress;
+
+const float PI  = 3.14159265359;
+
+vec2 rotate(vec2 p, float a){
+  float s = sin(a);
+  float c = cos(a);
+  return vec2(c * p.x - s * p.y, s * p.x + c * p.y);
+}
+
+float easeOutExpo(float t){
+  return (t >= 1.0) ? 1.0 : 1.0 - pow(2.0, -10.0 * t);
+}
+
+void main() {
+
+  vec2 uv = sourceTextureCoordinate;
+  vec2 ratio = inputSize.xy / inputSize.y;
+  vec2 center = vec2(0.5,0.5);
+
+  const float zoomInEnd = 0.1257;
+  const float rotStart = 0.06285;
+  const float rotEnd = 0.354;
+  const float zoomOutEnd = 0.457;
+  float scale;
+  float angle = 0.0;
+
+  // scale progress so the animation fills the whole duration
+  float prog = progress * zoomOutEnd;
+
+  if (prog < zoomInEnd){
+    float t = smoothstep(0.0, 1.0, prog / zoomInEnd);
+    scale = mix(1.0, maxZoom, t);
+  } else if (prog < rotEnd) {
+    scale = maxZoom;
+  } else if (prog < zoomOutEnd){
+    float t = smoothstep(0.0, 1.0, (prog - rotEnd) / (zoomOutEnd - rotEnd));
+    scale = mix(maxZoom, 1.0, easeOutExpo(t));
+  } else {
+    scale = 1.0;
+  }
+
+  if (prog > rotStart && prog < rotEnd){
+    float t = (prog - rotStart) / (rotEnd - rotStart);
+    float osc = sin(t * PI * 12.0);
+    angle = radians(maxAngle) * osc;
+  }
+
+  uv = uv - center;
+  uv *= ratio;
+  uv = rotate(uv, angle);
+  uv /= ratio;
+  uv = uv / scale + center;
+
+  vec4 color = sampleInput(uv);
+  gl_FragColor = toOutputFormat(color);
+}
+";

@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "identifier": "subtle_enhance",
+  "displayName": "Subtle Enhance",
+  "description": "[IG Edits] Video effect name. With \"Subtle Enhance\", the creator can apply a scene-aware auto-enhance that tweaks brightness, contrast, saturation, vignette and sharpen per detected scene category.",
+  "iglu": {}
+}

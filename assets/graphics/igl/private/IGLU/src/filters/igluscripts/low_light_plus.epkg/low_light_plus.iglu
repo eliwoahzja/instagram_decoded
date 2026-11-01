@@ -1,0 +1,151 @@
+[Filter LowLightPlus]
+# "Low Light Plus" — LUT color grade + very subtle film grain on top.
+# Two logical layers in a single fragment pass.
+#
+#   Layer 1 — Base LUT (full canvas):
+#     8x8 grid LUT lookup on low_light_plus_lut.png. Mixed against
+#     camera by `lut_strength`. Standard glamy-style pattern.
+#
+#   Layer 2 — Animated grain (procedural, no asset):
+#     fract(sin(dot(uv + time*0.1, vec2(127.1, 311.7))) * 43758.5)
+#     Bipolar additive at grain_strength so canvas brightness stays
+#     centered. Same primitive as tiffy / old_film. Default 0.05 =
+#     ~5% — very subtle, barely perceptible.
+#
+# Lighting emulation (Spark scene-light):
+#   The Spark scene used 20% ambient + 80% directional, both pure
+#   white, with a standard material on the rectangle the LUT-applied
+#   camera renders to. On a flat plane facing the directional light,
+#   that math is `color * (0.2 + 0.8 * dot(N, L)) = color * 1.0`
+#   when N and L are aligned. Combined with the alpha-blend
+#   composition Spark applies on top of that material, the visual
+#   reads slightly dimmer than a 1.0 multiplier passthrough. We
+#   collapse the whole stack into a single `brightness` multiplier
+#   on the final output (default 0.95 = a small dim that matches
+#   the Spark reference; dial to taste).
+#
+# Composite order (bottom -> top):
+#   camera -> LUT -> grain (bipolar additive) -> brightness multiplier
+#
+# Time source: getLocalTime() (monotonic wall-clock since shader
+# start) per the Time Source skill-doc rule for continuous animations.
+
+[Init]
+fun init(Filter filter)
+{
+    makeTexture('lut);
+
+    filter.parameters = {
+        # Layer 1 LUT.
+        {lut_strength = 1.0, min = 0.0, max = 1.0, description = "LUT mix strength (1.0 = full LUT, 0.0 = camera passthrough)"},
+
+        # Spark scene-light emulation (ambient 0.2 + directional 0.8).
+        {brightness = 0.827, min = 0.0, max = 2.0, description = "Output brightness multiplier (Spark scene-light emulation; 1.0 = no-op, <1 = dim)"},
+
+        # Layer 2 grain.
+        {grain_strength = 0.034, min = 0.0, max = 0.5, description = "Animated film grain bipolar amplitude (0 = none, 0.05 = barely perceptible)"},
+    };
+
+    filter.passes = {{
+      name = 'pass0,
+      inputs = {'default, 'lut},
+      uniforms = {
+        lut_strength = 1.0,
+        brightness = 0.827,
+        grain_strength = 0.034,
+        time = 0.0,
+      },
+      glslShader = glslLowLightPlus,
+    }};
+}
+
+# Custom Parameter strings for sample-app local-loading.
+string lut_path = "lut_path";
+string lut_filename = "";
+
+[PreRender]
+fun preRender(Filter filter){
+    string lut_filename_parameter = getParameterString(lut_path);
+    if (lut_filename_parameter != "") {
+        string new_lut_filename = stringAppend("textureFilePath://", lut_filename_parameter);
+        if (new_lut_filename != lut_filename) {
+            lut_filename = new_lut_filename;
+            loadTexture('lut, lut_filename);
+        }
+    }
+
+    f32 ls = getParameterFloat('lut_strength);
+    setShaderUniform('pass0, 'lut_strength, ls);
+
+    f32 b = getParameterFloat('brightness);
+    setShaderUniform('pass0, 'brightness, b);
+
+    f32 gs = getParameterFloat('grain_strength);
+    setShaderUniform('pass0, 'grain_strength, gs);
+
+    # Use getLocalTime() for monotonic continuous animation (grain).
+    f32 time = getLocalTime();
+    setShaderUniform('pass0, 'time, time);
+}
+
+#### GLSL shader ####
+
+string glslLowLightPlus = "
+    varying vec2 sourceTextureCoordinate;
+    BaseUniformsOpenGL;
+
+    uniform sampler2D auxSampler0;  // 'default (camera)
+    uniform sampler2D auxSampler1;  // 'lut
+
+    uniform float lut_strength;
+    uniform float brightness;
+    uniform float grain_strength;
+    uniform float time;
+
+    // 8x8 grid LUT lookup on auxSampler1.
+    vec3 lutLookup(vec3 inRgb) {
+      vec3 c = clamp(inRgb, 0.00781, 0.98438);
+      float x = c.r / 8.0;
+      float y = c.g / 8.0;
+      float z = c.b;
+      float blueY = floor(z * 8.0) / 8.0;
+      float blueX = floor((z - blueY) * 64.0) / 8.0;
+      x += blueX;
+      y += blueY;
+      return texture2D(auxSampler1, vec2(x, y)).xyz;
+    }
+
+    void main() {
+      vec2 uv = sourceTextureCoordinate;
+      vec4 cam = sampleInput(uv);
+
+      // ============================================================
+      // Layer 1: LUT-graded camera, mixed against passthrough by
+      // lut_strength (standard mix() pattern). Includes a graceful
+      // fallback for WIP / not-yet-uploaded LUTs (probe LUT center).
+      // ============================================================
+      vec3 lut_rgb = lutLookup(cam.rgb);
+      vec3 lut_probe = texture2D(auxSampler1, vec2(0.5, 0.5)).rgb;
+      float lut_loaded = step(0.05,
+          max(max(lut_probe.r, lut_probe.g), lut_probe.b));
+      vec3 graded = mix(cam.rgb, lut_rgb, lut_strength * lut_loaded);
+
+      // ============================================================
+      // Layer 2: animated grain (bipolar additive over result).
+      // Same primitive as tiffy / old_film.
+      // ============================================================
+      float grain = fract(
+          sin(dot(uv + time * 0.1, vec2(127.1, 311.7))) * 43758.5453);
+      float grain_signed = (grain - 0.5) * 2.0;
+      vec3 result = graded + vec3(grain_signed * grain_strength);
+
+      // Spark scene-light emulation (ambient 0.2 + directional 0.8
+      // on a standard material, with alpha-blend composition on top).
+      // Default 0.95 = small dim to match the Spark reference.
+      result *= brightness;
+
+      result = clamp(result, 0.0, 1.0);
+
+      gl_FragColor = toOutputFormat(vec4(result, cam.a));
+    }
+    ";

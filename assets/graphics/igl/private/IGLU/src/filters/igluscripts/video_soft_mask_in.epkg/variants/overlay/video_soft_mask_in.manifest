@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "displayName": "Soft mask in",
+  "description": "[IG Edits] Video effect name. With \"Soft mask in\", the creator can overlay a soft-edged mask that eases in over 2s on a quadratic curve, gradually revealing the subject.",
+  "iglu": {
+    "legacyId": 5079,
+    "behavior": {
+      "type": "fixedIntro",
+      "durationMs": 2000,
+      "curve": "quadraticInOut"
+    },
+    "customization": [],
+    "subject": {
+      "overlay": true
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQAC6MEmohUF"
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "4ef5984",
+      "handle": "AQAGP_oAAU9g",
+      "md5": "5b13822d7d7d0ceaf4741549bb539c6a"
+    }
+  }
+}

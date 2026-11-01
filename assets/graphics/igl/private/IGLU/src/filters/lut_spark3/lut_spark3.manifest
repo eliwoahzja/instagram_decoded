@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "identifier": "light",
+  "displayName": "Light",
+  "description": "[IG Edits] Color filter name. With \"Light\", the creator can apply a bright airy lifted-highlight tone by remapping each pixel's RGB through a 3D color lookup table.",
+  "iglu": {
+    "legacyId": 820
+  },
+  "assets": [
+    {
+      "name": "light.png",
+      "assetHash": "2e7a00677d0691644bf5d7dad8689c68e124e0bd62267e5dd736a23e5d2a9c9c",
+      "hubAssetId": "26811003505198953"
+    },
+    {
+      "name": "light_compressed.png",
+      "assetHash": "679b31c0fc917c5a68fc77116690851e8adfbfd7d3ae1deecaf0956f4b3e4e60",
+      "hubAssetId": "770682292664917"
+    }
+  ]
+}

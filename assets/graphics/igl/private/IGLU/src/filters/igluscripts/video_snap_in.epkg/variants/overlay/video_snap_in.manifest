@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "displayName": "Snap in",
+  "description": "[IG Edits] Effect name shown in the video effects picker. This is the user-facing label for a video effect.",
+  "iglu": {
+    "legacyId": 5136,
+    "behavior": {
+      "type": "fixedIntro",
+      "durationMs": 150,
+      "curve": "linear"
+    },
+    "customization": [
+      {
+        "name": "duration",
+        "default": 0.15,
+        "min": 0.1,
+        "max": 5.0,
+        "displayName": "Duration",
+        "displayMethod": "time"
+      }
+    ],
+    "subject": {
+      "overlay": true
+    }
+  },
+  "android": {
+    "previewAsset": {
+      "key": "c44408e1",
+      "handle": "AQAFdFY5U09d",
+      "md5": "5bff61a60157b39b6be7954724fcec7a"
+    }
+  },
+  "ios": {
+    "previewAsset": {
+      "handle": "AQANSMCIYXsE"
+    }
+  }
+}
