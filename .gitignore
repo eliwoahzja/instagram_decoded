@@ -1,0 +1,16 @@
+# Build output and local artifacts (never commit these)
+/build/
+/dist/
+/logs/
+*.apk
+*.idsig
+*.jks
+*.keystore
+KEYSTORE-PASSWORD.txt
+
+# Compiled tool classes
+/tools/*.class
+/tools/build/
+
+# The all-in-one source archive is a release artifact, not source
+/Instagram_Instants_Gallery_FINAL_FULL_SOURCE.zip

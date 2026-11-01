@@ -1048,6 +1048,8 @@
 .method public final onDestroyView()V
     .locals 4
 
+    invoke-static {p0}, Lapp/morphe/extension/instagram/patches/instants/InstantsGalleryOverlay;->detach(Landroidx/fragment/app/Fragment;)V
+
     const v0, -0x4657dfc5
 
     invoke-static {v0}, LX/3Et;->A02(I)I
@@ -1493,6 +1495,18 @@
     invoke-direct {v0, p0, v3}, LX/K7R;-><init>(Ljava/lang/Object;I)V
 
     invoke-virtual {v1, p0, v0}, LX/0go;->A06(LX/00T;LX/0bn;)V
+
+    invoke-static {p0, p1}, Lapp/morphe/extension/instagram/patches/instants/InstantsGalleryOverlay;->attach(Landroidx/fragment/app/Fragment;Landroid/view/View;)V
+
+    return-void
+.end method
+
+.method public onActivityResult(IILandroid/content/Intent;)V
+    .locals 0
+
+    invoke-static {p1, p2, p3}, Lapp/morphe/extension/instagram/patches/instants/InstantsGalleryOverlay;->onPickerResult(IILandroid/content/Intent;)V
+
+    invoke-super {p0, p1, p2, p3}, LX/4Ka;->onActivityResult(IILandroid/content/Intent;)V
 
     return-void
 .end method
