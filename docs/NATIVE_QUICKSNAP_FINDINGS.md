@@ -106,6 +106,31 @@ alone because the mask semantics live in the missing `LX/DSA` class and the
 `LX/aKl` preview transition is also missing. Guessing either would be exactly
 the kind of untested patch the project forbids.
 
+### Why no public ViewModel handoff exists
+
+A second pass checked whether the existing public APIs could replace the
+custom editor without editing a missing class:
+
+- `LX/kyb` is constructed inside `LX/oNg` (the camera composable) and kept in a
+  remembered `MutableState` inside `LX/XcZ`; there is no fragment or ViewModel
+  accessor. `LX/nKt.F0c` needs that live instance, so the shutter route cannot
+  be called from the gallery callback without adding a hook inside the camera
+  composable.
+- `LX/DSA.A01` is the captured-photo state-copy helper. Native call sites use
+  three different masks:
+  - `LX/gAI` uses `-0x22001` for the send/peek state;
+  - `LX/D6J` uses `-0x11000001` with a null bitmap for a filter/list update;
+  - `LX/DSe` uses `-0x3001`, stores the bitmap in
+    `QuickSnapCameraViewModel.A0A`, and passes `true` as the final argument.
+  `DSe` is the closest native equivalent of a capture handoff, but the meaning
+  of mask `-0x3001` and the exact transition it triggers are defined in the
+  missing `DSA` class. Invoking it from the picker without the class and a
+  device test would be an unverified state mutation, not a native integration.
+- `QuickSnapCameraViewModel.A06` is not a preview entry point: it builds the
+  archive-peek bitmap for a recorded video. `A05` draws the timestamp overlay.
+- The V4 immediate-send path (`InstantsGalleryPublisher` / `LX/hoN` with
+  selector `1`) is intact and was not replaced by a speculative preview.
+
 ## 3. Effect specification conflict
 
 `LX/b4V.<clinit>` defines **seven** native effects, not four:
