@@ -50,12 +50,47 @@ MOD_CLASSES=(
   "app/morphe/extension/instagram/patches/instants/InstantsGalleryPublisher"
 )
 
+# Exact class descriptors that must exist in the rebuilt APK. The verifier
+# parses DEX class_defs instead of piping unzip into grep, which returns a
+# false negative under `set -o pipefail` when grep exits on the first match.
+DEX_VERIFY="$PROJECT_DIR/tools/dex_verify.py"
+VERIFY_CLASSES=(
+  "Lapp/morphe/extension/instagram/patches/instants/InstantsGalleryOverlay;"
+  "Lapp/morphe/extension/instagram/patches/instants/InstantsGalleryImage;"
+  "Lapp/morphe/extension/instagram/patches/instants/InstantsGalleryIcon;"
+  "Lapp/morphe/extension/instagram/patches/instants/InstantsGalleryPublisher;"
+  "LX/XPO;"
+)
+# Classes that the decoded source tree is known to lose on case-insensitive
+# filesystems. They must be present in the base APK; otherwise the patch would
+# compile against references that have no runtime definition.
+REQUIRED_BASE_CLASSES=(
+  "LX/9lA;"
+  "LX/DSA;"
+  "LX/0ka;"
+  "LX/aKl;"
+  "LX/XcZ;"
+  "LX/b4V;"
+  "LX/kyb;"
+  "LX/kyt;"
+  "LX/gAI;"
+)
+
 die()  { printf '\n[FATAL] %s\n' "$*" >&2; exit 1; }
 warn() { printf '[warn ] %s\n' "$*"; }
 info() { printf '[info ] %s\n' "$*"; }
 ok()   { printf '[ ok  ] %s\n' "$*"; }
 need_cmd()  { command -v "$1" >/dev/null 2>&1 || die "missing command '$1'"; }
 need_file() { [ -f "$1" ] || die "missing file: $1"; }
+# List archive entries without piping the producer into a consumer that can
+# exit early. `unzip -Z1` is Info-ZIP; the -l fallback keeps old builds working.
+list_zip() {
+  if unzip -Z1 "$1" >/dev/null 2>&1; then
+    unzip -Z1 "$1"
+  else
+    unzip -l "$1" | awk 'NR > 3 && NF >= 4 { print $4 }'
+  fi
+}
 
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -78,8 +113,9 @@ exec > >(tee -a "$LOG_FILE") 2>&1
 info "mode: $MODE"
 info "project: $PROJECT_DIR"
 
-for c in java javac keytool apksigner zipalign zip unzip; do need_cmd "$c"; done
+for c in java javac keytool apksigner zipalign zip unzip python3; do need_cmd "$c"; done
 need_file "$APKTOOL_JAR"
+need_file "$DEX_VERIFY"
 need_file "$PROJECT_DIR/apktool.yml"
 need_file "$PROJECT_DIR/tools/SmaliAssemble.java"
 need_file "$PROJECT_DIR/tools/DexStats.java"
@@ -92,7 +128,7 @@ grep -q "InstantsGalleryOverlay;->attach" "$PROJECT_DIR/smali_classes16/X/XPO.sm
 grep -q "InstantsGalleryOverlay;->onPickerResult" "$PROJECT_DIR/smali_classes16/X/XPO.smali" \
   || die "onActivityResult bridge missing in XPO.smali"
 
-PKG_NAME="$(sed -n 's/.*package="\([^"]*\)".*/\1/p' "$PROJECT_DIR/AndroidManifest.xml" | head -1)"
+PKG_NAME="$(sed -n 's/.*package="\([^"]*\)".*/\1/p' "$PROJECT_DIR/AndroidManifest.xml" | sed -n '1p')"
 VER_CODE="$(awk '/versionCode:/ {print $2; exit}' "$PROJECT_DIR/apktool.yml")"
 [ "$PKG_NAME" = "com.instagram.android" ] || die "unexpected package '$PKG_NAME'"
 info "project package=$PKG_NAME versionCode=$VER_CODE"
@@ -102,18 +138,22 @@ info "project package=$PKG_NAME versionCode=$VER_CODE"
        The base supplies all untouched dex files, resources and the manifest."
 need_file "$BASE_APK"
 unzip -tqq "$BASE_APK" >/dev/null || die "base APK is not a readable zip"
-BASE_DEX_COUNT="$(unzip -l "$BASE_APK" | grep -cE ' classes[0-9]*\.dex$')"
+BASE_ENTRIES="$(list_zip "$BASE_APK")" || die "cannot list entries in $BASE_APK"
+BASE_DEX_COUNT="$(grep -cE '^classes[0-9]*\.dex$' <<< "$BASE_ENTRIES" || true)"
 [ "$BASE_DEX_COUNT" -eq 25 ] || die "base APK has $BASE_DEX_COUNT dex entries, expected 25"
 for d in "${PATCH_DEXES[@]}"; do
-  unzip -l "$BASE_APK" | grep -q " $d\$" || die "base APK is missing $d"
+  grep -qx "$d" <<< "$BASE_ENTRIES" || die "base APK is missing $d"
 done
-ok "base APK validated (25 dex entries)"
+python3 "$DEX_VERIFY" "$BASE_APK" "${REQUIRED_BASE_CLASSES[@]}" \
+  || die "base APK is missing a class that the patch or native QuickSnap code requires.
+       Re-decode/copy the exact installed base APK; do not use the lossy GitHub tree."
+ok "base APK validated (25 dex entries, required classes defined)"
 
 # ---------------------------------------------------------------- signing key
 need_file "$KEYSTORE"
 if [ -z "$KEY_ALIAS" ]; then
   KEY_ALIAS="$(keytool -list -keystore "$KEYSTORE" -storepass "${IG_STORE_PASS:-}" 2>/dev/null \
-      | awk -F, '/PrivateKeyEntry/ {print $1; exit}')"
+      | awk -F, '/PrivateKeyEntry/ { if (first == "") first = $1 } END { print first }')"
   [ -n "$KEY_ALIAS" ] || die "cannot determine key alias; pass --alias"
 fi
 [ -n "${IG_STORE_PASS:-}" ] || { read -rsp "Keystore password: " IG_STORE_PASS; echo; }
@@ -122,12 +162,12 @@ IG_KEY_PASS="${IG_KEY_PASS:-$IG_STORE_PASS}"
 
 dev_cert_sha() {
   apksigner verify --print-certs "$1" 2>/dev/null \
-    | awk -F': ' '/SHA-256 digest/ {print tolower($2); exit}'
+    | awk -F': ' '/SHA-256 digest/ { if (first == "") first = tolower($2) } END { print first }'
 }
 BASE_CERT="$(dev_cert_sha "$BASE_APK" || true)"
 NEW_CERT="$(keytool -list -v -keystore "$KEYSTORE" -alias "$KEY_ALIAS" \
               -storepass "$IG_STORE_PASS" 2>/dev/null \
-            | awk -F': ' '/SHA256:/ {gsub(/ /,""); print tolower($2); exit}')"
+            | awk -F': ' '/SHA256:/ { if (first == "") { gsub(/ /,""); first = tolower($2) } } END { print first }')"
 [ -n "$NEW_CERT" ] || die "cannot read keystore certificate"
 info "base cert : ${BASE_CERT:-<none>}"
 info "key cert  : $NEW_CERT"
@@ -187,7 +227,8 @@ if [ "$MODE" = "surgical" ]; then
     [ -d "$srcdir" ] || die "missing decoded directory for $d ($srcdir)"
     info "assembling $d from $srcdir"
     "${SMALI_CMD[@]}" "$srcdir" "$DEX_OUT/$d" || die "smali compilation failed for $d"
-    head -c 4 "$DEX_OUT/$d" | grep -q '^dex' || die "$d is not a dex file"
+    DEX_MAGIC="$(head -c 4 "$DEX_OUT/$d")"
+    [ "$DEX_MAGIC" = "dex" ] || die "$d is not a dex file"
   done
 
   # ------------------------------------- class-count regression guard per dex
@@ -232,11 +273,12 @@ else
 fi
 
 unzip -tqq "$WORK_APK" >/dev/null || die "repacked APK failed zip integrity"
-DEX_COUNT="$(unzip -l "$WORK_APK" | grep -cE ' classes[0-9]*\.dex$')"
+WORK_ENTRIES="$(list_zip "$WORK_APK")" || die "cannot list entries in $WORK_APK"
+DEX_COUNT="$(grep -cE '^classes[0-9]*\.dex$' <<< "$WORK_ENTRIES" || true)"
 [ "$DEX_COUNT" -eq 25 ] || die "repacked APK has $DEX_COUNT dex entries, expected 25"
-unzip -p "$WORK_APK" classes24.dex | grep -qa 'InstantsGalleryOverlay' \
-  || die "gallery classes missing from classes24.dex"
-ok "APK repacked and verified (25 dex, gallery classes present)"
+python3 "$DEX_VERIFY" "$WORK_APK" "${VERIFY_CLASSES[@]}" \
+  || die "required class definitions are missing from the repacked APK"
+ok "APK repacked and verified (25 dex, exact class definitions present)"
 
 # ------------------------------------------------------- align / sign / verify
 ALIGNED="$BUILD_DIR/aligned.apk"
@@ -262,7 +304,7 @@ else
 fi
 
 if command -v aapt2 >/dev/null 2>&1; then
-  F_PKG="$(aapt2 dump badging "$SIGNED" 2>/dev/null | sed -n "s/^package: name='\([^']*\)'.*/\1/p" | head -1)"
+  F_PKG="$(aapt2 dump badging "$SIGNED" 2>/dev/null | sed -n "s/^package: name='\([^']*\)'.*/\1/p" | sed -n '1p')"
   [ -z "$F_PKG" ] || [ "$F_PKG" = "$PKG_NAME" ] || die "package mismatch: $F_PKG"
   ok "package identity preserved ($PKG_NAME)"
 fi
